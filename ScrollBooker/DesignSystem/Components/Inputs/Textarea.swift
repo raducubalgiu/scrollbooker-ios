@@ -53,6 +53,11 @@ struct Textarea: View {
                 }
             }
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            guard !isDisabled else { return }
+            isFocused = true
+        }
     }
 }
 

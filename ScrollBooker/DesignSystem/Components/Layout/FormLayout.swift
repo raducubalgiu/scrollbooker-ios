@@ -12,9 +12,13 @@ struct FormLayout<Content: View>: View {
     var subHeadline: String
     var enableBottomButton: Bool = true
     var buttonTitle: String = ""
+    
+    var isDisabled: Bool = false
+    
     var onClick: (() -> Void) = {  }
     
     @ViewBuilder var content: () -> Content
+
     
     var body: some View {
         VStack(alignment: .leading) {
@@ -33,7 +37,8 @@ struct FormLayout<Content: View>: View {
             if enableBottomButton {
                 MainButton(
                     title: buttonTitle,
-                    onClick: onClick
+                    onClick: onClick,
+                    isDisabled: isDisabled
                 )
             }
         }

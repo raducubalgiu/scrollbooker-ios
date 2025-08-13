@@ -10,6 +10,7 @@ import SwiftUI
 struct MainButton: View {
     var title: String
     var onClick: () -> Void
+    var isDisabled: Bool = false
     
     var body: some View {
         Button(title) {
@@ -20,17 +21,19 @@ struct MainButton: View {
         .padding(.vertical, 5)
         .background(
             RoundedRectangle(cornerRadius: 50)
-                .fill(Color.primarySB)
+                .fill(isDisabled ? Color.surfaceSB : Color.primarySB)
         )
-        .foregroundColor(.onPrimary)
+        .foregroundColor(isDisabled ? .gray : .onPrimary)
         .padding(.vertical)
+        .disabled(isDisabled)
     }
 }
 
 #Preview {
     MainButton(
         title: "Login",
-        onClick: { }
+        onClick: { },
+        isDisabled: true
     )
     .padding()
 }

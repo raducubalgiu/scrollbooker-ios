@@ -38,8 +38,8 @@ struct FormLayout<Content: View>: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .padding(.top, 24)
-        .padding(.horizontal, 24)
+        .padding(.top, .xl)
+        .padding(.horizontal, .xl)
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }
 }

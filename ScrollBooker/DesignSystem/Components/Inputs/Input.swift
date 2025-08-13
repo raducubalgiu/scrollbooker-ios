@@ -42,6 +42,7 @@ struct Input: View {
                     text: $text,
                     onCommit: { onCommit?() }
                 )
+                .tint(.primary)
                 .keyboardType(keyboardType)
                 .disabled(!enabled || readOnly)
                 .focused($isFocused)

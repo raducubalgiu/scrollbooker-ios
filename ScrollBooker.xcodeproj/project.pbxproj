@@ -28,9 +28,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		BE6BC0192E4B71070087D9BD /* ScrollBooker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; name = ScrollBooker.app; path = "/Users/raducubalgiu/Desktop/scrollbooker-ios/ScrollBooker/build/Debug-iphoneos/ScrollBooker.app"; sourceTree = "<absolute>"; };
-		BE6BC0262E4B71080087D9BD /* ScrollBookerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = ScrollBookerTests.xctest; path = "/Users/raducubalgiu/Desktop/scrollbooker-ios/ScrollBooker/build/Debug-iphoneos/ScrollBooker.app/PlugIns/ScrollBookerTests.xctest"; sourceTree = "<absolute>"; };
-		BE6BC0302E4B71080087D9BD /* ScrollBookerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; name = ScrollBookerUITests.xctest; path = "/Users/raducubalgiu/Desktop/scrollbooker-ios/ScrollBooker/build/Debug-iphoneos/ScrollBookerUITests-Runner.app/PlugIns/ScrollBookerUITests.xctest"; sourceTree = "<absolute>"; };
+		BEBA7F182E4CADA400289802 /* ScrollBooker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrollBooker.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEBA7F192E4CADA400289802 /* ScrollBookerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollBookerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		BEBA7F1A2E4CADA400289802 /* ScrollBookerUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ScrollBookerUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEF70FDB2E4B8DBD003CE834 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +84,9 @@
 				BE6BC0292E4B71080087D9BD /* ScrollBookerTests */,
 				BE6BC0332E4B71080087D9BD /* ScrollBookerUITests */,
 				BEF70FDB2E4B8DBD003CE834 /* .gitignore */,
+				BEBA7F182E4CADA400289802 /* ScrollBooker.app */,
+				BEBA7F192E4CADA400289802 /* ScrollBookerTests.xctest */,
+				BEBA7F1A2E4CADA400289802 /* ScrollBookerUITests.xctest */,
 			);
 			sourceTree = "<group>";
 		};
@@ -109,7 +112,7 @@
 			packageProductDependencies = (
 			);
 			productName = ScrollBooker;
-			productReference = BE6BC0192E4B71070087D9BD /* ScrollBooker.app */;
+			productReference = BEBA7F182E4CADA400289802 /* ScrollBooker.app */;
 			productType = "com.apple.product-type.application";
 		};
 		BE6BC0252E4B71080087D9BD /* ScrollBookerTests */ = {
@@ -132,7 +135,7 @@
 			packageProductDependencies = (
 			);
 			productName = ScrollBookerTests;
-			productReference = BE6BC0262E4B71080087D9BD /* ScrollBookerTests.xctest */;
+			productReference = BEBA7F192E4CADA400289802 /* ScrollBookerTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		BE6BC02F2E4B71080087D9BD /* ScrollBookerUITests */ = {
@@ -155,7 +158,7 @@
 			packageProductDependencies = (
 			);
 			productName = ScrollBookerUITests;
-			productReference = BE6BC0302E4B71080087D9BD /* ScrollBookerUITests.xctest */;
+			productReference = BEBA7F1A2E4CADA400289802 /* ScrollBookerUITests.xctest */;
 			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */

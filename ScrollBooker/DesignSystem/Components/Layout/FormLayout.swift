@@ -24,6 +24,7 @@ struct FormLayout<Content: View>: View {
         VStack(alignment: .leading) {
             Text(headline)
                 .font(.largeTitle.bold())
+                .padding(.bottom, .xxs)
             
             Text(subHeadline)
                 .font(.system(size: 19))

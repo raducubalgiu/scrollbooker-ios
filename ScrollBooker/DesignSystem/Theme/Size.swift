@@ -10,6 +10,7 @@ import SwiftUI
 enum Size {
     enum Spacing: CGFloat {
         case base = 16
+        case xxs = 2
         case xs = 4
         case s = 8
         case m = 12

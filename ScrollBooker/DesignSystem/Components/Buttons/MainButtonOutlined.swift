@@ -21,16 +21,26 @@ struct MainButtonOutlined: View {
         .fontWeight(.semibold)
         .overlay(
             Capsule()
-                .stroke(.gray, lineWidth: 1)
+                .stroke(.divider, lineWidth: 1)
         )
     }
 }
 
-#Preview {
+#Preview("Light") {
     MainButtonOutlined(
         title: "Inregistreaza",
         onClick: {
             
         }
     )
+}
+
+#Preview("Dark") {
+    MainButtonOutlined(
+        title: "Inregistreaza",
+        onClick: {
+            
+        }
+    )
+    .preferredColorScheme(.dark)
 }

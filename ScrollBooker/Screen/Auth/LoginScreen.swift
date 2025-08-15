@@ -38,10 +38,11 @@ struct LoginScreen: View {
             
             HStack {
                 Text("Nu ai inca un cont?")
-                Button("Inregistrare") {
-                    
+                NavigationLink(
+                    "Inregistrare"
+                ) {
+                    RegisterScreen()
                 }
-                .foregroundColor(.primarySB)
                 .fontWeight(.bold)
             }
             

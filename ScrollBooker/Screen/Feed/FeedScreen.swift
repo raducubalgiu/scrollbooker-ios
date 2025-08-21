@@ -9,7 +9,14 @@ import SwiftUI
 
 struct FeedScreen: View {
     var body: some View {
-        Text("Feed Screen")
+        VStack {
+            Text("Feed Screen")
+        }
+        .frame(
+            maxWidth: .infinity,
+            maxHeight: .infinity
+        )
+        .ignoresSafeArea()
     }
 }
 

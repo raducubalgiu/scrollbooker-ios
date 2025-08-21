@@ -18,8 +18,9 @@ struct MainRouter: View {
                 .tag(MainTab.feed)
             
             InboxTabRouter(router: router)
-                 .tabItem { Label("Inbox", systemImage: "tray") }
+                 .tabItem { Label("Inbox", systemImage: "bell") }
                  .tag(MainTab.inbox)
+                 .badge(10)
             
             SearchTabRouter(router: router)
                  .tabItem { Label("Search", systemImage: "magnifyingglass")}
@@ -28,6 +29,7 @@ struct MainRouter: View {
             AppointmentsTabRouter(router: router)
                  .tabItem { Label("Appointments", systemImage: "calendar")}
                  .tag(MainTab.appointments)
+                 .badge(5)
             
             MyProfileTabRouter(router: router)
                  .tabItem { Label("Profile", systemImage: "person") }

@@ -27,6 +27,7 @@ final class Router: ObservableObject {
         profilePath = .init()
     }
     
+    //generic
     func push(_ route: Route) {
         switch(selectedTab) {
             case .feed: feedPath.append(route)
@@ -36,6 +37,24 @@ final class Router: ObservableObject {
             case .profile: profilePath.append(route)
         }
     }
-}
+    
+//    func pop() {
+//        switch(selectedTab) {
+//        case .feed: _ = feedPath.removeLast()
+//        case .inbox: _ = inboxPath.removeLast()
+//        case .search: _ = searchPath.removeLast()
+//        case .appointments: _ = appointmentsPath.removeLast()
+//        case .profile: _ = profilePath.removeLast()
+//        }
+//    }
+    
+    func toAppointmentDetails(id: Int) {
+        push(.appointmentDetails(id: id))
+    }
+    
+    func toAppointmentCancel(id: Int) {
+        push(.appointmentCancel(id: id))
+    }
+ }
 
 enum MainTab: Int { case feed, inbox, search, appointments, profile }

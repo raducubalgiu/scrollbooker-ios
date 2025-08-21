@@ -15,7 +15,7 @@ struct AppTheme<Content: View>: View {
         content()
             .tint(.primarySB)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.backgroundSB.ignoresSafeArea())
+            .background(Color.background.ignoresSafeArea())
             .applyPreferredColorScheme(mode)
     }
 }

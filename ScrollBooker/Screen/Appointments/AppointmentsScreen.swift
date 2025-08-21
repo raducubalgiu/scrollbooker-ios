@@ -8,11 +8,47 @@
 import SwiftUI
 
 struct AppointmentsScreen: View {
+    @EnvironmentObject var router: Router
+    @State private var items: [Int] = Array(1...20)
+    @State private var isLoading = false
+    
     var body: some View {
-        Text("Appointments Screen")
+        VStack(spacing: 0) {
+            Text("Rezervari")
+                .font(.title3)
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity)
+                .padding()
+        }
+        ScrollView {
+            LazyVStack(spacing: 0) {
+                ForEach(items, id: \.self) { item  in
+                    AppointmentCard(onClick: {
+                        router.toAppointmentDetails(id: 1)
+                    })
+                    
+                    Divider()
+                }
+            }
+        }
+    }
+    
+    private func loadMore() {
+        guard !isLoading else {return}
+        isLoading = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+            let next = (items.count + 1)...(items.count + 20)
+            items.append(contentsOf: next)
+            isLoading = false
+        }
     }
 }
 
-#Preview {
+#Preview("Light") {
     AppointmentsScreen()
+}
+
+#Preview("Dark") {
+    AppointmentsScreen()
+        .preferredColorScheme(.dark)
 }

@@ -15,13 +15,16 @@ struct AppointmentsTabRouter: View {
             AppointmentsScreen()
                 .navigationDestination(for: Route.self) { route in
                     switch route {
+                    case .appointments:
+                        AppointmentsScreen()
+                    case .appointmentDetails(let id):
+                        AppointmentDetailsScreen(appointmentId: id)
+                    case .appointmentCancel(let id):
+                        AppointmentCancelScreen(appointmentId: id)
                     default: Text("Route not in Appointments")
                     }
                 }
         }
+        .environmentObject(router)
     }
 }
-
-//#Preview {
-//    AppointmentsRouter()
-//}

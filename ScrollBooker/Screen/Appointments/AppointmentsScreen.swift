@@ -15,7 +15,7 @@ struct AppointmentsScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             Text("Rezervari")
-                .font(.title3)
+                .font(.headline)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity)
                 .padding()

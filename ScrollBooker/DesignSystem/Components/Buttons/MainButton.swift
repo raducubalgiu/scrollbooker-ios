@@ -11,6 +11,7 @@ struct MainButton: View {
     var title: String
     var onClick: () -> Void
     var isDisabled: Bool = false
+    var bgColor: Color = Color.primarySB
     
     var body: some View {
         Button(title) {
@@ -21,7 +22,7 @@ struct MainButton: View {
         .padding(.vertical, 5)
         .background(
             RoundedRectangle(cornerRadius: 50)
-                .fill(isDisabled ? Color.surfaceSB : Color.primarySB)
+                .fill(isDisabled ? Color.surfaceSB : bgColor)
         )
         .foregroundColor(isDisabled ? .gray : .onPrimary)
         .padding(.vertical)

@@ -6,20 +6,30 @@
 //
 
 import SwiftUI
+import MapKit
 
 struct AppointmentDetailsScreen: View {
     let appointmentId: Int
+    var onGoToCancel: () -> Void
+    
+    @State private var position: MapCameraPosition = .region(
+        MKCoordinateRegion(
+            center: CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025),
+            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
+        )
+    )
+    
+    let location = CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025)
     
     var body: some View {
         VStack(spacing: 0) {
             Text("Detalii rezervare")
-                .font(.title3)
+                .font(.headline)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity)
                 .padding()
         }
-        .navigationBarBackButtonHidden(true)
-        .navigationBarTitleDisplayMode(.inline)
+        .navigationBarHidden(true)
         
         ScrollView {
             VStack(alignment: .leading, spacing: 15) {
@@ -28,7 +38,13 @@ struct AppointmentDetailsScreen: View {
                     onClick: {}
                 )
                 
-                MainButton(title: "Rezerva din nou", onClick: {})
+//                MainButton(title: "Rezerva din nou", onClick: {})
+                
+                MainButton(
+                    title: "Anuleaza rezervarea",
+                    onClick: onGoToCancel,
+                    bgColor: .errorSB
+                )
                 
                 Text("Locatie")
                     .font(.headline.bold())
@@ -37,6 +53,13 @@ struct AppointmentDetailsScreen: View {
                     Image(systemName: "location")
                     Text("Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania")
                 }
+                
+                Map(position: $position) {
+                    Marker("Centrul Bucurestiului", coordinate: location)
+                }
+                .frame(height: 220)
+                .cornerRadius(8)
+                .padding(.top, .base)
             }
             .frame(maxWidth: .infinity)
             .padding()
@@ -45,10 +68,16 @@ struct AppointmentDetailsScreen: View {
 }
 
 #Preview("Light") {
-    AppointmentDetailsScreen(appointmentId: 1)
+    AppointmentDetailsScreen(
+        appointmentId: 1,
+        onGoToCancel: {}
+    )
 }
 
 #Preview("Dark") {
-    AppointmentDetailsScreen(appointmentId: 1)
+    AppointmentDetailsScreen(
+        appointmentId: 1,
+        onGoToCancel: {}
+    )
         .preferredColorScheme(.dark)
 }

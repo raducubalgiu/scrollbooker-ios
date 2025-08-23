@@ -18,7 +18,10 @@ struct AppointmentsTabRouter: View {
                     case .appointments:
                         AppointmentsScreen()
                     case .appointmentDetails(let id):
-                        AppointmentDetailsScreen(appointmentId: id)
+                        AppointmentDetailsScreen(
+                            appointmentId: id,
+                            onGoToCancel: { router.toAppointmentCancel(id: id) }
+                        )
                     case .appointmentCancel(let id):
                         AppointmentCancelScreen(appointmentId: id)
                     default: Text("Route not in Appointments")

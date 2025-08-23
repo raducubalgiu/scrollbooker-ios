@@ -9,10 +9,50 @@ import SwiftUI
 
 struct MyProfileScreen: View {
     var body: some View {
-        Text("My Profile Screen")
+        VStack {
+            ProfileHeaderView(username: "@radu_balgiu")
+            
+            ProfileCountersView()
+                .padding(.vertical, .xxl)
+            
+            ProfileUserInfoView()
+            
+            HStack {
+                Button { } label: { Text("Editeaza profilul") }
+                .frame(maxWidth: .infinity, minHeight: 60)
+                .fontWeight(.semibold)
+                .foregroundColor(Color.onSurfaceSB)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.surfaceSB)
+                )
+                
+                Button { } label: {
+                    HStack {
+                        Image(systemName: "calendar")
+                        Text("Urmareste")
+                    }
+                }
+                .frame(maxWidth: .infinity, minHeight: 60)
+                .fontWeight(.semibold)
+                .foregroundColor(Color.onSurfaceSB)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color.surfaceSB)
+                )
+            }
+            
+            Spacer()
+        }
+        .padding()
     }
 }
 
-#Preview {
+#Preview("Light") {
     MyProfileScreen()
+}
+
+#Preview("Dark") {
+    MyProfileScreen()
+        .preferredColorScheme(.dark)
 }

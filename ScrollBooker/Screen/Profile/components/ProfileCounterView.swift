@@ -12,10 +12,10 @@ struct ProfileCounterView: View {
     var label: String
     
     var body: some View {
-        VStack(spacing: 10) {
+        VStack(spacing: 5) {
             Text(counter != nil ? "\(counter!)" : "-")
                 .font(.headline)
-                .fontWeight(.heavy)
+                .fontWeight(.bold)
             Text(label)
                 .font(.subheadline)
         }

@@ -8,41 +8,84 @@
 import SwiftUI
 
 struct MyProfileScreen: View {
+    @State private var showBottomSheet = false
+    @State private var measuredHeight: CGFloat = 0
+    
     var body: some View {
         VStack {
-            ProfileHeaderView(username: "@radu_balgiu")
+            ProfileHeaderView(
+                onShowBottomSheet: { showBottomSheet.toggle() },
+                username: "@radu_balgiu",
+            )
             
             ProfileCountersView()
                 .padding(.vertical, .xxl)
             
             ProfileUserInfoView()
             
+            ProfileActionsView()
+            
             HStack {
-                Button { } label: { Text("Editeaza profilul") }
-                .frame(maxWidth: .infinity, minHeight: 60)
-                .fontWeight(.semibold)
-                .foregroundColor(Color.onSurfaceSB)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.surfaceSB)
+                Image(systemName: "repeat")
+                AvatarView(
+                    imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
+                    size: .s
                 )
-                
-                Button { } label: {
-                    HStack {
-                        Image(systemName: "calendar")
-                        Text("Urmareste")
-                    }
-                }
-                .frame(maxWidth: .infinity, minHeight: 60)
-                .fontWeight(.semibold)
-                .foregroundColor(Color.onSurfaceSB)
-                .background(
-                    RoundedRectangle(cornerRadius: 10)
-                        .fill(Color.surfaceSB)
-                )
+                Text("Frizeria Figaro")
+                    .font(.headline)
             }
+            .padding(.vertical, .xs)
+            
+            ProfileContactView()
+            
+            ProfileDescriptionView(description: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.")
             
             Spacer()
+        }
+        .sheet(isPresented: $showBottomSheet) {
+            VStack {
+                HStack {
+                    Image(systemName: "camera")
+                    Text("Creaza o postare")
+                        .font(.headline)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top)
+                .padding(.horizontal)
+                
+                HStack {
+                    Image(systemName: "bag")
+                    Text("Afacerea mea")
+                        .font(.headline)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top)
+                .padding(.horizontal)
+                
+                HStack {
+                    Image(systemName: "gearshape")
+                    Text("Setari")
+                        .font(.headline)
+                }
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.top)
+                .padding(.horizontal)
+            }
+            .padding(.top, .s)
+            .padding(.bottom)
+            .background(
+                GeometryReader { geo in
+                    Color.clear
+                        .onAppear { measuredHeight = geo.size.height }
+                        .onChange(of: geo.size.height) { _, new in
+                            measuredHeight = new
+                        }
+                }
+            )
+            .presentationDetents([.height(max(100, measuredHeight + 16))])
+            .presentationContentInteraction(.resizes)
+            .presentationDragIndicator(.hidden)
+            .presentationCornerRadius(25)
         }
         .padding()
     }

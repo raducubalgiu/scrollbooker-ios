@@ -10,6 +10,7 @@ import MapKit
 
 struct AppointmentDetailsScreen: View {
     let appointmentId: Int
+    var onBack: () -> Void
     var onGoToCancel: () -> Void
     
     @State private var position: MapCameraPosition = .region(
@@ -22,14 +23,10 @@ struct AppointmentDetailsScreen: View {
     let location = CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025)
     
     var body: some View {
-        VStack(spacing: 0) {
-            Text("Detalii rezervare")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding()
-        }
-        .navigationBarHidden(true)
+        Header(
+            title: "Detalii rezervare",
+            onBack: onBack
+        )
         
         ScrollView {
             VStack(alignment: .leading, spacing: 15) {
@@ -70,6 +67,7 @@ struct AppointmentDetailsScreen: View {
 #Preview("Light") {
     AppointmentDetailsScreen(
         appointmentId: 1,
+        onBack: {},
         onGoToCancel: {}
     )
 }
@@ -77,6 +75,7 @@ struct AppointmentDetailsScreen: View {
 #Preview("Dark") {
     AppointmentDetailsScreen(
         appointmentId: 1,
+        onBack: {},
         onGoToCancel: {}
     )
         .preferredColorScheme(.dark)

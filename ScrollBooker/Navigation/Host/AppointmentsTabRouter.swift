@@ -20,6 +20,7 @@ struct AppointmentsTabRouter: View {
                     case .appointmentDetails(let id):
                         AppointmentDetailsScreen(
                             appointmentId: id,
+                            onBack: {  },
                             onGoToCancel: { router.toAppointmentCancel(id: id) }
                         )
                     case .appointmentCancel(let id):

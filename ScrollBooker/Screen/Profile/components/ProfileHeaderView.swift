@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct ProfileHeaderView: View {
+    var onShowBottomSheet: () -> Void
     var username: String
     
     var body: some View {
@@ -22,19 +23,35 @@ struct ProfileHeaderView: View {
             
             Spacer()
             
-            Image(systemName: "line.3.horizontal")
+            Button {
+                onShowBottomSheet()
+            } label: {
+                Image(systemName: "line.3.horizontal")
+                    .foregroundColor(.onBackgroundSB)
+                    .font(.system(size: 24))
+            }
+            .buttonStyle(.plain)
 
         }
         .frame(maxWidth: .infinity)
-        .padding(.horizontal)
     }
 }
 
 #Preview("Light") {
-    ProfileHeaderView(username: "@radu_balgiu")
+    ProfileHeaderView(
+        onShowBottomSheet: {},
+        username: "@radu_balgiu",
+    )
+    
+    Spacer()
 }
 
 #Preview("Dark") {
-    ProfileHeaderView(username: "@radu_balgiu")
+    ProfileHeaderView(
+        onShowBottomSheet: {},
+        username: "@radu_balgiu",
+    )
         .preferredColorScheme(.dark)
+    
+    Spacer()
 }

@@ -47,11 +47,11 @@ struct AppointmentCard: View {
                     
                     VStack(spacing: 7) {
                         Text("12")
-                            .font(.title.bold())
+                            .font(.title2.bold())
                         Text("August")
                             .foregroundColor(.gray)
                         Text("12:30")
-                            .font(.title2.bold())
+                            .font(.title3.bold())
                     }
                     .padding()
                     .overlay(

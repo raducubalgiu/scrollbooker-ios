@@ -12,12 +12,12 @@ struct ProfileCountersView: View {
         HStack {
             ProfileCounterView(counter: 100, label: "Recenzii")
             
-            VerticalDivider(height: 30)
+            VerticalDivider(height: 25)
                 .padding(.horizontal, .m)
             
             ProfileCounterView(counter: 1500, label: "Urmaritori")
             
-            VerticalDivider(height: 30)
+            VerticalDivider(height: 25)
                 .padding(.horizontal, .m)
             
             ProfileCounterView(counter: 15, label: "Urmaresti")

@@ -11,7 +11,7 @@ extension Color {
     static let primarySB = Color("PrimaryColor")
     static let onPrimarySB = Color("OnPrimary")
     
-    static let mainBackground = Color("BackgroundSB")
+    static let mainBackground = Color("Background")
     static let onBackgroundSB = Color("OnBackground")
     
     static let surfaceSB = Color("Surface")

@@ -11,17 +11,44 @@ struct MyProfileTabRouter: View {
     @ObservedObject var router: Router
     
     var body: some View {
-        NavigationStack(path: $router.appointmentsPath) {
-            MyProfileScreen()
+        NavigationStack(path: $router.profilePath) {
+            MyProfileScreen(
+                onNavigateToSettings: { router.push(.mySettings) }
+            )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
-                    default: Text("Route not in My Profile")
+                    case .mySettings:
+                        SettingsScreen { route in
+                            router.push(route)
+                        }
+                        
+                    case .account:
+                        AccountScreen()
+                        
+                    case .privacy:
+                        PrivacyScreen()
+                        
+                    case .security:
+                        SecurityScreen()
+                        
+                    case .notificationSettings:
+                        NotificationSettingsScreen()
+                        
+                    case .display:
+                        DisplayScreen()
+                        
+                    case .reportProblem:
+                        ReportProblemScreen()
+                        
+                    case .support:
+                        SupportScreen()
+                        
+                    case .termsAndConditions:
+                        TermsAndConditionsScreen()
+                        
+                    default: Text("This Route does not exist")
                     }
                 }
         }
     }
 }
-
-//#Preview {
-//    MyProfileTabRouter()
-//}

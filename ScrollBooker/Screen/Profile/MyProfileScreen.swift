@@ -11,6 +11,8 @@ struct MyProfileScreen: View {
     @State private var showBottomSheet = false
     @State private var measuredHeight: CGFloat = 0
     
+    var onNavigateToSettings: () -> Void
+    
     var body: some View {
         VStack {
             ProfileHeaderView(
@@ -44,31 +46,31 @@ struct MyProfileScreen: View {
         }
         .sheet(isPresented: $showBottomSheet) {
             VStack {
-                HStack {
-                    Image(systemName: "camera")
-                    Text("Creaza o postare")
-                        .font(.headline)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top)
+                ListItemView(
+                    title: "Creaza o postare",
+                    leadingIcon: "camera",
+                    onClick: {},
+                    showTrailingIcon: false
+                )
                 .padding(.horizontal)
                 
-                HStack {
-                    Image(systemName: "bag")
-                    Text("Afacerea mea")
-                        .font(.headline)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top)
+                ListItemView(
+                    title: "Afacerea mea",
+                    leadingIcon: "bag",
+                    onClick: {},
+                    showTrailingIcon: false
+                )
                 .padding(.horizontal)
                 
-                HStack {
-                    Image(systemName: "gearshape")
-                    Text("Setari")
-                        .font(.headline)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
-                .padding(.top)
+                ListItemView(
+                    title: "Setari",
+                    leadingIcon: "gearshape",
+                    onClick: {
+                        showBottomSheet = false
+                        onNavigateToSettings()
+                    },
+                    showTrailingIcon: false
+                )
                 .padding(.horizontal)
             }
             .padding(.top, .s)
@@ -92,10 +94,14 @@ struct MyProfileScreen: View {
 }
 
 #Preview("Light") {
-    MyProfileScreen()
+    MyProfileScreen(
+        onNavigateToSettings: {}
+    )
 }
 
 #Preview("Dark") {
-    MyProfileScreen()
+    MyProfileScreen(
+        onNavigateToSettings: {}
+    )
         .preferredColorScheme(.dark)
 }

@@ -9,12 +9,15 @@ import SwiftUI
 
 struct Header: View {
     var title: String = ""
-    var onBack: () -> Void
+    var enableBack: Bool = true
+    @Environment(\.dismiss) private var dismiss
     
     var body: some View {
         HStack {
             Button {
-                onBack()
+                if(enableBack) {
+                    dismiss()
+                }
             } label: {
                 Image(systemName: "chevron.left")
                     .font(.system(size: 22.5))
@@ -37,8 +40,7 @@ struct Header: View {
 
 #Preview("Light") {
     Header(
-        title: "Header",
-        onBack: {}
+        title: "Header"
     )
     
     Spacer()
@@ -46,8 +48,7 @@ struct Header: View {
 
 #Preview("Light") {
     Header(
-        title: "Header",
-        onBack: {}
+        title: "Header"
     )
     .preferredColorScheme(.dark)
     

@@ -24,7 +24,7 @@ struct AppointmentsScreen: View {
             LazyVStack(spacing: 0) {
                 ForEach(items, id: \.self) { item  in
                     AppointmentCard(onClick: {
-                        router.toAppointmentDetails(id: 1)
+                        router.push(.appointmentCancel(id: 1))
                     })
                     
                     Divider()

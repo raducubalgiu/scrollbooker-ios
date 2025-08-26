@@ -22,15 +22,6 @@ struct FeedScreen: View {
     @State private var currentIndex: Int? = 0
     
     var body: some View {
-//        VStack {
-//            Text("Feed Screen")
-//        }
-//        .frame(
-//            maxWidth: .infinity,
-//            maxHeight: .infinity
-//        )
-//        .ignoresSafeArea()
-        
         ScrollView(.vertical) {
             LazyVStack(spacing: 0) {
                 ForEach(Array(videos.enumerated()), id: \.offset) { index, video in
@@ -40,7 +31,7 @@ struct FeedScreen: View {
                         } else {
                             Color.black
                         }
-                        // Aici Overlay likes etc
+                        PostOverlayView()
                     }
                     .id(index)
                     .containerRelativeFrame(.vertical)
@@ -68,6 +59,11 @@ struct FeedScreen: View {
     }
 }
 
-#Preview {
+#Preview("Light") {
     FeedScreen()
+}
+
+#Preview("Dark") {
+    FeedScreen()
+        .preferredColorScheme(.dark)
 }

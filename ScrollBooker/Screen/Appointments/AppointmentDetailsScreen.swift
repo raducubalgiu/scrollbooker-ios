@@ -24,8 +24,7 @@ struct AppointmentDetailsScreen: View {
     
     var body: some View {
         Header(
-            title: "Detalii rezervare",
-            onBack: onBack
+            title: "Detalii rezervare"
         )
         
         ScrollView {
@@ -60,6 +59,7 @@ struct AppointmentDetailsScreen: View {
             }
             .frame(maxWidth: .infinity)
             .padding()
+            .navigationBarHidden(true)
         }
     }
 }

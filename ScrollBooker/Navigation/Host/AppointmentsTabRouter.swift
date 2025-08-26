@@ -21,7 +21,7 @@ struct AppointmentsTabRouter: View {
                         AppointmentDetailsScreen(
                             appointmentId: id,
                             onBack: {  },
-                            onGoToCancel: { router.toAppointmentCancel(id: id) }
+                            onGoToCancel: { router.push(.appointmentDetails(id: id)) }
                         )
                     case .appointmentCancel(let id):
                         AppointmentCancelScreen(appointmentId: id)

@@ -6,15 +6,72 @@
 //
 
 enum Route: Hashable {
+    // Feed
     case feed
-    case inbox
-    case search
+    case feedSearch
+    case feedSearchResults
     
+    // Inbox
+    case inbox
+    case employmentRequestRespond
+    case employmentRequestRespondConsent
+    
+    // Search
+    case search
+    case businessProfile
+    
+    // Appointments
     case appointments
     case appointmentDetails(id: Int)
     case appointmentCancel(id: Int)
     
+    // Profile
     case myProfile
+    case myProfilePostDetail
+    case userProfile
+    case userProducts
     
-    case feedSearch
+    case editProfile
+    case editFullName
+    case editUsername
+    case editBio
+    case editGender
+    case editProfession
+    
+    case userSocial
+    
+    case calendar
+    case appointmentConfirmation
+    case camera
+    
+    // My Business
+    case myBusiness
+    
+    case myEmployees
+    case myEmployeesDismissal
+    
+    case myEmploymentRequests
+    case employmentSelectEmployee
+    case employmentAssignJob
+    case employmentAcceptTerms
+    
+    case myCalendar
+    case myServices
+    case mySchedules
+    case myCurrencies
+    
+    case myProducts
+    case addProduct
+    case editProducts
+    
+    // Settings
+    case mySettings
+    case account
+    case privacy
+    case security
+    case notificationSettings
+    case display
+    case reportProblem
+    case support
+    case termsAndConditions
 }

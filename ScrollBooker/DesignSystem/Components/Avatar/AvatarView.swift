@@ -36,7 +36,7 @@ struct AvatarView: View {
     
     struct AvatarBorder {
         var color: Color = .divider
-        var width: CGFloat = 2
+        var width: CGFloat = 1
     }
     
     var imageURL: URL?
@@ -52,7 +52,8 @@ struct AvatarView: View {
                 .clipShape(Circle())
                 .overlay {
                     if let border {
-                        Circle().stroke(.divider, lineWidth: border.width)
+                        Circle()
+                            .stroke(.divider, lineWidth: border.width)
                     }
                 }
                 .accessibilityLabel(Text("Avatar"))
@@ -93,6 +94,7 @@ struct AvatarView: View {
             .scaledToFit()
             .foregroundColor(.gray.opacity(0.7))
             .padding(size.diameter * 0.2)
+            .background(Color.white)
     }
     
     private var badgeSize: CGFloat { max(10, size.diameter * 0.28) }

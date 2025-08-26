@@ -24,8 +24,10 @@ struct AppointmentCard: View {
                 HStack {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 15) {
-                            Circle()
-                                .frame(width: 60, height: 60)
+                            AvatarView(
+                                imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
+                                size: .l
+                            )
                             VStack(alignment: .leading) {
                                 Text("Radu Ion")
                                     .font(.headline.bold())

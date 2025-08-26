@@ -13,6 +13,7 @@ struct MyProfileTabRouter: View {
     var body: some View {
         NavigationStack(path: $router.profilePath) {
             MyProfileScreen(
+                onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) }
             )
                 .navigationDestination(for: Route.self) { route in
@@ -45,6 +46,23 @@ struct MyProfileTabRouter: View {
                         
                     case .termsAndConditions:
                         TermsAndConditionsScreen()
+                        
+                    case .editProfile:
+                        EditProfileScreen { route in
+                            router.push(route)
+                        }
+                    
+                    case .editFullName:
+                        EditNameScreen()
+                        
+                    case .editUsername:
+                        EditUsernameScreen()
+                        
+                    case .editBio:
+                        EditBioScreen()
+                        
+                    case .editGender:
+                        EditGenderScreen()
                         
                     default: Text("This Route does not exist")
                     }

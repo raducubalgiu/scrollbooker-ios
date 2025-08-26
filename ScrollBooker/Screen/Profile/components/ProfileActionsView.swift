@@ -8,10 +8,12 @@
 import SwiftUI
 
 struct ProfileActionsView: View {
+    var onNavigateToEditProfile: () -> Void
+    
     var body: some View {
         HStack {
             Button {
-                
+                onNavigateToEditProfile()
             } label: {
                 Text("Editeaza profilul")
             }
@@ -45,5 +47,5 @@ struct ProfileActionsView: View {
 }
 
 #Preview {
-    ProfileActionsView()
+    ProfileActionsView(onNavigateToEditProfile: {})
 }

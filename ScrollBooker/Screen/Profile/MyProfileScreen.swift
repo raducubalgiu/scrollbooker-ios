@@ -11,6 +11,7 @@ struct MyProfileScreen: View {
     @State private var showBottomSheet = false
     @State private var measuredHeight: CGFloat = 0
     
+    var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     
     var body: some View {
@@ -25,7 +26,9 @@ struct MyProfileScreen: View {
             
             ProfileUserInfoView()
             
-            ProfileActionsView()
+            ProfileActionsView(
+                onNavigateToEditProfile: onNavigateToEditProfile
+            )
             
             HStack {
                 Image(systemName: "repeat")
@@ -95,12 +98,14 @@ struct MyProfileScreen: View {
 
 #Preview("Light") {
     MyProfileScreen(
+        onNavigateToEditProfile: {},
         onNavigateToSettings: {}
     )
 }
 
 #Preview("Dark") {
     MyProfileScreen(
+        onNavigateToEditProfile: {},
         onNavigateToSettings: {}
     )
         .preferredColorScheme(.dark)

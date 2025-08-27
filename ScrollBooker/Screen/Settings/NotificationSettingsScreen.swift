@@ -9,6 +9,8 @@ import SwiftUI
 
 struct NotificationSettingsScreen: View {
     var body: some View {
+        Header(title: "Notificari")
+        
         Spacer()
     }
 }

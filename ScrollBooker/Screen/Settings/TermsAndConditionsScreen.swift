@@ -9,6 +9,8 @@ import SwiftUI
 
 struct TermsAndConditionsScreen: View {
     var body: some View {
+        Header(title: "Termeni si conditii")
+        
         Spacer()
     }
 }

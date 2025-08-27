@@ -9,6 +9,8 @@ import SwiftUI
 
 struct DisplayScreen: View {
     var body: some View {
+        Header(title: "Afisare")
+        
         Spacer()
     }
 }

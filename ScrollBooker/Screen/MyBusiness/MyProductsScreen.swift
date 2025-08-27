@@ -1,5 +1,5 @@
 //
-//  SupportScreen.swift
+//  MyProductsScreen.swift
 //  ScrollBooker
 //
 //  Created by Raducu Balgiu on 26.08.2025.
@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct SupportScreen: View {
+struct MyProductsScreen: View {
     var body: some View {
-        Header(title: "Support")
+        Header(title: "Produsele mele")
         
         Spacer()
     }
 }
 
 #Preview {
-    SupportScreen()
+    MyProductsScreen()
 }

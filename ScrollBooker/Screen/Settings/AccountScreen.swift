@@ -9,12 +9,9 @@ import SwiftUI
 
 struct AccountScreen: View {
     var body: some View {
-        VStack {
-            Header(title: "Cont")
-            
-            Spacer()
-        }
-        .navigationBarHidden(true)
+        Header(title: "Cont")
+        
+        Spacer()
     }
 }
 

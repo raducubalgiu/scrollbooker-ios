@@ -13,6 +13,7 @@ struct MyProfileScreen: View {
     
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
+    var onNavigateToMyBusiness: () -> Void
     
     var body: some View {
         VStack {
@@ -60,7 +61,10 @@ struct MyProfileScreen: View {
                 ListItemView(
                     title: "Afacerea mea",
                     leadingIcon: "bag",
-                    onClick: {},
+                    onClick: {
+                        showBottomSheet = false
+                        onNavigateToMyBusiness()
+                    },
                     showTrailingIcon: false
                 )
                 .padding(.horizontal)
@@ -99,14 +103,16 @@ struct MyProfileScreen: View {
 #Preview("Light") {
     MyProfileScreen(
         onNavigateToEditProfile: {},
-        onNavigateToSettings: {}
+        onNavigateToSettings: {},
+        onNavigateToMyBusiness: {}
     )
 }
 
 #Preview("Dark") {
     MyProfileScreen(
         onNavigateToEditProfile: {},
-        onNavigateToSettings: {}
+        onNavigateToSettings: {},
+        onNavigateToMyBusiness: {}
     )
         .preferredColorScheme(.dark)
 }

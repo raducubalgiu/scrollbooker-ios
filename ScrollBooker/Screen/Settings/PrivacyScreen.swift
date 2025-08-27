@@ -9,6 +9,8 @@ import SwiftUI
 
 struct PrivacyScreen: View {
     var body: some View {
+        Header(title: "Privacy")
+        
         Spacer()
     }
 }

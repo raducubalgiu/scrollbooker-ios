@@ -50,7 +50,7 @@ struct SettingsScreen: View {
                     }
                 }
             }
-            .toolbarBackground(Color.mainBackground, for: .navigationBar)
+            .toolbarBackground(Color.backgroundSB, for: .navigationBar)
             .listRowSeparator(.hidden)
             .listStyle(.plain)
         }

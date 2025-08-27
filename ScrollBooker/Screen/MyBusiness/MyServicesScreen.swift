@@ -9,9 +9,16 @@ import SwiftUI
 
 struct MyServicesScreen: View {
     var body: some View {
-        Header(title: "Serviciile mele")
+        //Header(title: "Serviciile mele")
         
-        Spacer()
+        FormLayout(
+            headline: "Serviciile mele",
+            subHeadline: "Adauga serviciile pe care le desfasori la activitate",
+            enableBack: true,
+            buttonTitle: "Salveaza"
+        ) {
+            
+        }
     }
 }
 

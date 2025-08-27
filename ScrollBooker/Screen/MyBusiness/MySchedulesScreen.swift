@@ -9,9 +9,14 @@ import SwiftUI
 
 struct MySchedulesScreen: View {
     var body: some View {
-        Header(title: "Programul meu")
-        
-        Spacer()
+        FormLayout(
+            headline: "Programul de lucru",
+            subHeadline: "Adauga intervalele orare in care locatia ta este deschisa pentru clienti",
+            enableBack: true,
+            buttonTitle: "Salveaza"
+        ) {
+            
+        }
     }
 }
 

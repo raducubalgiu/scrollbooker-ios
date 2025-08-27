@@ -8,16 +8,16 @@
 import SwiftUI
 
 extension Color {
-    static let primarySB = Color("PrimaryColor")
-    static let onPrimarySB = Color("OnPrimary")
+    static let primarySB = Color("PrimarySBB")
+    static let onPrimarySB = Color("OnPrimarySBB")
     
-    static let mainBackground = Color("Background")
-    static let onBackgroundSB = Color("OnBackground")
+    static let backgroundSB = Color("BackgroundSBB")
+    static let onBackgroundSB = Color("OnBackgroundSBB")
     
-    static let surfaceSB = Color("Surface")
-    static let onSurfaceSB = Color("OnSurface")
+    static let surfaceSB = Color("SurfaceSBB")
+    static let onSurfaceSB = Color("OnSurfaceSBB")
     
-    static let errorSB = Color("Error")
-    static let onErrorSB = Color("OnError")
+    static let errorSB = Color("ErrorSBB")
+    static let onErrorSB = Color("OnErrorSBB")
 }
 

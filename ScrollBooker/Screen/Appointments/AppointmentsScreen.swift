@@ -22,10 +22,11 @@ struct AppointmentsScreen: View {
         }
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(items, id: \.self) { item  in
-                    AppointmentCard(onClick: {
-                        router.push(.appointmentCancel(id: 1))
-                    })
+                ForEach(appointmentsList) { item  in
+                    AppointmentCard(
+                        appointment: item,
+                        onClick: { router.push(.appointmentDetails(id: 1)) }
+                    )
                     
                     Divider()
                 }
@@ -34,7 +35,7 @@ struct AppointmentsScreen: View {
     }
     
     private func loadMore() {
-        guard !isLoading else {return}
+        guard !isLoading else { return }
         isLoading = true
         DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             let next = (items.count + 1)...(items.count + 20)

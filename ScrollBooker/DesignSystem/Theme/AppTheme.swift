@@ -11,12 +11,34 @@ struct AppTheme<Content: View>: View {
     let mode: ThemeMode
     @ViewBuilder var content: () -> Content
     
+    init(mode: ThemeMode, @ViewBuilder content: @escaping () -> Content) {
+        self.mode = mode
+        self.content = content
+        Self.configureTabBar()
+    }
+    
     var body: some View {
         content()
             .tint(.primarySB)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.background.ignoresSafeArea())
+            .background(Color.backgroundSB)
             .applyPreferredColorScheme(mode)
+    }
+    
+    private static func configureTabBar() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        //appearance.backgroundColor = UIColor(named: "BackgroundSBB")
+        appearance.shadowColor = UIColor(named: "Divider")
+        
+//        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(named: "OnBackgroundSBB")
+//        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
+//            .foregroundColor: UIColor(named: "OnBackgroundSBB") ?? <#default value#>
+//        ]
+        
+        let tabBar = UITabBar.appearance()
+        tabBar.standardAppearance = appearance
+        tabBar.scrollEdgeAppearance = appearance
     }
 }
 

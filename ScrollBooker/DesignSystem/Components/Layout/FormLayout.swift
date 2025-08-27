@@ -11,6 +11,7 @@ struct FormLayout<Content: View>: View {
     var headline: String
     var subHeadline: String
     var enableBottomButton: Bool = true
+    var enableBack: Bool = false
     var buttonTitle: String = ""
     
     var isDisabled: Bool = false
@@ -19,8 +20,11 @@ struct FormLayout<Content: View>: View {
     
     @ViewBuilder var content: () -> Content
 
-    
     var body: some View {
+        if(enableBack) {
+            Header()
+        }
+        
         VStack(alignment: .leading) {
             Text(headline)
                 .font(.largeTitle.bold())

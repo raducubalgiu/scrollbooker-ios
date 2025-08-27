@@ -80,7 +80,7 @@ struct MyBusinessScreen: View {
                         )
                 }
             }
-            .padding()
+            .padding(.horizontal)
         }
         .scrollIndicators(.hidden)
     }

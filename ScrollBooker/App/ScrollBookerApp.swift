@@ -12,7 +12,6 @@ struct ScrollBookerApp: App {
     @StateObject private var theme = ThemeManager()
     @StateObject private var app = AppState.shared
     
-    
     var body: some Scene {
         WindowGroup {
             AppTheme(mode: theme.mode) {

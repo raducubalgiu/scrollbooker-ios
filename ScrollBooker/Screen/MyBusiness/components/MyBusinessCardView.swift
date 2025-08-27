@@ -17,7 +17,7 @@ struct MyBusinessCardView: View {
         Button {
             onClick()
         } label: {
-            VStack(alignment: .leading, spacing: 20) {
+            VStack(alignment: .leading, spacing: 15) {
                 Image(systemName: icon)
                     .font(.system(size: 20))
                     .foregroundColor(.onBackgroundSB)
@@ -31,9 +31,9 @@ struct MyBusinessCardView: View {
                     .font(.subheadline)
                     .foregroundColor(.onSurfaceSB)
             }
-            .padding(.base)
-            .frame(maxWidth: .infinity, minHeight: CGFloat(200))
-            .background(.surface)
+            .padding(.xl)
+            .frame(maxWidth: .infinity, minHeight: CGFloat(180))
+            .background(Color.surfaceSB)
             .cornerRadius(12)
             .contentShape(Rectangle())
         }

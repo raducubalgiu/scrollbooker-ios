@@ -8,11 +8,25 @@
 import SwiftUI
 
 struct MyCurrenciesScreen: View {
+    @State private var vibrateOnRing = true
+    
     var body: some View {
-        Header(title: "My Currencies")
+        FormLayout(
+            headline: "Valute acceptate pentru plati",
+            subHeadline: "Alege in ce valute accepti sa primesti plati din partea clientilor",
+            enableBack: true,
+            buttonTitle: "Salveaza"
+        ) {
+            Toggle("Vibrate on Ring", isOn: $vibrateOnRing)
+        }
     }
 }
 
-#Preview {
+#Preview("Light") {
     MyCurrenciesScreen()
+}
+
+#Preview("Dark") {
+    MyCurrenciesScreen()
+        .preferredColorScheme(.dark)
 }

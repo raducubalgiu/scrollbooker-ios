@@ -14,7 +14,7 @@ struct ProfileHeaderView: View {
     var body: some View {
         HStack {
             Image(systemName: "line.3.horizontal")
-                .foregroundColor(.mainBackground)
+                .foregroundColor(.backgroundSB)
             
             Spacer()
             

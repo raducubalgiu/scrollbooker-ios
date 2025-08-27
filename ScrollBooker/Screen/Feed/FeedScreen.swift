@@ -28,10 +28,20 @@ struct FeedScreen: View {
                     ZStack {
                         if let player = viewModel.players[video.id] {
                             PlayerView(player: player).ignoresSafeArea()
+                            
                         } else {
                             Color.black
                         }
-                        PostOverlayView()
+                        
+//                        VStack {
+//                            HStack {
+//                                Image(Image(systemName: "menu"))
+//                                Image(Image(systemName: "search"))
+//                            }
+//                            
+//                            PostOverlayView()
+//                        }
+//                        .frame(maxHeight: .infinity)
                     }
                     .id(index)
                     .containerRelativeFrame(.vertical)
@@ -55,7 +65,7 @@ struct FeedScreen: View {
             else { viewModel.play(index: currentIndex ?? 0, in: videos) }
         }
         .onDisappear { viewModel.pauseAll() }
-        .background(Color.background)
+        .background(Color.backgroundSB)
     }
 }
 

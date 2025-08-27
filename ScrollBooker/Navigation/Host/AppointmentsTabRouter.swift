@@ -16,7 +16,9 @@ struct AppointmentsTabRouter: View {
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .appointments:
-                        AppointmentsScreen()
+                        AppointmentsScreen(
+                            
+                        )
                     case .appointmentDetails(let id):
                         AppointmentDetailsScreen(
                             appointmentId: id,

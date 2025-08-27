@@ -9,6 +9,8 @@ import SwiftUI
 
 struct AppointmentCard: View {
     var padding: CGFloat = 16
+    
+    let appointment: Appointment
     let onClick: () -> Void
     
     var body: some View {
@@ -16,7 +18,7 @@ struct AppointmentCard: View {
             onClick()
         } label: {
             VStack(alignment: .leading) {
-                Text("Finalizat")
+                Text(appointment.status)
                     .font(.headline.bold())
                     .foregroundColor(.gray)
                     .padding(.bottom, .base)
@@ -25,34 +27,34 @@ struct AppointmentCard: View {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 15) {
                             AvatarView(
-                                imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
+                                imageURL: appointment.user.avatarURL,
                                 size: .l
                             )
                             VStack(alignment: .leading) {
-                                Text("Radu Ion")
+                                Text(appointment.user.fullName)
                                     .font(.headline.bold())
-                                Text("Frizer")
+                                Text(appointment.user.profession ?? "-")
                                     .font(.headline)
                                     .foregroundColor(.gray)
                             }
                         }
                         
-                        Text("Tuns Barba")
+                        Text(appointment.product.name)
                             .font(.headline)
                             .foregroundColor(.gray)
                             
-                        Text("20 RON")
+                        Text("\(appointment.product.priceWithDiscount) \(appointment.product.currency)")
                             .font(.headline.bold())
                     }
                     
                     Spacer()
                     
                     VStack(spacing: 7) {
-                        Text("12")
+                        Text(appointment.startDate.day)
                             .font(.title2.bold())
-                        Text("August")
+                        Text(appointment.startDate.month)
                             .foregroundColor(.gray)
-                        Text("12:30")
+                        Text(appointment.startDate.time)
                             .font(.title3.bold())
                     }
                     .padding()
@@ -71,11 +73,17 @@ struct AppointmentCard: View {
 }
 
 #Preview("Light") {
-    AppointmentCard(onClick: {})
+    AppointmentCard(
+        appointment: appointmentsList[0],
+        onClick: {}
+    )
 }
 
 #Preview("Dark") {
-    AppointmentCard(onClick: {})
+    AppointmentCard(
+        appointment: appointmentsList[0],
+        onClick: {}
+    )
         .preferredColorScheme(.dark)
 }
 

@@ -31,6 +31,38 @@ struct AppointmentDetailsScreen: View {
             VStack(alignment: .leading, spacing: 15) {
                 AppointmentCard(
                     padding: 0,
+                    appointment: Appointment(
+                        id: 1,
+                        startDate: Date(),
+                        endDate: Date().addingTimeInterval(3600),
+                        channel: "scroll_booker",
+                        status: "confirmat",
+                        message: "",
+                        product: AppointmentProduct(
+                            id: 1,
+                            name: "Tuns Special",
+                            price: 50.0,
+                            priceWithDiscount: 50.0,
+                            discount: 0.0,
+                            currency: "RON",
+                            exchangeRate: 1.0
+                        ),
+                        user: AppointmentUser(
+                            id: 1,
+                            avatar: "",
+                            fullName: "Raducu Balgiu",
+                            username: "@radu_balgiu",
+                            profession: "Creator"
+                        ),
+                        isCustomer: true,
+                        business: AppointmentBusiness(
+                            address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
+                            coordinates: BusinessCoordinates(
+                                lat: 26.020075,
+                                lng: 44.433552
+                            )
+                        )
+                    ),
                     onClick: {}
                 )
                 

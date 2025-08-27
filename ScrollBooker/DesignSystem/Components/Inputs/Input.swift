@@ -59,7 +59,7 @@ struct Input: View {
         .padding(.vertical, 10)
         .background(
             RoundedRectangle(cornerRadius: 15)
-                .fill(.surface)
+                .fill(Color.surfaceSB)
         )
         .overlay(
             RoundedRectangle(cornerRadius: 15)
@@ -79,7 +79,7 @@ struct Input: View {
     }
     
     private var borderColor: Color {
-        isError ? .errorSB : .surface
+        isError ? .errorSB : .surfaceSB
     }
 }
 

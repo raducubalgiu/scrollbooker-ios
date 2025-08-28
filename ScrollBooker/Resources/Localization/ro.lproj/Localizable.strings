@@ -249,6 +249,7 @@
 "dontHaveAnyNotification" = "Nu ai nici o notificare";
 "categories" = "Categorii";
 "bookings" = "Rezervări";
+"bookingDetails" = "Detalii rezervare";
 
 /* --- DYNAMIC --- */
 

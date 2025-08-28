@@ -15,7 +15,8 @@ struct MyProfileTabRouter: View {
             MyProfileScreen(
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
-                onNavigateToMyBusiness: { router.push(.myBusiness) }
+                onNavigateToMyBusiness: { router.push(.myBusiness) },
+                onNavigateToUserSocial: { router.push(.userSocial) }
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
@@ -121,6 +122,11 @@ struct MyProfileTabRouter: View {
                         
                     case .myServices:
                         MyServicesScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                        
+                    case .userSocial:
+                        UserSocialScreen()
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
                         

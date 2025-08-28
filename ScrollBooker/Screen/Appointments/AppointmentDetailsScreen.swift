@@ -12,6 +12,10 @@ struct AppointmentDetailsScreen: View {
     let appointmentId: Int
     var onGoToCancel: () -> Void
     
+    private var appointment: Appointment? {
+        appointmentsList.first { $0.id == appointmentId }
+    }
+    
     @State private var position: MapCameraPosition = .region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025),
@@ -19,74 +23,69 @@ struct AppointmentDetailsScreen: View {
         )
     )
     
-    let location = CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025)
+    private var location: CLLocationCoordinate2D? {
+        guard let coordinates = appointment?.business.coordinates else { return  nil}
+        return CLLocationCoordinate2D(
+            latitude: coordinates.lat,
+            longitude: coordinates.lng
+        )
+    }
     
     var body: some View {
         Header(
-            title: "Detalii rezervare"
+            title: String(localized: "bookingDetails")
         )
         
         ScrollView {
             VStack(alignment: .leading, spacing: 15) {
-                AppointmentCardView(
-                    padding: 0,
-                    appointment: Appointment(
-                        id: 3,
-                        startDate: Date(),
-                        endDate: Date().addingTimeInterval(3600),
-                        channel: "scroll_booker",
-                        status: AppointmentStatus(raw: "cancelled"),
-                        message: "Am gasit o oferta mai buna",
-                        product: AppointmentProduct(
-                            id: 2,
-                            name: "Curs de dans bachata",
-                            price: 100.0,
-                            priceWithDiscount: 50.0,
-                            discount: 0.0,
-                            currency: "RON",
-                            exchangeRate: 1.0
-                        ),
-                        user: AppointmentUser(
-                            id: 2,
-                            avatar: "https://media.scrollbooker.ro/avatar-male-9.jpeg",
-                            fullName: "Salsa Factory",
-                            username: "@salsa_factory",
-                            profession: "Scoala de dans"
-                        ),
-                        isCustomer: true,
-                        business: AppointmentBusiness(
-                            address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
-                            coordinates: BusinessCoordinates(
-                                lat: 26.020075,
-                                lng: 44.433552
-                            )
-                        )
-                    ),
-                    onClick: {}
-                )
+                if(appointment != nil) {
+                    AppointmentCardView(
+                        padding: 0,
+                        appointment: appointment!,
+                        onClick: {}
+                    )
+                }
                 
-//                MainButton(title: "Rezerva din nou", onClick: {})
+                if(appointment?.status != .cancelled) {
+    //                MainButton(title: "Rezerva din nou", onClick: {})
+                    
+                    MainButton(
+                        title: String(localized: "cancelAppointment"),
+                        onClick: onGoToCancel,
+                        bgColor: .errorSB
+                    )
+                } else {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(.errorSB)
+                        Text("\(String(localized: "cancelReason")): \(appointment?.message ?? "")")
+                            .foregroundColor(.errorSB)
+                    }
+                    .padding(.vertical)
+                }
                 
-                MainButton(
-                    title: "Anuleaza rezervarea",
-                    onClick: onGoToCancel,
-                    bgColor: .errorSB
-                )
-                
-                Text("Locatie")
+                Text("location")
                     .font(.headline.bold())
                 
                 HStack {
                     Image(systemName: "location")
-                    Text("Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania")
+                    Text(appointment?.business.address ?? "")
                 }
                 
-                Map(position: $position) {
-                    Marker("Centrul Bucurestiului", coordinate: location)
+                if let coord = location {
+                    Map(position: $position) {
+                        Marker("Centrul Bucurestiului", coordinate: coord)
+                    }
+                    .frame(height: 220)
+                    .padding(.top, .base)
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+                    .onAppear {
+                        position = .region(MKCoordinateRegion(
+                            center: coord,
+                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
+                        ))
+                    }
                 }
-                .frame(height: 220)
-                .cornerRadius(8)
-                .padding(.top, .base)
             }
             .frame(maxWidth: .infinity)
             .padding()

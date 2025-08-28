@@ -10,11 +10,22 @@ import SwiftUI
 struct AppointmentCancelScreen: View {
     let appointmentId: Int
     
+    private var appointment: Appointment? {
+        appointmentsList.first { $0.id == appointmentId }
+    }
+    
     var body: some View {
-        Text("Appointment Cancel Screen")
+        FormLayout(
+            headline: "Anuleaza rezervarea",
+            subHeadline: "Feedbackul tau ne ajuta sa imbunatatim serviciile",
+            buttonTitle: "Anuleaza"
+        ) {
+
+        }
     }
 }
 
 #Preview {
     AppointmentCancelScreen(appointmentId: 1)
 }
+

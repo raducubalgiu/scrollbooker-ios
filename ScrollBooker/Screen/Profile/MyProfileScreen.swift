@@ -14,6 +14,7 @@ struct MyProfileScreen: View {
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
+    var onNavigateToUserSocial: () -> Void
     
     var body: some View {
         VStack {
@@ -22,7 +23,7 @@ struct MyProfileScreen: View {
                 username: "@radu_balgiu",
             )
             
-            ProfileCountersView()
+            ProfileCountersView(onNavigateToUserSocial: onNavigateToUserSocial)
                 .padding(.vertical, .xxl)
             
             ProfileUserInfoView()
@@ -104,7 +105,8 @@ struct MyProfileScreen: View {
     MyProfileScreen(
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
-        onNavigateToMyBusiness: {}
+        onNavigateToMyBusiness: {},
+        onNavigateToUserSocial: {}
     )
 }
 
@@ -112,7 +114,8 @@ struct MyProfileScreen: View {
     MyProfileScreen(
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
-        onNavigateToMyBusiness: {}
+        onNavigateToMyBusiness: {},
+        onNavigateToUserSocial: {}
     )
         .preferredColorScheme(.dark)
 }

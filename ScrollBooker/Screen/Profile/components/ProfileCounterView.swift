@@ -10,18 +10,36 @@ import SwiftUI
 struct ProfileCounterView: View {
     var counter: Int? = 0
     var label: String
+    var onClick: () -> Void
     
     var body: some View {
-        VStack(spacing: 5) {
-            Text(counter != nil ? "\(counter!)" : "-")
-                .font(.headline)
-                .fontWeight(.bold)
-            Text(label)
-                .font(.subheadline)
+        Button {
+            onClick()
+        } label: {
+            VStack(spacing: 5) {
+                Text(counter != nil ? "\(counter!)" : "-")
+                    .font(.headline)
+                    .fontWeight(.bold)
+                    .foregroundColor(.onBackgroundSB)
+                Text(label)
+                    .font(.subheadline)
+                    .foregroundColor(.onBackgroundSB)
+            }
         }
     }
 }
 
-#Preview {
-    ProfileCounterView(label: "Recenzii")
+#Preview("Light") {
+    ProfileCounterView(
+        label: "Recenzii",
+        onClick: {}
+    )
+}
+
+#Preview("Dark") {
+    ProfileCounterView(
+        label: "Recenzii",
+        onClick: {}
+    )
+        .preferredColorScheme(.dark)
 }

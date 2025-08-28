@@ -35,8 +35,8 @@ public let appointmentsList: [Appointment] = [
         business: AppointmentBusiness(
             address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
             coordinates: BusinessCoordinates(
-                lat: 26.020075,
-                lng: 44.433552
+                lat: 44.433552,
+                lng: 26.020075
             )
         )
     ),
@@ -67,8 +67,8 @@ public let appointmentsList: [Appointment] = [
         business: AppointmentBusiness(
             address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
             coordinates: BusinessCoordinates(
-                lat: 26.020075,
-                lng: 44.433552
+                lat: 44.433552,
+                lng: 26.020075
             )
         )
     ),
@@ -99,8 +99,8 @@ public let appointmentsList: [Appointment] = [
         business: AppointmentBusiness(
             address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
             coordinates: BusinessCoordinates(
-                lat: 26.020075,
-                lng: 44.433552
+                lat: 44.433552,
+                lng: 26.020075
             )
         )
     )

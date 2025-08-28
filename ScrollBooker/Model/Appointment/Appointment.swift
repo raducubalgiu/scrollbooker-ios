@@ -6,13 +6,14 @@
 //
 
 import Foundation
+import SwiftUICore
 
 public struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     public let id: Int
     public let startDate: Date
     public let endDate: Date
     public let channel: String
-    public let status: String
+    public let status: AppointmentStatus
     public let message: String?
     public let product: AppointmentProduct
     public let user: AppointmentUser
@@ -50,4 +51,33 @@ public struct BusinessCoordinates: Equatable, Hashable, Sendable {
 public struct AppointmentBusiness: Equatable, Hashable, Sendable {
     public let address: String
     public let coordinates: BusinessCoordinates
+}
+
+public enum AppointmentStatus: String, CaseIterable, Sendable, Codable {
+    case confirmed
+    case cancelled
+    case finished
+    case unknown
+    
+    init(raw: String) {
+        self = AppointmentStatus(rawValue: raw.lowercased()) ?? .unknown
+    }
+    
+    var title: String {
+        switch self {
+        case .confirmed: return String(localized: "appointment.status.confirmed")
+        case .cancelled: return String(localized: "appointment.status.cancelled")
+        case .finished: return String(localized: "appointment.status.finished")
+        case .unknown: return String(localized: "appointment.status.confirmed")
+        }
+    }
+    
+    var color: Color {
+        switch self {
+        case .confirmed: return .green
+        case .cancelled: return Color.errorSB
+        case .finished: return .gray
+        case .unknown: return .gray
+        }
+    }
 }

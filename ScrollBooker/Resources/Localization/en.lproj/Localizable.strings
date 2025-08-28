@@ -9,9 +9,9 @@
 "loginMessage" = "Please login to continue";
 "register" = "Înregistrare";
 "registerNow" = "Înregistrează";
-"registerMessage" = "Please register to continue";
-"alreadyHaveAnAccount" = "Ai deja un cont";
-"dontHaveAnAccount" = "Nu ai încă un cont";
+"registerMessage" = "Te rugăm să te înregistrezi pentru a continua";
+"alreadyHaveAnAccount" = "Ai deja un cont?";
+"dontHaveAnAccount" = "Nu ai încă un cont?";
 "doYouHaveABusinessWhichReceivesAppointments" = "Ai un business care primeste programari?";
 "dateOfBirth" = "Data de naștere";
 "dateOfBirthLabelDescription" = "Folosim această informație doar pentru a-ți personaliza experiența";
@@ -215,9 +215,6 @@
 "about" = "Despre";
 "photos" = "Foto";
 "team" = "Echipă";
-"confirmed" = "Confirmat";
-"finished" = "Finalizat";
-"canceled" = "Anulat";
 "all" = "Toate";
 "filter" = "Filtrează";
 "filterAppointments" = "Filtrează comenzile";
@@ -251,3 +248,10 @@
 "explore" = "Explorează";
 "dontHaveAnyNotification" = "Nu ai nici o notificare";
 "categories" = "Categorii";
+"bookings" = "Rezervări";
+
+/* --- DYNAMIC --- */
+
+"appointment.status.confirmed" = "Confirmat";
+"appointment.status.finished" = "Finalizat";
+"appointment.status.cancelled" = "Anulat";

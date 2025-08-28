@@ -17,8 +17,8 @@ extension Date {
     var month: String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ro_RO")
-        formatter.dateFormat = "HH:mm"
-        return formatter.string(from: self)
+        formatter.dateFormat = "LLLL"
+        return formatter.string(from: self).capitalized
     }
     
     var time: String {

@@ -13,8 +13,8 @@ struct RegisterBusinessScreen: View {
     
     var body: some View {
         FormLayout(
-            headline: "Inregistrare Business",
-            subHeadline: "Creaza un cont pentru a-ti inregistra afacerea si a incepe procesul de configurare",
+            headline: String(localized: "registerBusiness"),
+            subHeadline: String(localized: "registerBusinessDescription"),
             enableBottomButton: false,
         ) {
             Input(
@@ -32,7 +32,7 @@ struct RegisterBusinessScreen: View {
             )
             
             MainButton(
-                title: "Inregistrare",
+                title: String(localized: "register"),
                 onClick: {  }
             )
         }

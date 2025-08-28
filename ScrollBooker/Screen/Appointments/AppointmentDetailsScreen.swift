@@ -10,7 +10,6 @@ import MapKit
 
 struct AppointmentDetailsScreen: View {
     let appointmentId: Int
-    var onBack: () -> Void
     var onGoToCancel: () -> Void
     
     @State private var position: MapCameraPosition = .region(
@@ -29,30 +28,30 @@ struct AppointmentDetailsScreen: View {
         
         ScrollView {
             VStack(alignment: .leading, spacing: 15) {
-                AppointmentCard(
+                AppointmentCardView(
                     padding: 0,
                     appointment: Appointment(
-                        id: 1,
+                        id: 3,
                         startDate: Date(),
                         endDate: Date().addingTimeInterval(3600),
                         channel: "scroll_booker",
-                        status: "confirmat",
-                        message: "",
+                        status: AppointmentStatus(raw: "cancelled"),
+                        message: "Am gasit o oferta mai buna",
                         product: AppointmentProduct(
-                            id: 1,
-                            name: "Tuns Special",
-                            price: 50.0,
+                            id: 2,
+                            name: "Curs de dans bachata",
+                            price: 100.0,
                             priceWithDiscount: 50.0,
                             discount: 0.0,
                             currency: "RON",
                             exchangeRate: 1.0
                         ),
                         user: AppointmentUser(
-                            id: 1,
-                            avatar: "",
-                            fullName: "Raducu Balgiu",
-                            username: "@radu_balgiu",
-                            profession: "Creator"
+                            id: 2,
+                            avatar: "https://media.scrollbooker.ro/avatar-male-9.jpeg",
+                            fullName: "Salsa Factory",
+                            username: "@salsa_factory",
+                            profession: "Scoala de dans"
                         ),
                         isCustomer: true,
                         business: AppointmentBusiness(
@@ -99,7 +98,6 @@ struct AppointmentDetailsScreen: View {
 #Preview("Light") {
     AppointmentDetailsScreen(
         appointmentId: 1,
-        onBack: {},
         onGoToCancel: {}
     )
 }
@@ -107,7 +105,6 @@ struct AppointmentDetailsScreen: View {
 #Preview("Dark") {
     AppointmentDetailsScreen(
         appointmentId: 1,
-        onBack: {},
         onGoToCancel: {}
     )
         .preferredColorScheme(.dark)

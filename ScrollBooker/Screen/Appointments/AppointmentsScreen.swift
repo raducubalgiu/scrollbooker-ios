@@ -9,12 +9,15 @@ import SwiftUI
 
 struct AppointmentsScreen: View {
     @EnvironmentObject var router: Router
+    
     @State private var items: [Int] = Array(1...20)
     @State private var isLoading = false
     
+    var onNavigateToAppointmentDetails: (Int) -> Void
+    
     var body: some View {
         VStack(spacing: 0) {
-            Text("Rezervari")
+            Text("bookings")
                 .font(.headline)
                 .fontWeight(.semibold)
                 .frame(maxWidth: .infinity)
@@ -23,9 +26,9 @@ struct AppointmentsScreen: View {
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(appointmentsList) { item  in
-                    AppointmentCard(
+                    AppointmentCardView(
                         appointment: item,
-                        onClick: { router.push(.appointmentDetails(id: 1)) }
+                        onClick: { onNavigateToAppointmentDetails(item.id) }
                     )
                     
                     Divider()
@@ -46,10 +49,14 @@ struct AppointmentsScreen: View {
 }
 
 #Preview("Light") {
-    AppointmentsScreen()
+    AppointmentsScreen(
+        onNavigateToAppointmentDetails: {_ in }
+    )
 }
 
 #Preview("Dark") {
-    AppointmentsScreen()
+    AppointmentsScreen(
+        onNavigateToAppointmentDetails: {_ in }
+    )
         .preferredColorScheme(.dark)
 }

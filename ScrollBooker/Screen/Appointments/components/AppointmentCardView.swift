@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AppointmentCard: View {
+struct AppointmentCardView: View {
     var padding: CGFloat = 16
     
     let appointment: Appointment
@@ -18,9 +18,9 @@ struct AppointmentCard: View {
             onClick()
         } label: {
             VStack(alignment: .leading) {
-                Text(appointment.status)
+                Text(appointment.status.title)
                     .font(.headline.bold())
-                    .foregroundColor(.gray)
+                    .foregroundColor(appointment.status.color)
                     .padding(.bottom, .base)
                 
                 HStack {
@@ -73,17 +73,21 @@ struct AppointmentCard: View {
 }
 
 #Preview("Light") {
-    AppointmentCard(
+    AppointmentCardView(
         appointment: appointmentsList[0],
         onClick: {}
     )
+    
+    Spacer()
 }
 
 #Preview("Dark") {
-    AppointmentCard(
+    AppointmentCardView(
         appointment: appointmentsList[0],
         onClick: {}
     )
         .preferredColorScheme(.dark)
+    
+    Spacer()
 }
 

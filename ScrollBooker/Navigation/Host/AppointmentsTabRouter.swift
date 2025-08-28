@@ -12,21 +12,22 @@ struct AppointmentsTabRouter: View {
     
     var body: some View {
         NavigationStack(path: $router.appointmentsPath) {
-            AppointmentsScreen()
+            AppointmentsScreen(
+                onNavigateToAppointmentDetails: { id in
+                    router.push(.appointmentDetails(id: id))
+                }
+            )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
-                    case .appointments:
-                        AppointmentsScreen(
-                            
-                        )
                     case .appointmentDetails(let id):
                         AppointmentDetailsScreen(
                             appointmentId: id,
-                            onBack: {  },
-                            onGoToCancel: { router.push(.appointmentDetails(id: id)) }
+                            onGoToCancel: { router.push(.appointmentCancel(id: id)) }
                         )
+                        .toolbar(.hidden, for: .tabBar)
                     case .appointmentCancel(let id):
                         AppointmentCancelScreen(appointmentId: id)
+                            .toolbar(.hidden, for: .tabBar)
                     default: Text("Route not in Appointments")
                     }
                 }

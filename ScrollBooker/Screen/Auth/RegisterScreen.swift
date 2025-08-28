@@ -13,8 +13,8 @@ struct RegisterScreen: View {
     
     var body: some View {
         FormLayout(
-            headline: "Inregistrare",
-            subHeadline: "Please register to continue",
+            headline: String(localized: "register"),
+            subHeadline: String(localized: "registerMessage"),
             enableBottomButton: false,
         ) {
             Input(
@@ -32,12 +32,12 @@ struct RegisterScreen: View {
             )
             
             MainButton(
-                title: "Inregistrare",
+                title: String(localized: "register"),
                 onClick: {  }
             )
             
             HStack {
-                Text("Ai deja un cont?")
+                Text("alreadyHaveAnAccount")
                 Button("Login") {
                     
                 }
@@ -50,11 +50,11 @@ struct RegisterScreen: View {
                 
                 Divider()
                 
-                Text("Ai un business care primeste programari?")
+                Text("doYouHaveABusinessWhichReceivesAppointments")
                     .padding(.vertical)
                 
                 MainButtonOutlined(
-                    title: "Inregistreaza",
+                    title: String(localized: "registerNow"),
                     onClick: {}
                 )
             }

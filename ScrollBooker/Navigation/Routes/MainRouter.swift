@@ -18,21 +18,21 @@ struct MainRouter: View {
                 .tag(MainTab.feed)
             
             InboxTabRouter(router: router)
-                 .tabItem { Label("Inbox", systemImage: "bell") }
+                 .tabItem { Label("inbox", systemImage: "bell") }
                  .tag(MainTab.inbox)
                  .badge(10)
             
             SearchTabRouter(router: router)
-                 .tabItem { Label("Search", systemImage: "magnifyingglass")}
+                 .tabItem { Label("search", systemImage: "magnifyingglass")}
                  .tag(MainTab.search)
             
             AppointmentsTabRouter(router: router)
-                 .tabItem { Label("Appointments", systemImage: "calendar")}
+                 .tabItem { Label("bookings", systemImage: "calendar")}
                  .tag(MainTab.appointments)
                  .badge(5)
             
             MyProfileTabRouter(router: router)
-                 .tabItem { Label("Profile", systemImage: "person") }
+                 .tabItem { Label("profile", systemImage: "person") }
                  .tag(MainTab.profile)
         }
         .environmentObject(router)

@@ -24,7 +24,7 @@ struct MyBusinessCardView: View {
                 
                 Text(title)
                     .font(.headline)
-                    .fontWeight(.heavy)
+                    .fontWeight(.bold)
                     .foregroundColor(.onBackgroundSB)
                 
                 Text(description)

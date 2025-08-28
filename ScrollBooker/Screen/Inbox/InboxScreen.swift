@@ -9,10 +9,20 @@ import SwiftUI
 
 struct InboxScreen: View {
     var body: some View {
-        Text("Inbox Screen")
+        Header(
+            title: String(localized: "inbox"),
+            enableBack: false
+        )
+        
+        Spacer()
     }
 }
 
-//#Preview {
-//    InboxScreen()
-//}
+#Preview("Light") {
+    InboxScreen()
+}
+
+#Preview("Dark") {
+    InboxScreen()
+        .preferredColorScheme(.dark)
+}

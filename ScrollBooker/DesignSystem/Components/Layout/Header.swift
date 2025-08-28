@@ -14,14 +14,16 @@ struct Header: View {
     
     var body: some View {
         HStack {
-            Button {
+            VStack {
                 if(enableBack) {
-                    dismiss()
+                    Button {
+                        dismiss()
+                    } label: {
+                        Image(systemName: "chevron.left")
+                            .font(.system(size: 22.5))
+                            .foregroundColor(.onBackgroundSB)
+                    }
                 }
-            } label: {
-                Image(systemName: "chevron.left")
-                    .font(.system(size: 22.5))
-                    .foregroundColor(.onBackgroundSB)
             }
             .frame(width: 44, height: 44)
             
@@ -46,7 +48,7 @@ struct Header: View {
     Spacer()
 }
 
-#Preview("Light") {
+#Preview("Dark") {
     Header(
         title: "Header"
     )

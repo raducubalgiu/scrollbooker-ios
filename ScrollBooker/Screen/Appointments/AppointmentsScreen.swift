@@ -16,13 +16,11 @@ struct AppointmentsScreen: View {
     var onNavigateToAppointmentDetails: (Int) -> Void
     
     var body: some View {
-        VStack(spacing: 0) {
-            Text("bookings")
-                .font(.headline)
-                .fontWeight(.semibold)
-                .frame(maxWidth: .infinity)
-                .padding()
-        }
+        Header(
+            title: String(localized: "bookings"),
+            enableBack: false
+        )
+        
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(appointmentsList) { item  in

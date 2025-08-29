@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MyCalendarScreen: View {
     var body: some View {
-        Header(title: "Calendarul meu")
+        Header(title: String(localized: "myCalendar"))
         
         Spacer()
     }

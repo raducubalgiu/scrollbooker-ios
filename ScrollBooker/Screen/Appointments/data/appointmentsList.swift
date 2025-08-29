@@ -7,7 +7,7 @@
 
 import Foundation
 
-public let appointmentsList: [Appointment] = [
+let appointmentsList: [Appointment] = [
     Appointment(
         id: 1,
         startDate: Date(),

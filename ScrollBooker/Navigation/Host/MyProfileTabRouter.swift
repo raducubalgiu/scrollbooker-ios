@@ -126,7 +126,7 @@ struct MyProfileTabRouter: View {
                             .toolbar(.hidden, for: .tabBar)
                         
                     case .userSocial:
-                        UserSocialScreen()
+                        SocialScreen()
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
                         

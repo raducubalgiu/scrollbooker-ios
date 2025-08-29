@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-enum UserSocialTab: String, CaseIterable, Identifiable {
+enum SocialTab: String, CaseIterable, Identifiable {
     case reviews = "Recenzii"
     case followers = "Urmăritori"
     case following = "Urmărești"
@@ -15,8 +15,8 @@ enum UserSocialTab: String, CaseIterable, Identifiable {
     var id: String { rawValue }
 }
 
-struct UserSocialScreen: View {
-    @State private var selection: UserSocialTab = .reviews
+struct SocialScreen: View {
+    @State private var selection: SocialTab = .reviews
     @Namespace private var indicatorNS
     
     var body: some View {
@@ -31,7 +31,7 @@ struct UserSocialScreen: View {
                     .padding(.top, 0)
                 
                 HStack(spacing: 20) {
-                    ForEach(UserSocialTab.allCases) { tab in
+                    ForEach(SocialTab.allCases) { tab in
                         Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.9) ) {
                                 selection = tab
                             }
@@ -65,11 +65,11 @@ struct UserSocialScreen: View {
             // CONȚINUT SWIPE-ABIL
             TabView(selection: $selection) {
                 ReviewsTabView()
-                    .tag(UserSocialTab.reviews)
+                    .tag(SocialTab.reviews)
                 FollowersTabView()
-                    .tag(UserSocialTab.followers)
+                    .tag(SocialTab.followers)
                 FollowingsTabView()
-                    .tag(UserSocialTab.following)
+                    .tag(SocialTab.following)
             }
             .tabViewStyle(.page(indexDisplayMode: .never)) // swipe left/right, fără buline
         }
@@ -77,5 +77,5 @@ struct UserSocialScreen: View {
 }
 
 #Preview {
-    UserSocialScreen()
+    SocialScreen()
 }

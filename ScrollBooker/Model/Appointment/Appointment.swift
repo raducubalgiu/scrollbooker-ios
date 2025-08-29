@@ -8,39 +8,39 @@
 import Foundation
 import SwiftUICore
 
-public struct Appointment: Identifiable, Equatable, Hashable, Sendable {
-    public let id: Int
-    public let startDate: Date
-    public let endDate: Date
-    public let channel: String
-    public let status: AppointmentStatus
-    public let message: String?
-    public let product: AppointmentProduct
-    public let user: AppointmentUser
-    public let isCustomer: Bool
-    public let business: AppointmentBusiness
+struct Appointment: Identifiable, Equatable, Hashable, Sendable {
+    let id: Int
+    let startDate: Date
+    let endDate: Date
+    let channel: String
+    let status: AppointmentStatus
+    let message: String?
+    let product: AppointmentProduct
+    let user: AppointmentUser
+    let isCustomer: Bool
+    let business: AppointmentBusiness
     
-    public var duration: TimeInterval { endDate.timeIntervalSince(startDate) }
+    var duration: TimeInterval { endDate.timeIntervalSince(startDate) }
 }
 
-public struct AppointmentProduct: Equatable, Hashable, Sendable {
-    public let id: Int?
-    public let name: String
-    public let price: Decimal
-    public let priceWithDiscount: Decimal
-    public let discount: Decimal
-    public let currency: String
-    public let exchangeRate: Decimal
+struct AppointmentProduct: Equatable, Hashable, Sendable {
+    let id: Int?
+    let name: String
+    let price: Decimal
+    let priceWithDiscount: Decimal
+    let discount: Decimal
+    let currency: String
+    let exchangeRate: Decimal
 }
 
-public struct AppointmentUser: Equatable, Hashable, Sendable {
-    public let id: Int?
-    public let avatar: String?
-    public let fullName: String
-    public let username: String?
-    public let profession: String?
+struct AppointmentUser: Equatable, Hashable, Sendable {
+    let id: Int?
+    let avatar: String?
+    let fullName: String
+    let username: String?
+    let profession: String?
     
-    public var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
+    var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
 public struct BusinessCoordinates: Equatable, Hashable, Sendable {
@@ -48,12 +48,12 @@ public struct BusinessCoordinates: Equatable, Hashable, Sendable {
     public let lng: Double
 }
 
-public struct AppointmentBusiness: Equatable, Hashable, Sendable {
-    public let address: String
-    public let coordinates: BusinessCoordinates
+struct AppointmentBusiness: Equatable, Hashable, Sendable {
+    let address: String
+    let coordinates: BusinessCoordinates
 }
 
-public enum AppointmentStatus: String, CaseIterable, Sendable, Codable {
+enum AppointmentStatus: String, CaseIterable, Sendable, Codable {
     case confirmed
     case cancelled
     case finished

@@ -12,10 +12,10 @@ struct MyCurrenciesScreen: View {
     
     var body: some View {
         FormLayout(
-            headline: "Valute acceptate pentru plati",
-            subHeadline: "Alege in ce valute accepti sa primesti plati din partea clientilor",
+            headline: String(localized: "acceptedCurrencies"),
+            subHeadline: String(localized: "chooseDesiredCurrencies"),
             enableBack: true,
-            buttonTitle: "Salveaza"
+            buttonTitle: String(localized: "save")
         ) {
             Toggle("Vibrate on Ring", isOn: $vibrateOnRing)
         }

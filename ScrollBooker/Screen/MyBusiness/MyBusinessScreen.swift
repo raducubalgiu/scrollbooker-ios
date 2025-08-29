@@ -9,49 +9,49 @@ import SwiftUI
 
 private var myBusinessPages = [
     MyBusinessPage(
-        title: "Locatie",
-        description: "Detalii despre locatia business-ului tau",
+        title: String(localized: "location"),
+        description: String(localized: "businessLocationDetails"),
         icon: "location",
         route: .mySchedules
     ),
     MyBusinessPage(
-        title: "Program",
-        description: "Detalii despre programul meu",
+        title: String(localized: "scheduleShort"),
+        description: String(localized: "userScheduleDetails"),
         icon: "clock",
         route: .mySchedules
     ),
     MyBusinessPage(
-        title: "Produse",
-        description: "Detalii despre produsele mele",
+        title: String(localized: "products"),
+        description: String(localized: "userProductsDetails"),
         icon: "bag",
         route: .myProducts
     ),
     MyBusinessPage(
-        title: "Servicii",
-        description: "Detalii despre serviciile tale",
+        title: String(localized: "services"),
+        description: String(localized: "servicesDetails"),
         icon: "bag",
         route: .myServices
     ),
     MyBusinessPage(
-        title: "Calendar",
+        title: String(localized: "calendar"),
         description: "Detalii despre produsele mele",
         icon: "calendar",
         route: .myCalendar
     ),
     MyBusinessPage(
         title: "Valute",
-        description: "Alege valutele acceptate pentru plata",
+        description: String(localized: "paymentMethodsDetails"),
         icon: "creditcard",
         route: .myCurrencies
     ),
     MyBusinessPage(
-        title: "Angajati",
+        title: String(localized: "employees"),
         description: "Detalii despre angajatii tai",
         icon: "person.2",
         route: .myEmployees
     ),
     MyBusinessPage(
-        title: "Cereri de angajare",
+        title: String(localized: "employmentRequests"),
         description: "Detalii despre angajatii tai",
         icon: "repeat",
         route: .myEmploymentRequests

@@ -9,11 +9,24 @@ import SwiftUI
 
 struct ReviewsTabView: View {
     var body: some View {
-        Text("Lista recenzii")
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        VStack {
+            ScrollView {
+                LazyVStack {
+                    ForEach(userReviews) { review in
+                        ReviewCardView(review: review)
+                            .padding(.horizontal)
+                    }
+                }
+            }
+        }
     }
 }
 
-#Preview {
+#Preview("Light") {
     ReviewsTabView()
+}
+
+#Preview("Dark") {
+    ReviewsTabView()
+        .preferredColorScheme(.dark)
 }

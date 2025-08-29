@@ -14,7 +14,7 @@ struct UserListItem: View {
         HStack {
             HStack(spacing: 12) {
                 AvatarView(
-                    imageURL: userMini.avatarURL,
+                    imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
                     size: .l
                 )
                 
@@ -41,7 +41,7 @@ struct UserListItem: View {
                         .font(.subheadline.bold())
                         .foregroundColor(userMini.isFollow ? .onBackgroundSB : .onPrimarySB)
                 }
-                .padding(.vertical, 10)
+                .padding(.vertical, 7)
                 .padding(.horizontal, .base)
                 .background(
                     RoundedRectangle(cornerRadius: 5)

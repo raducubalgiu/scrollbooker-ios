@@ -232,3 +232,66 @@ let userFollowings: [UserMini] = [
         isBusinessOrEmployee: false
     ),
 ]
+
+let userReviews: [Review] = [
+    Review(
+        id: 1,
+        rating: 5,
+        review: "Am fost foarte multumit de aceasta experienta.",
+        customer: ReviewCustomer(id: 1, username: "cristiano", fullName: "Cristiano Ronaldo", avatar: ""),
+        service: ReviewService(id: 1, name: "Tuns"),
+        product: ReviewProduct(id: 1, name: "Tuns special"),
+        likeCount: 0,
+        isLiked: false,
+        isLikedByAuthor: false,
+        createdAt: "2025-08-29T14:10:29.465384Z"
+    ),
+    Review(
+        id: 2,
+        rating: 5,
+        review: "Exceptional. M-a tuns foarte bine!",
+        customer: ReviewCustomer(id: 1, username: "radu_balgiu", fullName: "Raducu Balgiu", avatar: ""),
+        service: ReviewService(id: 1, name: "Tuns"),
+        product: ReviewProduct(id: 2, name: "Tuns scurt"),
+        likeCount: 0,
+        isLiked: true,
+        isLikedByAuthor: false,
+        createdAt: "2025-08-29T18:10:29.465384Z"
+    ),
+    Review(
+        id: 3,
+        rating: 3,
+        review: "Nu prea mi-a placut. A intarziat 30 de minute si nu am putut sa ajung la birou in timp util",
+        customer: ReviewCustomer(id: 1, username: "gigi_corsicanu", fullName: "Gigi Corsicanu", avatar: ""),
+        service: ReviewService(id: 1, name: "Tuns"),
+        product: ReviewProduct(id: 2, name: "Tuns special"),
+        likeCount: 0,
+        isLiked: true,
+        isLikedByAuthor: false,
+        createdAt: "2025-08-29T10:30:29.465384Z"
+    ),
+    Review(
+        id: 4,
+        rating: 4,
+        review: "Singurul lucru care nu mi-a placut a fost locatia. Nu era foarte ingrijita",
+        customer: ReviewCustomer(id: 1, username: "georgel_cristian", fullName: "Georgel Cristian", avatar: ""),
+        service: ReviewService(id: 1, name: "Pensat"),
+        product: ReviewProduct(id: 3, name: "Pensat"),
+        likeCount: 0,
+        isLiked: false,
+        isLikedByAuthor: false,
+        createdAt: "2025-08-29T16:30:29.465384Z"
+    ),
+    Review(
+        id: 5,
+        rating: 5,
+        review: "Exceptional. Am gasit tunsoarea perfecta",
+        customer: ReviewCustomer(id: 1, username: "radu_cristian", fullName: "Radu Cristian", avatar: ""),
+        service: ReviewService(id: 1, name: "Tuns"),
+        product: ReviewProduct(id: 3, name: "Tuns special"),
+        likeCount: 0,
+        isLiked: false,
+        isLikedByAuthor: true,
+        createdAt: "2025-08-29T16:30:29.465384Z"
+    )
+]

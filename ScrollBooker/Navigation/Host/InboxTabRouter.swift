@@ -12,16 +12,25 @@ struct InboxTabRouter: View {
     
     var body: some View {
         NavigationStack(path: $router.inboxPath) {
-            InboxScreen()
+            InboxScreen(
+                onNavigateToEmployment: {
+                    router.push(.employmentRequestRespond)
+                }
+            )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
+                    case .employmentRequestRespond:
+                        EmploymentRespondScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                    case .employmentRequestRespondConsent:
+                        EmploymentRespondConsentScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                        
                     default: Text("Route not in Feed")
                     }
                 }
         }
     }
 }
-
-//#Preview {
-//    InboxTabRouter()
-//}

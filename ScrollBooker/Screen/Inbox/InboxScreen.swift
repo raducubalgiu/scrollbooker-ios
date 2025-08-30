@@ -8,21 +8,34 @@
 import SwiftUI
 
 struct InboxScreen: View {
+    var onNavigateToEmployment: () -> Void
+    
     var body: some View {
         Header(
             title: String(localized: "inbox"),
             enableBack: false
         )
         
-        Spacer()
+        ScrollView {
+            ForEach(dummyNotifications) { notification in
+                NotificationItemView(
+                    notification: notification,
+                    onNavigateToEmployment: onNavigateToEmployment
+                )
+            }
+        }
     }
 }
 
 #Preview("Light") {
-    InboxScreen()
+    InboxScreen(
+        onNavigateToEmployment: {}
+    )
 }
 
 #Preview("Dark") {
-    InboxScreen()
+    InboxScreen(
+        onNavigateToEmployment: {}
+    )
         .preferredColorScheme(.dark)
 }

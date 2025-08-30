@@ -12,16 +12,15 @@ struct FeedTabRouter: View {
     
     var body: some View {
         NavigationStack(path: $router.feedPath) {
-            FeedScreen()
+            FeedScreen(onNavigateToFeedSearch: { router.push(.feedSearch) })
                 .navigationDestination(for: Route.self) { route in
                     switch route {
+                    case .feedSearch:
+                        FeedSearchScreen()
+                        .toolbar(.hidden, for: .tabBar)
                     default: Text("Route not in Feed")
                     }
                 }
         }
     }
 }
-
-//#Preview {
-//    FeedTabRouter()
-//}

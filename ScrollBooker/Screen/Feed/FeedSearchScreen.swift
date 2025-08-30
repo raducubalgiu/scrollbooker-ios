@@ -7,12 +7,14 @@
 
 import SwiftUI
 
-struct FeedSearch: View {
+struct FeedSearchScreen: View {
     var body: some View {
-        Text("Feed Search!")
+        ScrollView {
+            
+        }
     }
 }
 
 #Preview {
-    FeedSearch()
+    FeedSearchScreen()
 }

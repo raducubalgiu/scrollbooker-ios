@@ -12,6 +12,7 @@ struct MainButton: View {
     var onClick: () -> Void
     var isDisabled: Bool = false
     var bgColor: Color = .primarySB
+    var color: Color = .onPrimarySB
     
     var body: some View {
         Button(title) {
@@ -24,13 +25,14 @@ struct MainButton: View {
             RoundedRectangle(cornerRadius: 50)
                 .fill(isDisabled ? Color.surfaceSB : bgColor)
         )
-        .foregroundColor(isDisabled ? .gray : .onPrimarySB)
+        .foregroundColor(isDisabled ? .gray : color)
         .padding(.vertical)
         .disabled(isDisabled)
+        .buttonStyle(.plain)
     }
 }
 
-#Preview {
+#Preview("Light") {
     MainButton(
         title: "Login",
         onClick: { },
@@ -38,3 +40,14 @@ struct MainButton: View {
     )
     .padding()
 }
+
+#Preview("Dark") {
+    MainButton(
+        title: "Login",
+        onClick: { },
+        isDisabled: true
+    )
+    .padding()
+    .preferredColorScheme(.dark)
+}
+

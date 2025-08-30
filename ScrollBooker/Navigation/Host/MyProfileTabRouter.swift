@@ -20,6 +20,7 @@ struct MyProfileTabRouter: View {
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
+                        // Settings
                     case .mySettings:
                         SettingsScreen { route in router.push(route)}
                             .navigationBarHidden(true)
@@ -65,6 +66,7 @@ struct MyProfileTabRouter: View {
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
                         
+                        // Edit Profile
                     case .editProfile:
                         EditProfileScreen { route in router.push(route) }
                             .navigationBarHidden(true)
@@ -90,6 +92,7 @@ struct MyProfileTabRouter: View {
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
                         
+                        // My Business
                     case .myBusiness:
                         MyBusinessScreen { route in router.push(route) }
                             .navigationBarHidden(true)
@@ -102,11 +105,6 @@ struct MyProfileTabRouter: View {
                         
                     case .myCurrencies:
                         MyCurrenciesScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .myEmployees:
-                        MyEmployeesScreen()
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
                         
@@ -125,6 +123,32 @@ struct MyProfileTabRouter: View {
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
                         
+                    case .myEmployees:
+                        MyEmployeesScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                        
+                    case .myEmploymentRequests:
+                        EmploymentsScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                    
+                    case .employmentSelectEmployee:
+                        EmploymentSelectEmployeeScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                        
+                    case .employmentAssignJob:
+                        EmploymentAsignJobScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                        
+                    case .employmentAcceptTerms:
+                        EmploymentAcceptTermsScreen()
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                        
+                    // Global Routes
                     case .userSocial:
                         SocialScreen()
                             .navigationBarHidden(true)

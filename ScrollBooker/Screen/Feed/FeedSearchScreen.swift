@@ -8,13 +8,29 @@
 import SwiftUI
 
 struct FeedSearchScreen: View {
+    var onNavigateToSearchResults: () -> Void
+    
     var body: some View {
         ScrollView {
             
         }
+        
+        MainButton(
+            title: "Go to Search Results",
+            onClick: onNavigateToSearchResults
+        )
     }
 }
 
-#Preview {
-    FeedSearchScreen()
+#Preview("Light") {
+    FeedSearchScreen(
+        onNavigateToSearchResults: {}
+    )
+}
+
+#Preview("Dark") {
+    FeedSearchScreen(
+        onNavigateToSearchResults: {}
+    )
+    .preferredColorScheme(.dark)
 }

@@ -28,7 +28,6 @@ struct AppTheme<Content: View>: View {
     private static func configureTabBar() {
         let appearance = UITabBarAppearance()
         appearance.configureWithOpaqueBackground()
-        //appearance.backgroundColor = UIColor(named: "BackgroundSBB")
         appearance.shadowColor = UIColor(named: "Divider")
         
 //        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(named: "OnBackgroundSBB")

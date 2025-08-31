@@ -35,7 +35,6 @@ struct ProfileContactView: View {
                     .font(.headline)
             }
         }
-        .padding(.vertical, .xs)
     }
 }
 

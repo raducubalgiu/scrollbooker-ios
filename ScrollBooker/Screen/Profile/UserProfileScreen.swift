@@ -1,13 +1,13 @@
 //
-//  MyProfileScreen.swift
+//  UserProfileScreen.swift
 //  ScrollBooker
 //
-//  Created by Raducu Balgiu on 14.08.2025.
+//  Created by Raducu Balgiu on 31.08.2025.
 //
 
 import SwiftUI
 
-struct MyProfileScreen: View {
+struct UserProfileScreen: View {
     @State private var measuredHeight: CGFloat = 0
     
     var onNavigateToEditProfile: () -> Void
@@ -26,16 +26,14 @@ struct MyProfileScreen: View {
                 .padding(.horizontal)
             },
             actions: {
-                MyProfileActionsView(
-                    onNavigateToEditProfile: onNavigateToEditProfile
-                )
+                UserProfileActions()
             }
         )
     }
 }
 
 #Preview("Light") {
-    MyProfileScreen(
+    UserProfileScreen(
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
         onNavigateToMyBusiness: {},
@@ -44,7 +42,7 @@ struct MyProfileScreen: View {
 }
 
 #Preview("Dark") {
-    MyProfileScreen(
+    UserProfileScreen(
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
         onNavigateToMyBusiness: {},
@@ -52,3 +50,4 @@ struct MyProfileScreen: View {
     )
         .preferredColorScheme(.dark)
 }
+

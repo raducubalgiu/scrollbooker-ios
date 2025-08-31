@@ -8,43 +8,77 @@
 import SwiftUI
 
 struct ProfileUserInfoView: View {
+    var url: URL?
+    var fullName: String
+    var profession: String
+    var isBusinessOrEmployee: Bool
+    var ratingsAverage: Decimal
+    var openingHours: OpeningHours
+    var onShowOpeningHoursSheet: () -> Void
+    
     var body: some View {
         HStack(spacing: 15) {
             AvatarView(
                 imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
                 size: .xl,
-                presence: .open,
+                isOpen: isBusinessOrEmployee ? openingHours.openNow : nil,
             )
             
             VStack(alignment: .leading, spacing: 7) {
-                Text("Radu Balgiu")
+                Text(fullName)
                     .font(.headline.bold())
                 HStack {
-                    Text("Stylist")
+                    Text(profession)
                     Image(systemName: "star.fill")
                         .foregroundColor(.primarySB)
-                    Text("4.5")
+                    Text("\(ratingsAverage)")
                         .font(.headline.bold())
                 }
                 
-                HStack {
-                    Image(systemName: "clock")
-                    Text("Deschide luni la 09:00")
-                        .font(.subheadline)
-                        .fontWeight(.semibold)
+                Button {
+                    onShowOpeningHoursSheet()
+                } label: {
+                    HStack {
+                        Image(systemName: "clock")
+                            .foregroundColor(.onBackgroundSB)
+                        
+                        Text(openingHours.formattedStatus)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundColor(.onBackgroundSB)
+                        
+                        Image(systemName: "chevron.down")
+                            .foregroundColor(.onBackgroundSB)
+                    }
                 }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
     }
 }
 
 #Preview("Light") {
-    ProfileUserInfoView()
+    ProfileUserInfoView(
+        url: dummyUserProfile.avatarURL,
+        fullName: dummyUserProfile.fullName,
+        profession: dummyUserProfile.profession,
+        isBusinessOrEmployee: dummyUserProfile.isBusinessOrEmployee,
+        ratingsAverage: dummyUserProfile.counters.ratingsAverage,
+        openingHours: dummyUserProfile.openingHours,
+        onShowOpeningHoursSheet: {}
+    )
 }
 
 #Preview("Dark") {
-    ProfileUserInfoView()
+    ProfileUserInfoView(
+        url: dummyUserProfile.avatarURL,
+        fullName: dummyUserProfile.fullName,
+        profession: dummyUserProfile.profession,
+        isBusinessOrEmployee: dummyUserProfile.isBusinessOrEmployee,
+        ratingsAverage: dummyUserProfile.counters.ratingsAverage,
+        openingHours: dummyUserProfile.openingHours,
+        onShowOpeningHoursSheet: {}
+    )
         .preferredColorScheme(.dark)
 }
 

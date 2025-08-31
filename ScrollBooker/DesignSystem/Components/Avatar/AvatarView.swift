@@ -23,17 +23,6 @@ struct AvatarView: View {
         }
     }
     
-    enum Presence {
-        case open, closed
-        
-        var color: Color {
-            switch self {
-            case .open: .green
-            case .closed: .divider
-            }
-        }
-    }
-    
     struct AvatarBorder {
         var color: Color = .divider
         var width: CGFloat = 1
@@ -42,7 +31,7 @@ struct AvatarView: View {
     var imageURL: URL?
     var size: AvatarSize = .m
     var border: AvatarBorder? = AvatarBorder()
-    var presence: Presence? = nil
+    var isOpen: Bool? = nil
     var placeholderImage: String = "person.fill"
     
     var body: some View {
@@ -58,9 +47,9 @@ struct AvatarView: View {
                 }
                 .accessibilityLabel(Text("Avatar"))
             
-            if let presence {
+            if let isOpen {
                 Circle()
-                    .fill(presence.color)
+                    .fill(isOpen ? .green : .divider)
                     .overlay(Circle().stroke(Color.white, lineWidth: 3))
                     .frame(width: badgeSize, height: badgeSize)
                     .offset(x: badgeOffset, y: badgeOffset)
@@ -125,27 +114,27 @@ struct AvatarView: View {
     HStack(spacing: 5) {
         AvatarView(
             size: .xs,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .s,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .m,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .l,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .xl,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .xxl,
-            presence: .open
+            isOpen: true
         )
     }
 }
@@ -159,27 +148,27 @@ struct AvatarView: View {
     HStack(spacing: 5) {
         AvatarView(
             size: .xs,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .s,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .m,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .l,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .xl,
-            presence: .open
+            isOpen: true
         )
         AvatarView(
             size: .xxl,
-            presence: .open
+            isOpen: true
         )
     }
 }

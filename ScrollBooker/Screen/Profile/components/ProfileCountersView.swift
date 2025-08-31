@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct ProfileCountersView: View {
+    var counters: UserCounters
     var onNavigateToUserSocial: () -> Void
     
     var body: some View {
         HStack {
             ProfileCounterView(
-                counter: 100,
-                label: "Recenzii",
+                counter: counters.ratingsCount,
+                label: String(localized: "reviews"),
                 onClick: onNavigateToUserSocial
             )
             
@@ -22,8 +23,8 @@ struct ProfileCountersView: View {
                 .padding(.horizontal, .m)
             
             ProfileCounterView(
-                counter: 1500,
-                label: "Urmaritori",
+                counter: counters.followersCount,
+                label: String(localized: "followers"),
                 onClick: onNavigateToUserSocial
             )
             
@@ -31,8 +32,8 @@ struct ProfileCountersView: View {
                 .padding(.horizontal, .m)
             
             ProfileCounterView(
-                counter: 15,
-                label: "Urmaresti",
+                counter: counters.followingsCount,
+                label: String(localized: "following"),
                 onClick: onNavigateToUserSocial
             )
         }
@@ -40,11 +41,17 @@ struct ProfileCountersView: View {
 }
 
 #Preview("Light") {
-    ProfileCountersView(onNavigateToUserSocial: {})
+    ProfileCountersView(
+        counters: dummyUserProfile.counters,
+        onNavigateToUserSocial: {}
+    )
 }
 
 #Preview("Dark") {
-    ProfileCountersView(onNavigateToUserSocial: {})
+    ProfileCountersView(
+        counters: dummyUserProfile.counters,
+        onNavigateToUserSocial: {}
+    )
         .preferredColorScheme(.dark)
 }
 

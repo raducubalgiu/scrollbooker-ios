@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileActionsView: View {
+struct MyProfileActionsView: View {
     var onNavigateToEditProfile: () -> Void
     
     var body: some View {
@@ -42,10 +42,10 @@ struct ProfileActionsView: View {
                     .fill(Color.surfaceSB)
             )
         }
-        .padding(.vertical, .xs)
+        .padding(.horizontal)
     }
 }
 
 #Preview {
-    ProfileActionsView(onNavigateToEditProfile: {})
+    MyProfileActionsView(onNavigateToEditProfile: {})
 }

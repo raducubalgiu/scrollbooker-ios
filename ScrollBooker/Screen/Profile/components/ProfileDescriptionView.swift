@@ -13,7 +13,6 @@ struct ProfileDescriptionView: View {
     var body: some View {
         Text(description)
         .multilineTextAlignment(.center)
-        .padding(.vertical, .xs)
         .padding(.horizontal)
     }
 }

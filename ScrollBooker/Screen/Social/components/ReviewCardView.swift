@@ -28,7 +28,7 @@ struct ReviewCardView: View {
             Text(ReviewLabel.from(value: review.rating).text)
                 .font(.headline)
             
-            StartRatingView(rating: review.rating)
+            StarRatingView(rating: Double(review.rating))
             
             Text(review.review)
                 .font(.body)

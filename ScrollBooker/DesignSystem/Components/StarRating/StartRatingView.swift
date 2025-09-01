@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct StartRatingView: View {
-    let rating: Int
+struct StarRatingView: View {
+    let rating: Double
     private let max = 5
     
     var body: some View {
         HStack(spacing: 4) {
             ForEach(1...max, id: \.self) { i in
-                Image(systemName: i <= rating ? "star.fill" : "star")
+                Image(systemName: i <= Int(rating) ? "star.fill" : "star")
                     .imageScale(.medium)
             }
             .foregroundColor(.primarySB)
@@ -23,10 +23,10 @@ struct StartRatingView: View {
 }
 
 #Preview("Light") {
-    StartRatingView(rating: 3)
+    StarRatingView(rating: 3)
 }
 
 #Preview("Dark") {
-    StartRatingView(rating: 3)
+    StarRatingView(rating: 3)
     
 }

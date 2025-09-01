@@ -13,9 +13,9 @@ struct InboxTabRouter: View {
     var body: some View {
         NavigationStack(path: $router.inboxPath) {
             InboxScreen(
-                onNavigateToEmployment: {
-                    router.push(.employmentRequestRespond)
-                }
+//                onNavigateToEmployment: {
+//                    router.push(.employmentRequestRespond)
+//                }
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {

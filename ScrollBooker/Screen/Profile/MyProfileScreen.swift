@@ -14,6 +14,7 @@ struct MyProfileScreen: View {
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
     var onNavigateToUserSocial: () -> Void
+    var onNavigateToUserProfile: () -> Void
     
     var user = dummyUserProfile
     
@@ -21,7 +22,7 @@ struct MyProfileScreen: View {
         ProfileLayout(
             user: user,
             header: {
-                ProfileHeaderView(username: "@\(user.username)")
+                MyProfileHeaderView(username: "@\(user.username)")
                 .padding(.vertical)
                 .padding(.horizontal)
             },
@@ -29,7 +30,8 @@ struct MyProfileScreen: View {
                 MyProfileActionsView(
                     onNavigateToEditProfile: onNavigateToEditProfile
                 )
-            }
+            },
+            onNavigateToUserProfile: onNavigateToUserProfile
         )
     }
 }
@@ -39,7 +41,8 @@ struct MyProfileScreen: View {
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
         onNavigateToMyBusiness: {},
-        onNavigateToUserSocial: {}
+        onNavigateToUserSocial: {},
+        onNavigateToUserProfile: {}
     )
 }
 
@@ -48,7 +51,8 @@ struct MyProfileScreen: View {
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
         onNavigateToMyBusiness: {},
-        onNavigateToUserSocial: {}
+        onNavigateToUserSocial: {},
+        onNavigateToUserProfile: {}
     )
         .preferredColorScheme(.dark)
 }

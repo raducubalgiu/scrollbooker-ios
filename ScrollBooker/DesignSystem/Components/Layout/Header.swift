@@ -21,6 +21,7 @@ struct Header: View {
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 22.5))
+                            .fontWeight(.semibold)
                             .foregroundColor(.onBackgroundSB)
                     }
                 }

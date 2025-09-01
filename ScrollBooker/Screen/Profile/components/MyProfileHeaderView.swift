@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProfileHeaderView: View {
+struct MyProfileHeaderView: View {
     var username: String
     
     var body: some View {
@@ -37,13 +37,13 @@ struct ProfileHeaderView: View {
 }
 
 #Preview("Light") {
-    ProfileHeaderView(username: "@radu_balgiu")
+    MyProfileHeaderView(username: "@radu_balgiu")
     
     Spacer()
 }
 
 #Preview("Dark") {
-    ProfileHeaderView(username: "@radu_balgiu")
+    MyProfileHeaderView(username: "@radu_balgiu")
         .preferredColorScheme(.dark)
     
     Spacer()

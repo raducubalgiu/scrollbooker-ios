@@ -16,7 +16,8 @@ struct MyProfileTabRouter: View {
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
-                onNavigateToUserSocial: { router.push(.userSocial) }
+                onNavigateToUserSocial: { router.push(.userSocial) },
+                onNavigateToUserProfile: { router.push(.userProfile) }
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
@@ -128,10 +129,10 @@ struct MyProfileTabRouter: View {
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
                         
-                    case .myEmploymentRequests:
-                        EmploymentsScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+//                    case .myEmploymentRequests:
+//                        EmploymentsScreen()
+//                            .navigationBarHidden(true)
+//                            .toolbar(.hidden, for: .tabBar)
                     
                     case .employmentSelectEmployee:
                         EmploymentSelectEmployeeScreen()
@@ -153,6 +154,18 @@ struct MyProfileTabRouter: View {
                         SocialScreen()
                             .navigationBarHidden(true)
                             .toolbar(.hidden, for: .tabBar)
+                        
+                    case .userProfile:
+                        UserProfileScreen(
+                            onNavigateToEditProfile: { router.push(.editProfile) },
+                            onNavigateToSettings: { router.push(.mySettings) },
+                            onNavigateToMyBusiness: { router.push(.myBusiness) },
+                            onNavigateToUserSocial: { router.push(.userSocial) },
+                            onNavigateToUserProfile: { router.push(.userProfile) }
+                        )
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                            .ignoresSafeArea(.container, edges: .bottom)
                         
                     default: Text("This Route does not exist")
                     }

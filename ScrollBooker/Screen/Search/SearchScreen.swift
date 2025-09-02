@@ -9,6 +9,10 @@ import SwiftUI
 import MapKit
 
 struct SearchScreen: View {
+    var onNavigateToBusinessProfile: (Int) -> Void
+    
+    @State private var isPresented = true
+    
     @State private var position: MapCameraPosition = .region(
         MKCoordinateRegion(
             center: CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025),
@@ -17,6 +21,8 @@ struct SearchScreen: View {
     )
     
     let location = CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025)
+    
+    let people = ["Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack", "Chase", "John", "Jane", "Joe", "Jenny", "Jack"]
     
     var body: some View {
         VStack {
@@ -27,14 +33,54 @@ struct SearchScreen: View {
             .ignoresSafeArea()
         }
         .navigationBarHidden(true)
+        .sheet(isPresented: $isPresented) {
+            ScrollView {
+                LazyVStack {
+                    ForEach(Array(people.enumerated()), id: \.offset) { index, person in
+                        HStack {
+                            Text("\(person), \(index)")
+                            
+                            Spacer()
+                            
+                            Button {
+                                print("Pressed!!!")
+                                isPresented = false
+                                onNavigateToBusinessProfile(1)
+                            } label: {
+                                Text("Business")
+                            }
+                            .padding(.vertical)
+                        }
+                        .padding(.horizontal)
+//                        .onTapGesture {
+//                            print("Pressed!!!")
+//                            onNavigateToBusinessProfile(1)
+//                        }
+                    }
+                }
+                .padding(.top, 8)
+                .padding(.bottom)
+            }
+            .padding(.top, .s)
+            .padding(.bottom)
+            //.interactiveDismissDisabled()
+            .presentationDetents([.medium, .large])
+            //.presentationContentInteraction(.scrolls)
+            .presentationDragIndicator(.visible)
+            .presentationCornerRadius(25)
+        }
     }
 }
 
 #Preview("Light") {
-    SearchScreen()
+    SearchScreen(
+        onNavigateToBusinessProfile: {_ in }
+    )
 }
 
 #Preview("Dark") {
-    SearchScreen()
+    SearchScreen(
+        onNavigateToBusinessProfile: {_ in }
+    )
         .preferredColorScheme(.dark)
 }

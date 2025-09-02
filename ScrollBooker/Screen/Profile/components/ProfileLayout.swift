@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileLayout<Header: View, Actions: View>: View {
     var user: UserProfile
+    var onNavigateToUserSocial: () -> Void
     
     @State private var showBottomSheet = false
     @State private var showOpeningHoursSheet = false
@@ -30,7 +31,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                 VStack(spacing: 15) {
                     ProfileCountersView(
                         counters: user.counters,
-                        onNavigateToUserSocial: {}
+                        onNavigateToUserSocial: onNavigateToUserSocial
                     )
                     .padding(.vertical, .xl)
 

@@ -21,6 +21,7 @@ struct MyProfileScreen: View {
     var body: some View {
         ProfileLayout(
             user: user,
+            onNavigateToUserSocial: onNavigateToUserSocial,
             header: {
                 MyProfileHeaderView(username: "@\(user.username)")
                 .padding(.vertical)

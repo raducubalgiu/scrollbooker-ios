@@ -18,7 +18,7 @@ enum Route: Hashable {
     
     // Search
     case search
-    case businessProfile
+    case businessProfile(id: Int)
     
     // Appointments
     case appointments

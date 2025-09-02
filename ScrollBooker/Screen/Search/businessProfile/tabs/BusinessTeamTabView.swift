@@ -10,6 +10,11 @@ import SwiftUI
 struct BusinessTeamTabView: View {
     var body: some View {
         VStack(spacing: 12) {
+            Text("team")
+                .font(.title2.weight(.heavy))
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
             ForEach(0..<6, id: \.self) { i in
                 HStack(spacing: 12) {
                     Circle().fill(Color.gray.opacity(0.3)).frame(width: 56, height: 56)

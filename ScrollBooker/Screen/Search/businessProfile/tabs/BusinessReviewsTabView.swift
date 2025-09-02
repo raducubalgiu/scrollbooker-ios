@@ -9,7 +9,25 @@ import SwiftUI
 
 struct BusinessReviewsTabView: View {
     var body: some View {
-        VStack(spacing: 0) {
+        VStack(alignment: .leading, spacing: 0) {
+            Text("reviews")
+                .font(.title2.weight(.heavy))
+                .padding()
+                .frame(maxWidth: .infinity, alignment: .leading)
+            
+            VStack(alignment: .leading, spacing: 10) {
+                StarRatingView(rating: 4.5)
+                
+                HStack {
+                    Text("4.5")
+                        .font(.headline.bold())
+                    Text("(1000)")
+                        .font(.headline.bold())
+                }
+            }
+            .padding(.leading)
+            .padding(.bottom)
+            
             ForEach(0..<12, id: \.self) { i in
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
@@ -25,12 +43,12 @@ struct BusinessReviewsTabView: View {
                 Divider()
             }
         }
-        .background(Color(.systemBackground))
     }
 }
 
 #Preview("Light") {
     BusinessReviewsTabView()
+        .padding(.top, 500)
 }
 
 #Preview("Dark") {

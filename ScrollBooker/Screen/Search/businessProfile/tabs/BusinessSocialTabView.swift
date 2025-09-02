@@ -10,13 +10,18 @@ import SwiftUI
 struct BusinessSocialTabView: View {
     var body: some View {
         VStack(alignment: .leading) {
-            Text("services")
+            Text("social")
                 .font(.title2.weight(.heavy))
-                .padding(.bottom)
+                .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-                .frame(maxWidth: .infinity, alignment: .leading)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(0...20, id: \.self) { index in
+                        
+                    }
+                }
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

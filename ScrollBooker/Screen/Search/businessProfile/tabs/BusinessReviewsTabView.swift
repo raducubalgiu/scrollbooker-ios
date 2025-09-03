@@ -28,21 +28,48 @@ struct BusinessReviewsTabView: View {
             .padding(.leading)
             .padding(.bottom)
             
-            ForEach(0..<12, id: \.self) { i in
+            ForEach(0..<5, id: \.self) { i in
                 VStack(alignment: .leading, spacing: 6) {
                     HStack {
-                        Circle().fill(Color.gray.opacity(0.3)).frame(width: 32, height: 32)
-                        Text("Client \(i+1)").font(.subheadline.weight(.semibold))
+                        HStack(spacing: 16) {
+                            AvatarView(size: .l)
+                            
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text("Raducu Balgiu")
+                                    .font(.headline)
+                                    .foregroundColor(.onBackgroundSB)
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
+                                
+                                Text("@radu_balgiu")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .lineLimit(1)
+                                    .truncationMode(.tail)
+                            }
+                        }
+                        
                         Spacer()
-                        HStack(spacing: 2) { ForEach(0..<5, id: \.self) { _ in Image(systemName: "star.fill") } }
-                            .font(.caption2)
+                        
+                        StarRatingView(rating: 4.5)
                     }
                     Text("Foarte mulțumit. Servicii excelente, recomand!").font(.body)
                 }
-                .padding(16)
+                .padding(.horizontal, .base)
+                .padding(.vertical, .xl)
+                
                 Divider()
             }
+            
+            MainButtonOutlined(
+                title: String(localized: "seeMore"),
+                fullWidth: true,
+                paddingV: 17.5,
+                onClick: {}
+            )
+            .padding()
         }
+        .padding(.top)
     }
 }
 

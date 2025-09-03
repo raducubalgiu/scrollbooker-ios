@@ -9,13 +9,6 @@ import SwiftUI
 
 // MARK: - Preference Keys (tracking scroll + secțiuni vizibile)
 
-private struct ScrollYKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = nextValue()
-    }
-}
-
 private struct SectionTopKey: PreferenceKey {
     static var defaultValue: [BusinessProfileSection: CGFloat] = [:]
     static func reduce(value: inout [BusinessProfileSection: CGFloat],
@@ -24,7 +17,10 @@ private struct SectionTopKey: PreferenceKey {
     }
 }
 
-// MARK: - Screen
+private struct CoverBottomKey: PreferenceKey {
+    static var defaultValue: CGFloat = .greatestFiniteMagnitude
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) { value = nextValue() }
+}
 
 struct BusinessProfileScreen: View {
     @Environment(\.dismiss) private var dismiss
@@ -36,29 +32,46 @@ struct BusinessProfileScreen: View {
     private let tabRowHeight: CGFloat = 48
 
     @State private var selected: BusinessProfileSection = .services
-    @State private var scrollY: CGFloat = 0 // offset pozitiv când urci
+    @State private var scrollY: CGFloat = 0
     @State private var tops: [BusinessProfileSection: CGFloat] = [:]
+    
+    @State private var coverBottomY: CGFloat = .greatestFiniteMagnitude
 
     var body: some View {
         ZStack(alignment: .top) {
-            // Header image cu parallax + fade
-            headerImage
-
-            // Conținut scrollabil cu tab row sticky
+            TopBar(showTitle: coverBottomY <= headerHeight)
+                .background(Color.backgroundSB
+                    .opacity(coverBottomY <= headerHeight + safeTopInset() ? 1 : 0)
+                )
+                
+                .zIndex(10)
+            
             ScrollViewReader { proxy in
                 ScrollView {
-                    // Măsurăm scroll-ul global
-                    GeometryReader { geo in
-                        Color.clear
-                            .preference(key: ScrollYKey.self,
-                                        value: -geo.frame(in: .named("SCROLL")).minY)
-                    }
-                    .frame(height: 0)
-
                     LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-                        // Spațiu egal cu înălțimea imaginii (imaginea stă în ZStack, nu în scroll)
-                        Color.clear
-                            .frame(height: imageHeight)
+                        AsyncImage(
+                            url: URL(string: "https://media.scrollbooker.ro/frizeria-figaro-location-1.avif")
+                        ) { img in
+                            img
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: imageHeight)
+                                .frame(maxWidth: .infinity)
+                                .clipped()
+                                .background(
+                                    GeometryReader { geo in
+                                        Color.clear
+                                            .preference(
+                                                key: CoverBottomKey.self,
+                                                value: geo.frame(in: .named("SCROLL")).maxY
+                                            )
+                                    }
+                                )
+                                
+                        } placeholder: {
+                            Color.gray.opacity(0.2)
+                                .frame(height: imageHeight)
+                        }
 
                         // Info business (titlu mare, rating, etc) – opțional
                         BusinessInfoView()
@@ -81,7 +94,6 @@ struct BusinessProfileScreen: View {
                             section(.about) {
                                 BusinessAboutTabView()
                             }
-                            Color.clear.frame(height: 16) // padding bottom
                         } header: {
                             BusinessProfileTabRow(
                                 selected: $selected,
@@ -92,88 +104,47 @@ struct BusinessProfileScreen: View {
                                     }
                                 }
                             )
+                            .frame(height: tabRowHeight)
+                            .background(Color.backgroundSB)
+                            .overlay(Divider(), alignment: .bottom)
+                            .zIndex(1)
                         }
                     }
                 }
                 .coordinateSpace(name: "SCROLL")
-                .onPreferenceChange(ScrollYKey.self) { scrollY = $0 }
+                .onPreferenceChange(CoverBottomKey.self) { coverBottomY = $0 }
                 .onPreferenceChange(SectionTopKey.self) { new in
                     tops = new
-                    // alegem secțiunea cea mai sus (>= 0) pentru select
                     if let best = new.sorted(by: { $0.value < $1.value })
                         .first(where: { $0.value >= 0 })?.key {
                         if best != selected { selected = best }
                     }
                 }
             }
-
-            // Top bar peste imagine – title apare doar când header-ul e colapsat
-            topBar
+            .ignoresSafeArea(edges: .top)
         }
-        .ignoresSafeArea(edges: .top)
     }
-
-    // MARK: - Subviews
-
-    private var collapseProgress: CGFloat {
-        // 0 -> la top; 1 -> după ce imaginea dispare
-        let denom = max(imageHeight - headerHeight, 1)
-        return min(max(scrollY / denom, 0), 1)
-    }
-
-    private var headerImage: some View {
-        let translate = -min(scrollY, imageHeight) // parallax în sus
-        let alpha = 1 - collapseProgress // fade out
-
-        return ZStack {
-            AsyncImage(url: URL(string: "https://media.scrollbooker.ro/frizeria-figaro-location-1.avif")) { img in
-                img
-                    .resizable()
-                    .scaledToFill()
-            } placeholder: {
-                Color.gray.opacity(0.2)
+    
+private struct TopBar: View {
+    var showTitle: Bool
+    
+    var body: some View {
+        HStack {
+            Button(action: {}) {
+                Image(systemName: "chevron.backward")
+                    .font(.title3.weight(.semibold))
+                    .padding(8)
+                    .background(.ultraThinMaterial)
+            }
+            Spacer()
+            Button(action: {}) {
+                Image(systemName: "square.and.arrow.up")
+                    .font(.title3.weight(.semibold))
+                    .padding(8)
+                    .background(.ultraThinMaterial)
             }
         }
-        .frame(height: imageHeight)
-        .frame(maxWidth: .infinity)
-        .clipped()
-        .opacity(alpha)
-        .offset(y: translate) // parallax
     }
-
-private var topBar: some View {
-    HStack {
-        Button {
-            dismiss()
-        } label: {
-            Image(systemName: "chevron.backward")
-                .font(.title3.weight(.semibold))
-                .padding(8)
-                .background(.ultraThinMaterial, in: Circle())
-        }
-
-        Spacer()
-
-        // Right action placeholder
-        Button { } label: {
-            Image(systemName: "square.and.arrow.up")
-                .font(.title3.weight(.semibold))
-                .padding(8)
-                .background(.ultraThinMaterial, in: Circle())
-        }
-    }
-    .padding(.horizontal, 16)
-    .padding(.top, safeTopInset())
-    .frame(height: headerHeight + safeTopInset(), alignment: .bottom)
-    .overlay(
-        Text("House Of Barbers")
-            .font(.system(size: 18, weight: .bold))
-            .opacity(collapseProgress) // apare când imaginea e colapsată
-    )
-    .background(
-        Color(.systemBackground)
-            .opacity(collapseProgress) // devine bar solid când scrollezi
-    )
 }
 
 // Helper pentru o secțiune cu tracking de „top” relativ la viewport
@@ -191,13 +162,12 @@ private func section<Content: View>(_ s: BusinessProfileSection,
             }
         )
     }
+}
 
-// MARK: - Utils
 private func safeTopInset() -> CGFloat {
     UIApplication.shared.connectedScenes
         .compactMap { ($0 as? UIWindowScene)?.keyWindow?.safeAreaInsets.top }
         .first ?? 0
-    }
 }
 
 #Preview("Light") {

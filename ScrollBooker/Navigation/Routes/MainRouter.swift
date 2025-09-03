@@ -45,6 +45,5 @@ struct MainRouter: View {
             case .profile: router.profilePath = .init()
             }
         }
-        .environment(\.symbolVariants, .none)
     }
 }

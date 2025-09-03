@@ -20,7 +20,117 @@ struct BusinessAboutTabView: View {
                 .font(.title2.weight(.heavy))
                 .padding(.vertical)
             
-            Text("Lu–Vi 09:00–20:00\nSâ 10:00–18:00\nDu închis")
+            HStack {
+                HStack {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 10, height: 10)
+                    Text("Luni")
+                        .font(.headline)
+                }
+                
+                Spacer()
+                
+                Text("09:00 - 18:00")
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity)
+            
+            HStack {
+                HStack {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 10, height: 10)
+                    Text("Marti")
+                        .font(.headline.weight(.heavy))
+                }
+                
+                Spacer()
+                
+                Text("09:00 - 18:00")
+                    .font(.headline.weight(.heavy))
+            }
+            .frame(maxWidth: .infinity)
+            
+            HStack {
+                HStack {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 10, height: 10)
+                    Text("Miercuri")
+                        .font(.headline)
+                }
+                
+                Spacer()
+                
+                Text("09:00 - 18:00")
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity)
+            
+            HStack {
+                HStack {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 10, height: 10)
+                    Text("Joi")
+                        .font(.headline)
+                }
+                
+                Spacer()
+                
+                Text("09:00 - 18:00")
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity)
+            
+            HStack {
+                HStack {
+                    Circle()
+                        .fill(Color.green)
+                        .frame(width: 10, height: 10)
+                    Text("Vineri")
+                        .font(.headline)
+                }
+                
+                Spacer()
+                
+                Text("09:00 - 18:00")
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity)
+            
+            HStack {
+                HStack {
+                    Circle()
+                        .fill(Color.gray)
+                        .frame(width: 10, height: 10)
+                    Text("Sambata")
+                        .font(.headline)
+                }
+                
+                Spacer()
+                
+                Text("Inchis")
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity)
+            
+            HStack {
+                HStack {
+                    Circle()
+                        .fill(Color.gray)
+                        .frame(width: 10, height: 10)
+                    Text("Duminica")
+                        .font(.headline)
+                }
+                
+                Spacer()
+                
+                Text("Inchis")
+                    .font(.headline)
+            }
+            .frame(maxWidth: .infinity)
             
             Text("address")
                 .font(.title2.weight(.heavy))

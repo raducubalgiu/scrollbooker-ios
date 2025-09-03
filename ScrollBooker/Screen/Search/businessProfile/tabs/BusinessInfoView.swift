@@ -30,17 +30,17 @@ struct BusinessInfoView: View {
                             onClick: {}
                         )
                     }
-                    Button(action: {}) {
-                        Text("follow")
-                            .fontWeight(.semibold)
-                            .foregroundColor(.onBackgroundSB)
-                            .padding(.vertical, 12.5)
-                            .frame(maxWidth: .infinity)
-                    }
-                    .overlay(
-                        Capsule()
-                            .stroke(.divider, lineWidth: 1)
-                    )
+//                    Button(action: {}) {
+//                        Text("follow")
+//                            .fontWeight(.semibold)
+//                            .foregroundColor(.onBackgroundSB)
+//                            .padding(.vertical, 12.5)
+//                            .frame(maxWidth: .infinity)
+//                    }
+//                    .overlay(
+//                        Capsule()
+//                            .stroke(.divider, lineWidth: 1)
+//                    )
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }

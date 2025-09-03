@@ -15,17 +15,22 @@ struct BusinessTeamTabView: View {
                 .padding()
                 .frame(maxWidth: .infinity, alignment: .leading)
             
-            ForEach(0..<6, id: \.self) { i in
-                HStack(spacing: 12) {
-                    Circle().fill(Color.gray.opacity(0.3)).frame(width: 56, height: 56)
-                    VStack(alignment: .leading) {
-                        Text("Stylist \(i+1)").font(.body.weight(.semibold))
-                        Text("Fade • Beard • Kids").foregroundStyle(.secondary)
+            ScrollView(.horizontal, showsIndicators: false) {
+                LazyHStack(spacing: 16) {
+                    ForEach(0...20, id: \.self) { index in
+                        VStack(spacing: 12) {
+                            AvatarView(size: .l)
+                            Text("Radu Balgiu")
+                                .font(.headline.bold())
+                            MainButtonOutlined(
+                                title: String(localized: "profile"),
+                                onClick: {}
+                            )
+                            .padding(.top, .s)
+                        }
                     }
-                    Spacer()
+                    .padding(.leading)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 8)
             }
         }
         .padding(.top, 8)

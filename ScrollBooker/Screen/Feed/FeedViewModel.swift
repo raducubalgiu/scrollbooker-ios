@@ -9,19 +9,19 @@ import SwiftUI
 import AVKit
 import Combine
 
-struct Video: Identifiable {
-    let id: String
-    let url: URL
-}
-
 class FeedViewModel: ObservableObject {
-    @Published var players: [String: AVPlayer] = [:]
+    @Published var players: [Int: AVPlayer] = [:]
     
     private var cancellables = Set<AnyCancellable>()
     
-    func prepare(videos: [Video]) {
-        for v in videos where players[v.id] == nil {
-            let item = AVPlayerItem(url: v.url)
+    func prepare(posts: [Post]) {
+        for post in posts where players[post.id] == nil {
+            guard let media = post.mediaFiles.first,
+                  let url = URL(string: media.url) else {
+                continue
+            }
+            
+            let item = AVPlayerItem(url: url)
             let p = AVPlayer(playerItem: item)
             p.actionAtItemEnd = .none
             
@@ -31,15 +31,15 @@ class FeedViewModel: ObservableObject {
                     p?.play()
                 }
                 .store(in: &cancellables)
-            players[v.id] = p
+            players[post.id] = p
         }
     }
     
-    func play(index: Int, in videos: [Video]) {
-        guard videos.indices.contains(index) else { return }
+    func play(index: Int, in posts: [Post]) {
+        guard posts.indices.contains(index) else { return }
         pauseAll()
-        let v = videos[index]
-        players[v.id]?.play()
+        let post = posts[index]
+        players[post.id]?.play()
     }
     
     func pauseAll() {

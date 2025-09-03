@@ -41,7 +41,6 @@ struct BusinessProfileTabRow: View {
                 }
             }
             .padding(.horizontal, 16)
-            .background(Color.backgroundSB)
         }
     }
 }

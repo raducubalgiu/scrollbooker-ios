@@ -8,14 +8,16 @@
 import SwiftUI
 
 struct PostOverlayView: View {
+    var post: Post
+    
     var body: some View {
         HStack(alignment: .bottom) {
             VStack(alignment: .leading) {
-                Text("Salsa Factory")
+                Text(post.user.fullName)
                     .font(.title3.bold())
                     .foregroundColor(.white)
                 HStack {
-                    Text("Scoala de dans")
+                    Text(post.user.profession ?? "")
                         .foregroundColor(.primarySB)
                     Image(systemName: "location")
                         .foregroundColor(.white)
@@ -28,27 +30,31 @@ struct PostOverlayView: View {
                     .background(.white)
                     .padding(.bottom, .s)
                 
-                HStack {
-                    VStack(alignment: .leading) {
-                        Text("Tuns Special")
-                            .font(.headline.bold())
-                            .foregroundColor(.white)
+                if let product = post.product {
+                    HStack {
+                        VStack(alignment: .leading) {
+                            Text(product.name)
+                                .font(.headline.bold())
+                                .foregroundColor(.white)
+                            
+                            Text("\(product.priceWithDiscount) \(product.currency.name)")
+                                .font(.headline.bold())
+                                .foregroundColor(.white)
+                        }
                         
-                        Text("200 RON")
-                            .font(.headline.bold())
+                        Spacer()
+                        
+                        Image(systemName: "square.and.arrow.up")
                             .foregroundColor(.white)
                     }
-                    
-                    Spacer()
-                    
-                    Image(systemName: "square.and.arrow.up")
-                        .foregroundColor(.white)
+                    .frame(maxWidth: .infinity)
                 }
-                .frame(maxWidth: .infinity)
                 
-                Text("Lorem Ipsum is simply dummy text of...")
-                    .foregroundColor(.white)
-                    .padding(.top, .s)
+                if let description = post.description {
+                    Text(description)
+                        .foregroundColor(.white)
+                        .padding(.top, .s)
+                }
                 
                 MainButton(
                     title: "Intervale disponibile",
@@ -59,7 +65,7 @@ struct PostOverlayView: View {
             
             VStack(alignment: .center, spacing: 20) {
                 AvatarView(
-                    imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
+                    imageURL: post.user.avatarURL,
                     size: .l
                 )
                 
@@ -67,7 +73,7 @@ struct PostOverlayView: View {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 35))
                         .foregroundColor(.white)
-                    Text("100")
+                    Text("\(post.counters.likeCount)")
                         .font(.headline.bold())
                         .foregroundColor(.white)
                 }
@@ -76,7 +82,7 @@ struct PostOverlayView: View {
                     Image(systemName: "ellipsis.message.fill")
                         .foregroundColor(.white)
                         .font(.system(size: 35))
-                    Text("50")
+                    Text("\(post.counters.commentCount)")
                         .font(.headline.bold())
                         .foregroundColor(.white)
                 }
@@ -85,7 +91,7 @@ struct PostOverlayView: View {
                     Image(systemName: "bookmark.fill")
                         .font(.system(size: 35))
                         .foregroundColor(.white)
-                    Text("100")
+                    Text("\(post.counters.bookmarkCount)")
                         .font(.headline.bold())
                         .foregroundColor(.white)
                 }
@@ -94,7 +100,7 @@ struct PostOverlayView: View {
                     Image(systemName: "paperplane.fill")
                         .font(.system(size: 35))
                         .foregroundColor(.white)
-                    Text("100")
+                    Text("\(post.counters.shareCount)")
                         .font(.headline.bold())
                         .foregroundColor(.white)
                 }
@@ -107,6 +113,8 @@ struct PostOverlayView: View {
 }
 
 #Preview("Post Overlay") {
-    PostOverlayView()
+    PostOverlayView(
+        post: dummyBookNowPosts[0]
+    )
         .preferredColorScheme(.dark)
 }

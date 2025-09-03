@@ -8,17 +8,13 @@
 import SwiftUI
 
 struct FeedScreen: View {
+    @EnvironmentObject var router: Router
     @StateObject private var viewModel = FeedViewModel()
     
     @Environment(\.scenePhase) private var scenePhase
     var onNavigateToFeedSearch: () -> Void
     
-    private let videos: [Video] = [
-        Video(id: "1", url: URL(string: "https://media.scrollbooker.ro/video-post-6.mp4")!),
-        Video(id: "2", url: URL(string: "https://media.scrollbooker.ro/frizerie-2.mov")!),
-        Video(id: "3", url: URL(string: "https://media.scrollbooker.ro/frizerie-7.mp4")!),
-        Video(id: "4", url: URL(string: "https://media.scrollbooker.ro/frizerie-8.mp4")!)
-    ]
+    let posts = dummyBookNowPosts
     
     @State private var currentIndex: Int? = 0
     
@@ -26,16 +22,16 @@ struct FeedScreen: View {
         ZStack(alignment: .top) {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
-                    ForEach(Array(videos.enumerated()), id: \.offset) { index, video in
+                    ForEach(Array(posts.enumerated()), id: \.element.id) { index, post in
                         ZStack {
-                            if let player = viewModel.players[video.id] {
-                                PlayerView(player: player).ignoresSafeArea()
+                            if let player = viewModel.players[post.id] {
+                                PlayerView(player: player)
                                 
                             } else {
                                 Color.black
                             }
                             
-                            PostOverlayView()
+                            PostOverlayView(post: post)
                         }
                         .id(index)
                         .containerRelativeFrame(.vertical)
@@ -49,15 +45,15 @@ struct FeedScreen: View {
             .ignoresSafeArea()
         }
         .onAppear {
-            viewModel.prepare(videos: videos)
-            viewModel.play(index: currentIndex ?? 0, in: videos)
+            viewModel.prepare(posts: posts)
+            viewModel.play(index: currentIndex ?? 0, in: posts)
         }
         .onChange(of: currentIndex) { _, newIndex in
-           viewModel.play(index: newIndex ?? 0, in: videos)
+           viewModel.play(index: newIndex ?? 0, in: posts)
         }
         .onChange(of: scenePhase) { _, phase in
             if phase != .active { viewModel.pauseAll() }
-            else { viewModel.play(index: currentIndex ?? 0, in: videos) }
+            else { viewModel.play(index: currentIndex ?? 0, in: posts) }
         }
         .onDisappear { viewModel.pauseAll() }
         .background(Color.backgroundSB)

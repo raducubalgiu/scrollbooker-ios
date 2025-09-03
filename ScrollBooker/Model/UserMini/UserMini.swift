@@ -16,7 +16,16 @@ struct UserMini: Identifiable, Codable, Hashable {
     let isFollow: Bool
     let profession: String?
     let ratingsAverage: Double?
-    let isBusinessOrEmployee: Bool?
+    let isBusinessOrEmployee: Bool
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:))}
+}
+
+extension UserMini {
+    var usernameOrProfession: String {
+        if !isBusinessOrEmployee {
+            return "@\(username)"
+        }
+        return profession ?? "@\(username)"
+    }
 }

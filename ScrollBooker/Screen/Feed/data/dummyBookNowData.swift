@@ -68,7 +68,16 @@ let dummyBookNowPosts: [Post] = [
             ratingsAverage: 4.5,
             isBusinessOrEmployee: true
         ),
-        product: nil,
+        product: PostProduct(
+            id: 1,
+            name: "Cursuri de dans",
+            description: "",
+            duration: 60,
+            price: 100,
+            priceWithDiscount: 50,
+            discount: 50,
+            currency: PostProductCurrency(id: 1, name: "RON")
+        ),
         userAction: UserPostActions(
             isLiked: true,
             isBookmarked: true,

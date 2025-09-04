@@ -16,6 +16,7 @@ struct ScrollBookerApp: App {
         WindowGroup {
             AppTheme(mode: theme.mode) {
                 RootRouter()
+                    .environmentObject(AppState.shared)
             }
             .environmentObject(app)
             .environmentObject(theme)

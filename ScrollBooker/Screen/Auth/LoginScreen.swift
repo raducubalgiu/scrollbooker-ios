@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct LoginScreen: View {
-    @State private var email: String = ""
+    @EnvironmentObject private var session: SessionManager
+    @State private var username: String = ""
     @State private var password: String = ""
     
     var body: some View {
@@ -18,22 +19,29 @@ struct LoginScreen: View {
             enableBottomButton: false,
         ) {
             Input(
-                label: "Email",
-                text: $email,
-                placeholder: "Email",
-                keyboardType: .emailAddress,
+                label: "Username",
+                text: $username,
+                placeholder: "Username",
             )
             
             Input(
                 label: "Parola",
                 text: $password,
                 placeholder: "Parola",
-                keyboardType: .emailAddress,
+                //keyboardType: .password,
             )
             
             MainButton(
                 title: "Logare",
-                onClick: {  }
+                onClick: {
+                    Task {
+                        await session.login(
+                            username: username,
+                            password: password
+                        )
+                    }
+                },
+                isDisabled: session.isLoading
             )
             
             HStack {

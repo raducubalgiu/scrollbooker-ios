@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct MyProfileScreen: View {
+    @EnvironmentObject private var session: SessionManager
     @State private var measuredHeight: CGFloat = 0
     
     var onNavigateToEditProfile: () -> Void
@@ -34,6 +35,12 @@ struct MyProfileScreen: View {
             },
             onNavigateToUserProfile: onNavigateToUserProfile
         )
+        
+        Button {
+            session.logout()
+        } label: {
+            Text("Logout")
+        }
     }
 }
 

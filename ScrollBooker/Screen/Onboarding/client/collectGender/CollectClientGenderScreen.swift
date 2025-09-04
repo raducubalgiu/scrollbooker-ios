@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CollectUserGenderScreen: View {
+struct CollectClientGenderScreen: View {
     var body: some View {
         FormLayout(
             headline: "Alege genul tau",
@@ -20,10 +20,10 @@ struct CollectUserGenderScreen: View {
 }
 
 #Preview("Light") {
-    CollectUserGenderScreen()
+    CollectClientGenderScreen()
 }
 
 #Preview("Dark") {
-    CollectUserGenderScreen()
+    CollectClientGenderScreen()
         .preferredColorScheme(.dark)
 }

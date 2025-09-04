@@ -26,8 +26,8 @@ private var settingsItems = [
 ]
 
 struct SettingsScreen: View {
-    var onNavigate: (Route) -> Void
     @Environment(\.dismiss) private var dismiss
+    var onNavigate: (Route) -> Void
     
     var body: some View {
         NavigationView {

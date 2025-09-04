@@ -12,24 +12,38 @@ struct RootRouter: View {
     @StateObject private var session = SessionManager()
     
     var body: some View {
-        Group {
-            switch app.startDestination {
-            case .splash:
-                SplashView().task {
-                    await session.bootstrap()
+        rootContent
+            .environmentObject(session)
+    }
+    
+    @ViewBuilder
+    private var rootContent: some View {
+        if !app.isInitialized {
+            SplashView()
+                .task { await session.bootstrap() }
+        } else if !app.isAuthenticated {
+            AuthRouter(startStep: nil)
+        } else {
+            if let info = session.userInfo {
+                if info.isValidated {
+                    MainRouter()
+                } else {
+                    AuthRouter(startStep: info.registrationStep)
                 }
-            case .auth:
-                MainRouter()
-            case .main:
-                MainRouter()
+            } else {
+                SplashView()
+                    .task { await session.bootstrap() }
             }
         }
-        .environmentObject(session)
     }
 }
 
 struct SplashView: View {
     var body: some View {
-        ZStack { Color.black.ignoresSafeArea(); ProgressView().tint(.white) }
+        ZStack {
+            Color.black.ignoresSafeArea();
+            
+            ProgressView().tint(.white)
+        }
     }
 }

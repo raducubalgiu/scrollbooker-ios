@@ -8,9 +8,93 @@
 import SwiftUI
 
 struct AuthRouter: View {
+    @EnvironmentObject private var session: SessionManager
+    let startStep: RegistrationStepEnum?
+    
+    @State private var path: [AuthRoute] = []
+    
+    private var startDestination: AuthRoute {
+        if let step = startStep {
+            return AuthRoute(step: step)
+        } else {
+            return .login
+        }
+    }
+    
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $path) {
+            startView
+                .navigationDestination(for: AuthRoute.self) { route in
+                    screen(for: route)
+                }
+                .onAppear {
+                    if startStep != nil && path.isEmpty {
+                        path = [startDestination]
+                    }
+                }
+        }
+    }
+    
+    @ViewBuilder
+    private var startView: some View {
+        switch startDestination {
+        case .login:
             LoginScreen()
+        default:
+            screen(for: startDestination)
+        }
+    }
+        
+    @ViewBuilder
+    private func screen(for route: AuthRoute) -> some View {
+        switch route {
+        case .login:
+            LoginScreen()
+            
+        case .registerClient:
+            RegisterScreen()
+            
+        case .registerBusiness:
+            RegisterBusinessScreen()
+            
+        case .collectEmailValidation:
+            CollectEmailVerification()
+            
+        case .collectUserUsername:
+            CollectUserUsernameScreen()
+            
+        case .collectClientBirthdate:
+            CollectClientBirthdateScreen()
+            
+        case .collectClientGender:
+            CollectClientGenderScreen()
+            
+        case .collectClientLocationPermission:
+            CollectUserLocationPermissionScreen()
+            
+        case .collectBusiness:
+            CollectBusinessTypeScreen()
+
+        case .collectBusinessDetails:
+            CollectBusinessDetailsScreen()
+            
+        case .collectBusinessLocation:
+            CollectBusinessAdressScreen()
+            
+        case .collectBusinessGallery:
+            CollectBusinessGalleryScreen()
+            
+        case .collectBusinessServices:
+            CollectBusinessServicesScreen()
+            
+        case .collectBusinessSchedules:
+            CollectBusinessSchedulesScreen()
+            
+        case .collectBusinessHasEmployees:
+            CollectBusinessHasEmployeesScreen()
+            
+        case .collectBusinessValidation:
+            CollectBusinessValidationScreen()
         }
     }
 }

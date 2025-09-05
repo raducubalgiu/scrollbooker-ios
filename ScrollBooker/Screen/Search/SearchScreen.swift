@@ -43,7 +43,6 @@ struct SearchScreen: View {
                             Spacer()
                             
                             Button {
-                                print("Pressed!!!")
                                 isPresented = false
                                 onNavigateToBusinessProfile(1)
                             } label: {

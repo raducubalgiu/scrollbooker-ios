@@ -12,11 +12,17 @@ struct Notification: Identifiable, Equatable, Hashable {
     let type: NotificationType
     let senderId: Int
     let receiverId: Int
-    let data: [String: JSONValue]?
     let message: String?
     let isRead: Bool
     let isDeleted: Bool
-    let sender: UserMini
+    let sender: NotificationSender
+}
+
+struct NotificationSender: Codable, Equatable, Hashable {
+    let id: Int
+    let fullName: String
+    let username: String
+    let avatar: String?
 }
 
 enum NotificationType: String, Equatable, Hashable, Sendable {
@@ -43,13 +49,4 @@ extension NotificationType {
             return ""
         }
     }
-}
-
-enum JSONValue: Equatable, Hashable, Sendable {
-    case string(String)
-    case number(Double)
-    case bool(Bool)
-    case object([String: JSONValue])
-    case array([JSONValue])
-    case null
 }

@@ -12,6 +12,15 @@ struct LoginScreen: View {
     @State private var username: String = ""
     @State private var password: String = ""
     
+    func handleLogin() {
+        Task {
+            await session.login(
+                username: username,
+                password: password
+            )
+        }
+    }
+    
     var body: some View {
         FormLayout(
             headline: String(localized: "login"),
@@ -19,38 +28,30 @@ struct LoginScreen: View {
             enableBottomButton: false,
         ) {
             Input(
-                label: "Username",
+                label: String(localized: "username"),
                 text: $username,
                 placeholder: "Username",
             )
             
             Input(
-                label: "Parola",
+                label: String(localized: "password"),
                 text: $password,
-                placeholder: "Parola",
-                //keyboardType: .password,
+                placeholder: String(localized: "password"),
             )
             
             MainButton(
-                title: "Logare",
-                onClick: {
-                    Task {
-                        await session.login(
-                            username: username,
-                            password: password
-                        )
-                    }
-                },
-                isDisabled: session.isLoading
+                title: String(localized: "login"),
+                onClick: handleLogin,
+                isDisabled: session.isLoading,
+                isLoading: session.isLoading
             )
             
             HStack {
                 Text("dontHaveAnAccount")
-                NavigationLink(
-                    "register"
-                ) {
+                NavigationLink("register") {
                     RegisterScreen()
                 }
+                .foregroundColor(.primarySB)
                 .fontWeight(.bold)
             }
             
@@ -73,9 +74,11 @@ struct LoginScreen: View {
 
 #Preview("Light") {
     LoginScreen()
+        .environmentObject(SessionManager())
 }
 
 #Preview("Dark") {
     LoginScreen()
+        .environmentObject(SessionManager())
         .preferredColorScheme(.dark)
 }

@@ -34,28 +34,27 @@ struct NotificationItemView: View {
                 Spacer()
                 
                 MainButtonMini(
-                    title: notification.type.rawValue != "employment_request" ? "Urmareste" : "Vezi mai mult",
+                    title: notification.type.rawValue != "employment_request" ? "Urmareste" : String(localized: "seeMore"),
                     backgroundColor: notification.type.rawValue != "employment_request" ? .primarySB : .errorSB,
                     onClick: onNavigateToEmployment
                 )
             }
         }
         .contentShape(Rectangle())
-        .padding(.horizontal, .base)
         .padding(.vertical, 10)
     }
 }
 
-#Preview("Light") {
-    NotificationItemView(
-        notification: dummyNotifications[0],
-        onNavigateToEmployment: {}
-    )
-}
-
-#Preview("Dark") {
-    NotificationItemView(
-        notification: dummyNotifications[0],
-        onNavigateToEmployment: {}
-    )
-}
+//#Preview("Light") {
+//    NotificationItemView(
+//        notification: dummyNotifications[0],
+//        onNavigateToEmployment: {}
+//    )
+//}
+//
+//#Preview("Dark") {
+//    NotificationItemView(
+//        notification: dummyNotifications[0],
+//        onNavigateToEmployment: {}
+//    )
+//}

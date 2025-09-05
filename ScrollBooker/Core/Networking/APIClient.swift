@@ -29,10 +29,6 @@ final class APIClient {
         self.session = session
         self.decoder = decoder
         self.encoder = encoder
-        
-        // daca BE-ul trimite snake_case
-        // self.decoder.keyDecodingStrategy = .convertFromSnakeCase
-        // self.encoder.keyEncodingStrategy = .convertToSnakeCase
     }
     
     // MARK: Request cu body (generic)
@@ -41,18 +37,27 @@ final class APIClient {
         method: HTTPMethod = .get,
         headers: [String:String] = [:],
         bearer: String? = nil,
+        query: [String:String]? = nil,
         body: B? = nil
     ) async throws -> T {
-        var url = config.baseURL
-        url.appendPathComponent(path)
+        var components = URLComponents(
+            url: config.baseURL.appendingPathComponent(path),
+            resolvingAgainstBaseURL: false
+        )
+        if let query {
+            components?.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+        }
+        guard let url = components?.url else { throw APIError.invalidURL }
         
+
         var req = URLRequest(url: url)
         req.httpMethod = method.rawValue
         
         // headers
         (config.defaultHeaders.merging(headers, uniquingKeysWith: { _, new in new } ))
             .forEach { req.setValue($1, forHTTPHeaderField: $0) }
-        if let bearer {
+        
+        if let bearer, !bearer.isEmpty {
             req.setValue("Bearer \(bearer)", forHTTPHeaderField: "Authorization")
         }
         
@@ -61,20 +66,15 @@ final class APIClient {
             req.setValue("application/json", forHTTPHeaderField: "Content-Type")
         }
         
+        // Log Request
+        NetworkLogger.request(req, body: req.httpBody)
+        
         let (data, resp) = try await session.data(for: req)
         
-        #if DEBUG
-        if let http = resp as? HTTPURLResponse {
-            print("[\(http.statusCode)] \(req.url?.absoluteString ?? "")")
-            if let raw = String(data: data, encoding: .utf8) {
-                print("Response body: \n\(raw)")
-            } else {
-                print("Response body: <binary \(data.count) bytes>")
-            }
-        }
-        #endif
-        
         guard let http = resp as? HTTPURLResponse else { throw APIError.invalidResponse }
+        
+        // Log Response
+        NetworkLogger.response(http, data: data)
         
         switch http.statusCode {
             case 200..<300:
@@ -92,13 +92,15 @@ final class APIClient {
         _ path: String,
         method: HTTPMethod = .get,
         headers: [String:String] = [:],
-        bearer: String? = nil
+        bearer: String? = nil,
+        query: [String:String]? = nil
     ) async throws -> T {
         try await request(
             path,
             method: method,
             headers: headers,
             bearer: bearer,
+            query: query,
             body: Optional<Empty>.none
         )
     }
@@ -144,16 +146,16 @@ final class APIClient {
         
         let (data, resp) = try await session.data(for: req)
         
-        #if DEBUG
-        if let http = resp as? HTTPURLResponse {
-            print("[\(http.statusCode)] \(req.url?.absoluteString ?? "")")
-            if let raw = String(data: data, encoding: .utf8) {
-                print("Response body: \n\(raw)")
-            } else {
-                print("Response body: <binary \(data.count) bytes>")
-            }
-        }
-        #endif
+//        #if DEBUG
+//        if let http = resp as? HTTPURLResponse {
+//            print("[\(http.statusCode)] \(req.url?.absoluteString ?? "")")
+//            if let raw = String(data: data, encoding: .utf8) {
+//                print("Response body: \n\(raw)")
+//            } else {
+//                print("Response body: <binary \(data.count) bytes>")
+//            }
+//        }
+//        #endif
         
         guard let http = resp as? HTTPURLResponse else { throw APIError.invalidResponse }
         

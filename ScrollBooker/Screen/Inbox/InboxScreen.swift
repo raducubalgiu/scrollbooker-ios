@@ -7,40 +7,70 @@
 
 import SwiftUI
 
-//enum ProfileTab2: CaseIterable {
-//case posts, reviews
-//
-//var title: String {
-//    switch self {
-//        case .posts: "Postări"
-//        case .reviews: "Recenzii"
-//        }
-//    }
-//}
-
 struct InboxScreen: View {
-    @State private var selectedTab: ProfileTab = .posts
-    var user = dummyUserProfile
-    @Namespace private var ns
+    @EnvironmentObject private var session: SessionManager
+    @StateObject private var viewModel: InboxViewModel
+    
+    init(viewModel: InboxViewModel) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+    }
 
     var body: some View {
         VStack(spacing: 0) {
-             //HEADER FIX
-            //MyProfileHeaderView(username: "radu")
-            
             Header(
                 title: String(localized: "inbox"),
                 enableBack: false
             )
             
-            ScrollView {
-                ForEach(dummyNotifications) { notification in
+            List {
+                ForEach(viewModel.notifications) { notification in
                     NotificationItemView(
                         notification: notification,
                         onNavigateToEmployment: {}
                     )
+                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                        Button(role: .destructive) {
+                            
+                        } label: {
+                            Label("delete", systemImage: "trash")
+                        }
+                        .tint(Color.errorSB)
+                    }
+                    .onAppear {
+                        Task {
+                            await viewModel.loadMoreIfNeeded(currentNotification: notification) }
+                    }
+                }
+                
+                if viewModel.isLoading && !viewModel.isRefreshing {
+                    ProgressView().padding(.vertical, 16)
                 }
             }
+            .listStyle(.plain)
+            .refreshable {
+                await viewModel.refresh()
+            }
+            .task { await viewModel.initialLoadIfNeeded() }
+            
+            if viewModel.isInitialLoading {
+                ProgressView()
+                    .scaleEffect(1.2)
+            }
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
+            
             
             // SCROLL CU TAB BAR STICKY
 //            ScrollView(.vertical, showsIndicators: false) {
@@ -140,115 +170,115 @@ struct InboxScreen: View {
     }
 }
 
-struct TabBar: View {
-@Binding var selected: ProfileTab
-@Namespace private var ns
+//struct TabBar: View {
+//@Binding var selected: ProfileTab
+//@Namespace private var ns
+//
+//var body: some View {
+//    HStack(spacing: 0) {
+//        ForEach(ProfileTab.allCases, id: \.self) { tab in
+//            Button {
+//                withAnimation(.easeInOut) {
+//                    selected = tab
+//                }
+//            } label: {
+//                VStack(spacing: 6) {
+////                    Text(tab.rawValue)
+////                        .font(.headline)
+//                    Image(systemName: tab.systemImage)
+//                    ZStack {
+//                        Rectangle()
+//                            .frame(height: 2)
+//                            .opacity(0)
+//                        if selected == tab {
+//                            Rectangle()
+//                                .frame(height: 2)
+//                                .matchedGeometryEffect(id: "underline", in: ns)
+//                        }
+//                    }
+//                }
+//                .frame(maxWidth: .infinity)
+//            }
+//            .buttonStyle(.plain)
+//        }
+//    }
+//    .padding(.vertical, 10)
+//    .padding(.horizontal)
+//    }
+//}
+//
+//struct TabContent: View {
+//    let selectedTab: ProfileTab
+//
+//    var body: some View {
+//        switch selectedTab {
+//        case .posts:
+//            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
+//                ForEach(0..<50, id: \.self) { index in
+//                    Rectangle()
+//                        .fill(Color.blue.opacity(0.5))
+//                        .aspectRatio(1, contentMode: .fit)
+//                        .overlay(Text("\(index)").foregroundColor(.white))
+//                }
+//            }
+//
+//        case .products:
+//            LazyVStack(spacing: 12) {
+//                ForEach(0..<20, id: \.self) { index in
+//                    Text("Review \(index)")
+//                        .frame(maxWidth: .infinity, minHeight: 60)
+//                        .background(Color.green.opacity(0.2))
+//                        .cornerRadius(8)
+//                        .padding(.horizontal)
+//                }
+//            }
+//            .padding(.top, 10)
+//        case .reposts:
+//            LazyVStack(spacing: 12) {
+//                ForEach(0..<20, id: \.self) { index in
+//                    Text("Review \(index)")
+//                        .frame(maxWidth: .infinity, minHeight: 60)
+//                        .background(Color.green.opacity(0.2))
+//                        .cornerRadius(8)
+//                        .padding(.horizontal)
+//                }
+//            }
+//            .padding(.top, 10)
+//        case .bookmarks:
+//            LazyVStack(spacing: 12) {
+//                ForEach(0..<20, id: \.self) { index in
+//                    Text("Review \(index)")
+//                        .frame(maxWidth: .infinity, minHeight: 60)
+//                        .background(Color.green.opacity(0.2))
+//                        .cornerRadius(8)
+//                        .padding(.horizontal)
+//                }
+//            }
+//            .padding(.top, 10)
+//        case .info:
+//            LazyVStack(spacing: 12) {
+//                ForEach(0..<20, id: \.self) { index in
+//                    Text("Review \(index)")
+//                        .frame(maxWidth: .infinity, minHeight: 60)
+//                        .background(Color.green.opacity(0.2))
+//                        .cornerRadius(8)
+//                        .padding(.horizontal)
+//                }
+//            }
+//            .padding(.top, 10)
+//        }
+//    }
+//}
 
-var body: some View {
-    HStack(spacing: 0) {
-        ForEach(ProfileTab.allCases, id: \.self) { tab in
-            Button {
-                withAnimation(.easeInOut) {
-                    selected = tab
-                }
-            } label: {
-                VStack(spacing: 6) {
-//                    Text(tab.rawValue)
-//                        .font(.headline)
-                    Image(systemName: tab.systemImage)
-                    ZStack {
-                        Rectangle()
-                            .frame(height: 2)
-                            .opacity(0)
-                        if selected == tab {
-                            Rectangle()
-                                .frame(height: 2)
-                                .matchedGeometryEffect(id: "underline", in: ns)
-                        }
-                    }
-                }
-                .frame(maxWidth: .infinity)
-            }
-            .buttonStyle(.plain)
-        }
-    }
-    .padding(.vertical, 10)
-    .padding(.horizontal)
-    }
-}
-
-struct TabContent: View {
-    let selectedTab: ProfileTab
-
-    var body: some View {
-        switch selectedTab {
-        case .posts:
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible()), GridItem(.flexible())], spacing: 2) {
-                ForEach(0..<50, id: \.self) { index in
-                    Rectangle()
-                        .fill(Color.blue.opacity(0.5))
-                        .aspectRatio(1, contentMode: .fit)
-                        .overlay(Text("\(index)").foregroundColor(.white))
-                }
-            }
-
-        case .products:
-            LazyVStack(spacing: 12) {
-                ForEach(0..<20, id: \.self) { index in
-                    Text("Review \(index)")
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                        .background(Color.green.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                }
-            }
-            .padding(.top, 10)
-        case .reposts:
-            LazyVStack(spacing: 12) {
-                ForEach(0..<20, id: \.self) { index in
-                    Text("Review \(index)")
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                        .background(Color.green.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                }
-            }
-            .padding(.top, 10)
-        case .bookmarks:
-            LazyVStack(spacing: 12) {
-                ForEach(0..<20, id: \.self) { index in
-                    Text("Review \(index)")
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                        .background(Color.green.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                }
-            }
-            .padding(.top, 10)
-        case .info:
-            LazyVStack(spacing: 12) {
-                ForEach(0..<20, id: \.self) { index in
-                    Text("Review \(index)")
-                        .frame(maxWidth: .infinity, minHeight: 60)
-                        .background(Color.green.opacity(0.2))
-                        .cornerRadius(8)
-                        .padding(.horizontal)
-                }
-            }
-            .padding(.top, 10)
-        }
-    }
-}
-
-#Preview("Light") {
-    InboxScreen(
-        //onNavigateToEmployment: {}
-    )
-}
-
-#Preview("Dark") {
-    InboxScreen(
-        //onNavigateToEmployment: {}
-    )
-        .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    InboxScreen(
+//        //onNavigateToEmployment: {}
+//    )
+//}
+//
+//#Preview("Dark") {
+//    InboxScreen(
+//        //onNavigateToEmployment: {}
+//    )
+//        .preferredColorScheme(.dark)
+//}

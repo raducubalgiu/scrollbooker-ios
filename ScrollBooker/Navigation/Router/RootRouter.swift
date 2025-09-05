@@ -20,20 +20,19 @@ struct RootRouter: View {
     private var rootContent: some View {
         if !app.isInitialized {
             SplashView()
-                .task { await session.bootstrap() }
+                .task {
+                    await session.bootstrap()
+                }
         } else if !app.isAuthenticated {
             AuthRouter(startStep: nil)
-        } else {
-            if let info = session.userInfo {
-                if info.isValidated {
-                    MainRouter()
-                } else {
-                    AuthRouter(startStep: info.registrationStep)
-                }
+        } else if let info = session.userInfo {
+            if info.isValidated {
+                MainRouter()
             } else {
-                SplashView()
-                    .task { await session.bootstrap() }
+                AuthRouter(startStep: info.registrationStep)
             }
+        } else {
+            SplashView()
         }
     }
 }

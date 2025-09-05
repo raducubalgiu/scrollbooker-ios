@@ -76,8 +76,6 @@ final class SessionManager: ObservableObject {
             // 1) Login
             let login = try await authAPI.login(.init(username: username, password: password))
             
-            print("LOGIN!!", login)
-            
             // 2) /user-info (cu tokenul nou)
             let info = try await userInfoAPI.userInfo(bearer: login.accessToken)
             

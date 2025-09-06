@@ -13,6 +13,10 @@ struct AppointmentsScreen: View {
     @State private var items: [Int] = Array(1...20)
     @State private var isLoading = false
     
+    @State private var showBottomSheet = false
+    
+    @State private var selected: AppointmentFilterTitleEnum = .all
+    
     var onNavigateToAppointmentDetails: (Int) -> Void
     
     var body: some View {
@@ -21,17 +25,39 @@ struct AppointmentsScreen: View {
             enableBack: false
         )
         
+        Button {
+            showBottomSheet = true
+        } label: {
+            Text("all")
+                .font(.subheadline.bold())
+                .foregroundColor(.onBackgroundSB)
+            Image(systemName: "chevron.down")
+                .foregroundColor(.onBackgroundSB)
+        }
+        .padding(.m)
+        .background(
+            RoundedRectangle(cornerRadius: 10)
+                .fill(Color.surfaceSB)
+        )
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.horizontal)
+        
         ScrollView {
             LazyVStack(spacing: 0) {
                 ForEach(appointmentsList) { item  in
                     AppointmentCardView(
                         appointment: item,
-                        onClick: { onNavigateToAppointmentDetails(item.id) }
+                        onClick: {
+                            onNavigateToAppointmentDetails(item.id)
+                        }
                     )
                     
                     Divider()
                 }
             }
+        }
+        .sheet(isPresented: $showBottomSheet) {
+            AppointmentSheet(selected: $selected)
         }
     }
     

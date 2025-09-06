@@ -14,65 +14,55 @@ struct InboxScreen: View {
     init(viewModel: InboxViewModel) {
         _viewModel = StateObject(wrappedValue: viewModel)
     }
-
+    
     var body: some View {
-        VStack(spacing: 0) {
-            Header(
-                title: String(localized: "inbox"),
-                enableBack: false
-            )
-            
-            List {
-                ForEach(viewModel.notifications) { notification in
-                    NotificationItemView(
-                        notification: notification,
-                        onNavigateToEmployment: {}
-                    )
-                    .swipeActions(edge: .trailing, allowsFullSwipe: false) {
-                        Button(role: .destructive) {
-                            
-                        } label: {
-                            Label("delete", systemImage: "trash")
-                        }
-                        .tint(Color.errorSB)
-                    }
-                    .onAppear {
-                        Task {
-                            await viewModel.loadMoreIfNeeded(currentNotification: notification) }
-                    }
-                }
+        ZStack {
+            VStack(spacing: 0) {
+                Header(
+                    title: String(localized: "inbox"),
+                    enableBack: false
+                )
                 
-                if viewModel.isLoading && !viewModel.isRefreshing {
-                    ProgressView().padding(.vertical, 16)
+                List {
+                    ForEach(viewModel.notifications) { notification in
+                        NotificationItemView(
+                            notification: notification,
+                            onNavigateToEmployment: {}
+                        )
+                        .swipeActions(edge: .trailing, allowsFullSwipe: false) {
+                            Button(role: .destructive) {
+                                Task { await viewModel.delete(notification) }
+                            } label: {
+                                Label("delete", systemImage: "trash")
+                            }
+                            .tint(Color.errorSB)
+                        }
+                        .onAppear {
+                            Task { await viewModel.loadMoreIfNeeded(currentNotification: notification) }}
+                    }
+                    
+                    if viewModel.isLoading && !viewModel.isRefreshing {
+                        ProgressView()
+                            .padding(.vertical, 16)
+                    }
                 }
+                .listStyle(.plain)
+                .refreshable {
+                    await viewModel.refresh()
+                }
+                .task { await viewModel.initialLoadIfNeeded() }
             }
-            .listStyle(.plain)
-            .refreshable {
-                await viewModel.refresh()
-            }
-            .task { await viewModel.initialLoadIfNeeded() }
             
             if viewModel.isInitialLoading {
                 ProgressView()
                     .scaleEffect(1.2)
             }
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            
-            // SCROLL CU TAB BAR STICKY
+        }
+    }
+}
+
+
+// SCROLL CU TAB BAR STICKY
 //            ScrollView(.vertical, showsIndicators: false) {
 //                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
 //                    VStack(spacing: 15) {
@@ -81,7 +71,7 @@ struct InboxScreen: View {
 //                            onNavigateToUserSocial: {}
 //                        )
 //                        .padding(.vertical, .xl)
-//                        
+//
 //                        ProfileUserInfoView(
 //                            url: user.avatarURL,
 //                            fullName: user.fullName,
@@ -92,23 +82,23 @@ struct InboxScreen: View {
 //                            onShowOpeningHoursSheet: { //showOpeningHoursSheet = true
 //                            }
 //                        )
-//                        
+//
 //                        MyProfileActionsView(onNavigateToEditProfile: {})
-//                        
+//
 //                        if let owner = user.businessOwner {
 //                            ProfileBusinessOwnerView(
 //                                businessOwner: owner,
 //                                onNavigateToUserProfile: {}
 //                            )
 //                        }
-//                        
+//
 //                        ProfileContactView()
-//                        
+//
 //                        if let description = user.bio {
 //                            ProfileDescriptionView(description: description)
 //                        }
 //                    }
-//                    
+//
 //                    Section {
 //                        TabView(selection: $selectedTab) {
 //                            ProfilePostsTabView()
@@ -131,7 +121,7 @@ struct InboxScreen: View {
 //                                .frame(height: 1)
 //                                .frame(maxWidth: .infinity)
 //                                .padding(.top, 0)
-//                            
+//
 //                            HStack(spacing: 20) {
 //                                ForEach(ProfileTab.allCases) { tab in
 //                                    Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.9) ) {
@@ -141,7 +131,7 @@ struct InboxScreen: View {
 //                                        VStack(spacing: 6) {
 //                                            Image(systemName: tab.systemImage)
 //                                                .foregroundStyle(selectedTab == tab ? .primary : .secondary)
-//                                            
+//
 //                                            ZStack {
 //                                                // indicator activ
 //                                                if selectedTab == tab {
@@ -166,9 +156,6 @@ struct InboxScreen: View {
 //                }
 //            }
 //            .ignoresSafeArea(.container, edges: .bottom)
-        }
-    }
-}
 
 //struct TabBar: View {
 //@Binding var selected: ProfileTab

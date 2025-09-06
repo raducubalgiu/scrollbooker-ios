@@ -8,7 +8,8 @@
 import Foundation
 
 protocol NotificationAPI {
-    func fetch(page: Int, limit: Int, bearer: String) async throws -> PaginatedResponse<Notification>
+    func getNotifications(page: Int, limit: Int, bearer: String) async throws -> PaginatedResponse<Notification>
+    func deleteNotificationById(notificationId: Int, bearer: String) async throws
 }
 
 final class NotificationAPIImpl: NotificationAPI {
@@ -17,7 +18,7 @@ final class NotificationAPIImpl: NotificationAPI {
         self.client = client
     }
     
-    func fetch(page: Int, limit: Int, bearer: String) async throws -> PaginatedResponse<Notification> {
+    func getNotifications(page: Int, limit: Int, bearer: String) async throws -> PaginatedResponse<Notification> {
         let dto: PaginatedResponseDTO<NotificationDTO> = try await client.request(
             "notifications/",
             bearer: bearer,
@@ -25,5 +26,13 @@ final class NotificationAPIImpl: NotificationAPI {
         )
         
         return PaginatedResponse(dto) { Notification(dto: $0) }
+    }
+    
+    func deleteNotificationById(notificationId: Int, bearer: String) async throws {
+        _ = try await client.request(
+            "notifications/\(notificationId)",
+            method: .delete,
+            bearer: bearer
+        ) as Empty
     }
 }

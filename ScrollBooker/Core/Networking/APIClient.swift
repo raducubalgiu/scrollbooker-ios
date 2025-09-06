@@ -146,17 +146,6 @@ final class APIClient {
         
         let (data, resp) = try await session.data(for: req)
         
-//        #if DEBUG
-//        if let http = resp as? HTTPURLResponse {
-//            print("[\(http.statusCode)] \(req.url?.absoluteString ?? "")")
-//            if let raw = String(data: data, encoding: .utf8) {
-//                print("Response body: \n\(raw)")
-//            } else {
-//                print("Response body: <binary \(data.count) bytes>")
-//            }
-//        }
-//        #endif
-        
         guard let http = resp as? HTTPURLResponse else { throw APIError.invalidResponse }
         
         switch http.statusCode {

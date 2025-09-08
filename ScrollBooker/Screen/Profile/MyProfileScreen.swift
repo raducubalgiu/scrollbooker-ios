@@ -10,6 +10,7 @@ import SwiftUI
 struct MyProfileScreen: View {
     @EnvironmentObject private var session: SessionManager
     @State private var measuredHeight: CGFloat = 0
+    @State private var showMenuSheet = false
     
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
@@ -23,8 +24,12 @@ struct MyProfileScreen: View {
         ProfileLayout(
             user: user,
             onNavigateToUserSocial: onNavigateToUserSocial,
+            onNavigateToUserProfile: onNavigateToUserProfile,
             header: {
-                MyProfileHeaderView(username: "@\(user.username)")
+                MyProfileHeaderView(
+                    username: "@\(user.username)",
+                    onOpenMenuSheet: { showMenuSheet = true }
+                )
                 .padding(.vertical)
                 .padding(.horizontal)
             },
@@ -33,8 +38,15 @@ struct MyProfileScreen: View {
                     onNavigateToEditProfile: onNavigateToEditProfile
                 )
             },
-            onNavigateToUserProfile: onNavigateToUserProfile
         )
+        .sheet(isPresented: $showMenuSheet) {
+            ProfileMenuSheetView(
+                showMenuSheet: $showMenuSheet,
+                onCreatePost: {},
+                onNavigateToMyBusiness: onNavigateToMyBusiness,
+                onNavigateToSettings: onNavigateToSettings
+            )
+        }
         
         Button {
             session.logout()

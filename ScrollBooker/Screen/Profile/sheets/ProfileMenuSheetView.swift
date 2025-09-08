@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct ProfileMenuSheetView: View {
-    @Binding var isPresented: Bool
+    @Binding var showMenuSheet: Bool
+    
     var onCreatePost: () -> Void
     var onNavigateToMyBusiness: () -> Void
     var onNavigateToSettings: () -> Void
@@ -21,7 +22,7 @@ struct ProfileMenuSheetView: View {
                 title: "Creaza o postare",
                 leadingIcon: "camera",
                 onClick: {
-                    isPresented = false
+                    showMenuSheet = false
                     onCreatePost()
                 },
                 showTrailingIcon: false
@@ -32,7 +33,7 @@ struct ProfileMenuSheetView: View {
                 title: "Afacerea mea",
                 leadingIcon: "bag",
                 onClick: {
-                    isPresented = false
+                    showMenuSheet = false
                     onNavigateToMyBusiness()
                 },
                 showTrailingIcon: false
@@ -43,7 +44,7 @@ struct ProfileMenuSheetView: View {
                 title: "Setari",
                 leadingIcon: "gearshape",
                 onClick: {
-                    isPresented = false
+                    showMenuSheet = false
                     onNavigateToSettings()
                 },
                 showTrailingIcon: false

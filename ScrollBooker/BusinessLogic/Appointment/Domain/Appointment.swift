@@ -20,7 +20,7 @@ struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     let isCustomer: Bool
     let business: AppointmentBusiness
     
-    var duration: TimeInterval { endDate.timeIntervalSince(startDate) }
+    //var duration: TimeInterval { endDate.timeIntervalSince(startDate) }
 }
 
 struct AppointmentProduct: Equatable, Hashable, Sendable {

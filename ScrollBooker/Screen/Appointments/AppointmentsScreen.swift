@@ -9,15 +9,19 @@ import SwiftUI
 
 struct AppointmentsScreen: View {
     @EnvironmentObject var router: Router
+    @StateObject private var viewModel: AppointmentsViewModel
+    var onNavigateToAppointmentDetails: (Int) -> Void
     
-    @State private var items: [Int] = Array(1...20)
-    @State private var isLoading = false
+    init(
+        viewModel: AppointmentsViewModel,
+        onNavigateToAppointmentDetails: @escaping (Int) -> Void = { _ in }
+    ) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        self.onNavigateToAppointmentDetails = onNavigateToAppointmentDetails
+    }
     
     @State private var showBottomSheet = false
-    
     @State private var selected: AppointmentFilterTitleEnum = .all
-    
-    var onNavigateToAppointmentDetails: (Int) -> Void
     
     var body: some View {
         Header(
@@ -42,45 +46,44 @@ struct AppointmentsScreen: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal)
         
-        ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(appointmentsList) { item  in
-                    AppointmentCardView(
-                        appointment: item,
-                        onClick: {
-                            onNavigateToAppointmentDetails(item.id)
-                        }
-                    )
-                    
-                    Divider()
+        ZStack {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.appointments) { item  in
+                        AppointmentCardView(
+                            appointment: item,
+                            onClick: {
+                                onNavigateToAppointmentDetails(item.id)
+                            }
+                        )
+                        
+                        Divider()
+                    }
                 }
             }
-        }
-        .sheet(isPresented: $showBottomSheet) {
-            AppointmentSheet(selected: $selected)
-        }
-    }
-    
-    private func loadMore() {
-        guard !isLoading else { return }
-        isLoading = true
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-            let next = (items.count + 1)...(items.count + 20)
-            items.append(contentsOf: next)
-            isLoading = false
+            .task { await viewModel.initialLoadIfNeeded() }
+            .sheet(isPresented: $showBottomSheet) {
+                AppointmentSheet(selected: $selected)
+            }
+            
+            if viewModel.isLoading {
+                ProgressView()
+                    .scaleEffect(1.2)
+            }
         }
     }
 }
 
-#Preview("Light") {
-    AppointmentsScreen(
-        onNavigateToAppointmentDetails: {_ in }
-    )
-}
-
-#Preview("Dark") {
-    AppointmentsScreen(
-        onNavigateToAppointmentDetails: {_ in }
-    )
-        .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    AppointmentsScreen(
+//        viewModel: AppointmentsViewModel(api: <#T##any AppointmentAPI#>, session: SessionManager),
+//        onNavigateToAppointmentDetails: {_ in }
+//    )
+//}
+//
+//#Preview("Dark") {
+//    AppointmentsScreen(
+//        onNavigateToAppointmentDetails: {_ in }
+//    )
+//        .preferredColorScheme(.dark)
+//}

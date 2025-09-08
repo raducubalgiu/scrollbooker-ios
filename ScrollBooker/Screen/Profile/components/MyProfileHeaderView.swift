@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MyProfileHeaderView: View {
     var username: String
+    var onOpenMenuSheet: () -> Void
     
     var body: some View {
         HStack {
@@ -23,7 +24,7 @@ struct MyProfileHeaderView: View {
             Spacer()
             
             Button {
-                
+                onOpenMenuSheet()
             } label: {
                 Image(systemName: "line.3.horizontal")
                     .foregroundColor(.onBackgroundSB)
@@ -37,13 +38,19 @@ struct MyProfileHeaderView: View {
 }
 
 #Preview("Light") {
-    MyProfileHeaderView(username: "@radu_balgiu")
+    MyProfileHeaderView(
+        username: "@radu_balgiu",
+        onOpenMenuSheet: {}
+    )
     
     Spacer()
 }
 
 #Preview("Dark") {
-    MyProfileHeaderView(username: "@radu_balgiu")
+    MyProfileHeaderView(
+        username: "@radu_balgiu",
+        onOpenMenuSheet: {}
+    )
         .preferredColorScheme(.dark)
     
     Spacer()

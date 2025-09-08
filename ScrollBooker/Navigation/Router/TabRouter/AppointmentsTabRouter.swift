@@ -8,11 +8,20 @@
 import SwiftUI
 
 struct AppointmentsTabRouter: View {
+    @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
     
+    private let apiClient = APIClient(
+        config: .init(baseURL: URL(string: "http://localhost:8000/api/v1")!)
+    )
+    
     var body: some View {
+        let appointmentsAPI = AppointmentAPIImpl(client: apiClient)
+        let viewModel = AppointmentsViewModel(api: appointmentsAPI, session: session)
+        
         NavigationStack(path: $router.appointmentsPath) {
             AppointmentsScreen(
+                viewModel: viewModel,
                 onNavigateToAppointmentDetails: { id in
                     router.push(.appointmentDetails(id: id))
                 }

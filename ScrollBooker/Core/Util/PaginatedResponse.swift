@@ -15,6 +15,14 @@ struct PaginatedResponseDTO<Item: Codable>: Codable {
 struct PaginatedResponse<Item> {
     let count: Int
     let results: [Item]
+    
+    init<DTO>(
+        _ dto: PaginatedResponseDTO<DTO>,
+        map: (DTO) throws -> Item
+    ) rethrows {
+        self.count = dto.count
+        self.results = try dto.results.map(map)
+    }
 }
 
 extension PaginatedResponse {

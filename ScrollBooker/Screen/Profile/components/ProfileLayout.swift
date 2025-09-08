@@ -13,7 +13,6 @@ struct ProfileLayout<Header: View, Actions: View>: View {
     var onNavigateToUserProfile: () -> Void
     
     @State private var showOpeningHoursSheet = false
-    @State private var measuredHeight: CGFloat = 0
     
     @State private var selected: ProfileTab = .posts
     @Namespace private var indicatorNS
@@ -59,24 +58,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                     }
                 }
                 .sheet(isPresented: $showOpeningHoursSheet) {
-                    VStack {
-                        Text("Opening Hours Sheet")
-                    }
-                    .padding(.top, .s)
-                    .padding(.bottom)
-                    .background(
-                        GeometryReader { geo in
-                            Color.clear
-                                .onAppear { measuredHeight = geo.size.height }
-                                .onChange(of: geo.size.height) { _, new in
-                                    measuredHeight = new
-                                }
-                        }
-                    )
-                    .presentationDetents([.height(max(100, measuredHeight + 16))])
-                    .presentationContentInteraction(.resizes)
-                    .presentationDragIndicator(.hidden)
-                    .presentationCornerRadius(25)
+                    OpeningHoursSheetView()
                 }
             }
         }

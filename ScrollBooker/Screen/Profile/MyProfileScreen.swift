@@ -9,7 +9,6 @@ import SwiftUI
 
 struct MyProfileScreen: View {
     @EnvironmentObject private var session: SessionManager
-    @State private var measuredHeight: CGFloat = 0
     @State private var showMenuSheet = false
     
     var onNavigateToEditProfile: () -> Void

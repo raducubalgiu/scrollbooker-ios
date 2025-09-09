@@ -13,17 +13,19 @@ struct PostUserView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
             Text(user.fullName)
-                .font(.title3.bold())
+                .font(.system(size: 16))
+                .fontWeight(.bold)
                 .foregroundColor(.white)
             
-            HStack {
+            HStack(spacing: 0) {
                 Text(user.usernameOrProfession)
+                    .font(.system(size: 16))
+                    .fontWeight(.bold)
                     .foregroundColor(.primarySB)
                 
-                Image(systemName: "location")
-                    .foregroundColor(.white)
-                
-                Text("5 km")
+                Text(" • 5 km")
+                    .font(.system(size: 16))
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
             }
         }

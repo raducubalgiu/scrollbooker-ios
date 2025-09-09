@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct AuthRouter: View {
+    @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
     let startStep: RegistrationStepEnum?
     
@@ -59,9 +60,13 @@ struct AuthRouter: View {
             
         case .collectEmailValidation:
             CollectEmailVerification()
+                .navigationBarHidden(true)
             
         case .collectUserUsername:
-            CollectUserUsernameScreen()
+            CollectUsernameScreen(
+                viewModel: container.makeCollectUsernameViewModel()
+            )
+                .navigationBarHidden(true)
             
         case .collectClientBirthdate:
             CollectClientBirthdateScreen()

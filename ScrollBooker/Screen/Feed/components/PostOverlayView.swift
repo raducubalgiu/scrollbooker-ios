@@ -34,8 +34,7 @@ struct PostOverlayView: View {
             )
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        .padding(.leading)
-        .padding(.bottom)
+        .padding(.m)
     }
 }
 

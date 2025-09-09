@@ -10,15 +10,15 @@ import SwiftUI
 @main
 struct ScrollBookerApp: App {
     @StateObject private var theme = ThemeManager()
-    @StateObject private var app = AppState.shared
+    @StateObject private var container = AppContainer()
     
     var body: some Scene {
         WindowGroup {
             AppTheme(mode: theme.mode) {
                 RootRouter()
-                    .environmentObject(AppState.shared)
+                    .environmentObject(container)
+                    .environmentObject(container.session)
             }
-            .environmentObject(app)
             .environmentObject(theme)
         }
     }

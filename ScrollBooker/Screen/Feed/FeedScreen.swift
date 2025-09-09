@@ -10,8 +10,8 @@ import SwiftUI
 struct FeedScreen: View {
     @EnvironmentObject var router: Router
     @StateObject private var viewModel = FeedViewModel()
-    
     @Environment(\.scenePhase) private var scenePhase
+
     var onNavigateToFeedSearch: () -> Void
     
     let posts = dummyBookNowPosts
@@ -19,61 +19,54 @@ struct FeedScreen: View {
     @State private var currentIndex: Int? = 0
     
     var body: some View {
-        ZStack(alignment: .top) {
+        GeometryReader { geo in
+            let totalHeight = geo.size.height - 56 + geo.safeAreaInsets.top
+
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
                     ForEach(Array(posts.enumerated()), id: \.element.id) { index, post in
                         ZStack {
-                            if let player = viewModel.players[post.id] {
-                                PlayerView(player: player)
+                            VStack(spacing: 0) {
+                                ZStack {
+                                    if let player = viewModel.players[post.id] {
+                                        PlayerView(player: player)
+                                            
+                                    }
+                                    
+                                    PostOverlayView(post: post)
+                                }
+                                .frame(height: totalHeight)
                                 
-                            } else {
-                                Color.black
+                                Spacer(minLength: 0)
                             }
-                            
-                            PostOverlayView(post: post)
+                            .frame(maxHeight: .infinity, alignment: .top)
                         }
-                        .id(index)
                         .containerRelativeFrame(.vertical)
+                        .id(index)
                     }
                 }
                 .scrollTargetLayout()
             }
+            .ignoresSafeArea(edges: .top)
             .scrollTargetBehavior(.paging)
             .scrollIndicators(.never)
             .scrollPosition(id: $currentIndex)
-            .ignoresSafeArea()
-        }
-        .onAppear {
-            viewModel.prepare(posts: posts)
-            viewModel.play(index: currentIndex ?? 0, in: posts)
-        }
-        .onChange(of: currentIndex) { _, newIndex in
-           viewModel.play(index: newIndex ?? 0, in: posts)
-        }
-        .onChange(of: scenePhase) { _, phase in
-            if phase != .active { viewModel.pauseAll() }
-            else { viewModel.play(index: currentIndex ?? 0, in: posts) }
-        }
-        .onDisappear { viewModel.pauseAll() }
-        .background(Color.backgroundSB)
-        .overlay(alignment: .top) {
-            HStack {
-                Image(systemName: "line.horizontal.3")
-                    .font(.system(size: 25, weight: .semibold))
-                    .foregroundColor(.white)
-                
-                Spacer()
-                
-                Button {
-                    onNavigateToFeedSearch()
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 25, weight: .semibold))
-                        .foregroundColor(.white)
-                }
+            .onAppear {
+                viewModel.prepare(posts: posts)
+                viewModel.play(index: currentIndex ?? 0, in: posts)
             }
-            .padding()
+            .onChange(of: currentIndex) { _, newIndex in
+               viewModel.play(index: newIndex ?? 0, in: posts)
+            }
+            .onChange(of: scenePhase) { _, phase in
+                if phase != .active { viewModel.pauseAll() }
+                else { viewModel.play(index: currentIndex ?? 0, in: posts) }
+            }
+            .onDisappear { viewModel.pauseAll() }
+            .background(Color.black)
+            .overlay(alignment: .top) {
+                FeedHeaderView(onNavigateToFeedSearch: onNavigateToFeedSearch)
+            }
         }
     }
 }

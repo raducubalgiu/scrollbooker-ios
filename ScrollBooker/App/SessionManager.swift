@@ -8,21 +8,21 @@
 import SwiftUI
 import Combine
 
-@MainActor
-final class AppState: ObservableObject {
-    static let shared = AppState()
-    
-    @Published var isInitialized = false
-    @Published var isAuthenticated = false
-    @Published var startDestination: RootDestination = .splash
-}
+//@MainActor
+//final class AppState: ObservableObject {
+//    static let shared = AppState()
+//    
+//    @Published var isInitialized = false
+//    @Published var isAuthenticated = false
+//    @Published var startDestination: RootDestination = .splash
+//}
 
 enum RootDestination { case splash, auth, main }
 
 @MainActor
 final class SessionManager: ObservableObject {
     // MARK: API
-    private let client = APIClient(config: .init(baseURL: URL(string: "http://localhost:8000/api/v1")!))
+    private let client: APIClient
     private lazy var authAPI: AuthAPI = AuthAPIImpl(client: client)
     private lazy var userInfoAPI: UserInfoAPI = UserInfoAPIImpl(client: client)
     
@@ -35,7 +35,12 @@ final class SessionManager: ObservableObject {
     @Published var isLoading = false
     @Published var loginError: String?
     
-    init(store: AuthStore = AuthStore()) {
+    @Published private(set) var isInitialized = false
+    @Published private(set) var isAuthenticated = false
+    @Published var startDestination: RootDestination = .splash
+    
+    init(store: AuthStore = AuthStore(), client: APIClient) {
+        self.client = client
         self.store = store
         self.auth = store.initialSnapshot
         
@@ -44,27 +49,28 @@ final class SessionManager: ObservableObject {
             .receive(on: DispatchQueue.main)
             .sink { [weak self] snap in
                 self?.auth = snap
-                AppState.shared.isAuthenticated = snap.isAuthenticated
+                self?.isAuthenticated = snap.isAuthenticated
             }
             .store(in: &cancellables)
     }
     
     func bootstrap() async {
-        defer { AppState.shared.isInitialized = true }
+        defer { isInitialized = true }
         
         guard let token = auth.accessToken, !token.isEmpty else {
-            AppState.shared.isAuthenticated = false
+            isAuthenticated = false
             userInfo = nil
             return
         }
+        
         do {
             let info = try await userInfoAPI.userInfo(bearer: token)
             self.userInfo = info
-            AppState.shared.isAuthenticated = true
+            isAuthenticated = true
         } catch {
             await store.clearUserSession()
             self.userInfo = nil
-            AppState.shared.isAuthenticated = false
+            isAuthenticated = false
         }
     }
     
@@ -91,11 +97,11 @@ final class SessionManager: ObservableObject {
                 permissions: []
             )
             self.userInfo = info
-            AppState.shared.isAuthenticated = true
+           isAuthenticated = true
             
         } catch {
             self.loginError = (error as? LocalizedError)?.errorDescription
-            AppState.shared.isAuthenticated = false
+            isAuthenticated = false
         }
         isLoading = false
     }
@@ -118,7 +124,7 @@ final class SessionManager: ObservableObject {
             )
         }
         self.userInfo = info
-        AppState.shared.isAuthenticated = true
+        isAuthenticated = true
     }
     
     func refreshTokens(access: String, refresh: String) {
@@ -133,6 +139,6 @@ final class SessionManager: ObservableObject {
     func logout() {
         Task { await store.clearUserSession() }
         self.userInfo = nil
-        AppState.shared.isAuthenticated = false
+        isAuthenticated = false
     }
 }

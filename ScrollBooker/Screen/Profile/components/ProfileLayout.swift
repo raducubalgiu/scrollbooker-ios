@@ -14,9 +14,6 @@ struct ProfileLayout<Header: View, Actions: View>: View {
     
     @State private var showOpeningHoursSheet = false
     
-    @State private var selected: ProfileTab = .posts
-    @Namespace private var indicatorNS
-    
     @ViewBuilder var header: () -> Header
     @ViewBuilder var actions: () -> Actions
     
@@ -56,6 +53,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                     if let description = user.bio {
                         ProfileDescriptionView(description: description)
                     }
+                    
+                    ProfileTabView()
                 }
                 .sheet(isPresented: $showOpeningHoursSheet) {
                     OpeningHoursSheetView()

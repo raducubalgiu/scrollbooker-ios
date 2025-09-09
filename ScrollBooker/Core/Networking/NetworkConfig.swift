@@ -15,4 +15,11 @@ struct NetworkConfig {
         self.baseURL = baseURL
         self.defaultHeaders = defaultHeaders
     }
+    
+    static var `default`: NetworkConfig {
+        NetworkConfig(
+            //baseURL: URL(string: "http://192.168.1.141:8000/api/v1")!,
+            baseURL: URL(string: "http://localhost:8000/api/v1")!,
+        )
+    }
 }

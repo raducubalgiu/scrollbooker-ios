@@ -10,6 +10,7 @@ import SwiftUI
 struct AppointmentsScreen: View {
     @EnvironmentObject var router: Router
     @StateObject private var viewModel: AppointmentsViewModel
+    
     var onNavigateToAppointmentDetails: (Int) -> Void
     
     init(

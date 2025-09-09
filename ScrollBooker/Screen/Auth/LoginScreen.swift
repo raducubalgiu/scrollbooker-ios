@@ -72,13 +72,13 @@ struct LoginScreen: View {
     }
 }
 
-#Preview("Light") {
-    LoginScreen()
-        .environmentObject(SessionManager())
-}
-
-#Preview("Dark") {
-    LoginScreen()
-        .environmentObject(SessionManager())
-        .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    LoginScreen()
+//        .environmentObject(SessionManager())
+//}
+//
+//#Preview("Dark") {
+//    LoginScreen()
+//        .environmentObject(SessionManager())
+//        .preferredColorScheme(.dark)
+//}

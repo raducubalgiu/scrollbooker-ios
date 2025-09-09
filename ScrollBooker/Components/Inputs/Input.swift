@@ -12,12 +12,14 @@ struct Input: View {
     @Binding var text: String
     var placeholder: String = ""
     var isError: Bool = false
+    var isLoading: Bool = false
     var enabled: Bool = true
     var readOnly: Bool = false
     var keyboardType: UIKeyboardType = .default
     var returnKeyType: UIReturnKeyType = .default
     var leadingIcon: Image? = nil
     var trailingIcon: Image? = nil
+    var trailingIconColor: Color = Color.onSurfaceSB
     var onCommit: (() -> Void)? = nil
     var errorMessage: String = ""
     
@@ -49,8 +51,23 @@ struct Input: View {
                 .submitLabel(returnKeyType == .next ? .next : .done)
                 .foregroundColor(readOnly ? .gray : .onBackgroundSB)
                 
-                if let trailingIcon = trailingIcon {
-                    trailingIcon.foregroundColor(.gray)
+                if isLoading {
+                    ProgressView()
+                } else {
+                    if let trailingIcon = trailingIcon {
+                        trailingIcon
+                            .foregroundColor(trailingIconColor)
+                            .fontWeight(.heavy)
+                    }
+                }
+                
+                if !text.isEmpty {
+                    Button {
+                        text = ""
+                    } label: {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                    }
                 }
             }
             .padding(.horizontal)
@@ -91,6 +108,36 @@ struct Input: View {
         text: $text,
         isError: false
     )
+    .padding()
+    
+    VStack(alignment: .leading) {
+        Text("Loading")
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(.secondary)
+        
+        Input(
+            label: "Email",
+            text: $text,
+            isError: false,
+            isLoading: true
+        )
+    }
+    .padding()
+    
+    VStack(alignment: .leading) {
+        Text("Success")
+            .font(.subheadline.weight(.semibold))
+            .foregroundColor(.secondary)
+        
+        Input(
+            label: "Email",
+            text: $text,
+            isError: false,
+            isLoading: false,
+            trailingIcon: Image(systemName: "checkmark"),
+            trailingIconColor: Color.green
+        )
+    }
     .padding()
     
     Spacer()

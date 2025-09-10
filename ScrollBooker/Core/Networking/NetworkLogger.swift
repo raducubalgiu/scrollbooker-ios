@@ -9,84 +9,52 @@ import Foundation
 import os
 
 enum NetworkLogger {
-enum Color: String {
-case cyan = "\u{001B}[0;36m"
-case green = "\u{001B}[0;32m"
-case yellow = "\u{001B}[0;33m"
-case red = "\u{001B}[0;31m"
-case reset = "\u{001B}[0;0m"
+    enum Color: String {
+        case cyan = "\u{001B}[0;36m"
+        case green = "\u{001B}[0;32m"
+        case yellow = "\u{001B}[0;33m"
+        case red = "\u{001B}[0;31m"
+        case reset = "\u{001B}[0;0m"
 }
 
 private static func write(_ text: String, color: Color) {
-#if DEBUG
-let colored = color.rawValue + text + Color.reset.rawValue + "\n"
-if let data = colored.data(using: .utf8) {
-FileHandle.standardOutput.write(data) // păstrează escape-urile
-}
-#endif
+    #if DEBUG
+    let colored = color.rawValue + text + Color.reset.rawValue + "\n"
+    if let data = colored.data(using: .utf8) {
+        FileHandle.standardOutput.write(data) // păstrează escape-urile
+    }
+    #endif
 }
 
 static func request(_ req: URLRequest, body: Data?) {
-var lines: [String] = []
-let method = req.httpMethod ?? "GET"
-let urlStr = req.url?.absoluteString ?? ""
-lines.append("→ \(method) \(urlStr)")
-lines.append("Headers: \(req.allHTTPHeaderFields ?? [:])")
-if let body = body, let s = String(data: body, encoding: .utf8) {
-lines.append("Body: \(s)")
-} else {
-lines.append("Body: nil")
+    var lines: [String] = []
+    let method = req.httpMethod ?? "GET"
+    let urlStr = req.url?.absoluteString ?? ""
+    lines.append("→ \(method) \(urlStr)")
+    lines.append("Headers: \(req.allHTTPHeaderFields ?? [:])")
+    if let body = body, let s = String(data: body, encoding: .utf8) {
+        lines.append("Body: \(s)")
+    } else {
+        lines.append("Body: nil")
 }
-write("[REQUEST]\n" + lines.joined(separator: "\n"), color: .cyan)
-}
-
-static func response(_ resp: HTTPURLResponse, data: Data?) {
-var lines: [String] = []
-lines.append("Status: \(resp.statusCode)")
-if let data = data, let s = String(data: data, encoding: .utf8) {
-lines.append("Body:\n\(s)")
-} else if let data = data {
-lines.append("Body: <binary \(data.count) bytes>")
-} else {
-lines.append("Body: nil")
-}
-let color: Color = (200..<300).contains(resp.statusCode) ? .green : .red
-write("[RESPONSE]\n" + lines.joined(separator: "\n"), color: color)
-}
+    write("[REQUEST]\n" + lines.joined(separator: "\n"), color: .cyan)
 }
 
-//enum NetworkLogLevel {
-//    case request, response, error
-//}
-//
-//struct NetworkLogger {
-//    private static let logger = Logger(subsystem: "com.scrollbooker", category: "network")
-//    
-//    private static let reset = "\u{001B}[0;0m"
-//    private static let green = "\u{001B}[0;32m"
-//    private static let blue = "\u{001B}[0;34m"
-//    private static let red = "\u{001B}[0;31m"
-//    private static let yellow = "\u{001B}[0;33m"
-//    
-//    static func log(_ level: NetworkLogLevel, message: String) {
-//        #if DEBUG
-//        let colored: String
-//        switch level {
-//        case .request: colored = "\(green)[REQUEST] \(reset)\(message)"
-//        case .response: colored = "\(green)[RESPONSE] \(reset)\(message)"
-//        case .error: colored = "\(green)[ERROR] \(reset)\(message)"
-//        }
-//        print(colored)
-//        #endif
-//        
-//        // Trimite si in Logger (Console.app / Instruments)
-//        switch level {
-//        case .request:
-//            logger.debug("\(message, privacy: .public)")
-//        case .response:
-//            logger.info("\(message, privacy: .public)")
-//        case .error:
-//            logger.error("\(message, privacy: .public)")
-//        }
-//    }
-//}
+    static func response(_ req: URLRequest, resp: HTTPURLResponse, data: Data?) {
+    var lines: [String] = []
+    let method = req.httpMethod ?? "GET"
+    let urlStr = req.url?.absoluteString ?? ""
+    lines.append("→ \(method) \(urlStr)")
+    
+    lines.append("Status: \(resp.statusCode)")
+    if let data = data, let s = String(data: data, encoding: .utf8) {
+        lines.append("Body:\n\(s)")
+    } else if let data = data {
+        lines.append("Body: <binary \(data.count) bytes>")
+    } else {
+        lines.append("Body: nil")
+    }
+    let color: Color = (200..<300).contains(resp.statusCode) ? .green : .red
+    write("[RESPONSE]\n" + lines.joined(separator: "\n"), color: color)
+    }
+}

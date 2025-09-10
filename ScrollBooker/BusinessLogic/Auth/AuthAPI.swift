@@ -9,6 +9,7 @@ import Foundation
 
 protocol AuthAPI {
     func login(_ body: LoginRequest) async throws -> LoginResponse
+    func refresh(refreshToken: String) async throws -> LoginResponse
 }
 
 final class AuthAPIImpl: AuthAPI {
@@ -24,6 +25,15 @@ final class AuthAPIImpl: AuthAPI {
                 "username": body.username,
                 "password": body.password
             ]
+        )
+        return LoginResponse(dto: dto)
+    }
+    
+    func refresh(refreshToken: String) async throws -> LoginResponse {
+        let dto: LoginResponseDTO = try await client.request(
+            "auth/refresh",
+            method: .post,
+            body: RefreshTokenRequestDTO(refresh_token: refreshToken)
         )
         return LoginResponse(dto: dto)
     }

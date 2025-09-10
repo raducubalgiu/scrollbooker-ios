@@ -11,30 +11,43 @@ struct PostOverlayView: View {
     var post: Post
     
     var body: some View {
-        HStack(alignment: .bottom) {
-            VStack(alignment: .leading, spacing: 15) {
-                PostUserView(user: post.user)
-                
-                if let product = post.product {
-                   PostProductView(product: product)
-                }
-                
-                if let description = post.description {
-                    PostDescriptionView(description: description)
-                }
-                
-                PostMainActionView(onClick: {})
-            }
-            .frame(maxWidth: .infinity)
-            .padding(.trailing, .xxl)
-            
-            PostActionsView(
-                userAvatarURL: post.user.avatarURL,
-                counters: post.counters
+        ZStack(alignment: .bottom) {
+            LinearGradient(
+                gradient: Gradient(colors: [
+                    Color.black.opacity(0.0),
+                    Color.black.opacity(0.6)
+                ]),
+                startPoint: .top,
+                endPoint: .bottom
             )
+            .frame(height: 200)
+            .ignoresSafeArea(edges: .bottom)
+            
+            HStack(alignment: .bottom) {
+                VStack(alignment: .leading, spacing: 15) {
+                    PostUserView(user: post.user)
+                    
+                    if let product = post.product {
+                       PostProductView(product: product)
+                    }
+                    
+                    if let description = post.description {
+                        PostDescriptionView(description: description)
+                    }
+                    
+                    PostMainActionView(onClick: {})
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.trailing, .xxl)
+                
+                PostActionsView(
+                    userAvatarURL: post.user.avatarURL,
+                    counters: post.counters
+                )
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .padding(.m)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-        .padding(.m)
     }
 }
 

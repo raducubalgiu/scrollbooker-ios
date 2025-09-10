@@ -8,23 +8,15 @@
 import SwiftUI
 import Combine
 
-//@MainActor
-//final class AppState: ObservableObject {
-//    static let shared = AppState()
-//    
-//    @Published var isInitialized = false
-//    @Published var isAuthenticated = false
-//    @Published var startDestination: RootDestination = .splash
-//}
-
 enum RootDestination { case splash, auth, main }
 
 @MainActor
 final class SessionManager: ObservableObject {
     // MARK: API
     private let client: APIClient
+    
     private lazy var authAPI: AuthAPI = AuthAPIImpl(client: client)
-    private lazy var userInfoAPI: UserInfoAPI = UserInfoAPIImpl(client: client)
+    private lazy var userAPI: UserAPI = UserAPIImpl(client: client)
     
     // MARK: Store & State
     private let store: AuthStore
@@ -63,13 +55,51 @@ final class SessionManager: ObservableObject {
             return
         }
         
+        guard let refreshToken = auth.refreshToken, !refreshToken.isEmpty else {
+            isAuthenticated = false
+            userInfo = nil
+            return
+        }
+        
         do {
-            let info = try await userInfoAPI.userInfo(bearer: token)
-            self.userInfo = info
-            isAuthenticated = true
+            // Verify token expiration
+            if isTokenExpired(token) {
+                // Try to refresh
+                let refresh = try await authAPI.refresh(refreshToken: refreshToken)
+                
+                // 2) Get User Info - new token
+                let info = try await userAPI.userInfo(token: refresh.accessToken)
+                
+                // 3) Get User Permissions
+                let permissions = try await userAPI.userPermission(token: refresh.accessToken)
+                let permissionCodes = permissions.map { $0.code }
+                
+                // 4) persist & state
+                await store.storeUserSession(
+                    accessToken: refresh.accessToken,
+                    refreshToken: refresh.refreshToken,
+                    userId: info.id,
+                    username: info.username,
+                    fullName: info.fullName,
+                    businessId: info.businessId,
+                    businessTypeId: info.businessTypeId,
+                    permissions: permissionCodes
+                )
+                self.userInfo = info
+                
+                isAuthenticated = true
+                
+            } else {
+                // Get User Info
+                let info = try await userAPI.userInfo(token: token)
+                self.userInfo = info
+                
+                isAuthenticated = true
+            }
         } catch {
             await store.clearUserSession()
             self.userInfo = nil
+            
             isAuthenticated = false
         }
     }
@@ -82,10 +112,14 @@ final class SessionManager: ObservableObject {
             // 1) Login
             let login = try await authAPI.login(.init(username: username, password: password))
             
-            // 2) /user-info (cu tokenul nou)
-            let info = try await userInfoAPI.userInfo(bearer: login.accessToken)
+            // 2) Get User Info - new token
+            let info = try await userAPI.userInfo(token: login.accessToken)
             
-            // 3) persist & state
+            // 3) Get User Permissions
+            let permissions = try await userAPI.userPermission(token: login.accessToken)
+            let permissionCodes = permissions.map { $0.code }
+            
+            // 4) persist & state
             await store.storeUserSession(
                 accessToken: login.accessToken,
                 refreshToken: login.refreshToken,
@@ -94,7 +128,7 @@ final class SessionManager: ObservableObject {
                 fullName: info.fullName,
                 businessId: info.businessId,
                 businessTypeId: info.businessTypeId,
-                permissions: []
+                permissions: permissionCodes
             )
             self.userInfo = info
            isAuthenticated = true
@@ -106,39 +140,34 @@ final class SessionManager: ObservableObject {
         isLoading = false
     }
     
-    func didLogin(token: String,
-                  refresh: String,
-                  info: UserInfo,
-                  permissions: [String]
-    ) {
-        Task {
-            await store.storeUserSession(
-                accessToken: token,
-                refreshToken: refresh,
-                userId: info.id,
-                username: info.username,
-                fullName: info.fullName,
-                businessId: info.businessId,
-                businessTypeId: info.businessTypeId,
-                permissions: permissions
-            )
-        }
-        self.userInfo = info
-        isAuthenticated = true
-    }
-    
-    func refreshTokens(access: String, refresh: String) {
-        Task {
-            await store.refreshTokens(
-                accessToken: access,
-                refreshToken: refresh
-            )
-        }
-    }
-    
     func logout() {
         Task { await store.clearUserSession() }
+        
         self.userInfo = nil
         isAuthenticated = false
+    }
+    
+    private func isTokenExpired(_ token: String, skewSeconds: TimeInterval = 60) -> Bool {
+        let parts = token.split(separator: ".")
+        guard parts.count >= 2 else { return true }
+        
+        var base64 = parts[1]
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        
+        while base64.count % 4 != 0 {
+            base64.append("=")
+        }
+        
+        guard let data = Data(base64Encoded: base64),
+            let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+            let exp = json["exp"] as? TimeInterval else {
+            return true
+        }
+        
+        let expirationDate = Date(timeIntervalSince1970: exp)
+        
+        return Date().addingTimeInterval(skewSeconds) >= expirationDate
+        
     }
 }

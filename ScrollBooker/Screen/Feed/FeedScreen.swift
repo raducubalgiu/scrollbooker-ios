@@ -51,6 +51,7 @@ struct FeedScreen: View {
             .scrollTargetBehavior(.paging)
             .scrollIndicators(.never)
             .scrollPosition(id: $currentIndex)
+
             .onAppear {
                 viewModel.prepare(posts: posts)
                 viewModel.play(index: currentIndex ?? 0, in: posts)

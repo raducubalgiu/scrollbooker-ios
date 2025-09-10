@@ -74,7 +74,7 @@ final class APIClient {
         guard let http = resp as? HTTPURLResponse else { throw APIError.invalidResponse }
         
         // Log Response
-        NetworkLogger.response(http, data: data)
+        NetworkLogger.response(req, resp: http, data: data)
         
         switch http.statusCode {
             case 200..<300:

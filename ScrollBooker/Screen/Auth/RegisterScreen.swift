@@ -8,8 +8,20 @@
 import SwiftUI
 
 struct RegisterScreen: View {
+    @EnvironmentObject private var session: SessionManager
+    
     @State private var email: String = ""
     @State private var password: String = ""
+    
+    func handleRegister() {
+        Task {
+            await session.register(
+                email: email,
+                password: password,
+                roleName: "client"
+            )
+        }
+    }
     
     var body: some View {
         FormLayout(
@@ -18,28 +30,30 @@ struct RegisterScreen: View {
             enableBottomButton: false,
         ) {
             Input(
-                label: "Email",
+                label: String(localized: "email"),
                 text: $email,
-                placeholder: "Email",
+                placeholder: String(localized: "email"),
                 keyboardType: .emailAddress,
             )
             
             Input(
-                label: "Parola",
+                label: String(localized: "password"),
                 text: $password,
-                placeholder: "Parola",
+                placeholder: String(localized: "password"),
                 keyboardType: .emailAddress,
             )
             
             MainButton(
                 title: String(localized: "register"),
-                onClick: {  }
+                onClick: handleRegister,
+                isDisabled: session.isLoading,
+                isLoading: session.isLoading
             )
             
             HStack {
                 Text("alreadyHaveAnAccount")
-                Button("Login") {
-                    
+                NavigationLink("register") {
+                    LoginScreen()
                 }
                 .foregroundColor(.primarySB)
                 .fontWeight(.bold)

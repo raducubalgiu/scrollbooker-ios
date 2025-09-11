@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CollectUsernameScreen: View {
-    @State var viewModel: CollectUsernameViewModel
+    @Bindable var viewModel: CollectUsernameViewModel
     
     var body: some View {
         let trailingIcon: Image? = {
@@ -47,8 +47,9 @@ struct CollectUsernameScreen: View {
                 
                 MainButton(
                     title: String(localized: "save"),
-                    onClick: {},
-                    isDisabled: viewModel.username.isEmpty || !viewModel.isAvailable
+                    onClick: { Task { await viewModel.collectUsername() }},
+                    isDisabled: viewModel.username.isEmpty || !viewModel.isAvailable || viewModel.isLoading,
+                    isLoading: viewModel.isLoading
                 )
             }
         }

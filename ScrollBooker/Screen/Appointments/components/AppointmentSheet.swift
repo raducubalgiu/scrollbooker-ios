@@ -20,7 +20,7 @@ struct AppointmentSheet: View {
             ForEach(Array(AppointmentFilterTitleEnum.allCases.enumerated()), id: \.element) { index, option in
                 InputRadio(
                     title: option.localized,
-                    isSelected: .constant(option == selected),
+                    isSelected: option == selected,
                     onClick: { selected = option }
                 )
                 

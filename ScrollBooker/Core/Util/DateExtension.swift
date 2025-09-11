@@ -27,3 +27,14 @@ extension Date {
         return formatter.string(from: self)
     }
 }
+
+private let ymdFormatter: DateFormatter = {
+    let f = DateFormatter()
+    f.calendar = .init(identifier: .iso8601)
+    f.locale = .init(identifier: "en_US_POSIX")
+    f.timeZone = .init(secondsFromGMT: 0)
+    f.dateFormat = "yyyy-MM-dd"
+    return f
+}()
+
+private extension Date { var yyyyMMdd: String { ymdFormatter.string(from: self) } }

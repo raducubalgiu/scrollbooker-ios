@@ -1,13 +1,13 @@
 //
-//  LoginResponse.swift
+//  AuthResponse.swift
 //  ScrollBooker
 //
-//  Created by Raducu Balgiu on 04.09.2025.
+//  Created by Raducu Balgiu on 10.09.2025.
 //
 
 import Foundation
 
-struct LoginResponse: Codable {
+struct AuthResponse: Codable {
     let accessToken: String
     let refreshToken: String
     let tokenType: String

@@ -15,6 +15,7 @@ struct FormLayout<Content: View>: View {
     var buttonTitle: String = ""
     
     var isDisabled: Bool = false
+    var isLoading: Bool = false
     
     var onClick: (() -> Void) = {  }
     
@@ -43,7 +44,8 @@ struct FormLayout<Content: View>: View {
                 MainButton(
                     title: buttonTitle,
                     onClick: onClick,
-                    isDisabled: isDisabled
+                    isDisabled: isDisabled,
+                    isLoading: isLoading
                 )
             }
         }

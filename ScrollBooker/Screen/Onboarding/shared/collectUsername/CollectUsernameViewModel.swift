@@ -90,4 +90,30 @@ final class CollectUsernameViewModel {
             try? await Task.sleep(for: .milliseconds(300) - elapsed)
         }
     }
+    
+    @MainActor
+    func collectUsername() async {
+        guard let token = session.auth.accessToken, !token.isEmpty else {
+            errorMessage = "Missing access token."
+            return
+        }
+        
+        let start = ContinuousClock.now
+        isLoading = true
+        defer { isLoading = false }
+        
+        do {
+            let response = try await api.collectUsername(username: username, token: token)
+            print("RESPONSE!!", response)
+            errorMessage = nil
+        } catch {
+            errorMessage = error.localizedDescription
+        
+        }
+        
+        let elapsed = start.duration(to: .now)
+        if elapsed < .milliseconds(300) {
+            try? await Task.sleep(for: .milliseconds(300) - elapsed)
+        }
+    }
 }

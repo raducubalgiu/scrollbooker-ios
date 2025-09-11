@@ -69,13 +69,22 @@ struct AuthRouter: View {
                 .navigationBarHidden(true)
             
         case .collectClientBirthdate:
-            CollectClientBirthdateScreen()
+            CollectBirthdateScreen(
+                viewModel: container.makeCollectBirthdateViewModel()
+            )
+                .navigationBarHidden(true)
             
         case .collectClientGender:
-            CollectClientGenderScreen()
+            CollectGenderScreen(
+                viewModel: container.makeCollectGenderViewModel()
+            )
+                .navigationBarHidden(true)
             
         case .collectClientLocationPermission:
-            CollectUserLocationPermissionScreen()
+            CollectLocationPermissionScreen(
+                viewModel: container.makeCollectLocationPermissionViewModel()
+            )
+                .navigationBarHidden(true)
             
         case .collectBusiness:
             CollectBusinessTypeScreen()

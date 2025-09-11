@@ -54,7 +54,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                         ProfileDescriptionView(description: description)
                     }
                     
-                    ProfileTabView()
+//                    ProfileTabView()
                 }
                 .sheet(isPresented: $showOpeningHoursSheet) {
                     OpeningHoursSheetView()

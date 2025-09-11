@@ -71,19 +71,16 @@ final class SessionManager: ObservableObject {
                 let info = try await userAPI.userInfo(token: refresh.accessToken)
                 
                 // 3) Get User Permissions
-                let permissions = try await userAPI.userPermission(token: refresh.accessToken)
-                let permissionCodes = permissions.map { $0.code }
+                //let permissions = try await userAPI.userPermission(token: refresh.accessToken)
+                //let permissionCodes = permissions.map { $0.code }
+                
+                print("REFRSH ACCESS TOKEN!!!", refresh.accessToken)
+                print("REFRESH REFRESH TOKEN!!", refresh.refreshToken)
                 
                 // 4) persist & state
-                await store.storeUserSession(
+                await store.refreshTokens(
                     accessToken: refresh.accessToken,
-                    refreshToken: refresh.refreshToken,
-                    userId: info.id,
-                    username: info.username,
-                    fullName: info.fullName,
-                    businessId: info.businessId,
-                    businessTypeId: info.businessTypeId,
-                    permissions: permissionCodes
+                    refreshToken: refresh.refreshToken
                 )
                 self.userInfo = info
                 
@@ -110,7 +107,8 @@ final class SessionManager: ObservableObject {
         
         do {
             // 1) Login
-            let login = try await authAPI.login(.init(username: username, password: password))
+            let loginDTO = LoginRequestDTO(username: username, password: password)
+            let login = try await authAPI.login(body: loginDTO)
             
             // 2) Get User Info - new token
             let info = try await userAPI.userInfo(token: login.accessToken)
@@ -140,11 +138,69 @@ final class SessionManager: ObservableObject {
         isLoading = false
     }
     
+    func register(email: String, password: String, roleName: String) async {
+        isLoading = true
+        loginError = nil
+        
+        do {
+            // 1) Login
+            let registerDTO = RegisterRequestDTO(email: email, password: password, role_name: roleName)
+            let register = try await authAPI.register(body: registerDTO)
+            
+            // 2) Get User Info - new token
+            let info = try await userAPI.userInfo(token: register.accessToken)
+            
+            // 3) Get User Permissions
+            let permissions = try await userAPI.userPermission(token: register.accessToken)
+            let permissionCodes = permissions.map { $0.code }
+            
+            // 4) persist & state
+            await store.storeUserSession(
+                accessToken: register.accessToken,
+                refreshToken: register.refreshToken,
+                userId: info.id,
+                username: info.username,
+                fullName: info.fullName,
+                businessId: info.businessId,
+                businessTypeId: info.businessTypeId,
+                permissions: permissionCodes
+            )
+            self.userInfo = info
+           isAuthenticated = true
+            
+        } catch {
+            self.loginError = (error as? LocalizedError)?.errorDescription
+            isAuthenticated = false
+        }
+        isLoading = false
+    }
+    
     func logout() {
         Task { await store.clearUserSession() }
         
         self.userInfo = nil
         isAuthenticated = false
+    }
+    
+    func verifyEmail() async {
+        guard let token = auth.accessToken, !token.isEmpty else {
+            isAuthenticated = false
+            userInfo = nil
+            return
+        }
+        
+        isLoading = true
+        loginError = nil
+        
+        do {
+            let authState = try await authAPI.verifyEmail(token: token)
+            print("AUTH STATE!", authState)
+            // Update AuthState
+        } catch {
+            self.loginError = (error as? LocalizedError)?.errorDescription
+        }
+        
+        isLoading = false
     }
     
     private func isTokenExpired(_ token: String, skewSeconds: TimeInterval = 60) -> Bool {
@@ -171,3 +227,4 @@ final class SessionManager: ObservableObject {
         
     }
 }
+

@@ -28,11 +28,25 @@ final class AppContainer: ObservableObject {
     }
     
     // MARK: - View Model factories
-    func makeAppointmentsViewModel() -> AppointmentsViewModel {
-        AppointmentsViewModel(api: appointmentAPI, session: session)
-    }
-    
+    // Onboarding
     func makeCollectUsernameViewModel() -> CollectUsernameViewModel {
         CollectUsernameViewModel(api: onboardingAPI, session: session)
+    }
+    
+    func makeCollectBirthdateViewModel() -> CollectBirthdateViewModel {
+        CollectBirthdateViewModel(api: onboardingAPI, session: session)
+    }
+    
+    func makeCollectGenderViewModel() -> CollectGenderViewModel {
+        CollectGenderViewModel(api: onboardingAPI, session: session)
+    }
+    
+    func makeCollectLocationPermissionViewModel() -> CollectLocationPermissionViewModel {
+        CollectLocationPermissionViewModel(api: onboardingAPI, session: session)
+    }
+    
+    // Appointments
+    func makeAppointmentsViewModel() -> AppointmentsViewModel {
+        AppointmentsViewModel(api: appointmentAPI, session: session)
     }
 }

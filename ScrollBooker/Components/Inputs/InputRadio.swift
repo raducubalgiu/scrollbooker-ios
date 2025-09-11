@@ -9,7 +9,7 @@ import SwiftUI
 
 struct InputRadio: View {
     let title: String
-    @Binding var isSelected: Bool
+    let isSelected: Bool
     var onClick: () -> Void
     
     var body: some View {
@@ -51,13 +51,13 @@ struct InputRadio: View {
     VStack {
         InputRadio(
             title: "Some Title",
-            isSelected: .constant(true),
+            isSelected: true,
             onClick: {}
         )
         
         InputRadio(
             title: "Some Title",
-            isSelected: .constant(false),
+            isSelected: false,
             onClick: {}
         )
     }
@@ -68,14 +68,14 @@ struct InputRadio: View {
     VStack {
         InputRadio(
             title: "Some Title",
-            isSelected: .constant(true),
+            isSelected: true,
             onClick: {}
         )
         .preferredColorScheme(.dark)
         
         InputRadio(
             title: "Some Title",
-            isSelected: .constant(false),
+            isSelected: false,
             onClick: {}
         )
         .preferredColorScheme(.dark)

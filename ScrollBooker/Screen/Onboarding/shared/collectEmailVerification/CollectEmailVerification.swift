@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct CollectEmailVerification: View {
+    @EnvironmentObject private var session: SessionManager
+    
     var body: some View {
         FormLayout(
             headline: "Email Verification",
             subHeadline: "",
-            buttonTitle: "Verify"
+            buttonTitle: "Verify",
+            onClick: { Task { await session.verifyEmail() } }
         ) {
             
         }

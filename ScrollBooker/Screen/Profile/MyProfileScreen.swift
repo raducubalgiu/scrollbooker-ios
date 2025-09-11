@@ -36,6 +36,12 @@ struct MyProfileScreen: View {
                 MyProfileActionsView(
                     onNavigateToEditProfile: onNavigateToEditProfile
                 )
+                
+                Button {
+                    session.logout()
+                } label: {
+                    Text("Logout")
+                }
             },
         )
         .sheet(isPresented: $showMenuSheet) {
@@ -45,12 +51,6 @@ struct MyProfileScreen: View {
                 onNavigateToMyBusiness: onNavigateToMyBusiness,
                 onNavigateToSettings: onNavigateToSettings
             )
-        }
-        
-        Button {
-            session.logout()
-        } label: {
-            Text("Logout")
         }
     }
 }

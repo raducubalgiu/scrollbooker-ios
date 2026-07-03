@@ -13,7 +13,12 @@ struct UserProfileDTO: Codable {
     let fullname: String
     let avatar: String?
     let gender: String
+    let date_of_birth: String?
     let bio: String?
+    let website: String?
+    let public_email: String?
+    let instagram: String?
+    let tiktok: String?
     let business_id: Int?
     let business_type_id: Int?
     let counters: UserCountersDTO

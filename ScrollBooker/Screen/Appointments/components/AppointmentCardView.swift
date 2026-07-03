@@ -17,11 +17,11 @@ struct AppointmentCardView: View {
         Button {
             onClick()
         } label: {
-            VStack(alignment: .leading) {
+            VStack(alignment: .leading, spacing: 10) {
                 Text(appointment.status.title)
                     .font(.headline.bold())
                     .foregroundColor(appointment.status.color)
-                    .padding(.bottom, .base)
+                    .padding(.bottom, 4)
                 
                 HStack {
                     VStack(alignment: .leading, spacing: 10) {
@@ -30,7 +30,7 @@ struct AppointmentCardView: View {
                                 imageURL: appointment.user.avatarURL,
                                 size: .l
                             )
-                            VStack(alignment: .leading) {
+                            VStack(alignment: .leading, spacing: 2) {
                                 Text(appointment.user.fullName)
                                     .font(.headline.bold())
                                 Text(appointment.user.profession ?? "-")
@@ -39,17 +39,44 @@ struct AppointmentCardView: View {
                             }
                         }
                         
-                        Text(appointment.product.name)
-                            .font(.headline)
+                        Text(appointment.getProductNames())
+                            .fontWeight(.regular)
                             .foregroundColor(.gray)
+                            .lineLimit(1)
+                            .truncationMode(.tail)
+                        
+                        HStack(alignment: .center, spacing: 5) {
+                            Image(systemName: "clock")
+                                .foregroundColor(.gray)
                             
-                        Text("\(appointment.product.priceWithDiscount) \(appointment.product.currency)")
-                            .font(.headline.bold())
+                            Text(appointment.formattedTotalDuration)
+                                .foregroundColor(.gray)
+                        }
+                        .padding(.top, 4)
+                        
+                        HStack(alignment: .center) {
+                            HStack(alignment: .center, spacing: 5) {
+                                Text("\(appointment.totalPriceWithDiscount, format: .number.precision(.fractionLength(2))) \(appointment.paymentCurrency.name)")
+                                    .font(.system(size: 17, weight: .semibold))
+                            
+                                if appointment.totalDiscount > 0 {
+                                    Text(appointment.totalPrice, format: .number.precision(.fractionLength(2)))
+                                        .font(.body)
+                                        .strikethrough()
+                                        .foregroundColor(.gray)
+                                    
+                                    Text("(-\(appointment.totalDiscount, format: .number.precision(.fractionLength(2)))%)")
+                                        .foregroundColor(.red)
+                                }
+                            }
+                            Spacer()
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
                     }
                     
                     Spacer()
                     
-                    VStack(spacing: 7) {
+                    VStack(spacing: 10) {
                         Text(appointment.startDate.day)
                             .font(.title2.bold())
                         Text(appointment.startDate.month)
@@ -57,14 +84,15 @@ struct AppointmentCardView: View {
                         Text(appointment.startDate.time)
                             .font(.title3.bold())
                     }
-                    .padding()
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 12)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
                             .stroke(.divider, lineWidth: 1)
                     )
                 }
             }
-            .frame(maxWidth: .infinity)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .padding(padding)
             .contentShape(Rectangle())
         }

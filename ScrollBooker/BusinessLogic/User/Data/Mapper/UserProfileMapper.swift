@@ -14,7 +14,12 @@ extension UserProfile {
         self.fullName = dto.fullname
         self.avatar = dto.avatar
         self.gender = dto.gender
+        self.dateOfBirth = dto.date_of_birth
         self.bio = dto.bio
+        self.website = dto.website
+        self.publicEmail = dto.public_email
+        self.instagram = dto.instagram
+        self.tiktok = dto.tiktok
         self.businessId = dto.business_id
         self.businessTypeId = dto.business_type_id
         self.counters = UserCounters(dto: dto.counters)
@@ -35,7 +40,6 @@ extension BusinessOwner {
         self.fullName = dto.fullname
         self.username = dto.username
         self.avatar = dto.avatar
-        self.isFollow = dto.is_follow
     }
 }
 

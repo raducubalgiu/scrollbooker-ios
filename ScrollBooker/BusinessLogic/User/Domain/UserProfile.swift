@@ -13,7 +13,12 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     let fullName: String
     let avatar: String?
     let gender: String
+    let dateOfBirth: String?
     let bio: String?
+    let website: String?
+    let publicEmail: String?
+    let instagram: String?
+    let tiktok: String?
     let businessId: Int?
     let businessTypeId: Int?
     let counters: UserCounters
@@ -34,7 +39,6 @@ struct BusinessOwner: Codable, Hashable, Sendable {
     let fullName: String
     let username: String
     let avatar: String?
-    let isFollow: Bool
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }

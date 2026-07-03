@@ -46,6 +46,24 @@ final class SessionManager: ObservableObject {
             .store(in: &cancellables)
     }
     
+    func updateAuthState(_ authState: AuthState) {
+        guard let currentUserInfo = userInfo else { return }
+        
+        userInfo = UserInfo(
+            id: currentUserInfo.id,
+            username: currentUserInfo.username,
+            fullName: currentUserInfo.fullName,
+            profession: currentUserInfo.profession,
+            avatar: currentUserInfo.avatar,
+            businessId: currentUserInfo.businessId,
+            businessOwnerId: currentUserInfo.businessOwnerId,
+            businessTypeId: currentUserInfo.businessTypeId,
+            hasEmployees: currentUserInfo.hasEmployees,
+            isValidated: authState.isValidated,
+            registrationStep: authState.registrationStep
+        )
+    }
+    
     func bootstrap() async {
         defer { isInitialized = true }
         
@@ -194,8 +212,7 @@ final class SessionManager: ObservableObject {
         
         do {
             let authState = try await authAPI.verifyEmail(token: token)
-            print("AUTH STATE!", authState)
-            // Update AuthState
+            updateAuthState(authState)
         } catch {
             self.loginError = (error as? LocalizedError)?.errorDescription
         }

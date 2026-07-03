@@ -48,7 +48,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                         )
                     }
 
-                    ProfileContactView()
+// Phase 2
+//                    ProfileContactView()
 
                     if let description = user.bio {
                         ProfileDescriptionView(description: description)
@@ -359,12 +360,14 @@ struct ProfileLayout<Header: View, Actions: View>: View {
 //    ProfileLayout(
 //        user: dummyUserProfile,
 //        header: {
-//            MyProfileHeaderView(username: "radu_balgiu")
+//            MyProfileHeaderView(username: "radu_balgiu"),
+//            
 //        },
 //        actions: {
 //            MyProfileActionsView(onNavigateToEditProfile: {})
 //        },
-//        onNavigateToUserProfile: {}
+//        onNavigateToUserProfile: {},
+//        onNavigateToUserSocial: {}
 //    )
 //    .preferredColorScheme(.dark)
 //}
@@ -378,7 +381,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
 //        actions: {
 //            UserProfileActions()
 //        },
-//        onNavigateToUserProfile: {}
+//        onNavigateToUserProfile: {},
+//        onNavigateToUserSocial: {}
 //    )
 //}
 //
@@ -391,7 +395,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
 //        actions: {
 //            UserProfileActions()
 //        },
-//        onNavigateToUserProfile: {}
+//        onNavigateToUserProfile: {},
+//        onNavigateToUserSocial: {}
 //    )
 //    .preferredColorScheme(.dark)
 //}

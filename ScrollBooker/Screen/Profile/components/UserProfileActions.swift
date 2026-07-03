@@ -19,7 +19,7 @@ struct UserProfileActions: View {
             .fontWeight(.semibold)
             .foregroundColor(Color.onPrimarySB)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 50)
                     .fill(Color.primarySB)
             )
             
@@ -36,7 +36,7 @@ struct UserProfileActions: View {
             .fontWeight(.semibold)
             .foregroundColor(Color.onSurfaceSB)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 50)
                     .fill(Color.surfaceSB)
             )
             
@@ -52,7 +52,7 @@ struct UserProfileActions: View {
             .fontWeight(.semibold)
             .foregroundColor(Color.onSurfaceSB)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 50)
                     .fill(Color.surfaceSB)
             )
         }

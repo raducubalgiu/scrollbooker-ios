@@ -21,7 +21,7 @@ struct MyProfileActionsView: View {
             .fontWeight(.semibold)
             .foregroundColor(Color.onSurfaceSB)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 50)
                     .fill(Color.surfaceSB)
             )
             
@@ -38,7 +38,7 @@ struct MyProfileActionsView: View {
             .fontWeight(.semibold)
             .foregroundColor(Color.onSurfaceSB)
             .background(
-                RoundedRectangle(cornerRadius: 10)
+                RoundedRectangle(cornerRadius: 50)
                     .fill(Color.surfaceSB)
             )
         }

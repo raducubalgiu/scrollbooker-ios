@@ -22,7 +22,12 @@ final class AppointmentAPIImpl: AppointmentAPI {
         self.client = client
     }
     
-    func getUserAppointments(page: Int, limit: Int, asCustomer: Bool?, bearer: String) async throws -> PaginatedResponse<Appointment> {
+    func getUserAppointments(
+        page: Int,
+        limit: Int,
+        asCustomer: Bool?,
+        bearer: String
+    ) async throws -> PaginatedResponse<Appointment> {
         var query: [String: String] = [
             "page": "\(page)",
             "limit": "\(limit)",
@@ -31,7 +36,7 @@ final class AppointmentAPIImpl: AppointmentAPI {
             query["as_customer"] = asCustomer ? "true" : "false"
         }
         
-        let dto: PaginatedResponseDTO<AppointmentDTO> = try await client.request(
+        let dto: PaginatedResponseDTO<AppointmentDto> = try await client.request(
             "appointments/",
             bearer: bearer,
             query: query

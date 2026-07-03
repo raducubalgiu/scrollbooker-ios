@@ -11,8 +11,12 @@ struct UserInfo: Codable, Hashable, Identifiable {
     let id: Int
     let username: String
     let fullName: String
+    let profession: String
+    let avatar: String?
     let businessId: Int?
+    let businessOwnerId: Int?
     let businessTypeId: Int?
+    let hasEmployees: Bool
     let isValidated: Bool
     let registrationStep: RegistrationStepEnum?
 }

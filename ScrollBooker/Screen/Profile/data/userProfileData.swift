@@ -11,7 +11,12 @@ let dummyUserProfile: UserProfile = UserProfile(
     fullName: "Radu Ion",
     avatar: "",
     gender: "other",
+    dateOfBirth: nil,
     bio: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been.",
+    website: nil,
+    publicEmail: nil,
+    instagram: nil,
+    tiktok: nil,
     businessId: 1,
     businessTypeId: 1,
     counters: UserCounters(
@@ -36,7 +41,6 @@ let dummyUserProfile: UserProfile = UserProfile(
         fullName: "Frizeria Figaro",
         username: "frizeria_figaro",
         avatar: "",
-        isFollow: false
     ),
     isOwnProfile: true,
     isBusinessOrEmployee: true,

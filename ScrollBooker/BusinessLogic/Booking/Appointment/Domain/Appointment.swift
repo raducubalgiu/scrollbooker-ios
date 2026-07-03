@@ -8,6 +8,11 @@
 import Foundation
 import SwiftUICore
 
+struct Currency: Identifiable, Equatable, Hashable, Sendable {
+    let id: Int
+    let name: String
+}
+
 struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let startDate: Date
@@ -15,30 +20,47 @@ struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     let channel: String
     let status: AppointmentStatus
     let message: String?
-    let product: AppointmentProduct
-    let user: AppointmentUser
     let isCustomer: Bool
+    let products: [AppointmentProduct]
+    let user: AppointmentUser
+    let customer: AppointmentUser
     let business: AppointmentBusiness
-    
-    //var duration: TimeInterval { endDate.timeIntervalSince(startDate) }
+    let totalPrice: Decimal
+    let totalPriceWithDiscount: Decimal
+    let totalDiscount: Decimal
+    let totalDuration: Int
+    let paymentCurrency: Currency
+    let hasWrittenReview: Bool
+    let hasVideoReview: Bool
+    let writtenReview: AppointmentWrittenReview?
 }
 
-struct AppointmentProduct: Equatable, Hashable, Sendable {
+struct AppointmentWrittenReview: Codable, Hashable, Identifiable {
+    let id: Int
+    let review: String?
+    let rating: Int
+}
+
+struct AppointmentProduct: Identifiable, Equatable, Hashable, Sendable {
     let id: Int?
     let name: String
     let price: Decimal
     let priceWithDiscount: Decimal
     let discount: Decimal
-    let currency: String
-    let exchangeRate: Decimal
+    let duration: Int
+    let currency: Currency
+    let convertedPriceWithDiscount: Decimal
+    let exchangeRate: Decimal?
 }
 
-struct AppointmentUser: Equatable, Hashable, Sendable {
+struct AppointmentUser: Identifiable, Equatable, Hashable, Sendable {
     let id: Int?
-    let avatar: String?
     let fullName: String
     let username: String?
+    let avatar: String?
     let profession: String?
+    let ratingsAverage: Double?
+    let ratingsCount: Int?
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
@@ -51,6 +73,7 @@ public struct BusinessCoordinates: Equatable, Hashable, Sendable {
 struct AppointmentBusiness: Equatable, Hashable, Sendable {
     let address: String
     let coordinates: BusinessCoordinates
+    let mapUrl: String?
 }
 
 enum AppointmentStatus: String, CaseIterable, Sendable, Codable {

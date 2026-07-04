@@ -27,7 +27,8 @@ extension Appointment {
         self.id = dto.id
         self.startDate = start
         self.endDate = end
-        self.channel = dto.channel
+        self.channel = AppointmentChannelEnum.fromKey(dto.channel) ?? .scrollBooker
+
         self.status = AppointmentStatus(raw: dto.status)
         self.message = dto.message
         self.isCustomer = dto.isCustomer
@@ -70,7 +71,6 @@ extension Appointment {
         }
 }
 
-// MARK: - Appointment Written Review Mapper
 extension AppointmentWrittenReview {
     init(dto: AppointmentWrittenReviewDto) {
         self.id = dto.id
@@ -79,7 +79,6 @@ extension AppointmentWrittenReview {
     }
 }
 
-// MARK: - Appointment Product Mapper
 extension AppointmentProduct {
     init(dto: AppointmentProductDto) {
         self.id = dto.id
@@ -103,13 +102,6 @@ extension AppointmentUser {
         self.profession = dto.profession
         self.ratingsAverage = dto.ratingsAverage
         self.ratingsCount = dto.ratingsCount
-    }
-}
-
-extension BusinessCoordinates {
-    init(dto: BusinessCoordinatesDto) {
-        self.lat = dto.lat
-        self.lng = dto.lng
     }
 }
 

@@ -14,6 +14,7 @@ enum AuthRoute: Hashable {
     
     case collectEmailValidation
     case collectUserUsername
+    case collectUserPhoneNumber
     
     case collectClientBirthdate
     case collectClientGender
@@ -28,21 +29,48 @@ enum AuthRoute: Hashable {
     case collectBusinessSchedules
     case collectBusinessHasEmployees
     case collectBusinessValidation
+    
+    case collectBusinessCurrencies
 }
 
 extension AuthRoute {
     init(step: RegistrationStepEnum) {
         switch step {
-        case .collectUserEmailValidation: self = .collectEmailValidation
-        case .collectUserUsername: self = .collectUserUsername
-        case .collectClientBirthdate: self = .collectClientBirthdate
-        case .collectClientGender: self = .collectClientGender
-        case .collectClientLocation: self = .collectClientLocationPermission
-        case .collectBusiness: self = .collectBusiness
-        case .collectBusinessServices: self = .collectBusinessServices
-        case .collectBusinessSchedules: self = .collectBusinessSchedules
-        case .collectBusinessHasEmployees: self = .collectBusinessHasEmployees
-        case .collectBusinessValidation: self = .collectBusinessValidation
+        case .collectUserEmailValidation:
+            self = .collectEmailValidation
+            
+        case .collectUserUsername:
+            self = .collectUserUsername
+            
+        case .collectUserPhoneHumber:
+            self = .collectUserPhoneNumber
+            
+        case .collectClientBirthdate:
+            self = .collectClientBirthdate
+            
+        case .collectClientGender:
+            self = .collectClientGender
+            
+        case .collectClientLocationPermission:
+            self = .collectClientLocationPermission
+            
+        case .collectBusiness:
+            self = .collectBusiness
+            
+        case .collectBusinessServices:
+            self = .collectBusinessServices
+            
+        case .collectBusinessSchedules:
+            self = .collectBusinessSchedules
+            
+        case .collectBusinessHasEmployees:
+            self = .collectBusinessHasEmployees
+            
+        case .collectBusinessValidation:
+            self = .collectBusinessValidation
+            
+        case .collectBusinessCurrencies:
+            self = .collectBusinessCurrencies
         }
     }
 }

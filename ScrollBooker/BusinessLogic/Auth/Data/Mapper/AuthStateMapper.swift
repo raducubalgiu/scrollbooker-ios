@@ -10,6 +10,6 @@ import Foundation
 extension AuthState {
     init(dto: AuthStateDTO) {
         self.isValidated = dto.is_validated
-        self.registrationStep = RegistrationStepEnum.fromKey(dto.registration_step)
+        self.registrationStep = RegistrationStepEnum.fromKeyOrNull(dto.registration_step)
     }
 }

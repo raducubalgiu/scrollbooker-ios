@@ -60,31 +60,35 @@ struct AuthRouter: View {
             
         case .collectEmailValidation:
             CollectEmailVerification()
-                .navigationBarHidden(true)
+                .toolbar(.hidden, for: .navigationBar)
             
         case .collectUserUsername:
             CollectUsernameScreen(
                 viewModel: container.makeCollectUsernameViewModel()
             )
-                .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
+            
+        case .collectUserPhoneNumber:
+            CollectPhoneNumberScreen()
+                .toolbar(.hidden, for: .navigationBar)
             
         case .collectClientBirthdate:
             CollectBirthdateScreen(
                 viewModel: container.makeCollectBirthdateViewModel()
             )
-                .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             
         case .collectClientGender:
             CollectGenderScreen(
                 viewModel: container.makeCollectGenderViewModel()
             )
-                .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             
         case .collectClientLocationPermission:
             CollectLocationPermissionScreen(
                 viewModel: container.makeCollectLocationPermissionViewModel()
             )
-                .navigationBarHidden(true)
+            .toolbar(.hidden, for: .navigationBar)
             
         case .collectBusiness:
             CollectBusinessTypeScreen()
@@ -109,6 +113,11 @@ struct AuthRouter: View {
             
         case .collectBusinessValidation:
             CollectBusinessValidationScreen()
+            
+        case .collectBusinessCurrencies: 
+            CollectBusinessCurrenciesScreen() // Înlocuiește cu numele real al ecranului tău pentru monede
         }
     }
 }
+
+

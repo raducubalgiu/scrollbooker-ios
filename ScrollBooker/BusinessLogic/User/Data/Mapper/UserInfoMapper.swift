@@ -19,6 +19,6 @@ extension UserInfo {
         self.businessTypeId = dto.business_type_id
         self.hasEmployees = dto.has_employees
         self.isValidated = dto.is_validated
-        self.registrationStep = RegistrationStepEnum.fromKey(dto.registration_step)
+        self.registrationStep = RegistrationStepEnum.fromKeyOrNull(dto.registration_step)
     }
 }

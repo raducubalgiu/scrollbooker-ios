@@ -17,7 +17,7 @@ struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let startDate: Date
     let endDate: Date
-    let channel: String
+    let channel: AppointmentChannelEnum
     let status: AppointmentStatus
     let message: String?
     let isCustomer: Bool
@@ -63,11 +63,6 @@ struct AppointmentUser: Identifiable, Equatable, Hashable, Sendable {
     let ratingsCount: Int?
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
-}
-
-public struct BusinessCoordinates: Equatable, Hashable, Sendable {
-    public let lat: Double
-    public let lng: Double
 }
 
 struct AppointmentBusiness: Equatable, Hashable, Sendable {

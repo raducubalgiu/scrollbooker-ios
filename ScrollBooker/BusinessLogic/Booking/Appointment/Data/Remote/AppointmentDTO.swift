@@ -62,11 +62,6 @@ struct AppointmentUserDto: Codable {
     let ratingsCount: Int?
 }
 
-struct BusinessCoordinatesDto: Codable {
-    let lat: Double
-    let lng: Double
-}
-
 struct AppointmentBusinessDto: Codable {
     let address: String
     let coordinates: BusinessCoordinatesDto

@@ -16,13 +16,7 @@ struct FeedTabRouter: View {
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .feedSearch:
-                        FeedSearchScreen(
-                            onNavigateToSearchResults: { router.push(.feedSearchResults) }
-                        )
-                        .toolbar(.hidden, for: .tabBar)
-                        
-                    case .feedSearchResults:
-                        FeedSearchResultsScreen()
+                        FeedSearchScreen()
                         .toolbar(.hidden, for: .tabBar)
                         
                     default: Text("Route not in Feed")

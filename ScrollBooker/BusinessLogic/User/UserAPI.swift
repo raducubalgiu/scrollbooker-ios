@@ -7,9 +7,10 @@
 
 import Foundation
 
-protocol UserAPI {
-    func userInfo(token: String) async throws -> UserInfo
-    func userPermission(token: String) async throws -> [Permission]
+/// Protocol decuplat de sesiuni, similar interfețelor curate din Retrofit / Jetpack Compose.
+protocol UserAPI: Sendable {
+    func userInfo() async throws -> UserInfo
+    func userPermission() async throws -> [Permission]
 }
 
 final class UserAPIImpl: UserAPI {
@@ -19,19 +20,14 @@ final class UserAPIImpl: UserAPI {
         self.client = client
     }
     
-    func userInfo(token: String) async throws -> UserInfo {
-        let dto: UserInfoDTO = try await client.request(
-            "auth/user-info",
-            bearer: token
-        )
-        
+    func userInfo() async throws -> UserInfo {
+        // Interceptorul adaugă automat token-ul Bearer în background.
+        let dto: UserInfoDTO = try await client.request("auth/user-info")
         return UserInfo(dto: dto)
     }
     
-    func userPermission(token: String) async throws -> [Permission] {
-        return try await client.request(
-            "auth/user-permissions",
-            bearer: token
-        )
+    func userPermission() async throws -> [Permission] {
+        // Apel simplu, curat, fără management manual de token-uri.
+        return try await client.request("auth/user-permissions")
     }
 }

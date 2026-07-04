@@ -7,29 +7,34 @@
 
 import Foundation
 
-protocol AuthAPI {
+// MARK: - Protocol
+/// Protocol marcat ca Sendable pentru conformarea strictă la modelul de concurență din Swift 6.
+protocol AuthAPI: Sendable {
     func login(body: LoginRequestDTO) async throws -> AuthResponse
     func register(body: RegisterRequestDTO) async throws -> AuthResponse
     func refresh(refreshToken: String) async throws -> AuthResponse
-    func verifyEmail(token: String) async throws -> AuthState
+    // Eliminat parametrul (token: String) pentru a lăsa AuthInterceptor să injecteze token-ul automat
+    func verifyEmail() async throws -> AuthState
 }
 
+// MARK: - Implementare
 final class AuthAPIImpl: AuthAPI {
     private let client: APIClient
+    
     init(client: APIClient) {
         self.client = client
     }
     
     func login(body: LoginRequestDTO) async throws -> AuthResponse {
-        let dto: AuthResponseDTO = try await client.multiPartRequest(
-            "auth/login",
-            fields: [
-                "username": body.username,
-                "password": body.password
-            ]
-        )
-        return AuthResponse(dto: dto)
-    }
+            let dto: AuthResponseDTO = try await client.formUrlEncodedRequest(
+                "auth/login",
+                fields: [
+                    "username": body.username,
+                    "password": body.password
+                ]
+            )
+            return AuthResponse(dto: dto)
+        }
     
     func register(body: RegisterRequestDTO) async throws -> AuthResponse {
         let dto: AuthResponseDTO = try await client.request(
@@ -41,6 +46,7 @@ final class AuthAPIImpl: AuthAPI {
     }
     
     func refresh(refreshToken: String) async throws -> AuthResponse {
+        // Endpoint-ul de refresh nu folosește interceptorul de Bearer Token (deoarece trimite refreshToken în body)
         let dto: AuthResponseDTO = try await client.request(
             "auth/refresh",
             method: .post,
@@ -49,11 +55,11 @@ final class AuthAPIImpl: AuthAPI {
         return AuthResponse(dto: dto)
     }
     
-    func verifyEmail(token: String) async throws -> AuthState {
+    func verifyEmail() async throws -> AuthState {
+        // Schimbarea este completă: protocolul și clasa au acum aceeași semnătură curată
         let dto: AuthStateDTO = try await client.request(
             "auth/verify-email",
-            method: .post,
-            bearer: token
+            method: .post
         )
         return AuthState(dto: dto)
     }

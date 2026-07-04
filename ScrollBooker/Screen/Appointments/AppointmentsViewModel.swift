@@ -50,24 +50,29 @@ final class AppointmentsViewModel: ObservableObject, HasLoadingState {
     }
     
     private func loadAppointments() async {
-        guard let token = session.auth.accessToken, !token.isEmpty else {
-            errorMessage = "Missing access token."
-            return
-        }
+        // SOLUȚIE ENTERPRISE: Am eliminat verificarea manuală a token-ului din SessionManager.
+        // Interceptorul global se ocupă de validare și refresh automat.
+        errorMessage = nil
         
         do {
+            // Apelul curat către API, fără parametrul bearer.
             let response: PaginatedResponse<Appointment> = try await withVisibleLoading {
                 try await api.getUserAppointments(
                     page: page,
                     limit: limit,
-                    asCustomer: false,
-                    bearer: token
+                    asCustomer: false
                 )
             }
             count = response.count
             appointments.append(contentsOf: response.results)
             page += 1
-        } catch {}
+        } catch {
+            // GESTIONARE CORECTĂ A ERORILOR: Convertim eroarea într-un mesaj lizibil pentru utilizator.
+            if let localizedError = error as? LocalizedError {
+                errorMessage = localizedError.errorDescription
+            } else {
+                errorMessage = error.localizedDescription
+            }
+        }
     }
-    
 }

@@ -73,21 +73,15 @@ struct AuthRouter: View {
                 .toolbar(.hidden, for: .navigationBar)
             
         case .collectClientBirthdate:
-            CollectBirthdateScreen(
-                viewModel: container.makeCollectBirthdateViewModel()
-            )
+            CollectBirthdateScreen()
             .toolbar(.hidden, for: .navigationBar)
             
         case .collectClientGender:
-            CollectGenderScreen(
-                viewModel: container.makeCollectGenderViewModel()
-            )
+            CollectGenderScreen()
             .toolbar(.hidden, for: .navigationBar)
             
         case .collectClientLocationPermission:
-            CollectLocationPermissionScreen(
-                viewModel: container.makeCollectLocationPermissionViewModel()
-            )
+            CollectLocationPermissionScreen()
             .toolbar(.hidden, for: .navigationBar)
             
         case .collectBusiness:

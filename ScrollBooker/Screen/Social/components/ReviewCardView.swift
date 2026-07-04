@@ -12,47 +12,47 @@ struct ReviewCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            HStack(spacing: 12) {
-                AvatarView(imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg")!)
-                
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(review.customer.fullName)
-                        .font(.subheadline.weight(.semibold))
-                    
-                    Text("2024-05-23 18:30")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                }
-            }
-            
-            Text(ReviewLabel.from(value: review.rating).text)
-                .font(.headline)
-            
-            StarRatingView(rating: Double(review.rating))
-            
-            Text(review.review)
-                .font(.body)
-                .fixedSize(horizontal: false, vertical: true)
-            
-            HStack(spacing: 12) {
-                Button {
-                    
-                } label: {
-                    Text("addComment")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
-                .buttonStyle(.plain)
-                
-                Button {
-                    
-                } label: {
-                    Image(systemName: review.isLiked ? "heart.fill" : "heart")
-                        .font(.title3)
-                        .foregroundColor(review.isLiked ? .errorSB : .gray)
-                }
-            }
+//            HStack(spacing: 12) {
+//                AvatarView(imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg")!)
+//                
+//                VStack(alignment: .leading, spacing: 2) {
+//                    Text(review.customer.fullName)
+//                        .font(.subheadline.weight(.semibold))
+//                    
+//                    Text("2024-05-23 18:30")
+//                        .font(.caption)
+//                        .foregroundColor(.secondary)
+//                }
+//            }
+//            
+//            Text(ReviewLabel.from(value: review.rating).text)
+//                .font(.headline)
+//            
+//            StarRatingView(rating: Double(review.rating))
+//            
+//            Text(review.review)
+//                .font(.body)
+//                .fixedSize(horizontal: false, vertical: true)
+//            
+//            HStack(spacing: 12) {
+//                Button {
+//                    
+//                } label: {
+//                    Text("addComment")
+//                        .font(.subheadline)
+//                        .foregroundStyle(.secondary)
+//                        .frame(maxWidth: .infinity, alignment: .leading)
+//                }
+//                .buttonStyle(.plain)
+//                
+//                Button {
+//                    
+//                } label: {
+//                    Image(systemName: review.isLiked ? "heart.fill" : "heart")
+//                        .font(.title3)
+//                        .foregroundColor(review.isLiked ? .errorSB : .gray)
+//                }
+//            }
         }
         .padding()
         .background(
@@ -67,15 +67,15 @@ struct ReviewCardView: View {
     }
 }
 
-#Preview("Light") {
-    ReviewCardView(
-        review: userReviews[0]
-    )
-}
-
-#Preview("Dark") {
-    ReviewCardView(
-        review: userReviews[0]
-    )
-    .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    ReviewCardView(
+//        review: userReviews[0]
+//    )
+//}
+//
+//#Preview("Dark") {
+//    ReviewCardView(
+//        review: userReviews[0]
+//    )
+//    .preferredColorScheme(.dark)
+//}

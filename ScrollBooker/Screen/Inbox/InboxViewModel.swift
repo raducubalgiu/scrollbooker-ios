@@ -68,43 +68,50 @@ final class InboxViewModel: ObservableObject, HasLoadingState {
     }
     
     func delete(_ notification: Notification) async {
-        guard let token = session.auth.accessToken, !token.isEmpty else {
-            errorMessage = "Missing access token."; return
-        }
+        // SOLUȚIE ENTERPRISE: Am eliminat verificarea manuală a token-ului.
+        errorMessage = nil
+        
         guard let idx = notifications.firstIndex(where: { $0.id == notification.id }) else { return }
         
-        // optimistic UI
+        // Optimistic UI (Aplicația șterge notificarea instant din UI pentru un efect de fluiditate maximă)
         let removed = notifications.remove(at: idx)
                 
         do {
             try await withVisibleLoading {
-                try await api.deleteNotificationById(notificationId: removed.id, bearer: token)
+                // Apel curat, interceptorul se ocupă de securitate în background
+                try await api.deleteNotificationById(notificationId: removed.id)
             }
         } catch {
-            // rollback
+            // Rollback (Dacă serverul dă eroare, reintroducem notificarea exact pe poziția ei inițială)
             notifications.insert(removed, at: idx)
+            
+            if let localizedError = error as? LocalizedError {
+                errorMessage = localizedError.errorDescription
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
     
     private func loadNextPage() async {
-        guard let token = session.auth.accessToken, !token.isEmpty else {
-            errorMessage = "Missing access token."
-            return
-        }
+        // Am eliminat codul parazit de token checking
+        errorMessage = nil
         
         do {
             let response: PaginatedResponse<Notification> = try await withVisibleLoading {
-                try await api.getNotifications(
-                    page: page,
-                    limit: limit,
-                    bearer: token
-                )
+                // Apel curat fără parametrul bearer
+                try await api.getNotifications(page: page, limit: limit)
             }
             count = response.count
             notifications.append(contentsOf: response.results)
             page += 1
         } catch {
-            
+            // Gestionăm eroarea de rețea sau de sesiune pentru paginare
+            if let localizedError = error as? LocalizedError {
+                errorMessage = localizedError.errorDescription
+            } else {
+                errorMessage = error.localizedDescription
+            }
         }
     }
 }

@@ -1,0 +1,13 @@
+//
+//  Development.xcconfig
+//  ScrollBooker
+//
+//  Created by Raducu Balgiu on 04.07.2026.
+//
+
+// Configuration settings file format documentation can be found at:
+// https://developer.apple.com/documentation/xcode/adding-a-build-configuration-file-to-your-project
+
+API_HOST = 127.0.0.1:8000
+API_SCHEME = http
+

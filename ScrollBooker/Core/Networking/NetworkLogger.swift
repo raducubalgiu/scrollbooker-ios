@@ -8,53 +8,83 @@
 import Foundation
 import os
 
+/// Logger de rețea ultra-performant și asincron, aliniat la standardele de securitate și concurență Apple.
 enum NetworkLogger {
-    enum Color: String {
-        case cyan = "\u{001B}[0;36m"
-        case green = "\u{001B}[0;32m"
-        case yellow = "\u{001B}[0;33m"
-        case red = "\u{001B}[0;31m"
-        case reset = "\u{001B}[0;0m"
-}
+    // Definim un subsistem unic pentru modulul de rețea, facilitând filtrarea în Xcode Console și Apple Console app.
+    private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.app.network", category: "Network")
 
-private static func write(_ text: String, color: Color) {
-    #if DEBUG
-    let colored = color.rawValue + text + Color.reset.rawValue + "\n"
-    if let data = colored.data(using: .utf8) {
-        FileHandle.standardOutput.write(data) // păstrează escape-urile
+    /// Loghează detaliile unei cereri HTTP trimise.
+    static func request(_ req: URLRequest, body: Data?) {
+        #if DEBUG
+        let method = req.httpMethod ?? "GET"
+        let urlStr = req.url?.absoluteString ?? ""
+        
+        // Cenzurăm sau mascăm token-urile sensibile pentru a preveni scurgerile de date (Security Compliance)
+        var headers = req.allHTTPHeaderFields ?? [:]
+        if headers["Authorization"] != nil {
+            headers["Authorization"] = "Bearer [REDACTED/PROTECTED]"
+        }
+        
+        var bodyString = "nil"
+        if let body = body {
+            // Verificăm dacă corpul este un JSON valid înainte de a-l printa, pentru a evita procesarea fișierelor binare
+            if let json = try? JSONSerialization.jsonObject(with: body),
+               let prettyData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
+                bodyString = String(data: prettyData, encoding: .utf8) ?? "Invalid UTF8"
+            } else {
+                bodyString = "<Binary or Non-JSON Data: \(body.count) bytes>"
+            }
+        }
+        
+        // Utilizăm proprietatea structurală os.Logger pentru a trimite logurile asincron.
+        // Folosim marcare de privacy: URL-ul este marcat ca privat în logurile de sistem consolidate.
+        logger.debug("""
+        [REQUEST] 🚀
+        → Method: \(method, privacy: .public)
+        → URL: \(urlStr, privacy: .private)
+        → Headers: \(headers, privacy: .private)
+        → Body:
+        \(bodyString, privacy: .private)
+        """)
+        #endif
     }
-    #endif
-}
 
-static func request(_ req: URLRequest, body: Data?) {
-    var lines: [String] = []
-    let method = req.httpMethod ?? "GET"
-    let urlStr = req.url?.absoluteString ?? ""
-    lines.append("→ \(method) \(urlStr)")
-    lines.append("Headers: \(req.allHTTPHeaderFields ?? [:])")
-    if let body = body, let s = String(data: body, encoding: .utf8) {
-        lines.append("Body: \(s)")
-    } else {
-        lines.append("Body: nil")
-}
-    write("[REQUEST]\n" + lines.joined(separator: "\n"), color: .cyan)
-}
-
+    /// Loghează detaliile unui răspuns HTTP primit de la server.
     static func response(_ req: URLRequest, resp: HTTPURLResponse, data: Data?) {
-    var lines: [String] = []
-    let method = req.httpMethod ?? "GET"
-    let urlStr = req.url?.absoluteString ?? ""
-    lines.append("→ \(method) \(urlStr)")
-    
-    lines.append("Status: \(resp.statusCode)")
-    if let data = data, let s = String(data: data, encoding: .utf8) {
-        lines.append("Body:\n\(s)")
-    } else if let data = data {
-        lines.append("Body: <binary \(data.count) bytes>")
-    } else {
-        lines.append("Body: nil")
-    }
-    let color: Color = (200..<300).contains(resp.statusCode) ? .green : .red
-    write("[RESPONSE]\n" + lines.joined(separator: "\n"), color: color)
+        #if DEBUG
+        let method = req.httpMethod ?? "GET"
+        let urlStr = req.url?.absoluteString ?? ""
+        let statusCode = resp.statusCode
+        
+        var bodyString = "nil"
+        if let data = data {
+            if let json = try? JSONSerialization.jsonObject(with: data),
+               let prettyData = try? JSONSerialization.data(withJSONObject: json, options: .prettyPrinted) {
+                bodyString = String(data: prettyData, encoding: .utf8) ?? "Invalid UTF8"
+            } else {
+                bodyString = "<Binary or Non-JSON Data: \(data.count) bytes>"
+            }
+        }
+        
+        // Bifurcăm nivelul de log în funcție de codul de status pentru o scanare vizuală facilă în Xcode 15+
+        if (200..<300).contains(statusCode) {
+            logger.info("""
+            [RESPONSE SUCCESS] ✅
+            ← \(method, privacy: .public) \(statusCode, privacy: .public)
+            ← URL: \(urlStr, privacy: .private)
+            ← Body:
+            \(bodyString, privacy: .private)
+            """)
+        } else {
+            // Pentru erori (4xx, 5xx) folosim .error pentru a apărea cu roșu automat în Consola nativă
+            logger.error("""
+            [RESPONSE ERROR] ❌
+            ← \(method, privacy: .public) \(statusCode, privacy: .public)
+            ← URL: \(urlStr, privacy: .private)
+            ← Body:
+            \(bodyString, privacy: .private)
+            """)
+        }
+        #endif
     }
 }

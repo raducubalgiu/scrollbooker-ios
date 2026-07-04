@@ -21,56 +21,89 @@ struct AppointmentsScreen: View {
         self.onNavigateToAppointmentDetails = onNavigateToAppointmentDetails
     }
     
-    @State private var showBottomSheet = false
-    @State private var selected: AppointmentFilterTitleEnum = .all
-    
     var body: some View {
-        Header(
-            title: String(localized: "bookings"),
-            enableBack: false
-        )
-        
-        Button {
-            showBottomSheet = true
-        } label: {
-            Text("all")
-                .font(.subheadline.bold())
-                .foregroundColor(.onBackgroundSB)
-            Image(systemName: "chevron.down")
-                .foregroundColor(.onBackgroundSB)
-        }
-        .padding(.m)
-        .background(
-            RoundedRectangle(cornerRadius: 10)
-                .fill(Color.surfaceSB)
-        )
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.horizontal)
-        
-        ZStack {
+        VStack(spacing: 0) {
+            Header(
+                title: String(localized: "bookings"),
+                enableBack: false
+            )
+            
             ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(viewModel.appointments) { item  in
-                        AppointmentCardView(
-                            appointment: item,
-                            onClick: {
-                                onNavigateToAppointmentDetails(item.id)
-                            }
-                        )
+                Group {
+                    switch viewModel.state {
+                    case .idle:
+                        Color.clear
+                            .frame(height: 200)
                         
-                        Divider()
+                    case .loading:
+                        // Loader centralizat fluid
+                        VStack {
+                            Spacer()
+                            ProgressView()
+                                .scaleEffect(1.2)
+                            Spacer()
+                        }
+                        .frame(minHeight: 400)
+                        
+                    case .error(let message):
+                        // Ecran de eroare integrat safe în scroll
+                        VStack(spacing: 16) {
+                            Text("❌")
+                                .font(.system(size: 40))
+                            Text(message)
+                                .font(.body)
+                                .foregroundColor(.secondary)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, 24)
+                            
+                            Button(action: {
+                                Task { await viewModel.refresh() }
+                            }) {
+                                Text("retry")
+                                    .font(.subheadline.bold())
+                                    .padding(.horizontal, 16)
+                                    .padding(.vertical, 8)
+                            }
+                            .buttonStyle(.borderedProminent)
+                        }
+                        .padding(.top, 60)
+                        
+                    case .success(let appointments):
+                        if appointments.isEmpty {
+                            VStack {
+                                Text("Nu ai nicio programare activă.")
+                                    .foregroundColor(.secondary)
+                            }
+                            .padding(.top, 100)
+                        } else {
+                            // Randerul performant de listă binară
+                            LazyVStack(spacing: 0) {
+                                ForEach(appointments) { item in
+                                    AppointmentCardView(
+                                        appointment: item,
+                                        onClick: {
+                                            onNavigateToAppointmentDetails(item.id)
+                                        }
+                                    )
+                                    .onAppear {
+                                        Task { await viewModel.loadMoreIfNeeded(currentAppointment: item) }
+                                    }
+                                    
+                                    Divider()
+                                }
+                            }
+                        }
                     }
                 }
+                .frame(maxWidth: .infinity)
             }
-            .task { await viewModel.initialLoadIfNeeded() }
-            .sheet(isPresented: $showBottomSheet) {
-                AppointmentSheet(selected: $selected)
+            .refreshable {
+                // Pull-to-Refresh asincron nativ legat direct la ScrollView-ul global
+                await viewModel.refresh()
             }
-            
-            if viewModel.isLoading {
-                ProgressView()
-                    .scaleEffect(1.2)
-            }
+        }
+        .task {
+            await viewModel.initialLoadIfNeeded()
         }
     }
 }

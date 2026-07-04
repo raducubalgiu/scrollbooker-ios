@@ -12,14 +12,11 @@ enum RootDestination { case splash, auth, main }
 
 @MainActor
 final class SessionManager: ObservableObject {
-    // MARK: - API
     private let client: APIClient
-    
-    // Eliminat lazy var pentru siguranță strictă în MainActor
+
     private let authAPI: AuthAPI
     private let userAPI: UserAPI
     
-    // MARK: - Store & State
     private let store: AuthStore
     private var cancellables = Set<AnyCancellable>()
     
@@ -32,11 +29,8 @@ final class SessionManager: ObservableObject {
     @Published private(set) var isAuthenticated = false
     @Published var startDestination: RootDestination = .splash
     
-    // Mecanism enterprise pentru a opri request-urile simultane de refresh (Debouncing / Mutex)
     private var refreshTask: Task<Void, Error>?
     
-    /// Proprietate calculată rapid. În producție, dacă ai nevoie de acces ultra-rapid
-    /// de pe thread-uri de background fără await pe MainActor, token-ul se citește dintr-un Keychain izolat.
     var accessToken: String? {
         auth.accessToken
     }
@@ -91,11 +85,9 @@ final class SessionManager: ObservableObject {
         
         do {
             if isTokenExpired(token) {
-                // Folosim funcția globală de refresh pentru a rula în siguranță
                 try await refreshSession()
             }
             
-            // Apelul nu mai primește parametru! Interceptorul injectează automat noul token proaspăt salvat.
             let info = try await userAPI.userInfo()
             self.userInfo = info
             isAuthenticated = true
@@ -111,21 +103,16 @@ final class SessionManager: ObservableObject {
         loginError = nil
         
         do {
-            // 1) Apelăm endpoint-ul de login (folosește noul nostru multipart pe disc)
             let loginDTO = LoginRequestDTO(username: username, password: password)
             let loginResponse = try await authAPI.login(body: loginDTO)
             
-            // 2) IMPORTANT (Standard Enterprise): Salvăm temporar sesiunea doar cu token-urile
-            // pentru ca interceptorul din APIClient să le poată folosi imediat la pașii următori.
             await store.refreshTokens(
                 accessToken: loginResponse.accessToken,
                 refreshToken: loginResponse.refreshToken
             )
             
-            // 3) Obținem informațiile utilizatorului. Interceptorul injectează automat token-ul proaspăt salvat!
             let info = try await userAPI.userInfo()
             
-            // 4) Obținem permisiunile utilizatorului (fără token manual)
             let permissions = try await userAPI.userPermission()
             let permissionCodes = permissions.map { $0.code }
             
@@ -148,7 +135,7 @@ final class SessionManager: ObservableObject {
         } catch {
             self.loginError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             self.isAuthenticated = false
-            await store.clearUserSession() // Ne asigurăm că nu rămân token-uri parțiale la eșec
+            await store.clearUserSession()
         }
         
         isLoading = false
@@ -160,24 +147,19 @@ final class SessionManager: ObservableObject {
         loginError = nil
         
         do {
-            // 1) Apelăm endpoint-ul de înregistrare
             let registerDTO = RegisterRequestDTO(email: email, password: password, role_name: roleName)
             let registerResponse = try await authAPI.register(body: registerDTO)
             
-            // 2) Salvăm token-urile imediat în store pentru a fi vizibile de interceptor
             await store.refreshTokens(
                 accessToken: registerResponse.accessToken,
                 refreshToken: registerResponse.refreshToken
             )
             
-            // 3) Obținem datele utilizatorului automat securizat
             let info = try await userAPI.userInfo()
             
-            // 4) Obținem permisiunile
             let permissions = try await userAPI.userPermission()
             let permissionCodes = permissions.map { $0.code }
             
-            // 5) Salvăm sesiunea completă în stocarea securizată
             await store.storeUserSession(
                 accessToken: registerResponse.accessToken,
                 refreshToken: registerResponse.refreshToken,
@@ -189,7 +171,6 @@ final class SessionManager: ObservableObject {
                 permissions: permissionCodes
             )
             
-            // 6) Actualizăm starea aplicației
             self.userInfo = info
             self.isAuthenticated = true
             
@@ -204,7 +185,6 @@ final class SessionManager: ObservableObject {
     
     // MARK: - Global Token Refresh (Apelat automat de AuthInterceptor la erori 401)
     func refreshSession() async throws {
-        // Dacă un refresh este deja în curs de rulare, nu pornim altul! Returnăm aceeași sarcină.
         if let existingTask = refreshTask {
             _ = try await existingTask.value
             return
@@ -214,21 +194,18 @@ final class SessionManager: ObservableObject {
             throw APIError.unauthorized
         }
         
-        // Cream un nou Task pentru a bloca și sincroniza toate celelalte request-uri paralele
         let task = Task<Void, Error> {
             let refresh = try await authAPI.refresh(refreshToken: refreshToken)
             
-            // Salvăm noile token-uri în store. Publisher-ul Combine va actualiza automat `self.auth`
             await store.refreshTokens(
                 accessToken: refresh.accessToken,
                 refreshToken: refresh.refreshToken
             )
         }
         
-        // Asociem task-ul proprietății globale
         self.refreshTask = task
         
-        defer { self.refreshTask = nil } // Curățăm task-ul când se termină (indiferent de succes/eșec)
+        defer { self.refreshTask = nil }
         
         _ = try await task.value
     }
@@ -250,7 +227,6 @@ final class SessionManager: ObservableObject {
         loginError = nil
         
         do {
-            // Presupunând că authAPI a fost și el adaptat să nu mai ceară token manual
             let authState = try await authAPI.verifyEmail()
             updateAuthState(authState)
         } catch {

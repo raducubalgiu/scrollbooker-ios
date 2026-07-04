@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct PaginatedResponseDTO<Item: Codable>: Codable {
+struct PaginatedResponseDTO<Item: Decodable>: Decodable {
     let count: Int
     let results: [Item]
 }
@@ -16,7 +16,7 @@ struct PaginatedResponse<Item> {
     let count: Int
     let results: [Item]
     
-    init<DTO>(
+    init<DTO: Decodable>(
         _ dto: PaginatedResponseDTO<DTO>,
         map: (DTO) throws -> Item
     ) rethrows {
@@ -26,7 +26,10 @@ struct PaginatedResponse<Item> {
 }
 
 extension PaginatedResponse {
-    init<T>(_ dto: PaginatedResponseDTO<T>, map: (T) -> Item) {
+    init<DTO: Decodable>(
+        _ dto: PaginatedResponseDTO<DTO>,
+        map: (DTO) -> Item
+    ) {
         self.count = dto.count
         self.results = dto.results.map(map)
     }

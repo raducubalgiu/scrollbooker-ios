@@ -9,14 +9,12 @@ import SwiftUI
 
 @MainActor
 final class Router: ObservableObject {
-    // Un Stack per tab
     @Published var feedPath = NavigationPath()
     @Published var inboxPath = NavigationPath()
     @Published var searchPath  = NavigationPath()
     @Published var appointmentsPath = NavigationPath()
     @Published var profilePath = NavigationPath()
     
-    // Tab Curent
     @Published var selectedTab: MainTab = .feed
     
     func resetAll() {
@@ -27,7 +25,6 @@ final class Router: ObservableObject {
         profilePath = .init()
     }
     
-    // generic
     func push(_ route: Route) {
         switch(selectedTab) {
             case .feed: feedPath.append(route)

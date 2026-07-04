@@ -7,14 +7,12 @@
 
 import Foundation
 
-/// Actor care garantează siguranța concurenței la nivel de thread-uri (Swift 6 strict compliance).
 actor APIClient {
     private let config: NetworkConfig
     private let session: URLSession
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
     
-    // Lista de interceptori ce vor procesa secvențial fiecare cerere.
     private var interceptors: [RequestInterceptor] = []
     
     init(config: NetworkConfig,
@@ -28,12 +26,10 @@ actor APIClient {
         self.encoder = encoder
     }
     
-    /// Permite înregistrarea dinamică a interceptorilor (ex: după ce AppContainer a fost inițializat).
     func addInterceptor(_ interceptor: RequestInterceptor) {
         self.interceptors.append(interceptor)
     }
     
-    // MARK: - Core Request Engine
     func request<T: Decodable, B: Encodable>(
         _ path: String,
         method: HTTPMethod = .get,
@@ -42,7 +38,6 @@ actor APIClient {
         body: B? = nil
     ) async throws -> T {
         return try await executeWithRetry(attempts: 0) { [unowned self] in
-            // 1. Construcție URL inițial
             var components = URLComponents(url: self.config.baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
             if let query {
                 components?.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
@@ -52,7 +47,6 @@ actor APIClient {
             var req = URLRequest(url: url)
             req.httpMethod = method.rawValue
             
-            // 2. Aplicare Headers implicite
             self.config.defaultHeaders.merging(headers, uniquingKeysWith: { _, new in new })
                 .forEach { req.setValue($1, forHTTPHeaderField: $0) }
             
@@ -61,7 +55,6 @@ actor APIClient {
                 req.setValue("application/json", forHTTPHeaderField: "Content-Type")
             }
             
-            // 3. Rularea cererii prin faza de Adaptare a Interceptorilor
             for interceptor in self.interceptors {
                 req = try await interceptor.adapt(req)
             }
@@ -76,15 +69,22 @@ actor APIClient {
         }
     }
     
-    // Overload convenabil fără corpul cererii (Body)
     func request<T: Decodable>(
-        _ path: String,
-        method: HTTPMethod = .get,
-        headers: [String: String] = [:],
-        query: [String: String]? = nil
-    ) async throws -> T {
-        try await request(path, method: method, headers: headers, query: query, body: Optional<Empty>.none)
-    }
+            _ path: String,
+            method: HTTPMethod = .get,
+            headers: [String: String] = [:],
+            query: [String: String]? = nil
+        ) async throws -> T {
+            // Apelăm funcția ta principală, dar fixăm tipul corpului (B) ca fiind structura 'Empty'
+            // Acest lucru îi spune clar compilatorului că corpul este nil și îndeplinește criteriul Encodable
+            try await request(
+                path,
+                method: method,
+                headers: headers,
+                query: query,
+                body: Optional<Empty>.none
+            )
+        }
     
     func multiPartRequest<T: Decodable>(
         _ path: String,
@@ -103,12 +103,10 @@ actor APIClient {
             allHeaders["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
             allHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
             
-            // Aplicare interceptori
             for interceptor in self.interceptors {
                 req = try await interceptor.adapt(req)
             }
             
-            // Locația fișierului temporar pe disc
             let tempFileURL = FileManager.default.temporaryDirectory
                 .appendingPathComponent(UUID().uuidString)
                 .appendingPathExtension("tmp")
@@ -119,14 +117,12 @@ actor APIClient {
             stream.open()
             defer { stream.close() }
             
-            // Scriem câmpurile text
             for (key, value) in fields {
                 if let boundaryData = "--\(boundary)\r\n".data(using: .utf8) { try stream.writeData(boundaryData) }
                 if let dispData = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8) { try stream.writeData(dispData) }
                 if let valueData = "\(value)\r\n".data(using: .utf8) { try stream.writeData(valueData) }
             }
             
-            // Scriem fișierele binare direct din sursă
             for file in files {
                 if let boundaryData = "--\(boundary)\r\n".data(using: .utf8) { try stream.writeData(boundaryData) }
                 if let dispData = "Content-Disposition: form-data; name=\"\(file.name)\"; filename=\"\(file.filename)\"\r\n".data(using: .utf8) { try stream.writeData(dispData) }
@@ -135,16 +131,13 @@ actor APIClient {
                 if let lineBreak = "\r\n".data(using: .utf8) { try stream.writeData(lineBreak) }
             }
             
-            // Scriem închiderea corpului multipart
             if let endBoundaryData = "--\(boundary)--\r\n".data(using: .utf8) {
                 try stream.writeData(endBoundaryData)
             }
             
-            // Executăm upload-ul folosind fișierul temporar creat pe disc
             NetworkLogger.request(req, body: "[Multipart Streaming From Disk]".data(using: .utf8))
             let (data, resp) = try await self.session.upload(for: req, fromFile: tempFileURL)
             
-            // Ștergem fișierul temporar imediat după upload pentru a elibera spațiul
             try? FileManager.default.removeItem(at: tempFileURL)
             
             guard let http = resp as? HTTPURLResponse else { throw APIError.invalidResponse }
@@ -165,7 +158,6 @@ actor APIClient {
                 var req = URLRequest(url: url)
                 req.httpMethod = method.rawValue
                 
-                // Reconstituim exact comportamentul tău inițial de generare binară
                 let boundary = "Boundary-\(UUID().uuidString)"
                 var allHeaders = self.config.defaultHeaders.merging(headers, uniquingKeysWith: { _, new in new })
                 allHeaders["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
@@ -175,7 +167,6 @@ actor APIClient {
                 }
                 allHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
                 
-                // Aici este EXACT logica ta originală de append direct în RAM care a mers!
                 var body = Data()
                 for (key, value) in fields {
                     if let boundaryData = "--\(boundary)\r\n".data(using: .utf8) { body.append(boundaryData) }
@@ -196,7 +187,6 @@ actor APIClient {
             }
         }
     
-    // MARK: - Private Helpers
     private func handleResponse<T: Decodable>(_ http: HTTPURLResponse, data: Data) throws -> T {
         switch http.statusCode {
         case 200..<300:
@@ -209,14 +199,11 @@ actor APIClient {
         }
     }
     
-    /// Wrapper recursiv pentru managementul mecanic al funcției de Retry din interceptori
     private func executeWithRetry<T>(attempts: Int, action: @escaping () async throws -> T) async throws -> T {
         do {
             return try await action()
         } catch {
-            // Iterăm prin interceptori să vedem dacă vreunul dorește să facă retry (ex: AuthInterceptor la 401)
             for interceptor in interceptors {
-                // Generăm un URLRequest generic pentru testarea condiției de retry
                 let dummyRequest = URLRequest(url: config.baseURL)
                 if try await interceptor.retry(dummyRequest, dueTo: error, attempts: attempts + 1) {
                     return try await executeWithRetry(attempts: attempts + 1, action: action)
@@ -227,7 +214,6 @@ actor APIClient {
     }
 }
 
-// Extensie securizată pentru OutputStream, eliminând complet Force Unwrap-ul (`!`)
 private extension OutputStream {
     func writeString(_ string: String) throws {
         guard let data = string.data(using: .utf8) else { return }
@@ -237,7 +223,6 @@ private extension OutputStream {
     func writeData(_ data: Data) throws {
         data.withUnsafeBytes { (buffer: UnsafeRawBufferPointer) in
             guard let baseAddress = buffer.baseAddress?.assumingMemoryBound(to: UInt8.self) else { return }
-            // Am eliminat "_ =" de aici, apelând direct funcția nativă write
             self.write(baseAddress, maxLength: data.count)
         }
     }
@@ -246,10 +231,85 @@ private extension OutputStream {
 
 struct Empty: Codable {}
 
-/// Structură care definește un fișier binar pentru încărcările de tip Multipart (imagini, video)
 struct MultipartFile: Sendable {
     let name: String
     let filename: String
     let data: Data
     let mimeType: String
+}
+
+@propertyWrapper
+struct LossyDecimal: Codable, Hashable, Sendable {
+    var wrappedValue: Decimal
+    
+    init(wrappedValue: Decimal) {
+        self.wrappedValue = wrappedValue
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        
+        // 1. Încercăm să îl decodăm ca număr (Double)
+        if let numericValue = try? container.decode(Double.self) {
+            self.wrappedValue = Decimal(numericValue)
+            return
+        }
+        
+        // 2. Încercăm să îl decodăm ca String (Cazul tău FastAPI: "100.0")
+        if let stringValue = try? container.decode(String.self),
+           let decimalValue = Decimal(string: stringValue) {
+            self.wrappedValue = decimalValue
+            return
+        }
+        
+        // 3. Fallback sigur: Încercăm decodarea nativă a sistemului
+        self.wrappedValue = try container.decode(Decimal.self)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(wrappedValue)
+    }
+}
+
+@propertyWrapper
+struct LossyOptionalDecimal: Codable, Hashable, Sendable {
+    var wrappedValue: Decimal?
+    
+    init(wrappedValue: Decimal?) {
+        self.wrappedValue = wrappedValue
+    }
+    
+    init(from decoder: Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        
+        // Dacă valoarea lipsește sau este null în JSON, returnăm nil în siguranță
+        if container.decodeNil() {
+            self.wrappedValue = nil
+            return
+        }
+        
+        if let numericValue = try? container.decode(Double.self) {
+            self.wrappedValue = Decimal(numericValue)
+            return
+        }
+        
+        if let stringValue = try? container.decode(String.self),
+           let decimalValue = Decimal(string: stringValue) {
+            self.wrappedValue = decimalValue
+            return
+        }
+        
+        // Dacă e alt format ciudat, încercăm decodarea nativă opțională
+        self.wrappedValue = try? container.decode(Decimal.self)
+    }
+    
+    func encode(to encoder: Encoder) throws {
+        var container = encoder.singleValueContainer()
+        if let value = wrappedValue {
+            try container.encode(value)
+        } else {
+            try container.encodeNil()
+        }
+    }
 }

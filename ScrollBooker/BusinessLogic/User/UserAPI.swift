@@ -21,8 +21,8 @@ final class UserAPIImpl: UserAPI {
     }
     
     func userInfo() async throws -> UserInfo {
-        // Interceptorul adaugă automat token-ul Bearer în background.
         let dto: UserInfoDTO = try await client.request("auth/user-info")
+        
         return UserInfo(dto: dto)
     }
     

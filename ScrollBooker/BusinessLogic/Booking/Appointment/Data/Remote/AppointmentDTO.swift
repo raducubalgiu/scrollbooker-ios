@@ -7,11 +7,6 @@
 
 import Foundation
 
-struct CurrencyDto: Codable {
-    let id: Int
-    let name: String
-}
-
 struct AppointmentDto: Codable {
     let id: Int
     let startDate: String

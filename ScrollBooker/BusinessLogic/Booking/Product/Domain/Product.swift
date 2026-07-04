@@ -7,11 +7,6 @@
 
 import Foundation
 
-struct SubFilter: Identifiable, Equatable, Hashable, Sendable {
-    let id: Int
-    let name: String
-}
-
 struct Product: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String

@@ -7,13 +7,6 @@
 
 import Foundation
 
-extension Currency {
-    init(dto: CurrencyDto) {
-        self.id = dto.id
-        self.name = dto.name
-    }
-}
-
 extension Appointment {
     init(dto: AppointmentDto) throws {
         guard let start = DateParser.parseISO8601UTC(dto.startDate) else {

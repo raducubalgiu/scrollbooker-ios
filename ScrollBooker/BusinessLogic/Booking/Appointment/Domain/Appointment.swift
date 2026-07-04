@@ -8,11 +8,6 @@
 import Foundation
 import SwiftUICore
 
-struct Currency: Identifiable, Equatable, Hashable, Sendable {
-    let id: Int
-    let name: String
-}
-
 struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let startDate: Date

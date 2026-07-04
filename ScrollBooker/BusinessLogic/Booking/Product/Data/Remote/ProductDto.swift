@@ -7,11 +7,6 @@
 
 import Foundation
 
-struct SubFilterDto: Codable {
-    let id: Int
-    let name: String
-}
-
 struct ProductOfferingUserDto: Codable {
     let id: Int
     let username: String

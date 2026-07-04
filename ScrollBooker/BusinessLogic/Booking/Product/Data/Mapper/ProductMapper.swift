@@ -78,10 +78,10 @@ extension ProductFilter {
     init(dto: ProductFilterDto) {
         self.id = dto.id
         self.name = dto.name
+        
         self.subFilters = dto.sub_filters.map { SubFilter(dto: $0) }
         
         self.type = FilterTypeEnum.fromKey(dto.type)
-        
         self.unit = dto.unit
         self.minim = dto.minim
         self.maxim = dto.maxim
@@ -89,9 +89,3 @@ extension ProductFilter {
     }
 }
 
-extension SubFilter {
-    init(dto: SubFilterDto) {
-        self.id = dto.id
-        self.name = dto.name
-    }
-}

@@ -9,12 +9,21 @@ import SwiftUI
 
 struct EditBioScreen: View {
     var body: some View {
-        Header(title: "Bio")
+        Header(title: String(localized: "biography"))
         
         Spacer()
     }
 }
 
-#Preview {
+#Preview("Light") {
     EditBioScreen()
+    
+    Spacer()
+}
+
+#Preview("Dark") {
+    EditBioScreen()
+        .preferredColorScheme(.dark)
+    
+    Spacer()
 }

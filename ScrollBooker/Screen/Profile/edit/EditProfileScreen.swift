@@ -12,10 +12,10 @@ struct EditProfileScreen: View {
     
     var body: some View {
         VStack {
-            Header(title: "Editeaza profilul")
+            Header(title: String(localized: "editProfile"))
             
             VStack(alignment: .leading) {
-                Text("Despre tine")
+                Text(String(localized: "aboutYou"))
                     .font(.headline.bold())
                     .foregroundColor(.gray)
                     .padding(.top, .base)
@@ -24,7 +24,7 @@ struct EditProfileScreen: View {
                     onNavigate(.editFullName)
                 } label: {
                     HStack {
-                        Text("Nume")
+                        Text(String(localized: "name"))
                             .font(.headline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
@@ -46,14 +46,36 @@ struct EditProfileScreen: View {
                     onNavigate(.editUsername)
                 } label: {
                     HStack {
-                        Text("Utilizator")
+                        Text(String(localized: "username"))
                             .font(.headline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()
                         
                         HStack {
-                            Text("@radu_ion")
+                            Text("radu_ion")
+                                .font(.subheadline.bold())
+                                .foregroundColor(.gray)
+                            
+                            Image(systemName: "chevron.right")
+                                .foregroundColor(.gray)
+                        }
+                    }
+                    .padding(.vertical, .m)
+                }
+                
+                Button {
+                    onNavigate(.editBio)
+                } label: {
+                    HStack {
+                        Text(String(localized: "bio"))
+                            .font(.headline.bold())
+                            .foregroundColor(.onBackgroundSB)
+                        
+                        Spacer()
+                        
+                        HStack {
+                            Text("")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             
@@ -68,14 +90,14 @@ struct EditProfileScreen: View {
                     onNavigate(.editGender)
                 } label: {
                     HStack {
-                        Text("Gen")
+                        Text(String(localized: "gender"))
                             .font(.headline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()
                         
                         HStack {
-                            Text("Prefer sa nu spun")
+                            Text(String(localized: "preferNotToSay"))
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             
@@ -87,17 +109,17 @@ struct EditProfileScreen: View {
                 }
                 
                 Button {
-                    onNavigate(.editProfession)
+                    onNavigate(.editBirthdate)
                 } label: {
                     HStack {
-                        Text("Profesie")
+                        Text(String(localized: "birthdate"))
                             .font(.headline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()
                         
                         HStack {
-                            Text("Stylist")
+                            Text(String(localized: "preferNotToSay"))
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             

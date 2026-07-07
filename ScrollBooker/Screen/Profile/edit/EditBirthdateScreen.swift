@@ -1,29 +1,30 @@
 //
-//  EditNameScreen.swift
+//  EditBirthdateScreen.swift
 //  ScrollBooker
 //
-//  Created by Raducu Balgiu on 26.08.2025.
+//  Created by Raducu Balgiu on 06.07.2026.
 //
 
 import SwiftUI
 
-struct EditNameScreen: View {
+struct EditBirthdateScreen: View {
     var body: some View {
-        Header(title: String(localized: "name"))
+        Header(title: String(localized: "birthdate"))
         
         Spacer()
     }
 }
 
 #Preview("Light") {
-    EditNameScreen()
+    EditBirthdateScreen()
     
     Spacer()
 }
 
 #Preview("Dark") {
-    EditNameScreen()
+    EditBirthdateScreen()
         .preferredColorScheme(.dark)
     
     Spacer()
 }
+

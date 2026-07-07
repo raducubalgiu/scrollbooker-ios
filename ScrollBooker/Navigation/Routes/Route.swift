@@ -36,6 +36,7 @@ enum Route: Hashable {
     case editUsername
     case editBio
     case editGender
+    case editBirthdate
     case editProfession
     
     case userSocial
@@ -46,11 +47,9 @@ enum Route: Hashable {
     
     // My Business
     case myBusiness
-    
+    case myBusinessDetails
     case myEmployees
-    case myEmployeesDismissal
     
-    case myEmploymentRequests
     case employmentSelectEmployee
     case employmentAssignJob
     case employmentAcceptTerms

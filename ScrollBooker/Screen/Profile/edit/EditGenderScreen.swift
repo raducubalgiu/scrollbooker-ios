@@ -9,12 +9,21 @@ import SwiftUI
 
 struct EditGenderScreen: View {
     var body: some View {
-        Header(title: "Gender")
+        Header(title: String(localized: "gender"))
         
         Spacer()
     }
 }
 
-#Preview {
+#Preview("Light") {
     EditGenderScreen()
+    
+    Spacer()
+}
+
+#Preview("Dark") {
+    EditGenderScreen()
+        .preferredColorScheme(.dark)
+    
+    Spacer()
 }

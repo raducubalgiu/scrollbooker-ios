@@ -14,48 +14,48 @@ private var myBusinessPages = [
         icon: "location",
         route: .mySchedules
     ),
+    
     MyBusinessPage(
         title: String(localized: "scheduleShort"),
         description: String(localized: "userScheduleDetails"),
         icon: "clock",
         route: .mySchedules
     ),
+    
     MyBusinessPage(
         title: String(localized: "products"),
         description: String(localized: "userProductsDetails"),
         icon: "bag",
         route: .myProducts
     ),
+    
     MyBusinessPage(
         title: String(localized: "services"),
         description: String(localized: "servicesDetails"),
         icon: "bag",
         route: .myServices
     ),
+    
     MyBusinessPage(
         title: String(localized: "calendar"),
         description: "Detalii despre produsele mele",
         icon: "calendar",
         route: .myCalendar
     ),
+    
     MyBusinessPage(
         title: "Valute",
         description: String(localized: "paymentMethodsDetails"),
         icon: "creditcard",
         route: .myCurrencies
     ),
+    
     MyBusinessPage(
         title: String(localized: "employees"),
         description: "Detalii despre angajatii tai",
         icon: "person.2",
         route: .myEmployees
     ),
-    MyBusinessPage(
-        title: String(localized: "employmentRequests"),
-        description: "Detalii despre angajatii tai",
-        icon: "repeat",
-        route: .myEmploymentRequests
-    )
 ]
 
 struct MyBusinessScreen: View {

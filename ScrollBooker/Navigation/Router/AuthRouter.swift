@@ -63,9 +63,7 @@ struct AuthRouter: View {
                 .toolbar(.hidden, for: .navigationBar)
             
         case .collectUserUsername:
-            CollectUsernameScreen(
-                viewModel: container.makeCollectUsernameViewModel()
-            )
+            CollectUsernameScreen()
             .toolbar(.hidden, for: .navigationBar)
             
         case .collectUserPhoneNumber:
@@ -109,7 +107,7 @@ struct AuthRouter: View {
             CollectBusinessValidationScreen()
             
         case .collectBusinessCurrencies: 
-            CollectBusinessCurrenciesScreen() // Înlocuiește cu numele real al ecranului tău pentru monede
+            CollectBusinessCurrenciesScreen()
         }
     }
 }

@@ -34,7 +34,7 @@ struct AppointmentCardView: View {
                                 Text(appointment.user.fullName)
                                     .font(.headline.bold())
                                 Text(appointment.user.profession ?? "-")
-                                    .font(.headline)
+                                    .font(.subheadline)
                                     .foregroundColor(.gray)
                             }
                         }
@@ -50,6 +50,7 @@ struct AppointmentCardView: View {
                                 .foregroundColor(.gray)
                             
                             Text(appointment.formattedTotalDuration)
+                                .font(.subheadline)
                                 .foregroundColor(.gray)
                         }
                         .padding(.top, 4)

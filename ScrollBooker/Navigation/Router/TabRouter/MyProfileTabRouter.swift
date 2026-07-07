@@ -22,152 +22,157 @@ struct MyProfileTabRouter: View {
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                         // Settings
-                    case .mySettings:
-                        SettingsScreen { route in router.push(route)}
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .account:
-                        AccountScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .privacy:
-                        PrivacyScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .security:
-                        SecurityScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .notificationSettings:
-                        NotificationSettingsScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .display:
-                        DisplayScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .reportProblem:
-                        ReportProblemScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .support:
-                        SupportScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .termsAndConditions:
-                        TermsAndConditionsScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
+                        case .mySettings:
+                            SettingsScreen { route in router.push(route)}
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .account:
+                            AccountScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .privacy:
+                            PrivacyScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .security:
+                            SecurityScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .notificationSettings:
+                            NotificationSettingsScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .display:
+                            DisplayScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .reportProblem:
+                            ReportProblemScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .support:
+                            SupportScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .termsAndConditions:
+                            TermsAndConditionsScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
                         // Edit Profile
-                    case .editProfile:
-                        EditProfileScreen { route in router.push(route) }
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                    
-                    case .editFullName:
-                        EditNameScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        case .editProfile:
+                            EditProfileScreen { route in router.push(route) }
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
                         
-                    case .editUsername:
-                        EditUsernameScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        case .editFullName:
+                            EditNameScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .editUsername:
+                            EditUsernameScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .editBio:
+                            EditBioScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
                         
-                    case .editBio:
-                        EditBioScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        case .editGender:
+                            EditGenderScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
                         
-                    case .editGender:
-                        EditGenderScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        case .editBirthdate:
+                            EditBirthdateScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
                         
                         // My Business
-                    case .myBusiness:
-                        MyBusinessScreen { route in router.push(route) }
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        case .myBusiness:
+                            MyBusinessScreen { route in router.push(route) }
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
                         
-                    case .myCalendar:
-                        MyCalendarScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        case .myBusinessDetails:
+                            MyBusinessDetailsScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .myCalendar:
+                            MyCalendarScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .myCurrencies:
+                            MyCurrenciesScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .myProducts:
+                            MyProductsScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .mySchedules:
+                            MySchedulesScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .myServices:
+                            MyServicesScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .myEmployees:
+                            MyEmployeesScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
                         
-                    case .myCurrencies:
-                        MyCurrenciesScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .myProducts:
-                        MyProductsScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .mySchedules:
-                        MySchedulesScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .myServices:
-                        MyServicesScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .myEmployees:
-                        MyEmployeesScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-//                    case .myEmploymentRequests:
-//                        EmploymentsScreen()
-//                            .navigationBarHidden(true)
-//                            .toolbar(.hidden, for: .tabBar)
-                    
-                    case .employmentSelectEmployee:
-                        EmploymentSelectEmployeeScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .employmentAssignJob:
-                        EmploymentAsignJobScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .employmentAcceptTerms:
-                        EmploymentAcceptTermsScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    // Global Routes
-                    case .userSocial:
-                        SocialScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    case .userProfile:
-                        UserProfileScreen(
-                            onNavigateToEditProfile: { router.push(.editProfile) },
-                            onNavigateToSettings: { router.push(.mySettings) },
-                            onNavigateToMyBusiness: { router.push(.myBusiness) },
-                            onNavigateToUserSocial: { router.push(.userSocial) },
-                            onNavigateToUserProfile: { router.push(.userProfile) }
-                        )
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                            .ignoresSafeArea(.container, edges: .bottom)
-                        
-                    default: Text("This Route does not exist")
+                        case .employmentSelectEmployee:
+                            EmploymentSelectEmployeeScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .employmentAssignJob:
+                            EmploymentAsignJobScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .employmentAcceptTerms:
+                            EmploymentAcceptTermsScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        // Global Routes
+                        case .userSocial:
+                            SocialScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        case .userProfile:
+                            UserProfileScreen(
+                                onNavigateToEditProfile: { router.push(.editProfile) },
+                                onNavigateToSettings: { router.push(.mySettings) },
+                                onNavigateToMyBusiness: { router.push(.myBusiness) },
+                                onNavigateToUserSocial: { router.push(.userSocial) },
+                                onNavigateToUserProfile: { router.push(.userProfile) }
+                            )
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                                .ignoresSafeArea(.container, edges: .bottom)
+                            
+                        default: Text("This Route does not exist")
                     }
                 }
         }

@@ -252,6 +252,13 @@
 "bookingDetails" = "Detalii rezervare";
 "myCalendar" = "Calendarul meu";
 "send" = "Trimite";
+"name" = "Nume";
+"biography" = "Biografie";
+"birthdate" = "Data nașterii";
+"gender" = "Gen";
+"editProfile" = "Editează profilul";
+"preferNotToSay" = "Prefer să nu spun";
+"aboutYou" = "Despre tine";
 
 /* --- DYNAMIC --- */
 

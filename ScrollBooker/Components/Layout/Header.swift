@@ -32,6 +32,7 @@ struct Header: View {
             
             Text(title)
                 .font(.headline)
+                .foregroundColor(.onBackgroundSB)
             
             Spacer()
             

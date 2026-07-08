@@ -6,13 +6,11 @@
 //
 
 import Foundation
-
-import Foundation
 import Observation
 
 @Observable
 @MainActor
-final class AppointmentsViewModel {
+final class AppointmentsViewModel: HasLoadingState {
 
     var uiState = UiState(data: [Appointment]())
 
@@ -26,6 +24,18 @@ final class AppointmentsViewModel {
 
     var hasMore: Bool {
         uiState.data.count < totalCount
+    }
+
+    // MARK: - HasLoadingState conformance (proxy către uiState)
+
+    var isLoading: Bool {
+        get { uiState.isLoading }
+        set { uiState.isLoading = newValue }
+    }
+
+    var errorMessage: String? {
+        get { uiState.errorMessage }
+        set { uiState.errorMessage = newValue }
     }
 
     init(getUserAppointments: GetUserAppointmentsUseCase) {
@@ -74,22 +84,19 @@ final class AppointmentsViewModel {
     private func load(isFirstPage: Bool) async {
 
         if isFirstPage {
-            uiState.isLoading = true
             uiState.errorMessage = nil
         }
 
-        defer {
-            if isFirstPage {
-                uiState.isLoading = false
-            }
-        }
-
         do {
+            let response: PaginatedResponse<Appointment>
 
-            let response = try await getUserAppointments(
-                page: page,
-                limit: limit
-            )
+            if isFirstPage {
+                response = try await withVisibleLoading {
+                    try await getUserAppointments(page: page, limit: limit)
+                }
+            } else {
+                response = try await getUserAppointments(page: page, limit: limit)
+            }
 
             if isFirstPage {
 

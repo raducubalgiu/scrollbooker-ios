@@ -19,7 +19,8 @@ struct AppointmentCardView: View {
         } label: {
             VStack(alignment: .leading, spacing: 10) {
                 Text(appointment.status.title)
-                    .font(.headline.bold())
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                     .foregroundColor(appointment.status.color)
                     .padding(.bottom, 4)
                 
@@ -32,7 +33,7 @@ struct AppointmentCardView: View {
                             )
                             VStack(alignment: .leading, spacing: 2) {
                                 Text(appointment.user.fullName)
-                                    .font(.headline.bold())
+                                    .font(.headline)
                                 Text(appointment.user.profession ?? "-")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
@@ -40,7 +41,7 @@ struct AppointmentCardView: View {
                         }
                         
                         Text(appointment.getProductNames())
-                            .fontWeight(.regular)
+                            .font(.subheadline)
                             .foregroundColor(.gray)
                             .lineLimit(1)
                             .truncationMode(.tail)
@@ -50,7 +51,7 @@ struct AppointmentCardView: View {
                                 .foregroundColor(.gray)
                             
                             Text(appointment.formattedTotalDuration)
-                                .font(.subheadline)
+                                .font(.footnote)
                                 .foregroundColor(.gray)
                         }
                         .padding(.top, 4)
@@ -58,15 +59,16 @@ struct AppointmentCardView: View {
                         HStack(alignment: .center) {
                             HStack(alignment: .center, spacing: 5) {
                                 Text("\(appointment.totalPriceWithDiscount, format: .number.precision(.fractionLength(2))) \(appointment.paymentCurrency.name)")
-                                    .font(.system(size: 17, weight: .semibold))
+                                    .font(.headline)
                             
                                 if appointment.totalDiscount > 0 {
                                     Text(appointment.totalPrice, format: .number.precision(.fractionLength(2)))
-                                        .font(.body)
+                                        .font(.subheadline)
                                         .strikethrough()
                                         .foregroundColor(.gray)
                                     
                                     Text("(-\(appointment.totalDiscount, format: .number.precision(.fractionLength(2)))%)")
+                                        .font(.subheadline)
                                         .foregroundColor(.red)
                                 }
                             }
@@ -79,11 +81,14 @@ struct AppointmentCardView: View {
                     
                     VStack(spacing: 10) {
                         Text(appointment.startDate.day)
-                            .font(.title2.bold())
+                            .font(.title2)
+                            .fontWeight(.bold)
                         Text(appointment.startDate.month)
+                            .font(.footnote)
                             .foregroundColor(.gray)
                         Text(appointment.startDate.time)
-                            .font(.title3.bold())
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
                     }
                     .padding(.vertical, 8)
                     .padding(.horizontal, 12)

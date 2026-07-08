@@ -14,48 +14,25 @@ protocol HasLoadingState: AnyObject {
 }
 
 extension HasLoadingState {
-    // Ruleaza o operatie async, garantand un loading vizibil minim (default 300 ms).
     @discardableResult
-    func withVisibleLoading<T> (
-        minDuration: Duration = .milliseconds(2000),
+    
+    func withVisibleLoading<T>(
+        minDuration: Duration = .milliseconds(300),
         _ operation: () async throws -> T
     ) async rethrows -> T {
         isLoading = true
         let clock = ContinuousClock()
         let start = clock.now
-        
-        // Asiguram oprirea loading-ului indiferent de ramura
-        defer { isLoading = false }
-        
-        do {
-            let value = try await operation()
-            
-            // Garantam durata minima a indicatorului
-            let elapsed = start.duration(to: clock.now)
-            if elapsed < minDuration {
-                try? await Task.sleep(for: minDuration - elapsed)
-            }
-            
-            return value
-        } catch {
-            // Garantam durata minima a indicatorului si pe esec
-            let elapsed = start.duration(to: clock.now)
-            if elapsed < minDuration {
-                try? await Task.sleep(for: minDuration - elapsed)
-            }
-            
-            
-            errorMessage = (error as NSError).localizedDescription
-            throw error
-        }
-    }
-}
 
-@discardableResult
-func withVisibleLoading<T>(
-    _ owner: HasLoadingState,
-    minDuration: Duration = .milliseconds(2000),
-    _ operation: () async throws -> T
-) async rethrows -> T {
-    try await owner.withVisibleLoading(minDuration: minDuration, operation)
+        defer { isLoading = false }
+
+        let value = try await operation()
+
+        let elapsed = start.duration(to: clock.now)
+        if elapsed < minDuration {
+            try? await Task.sleep(for: minDuration - elapsed)
+        }
+
+        return value
+    }
 }

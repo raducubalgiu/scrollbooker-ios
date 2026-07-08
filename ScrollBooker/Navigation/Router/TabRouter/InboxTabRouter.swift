@@ -8,11 +8,14 @@
 import SwiftUI
 
 struct InboxTabRouter: View {
+    @EnvironmentObject private var container: AppContainer
     @ObservedObject var router: Router
     
     var body: some View {
         NavigationStack(path: $router.inboxPath) {
-            InboxScreen()
+            InboxScreen(
+                viewModel: container.notificationModule.makeNotificationsViewModel(),
+            )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                     case .employmentRequestRespond:

@@ -13,7 +13,7 @@ let appointmentsList: [Appointment] = [
         startDate: Date(),
         endDate: Date().addingTimeInterval(3600),
         channel: AppointmentChannelEnum.scrollBooker,
-        status: AppointmentStatus(raw: "confirmed"),
+        status: AppointmentStatusEnum.finished,
         message: "",
         isCustomer: true,
         products: [
@@ -66,7 +66,7 @@ let appointmentsList: [Appointment] = [
         startDate: Date(),
         endDate: Date().addingTimeInterval(3600),
         channel: AppointmentChannelEnum.scrollBooker,
-        status: AppointmentStatus(raw: "finished"),
+        status: .canceled,
         message: "",
         isCustomer: true,
         products: [
@@ -119,7 +119,7 @@ let appointmentsList: [Appointment] = [
         startDate: Date(),
         endDate: Date().addingTimeInterval(3600),
         channel: AppointmentChannelEnum.scrollBooker,
-        status: AppointmentStatus(raw: "cancelled"),
+        status: .inProgress,
         message: "Am gasit o oferta mai buna",
         isCustomer: true,
         products: [

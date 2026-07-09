@@ -260,6 +260,8 @@
 "preferNotToSay" = "Prefer să nu spun";
 "aboutYou" = "Despre tine";
 "display" = "Afișare";
+"bookedServices" = "Servicii rezervate";
+"clickOnRatingToEvaluate" = "Click pe o stea pentru a evalua";
 
 /* --- DYNAMIC --- */
 

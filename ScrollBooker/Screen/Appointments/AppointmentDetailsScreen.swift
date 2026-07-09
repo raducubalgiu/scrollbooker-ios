@@ -10,101 +10,104 @@ import MapKit
 
 struct AppointmentDetailsScreen: View {
     let appointmentId: Int
-    var onGoToCancel: () -> Void
+    let isFinished: Bool
     
     private var appointment: Appointment? {
         appointmentsList.first { $0.id == appointmentId }
     }
     
-    @State private var position: MapCameraPosition = .region(
-        MKCoordinateRegion(
-            center: CLLocationCoordinate2D(latitude: 44.4269, longitude: 26.1025),
-            span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
-        )
-    )
-    
-    private var location: CLLocationCoordinate2D? {
-        guard let coordinates = appointment?.business.coordinates else { return  nil}
-        return CLLocationCoordinate2D(
-            latitude: coordinates.lat,
-            longitude: coordinates.lng
-        )
-    }
-    
     var body: some View {
-        Header(
-            title: String(localized: "bookingDetails")
-        )
-        
-        ScrollView {
-            VStack(alignment: .leading, spacing: 15) {
-                if(appointment != nil) {
-                    AppointmentCardView(
-                        padding: 0,
-                        appointment: appointment!,
-                        onClick: {}
-                    )
-                }
+            VStack(spacing: 0) {
+                Header(title: "")
                 
-                if(appointment?.status != .cancelled) {
-    //                MainButton(title: "Rezerva din nou", onClick: {})
-                    
-                    MainButton(
-                        title: String(localized: "cancelAppointment"),
-                        onClick: onGoToCancel,
-                        bgColor: .errorSB
-                    )
-                } else {
-                    HStack {
-                        Image(systemName: "exclamationmark.triangle")
-                            .foregroundColor(.errorSB)
-                        Text("\(String(localized: "cancelReason")): \(appointment?.message ?? "")")
-                            .foregroundColor(.errorSB)
+                ScrollView {
+                    VStack(alignment: .leading, spacing: 0) {
+                        if let a = appointment {
+                            AppointmentDetailsHeader(appointment: a)
+                            
+                            Text("\(String(localized: "bookedServices")):")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .padding(.vertical, .xl)
+                            
+                            ForEach(Array(a.products.enumerated()), id: \.offset) { index, prod in
+                                AppointmentProductPrice(
+                                    name: prod.name,
+                                    price: prod.price,
+                                    priceWithDiscount: prod.priceWithDiscount,
+                                    discount: prod.discount,
+                                    currencyName: prod.currency.name
+                                )
+                                
+                                if index < a.products.count - 1 {
+                                    Divider()
+                                        .padding(.vertical, .base)
+                                }
+                            }
+                            
+                            Divider()
+                                .padding(.vertical, .base)
+                            
+                            AppointmentProductPrice(
+                                name: String(localized: "total"),
+                                price: a.totalPrice,
+                                priceWithDiscount: a.totalPriceWithDiscount,
+                                discount: a.totalDiscount,
+                                currencyName: a.paymentCurrency.name
+                            )
+                            .padding(.bottom, .xl)
+                            
+                            AppointmentDetailsActions(
+                                status: a.status,
+                                isCustomer: a.isCustomer,
+                                onNavigateToCancel: {}
+                            )
+                            .padding(.bottom, .xl)
+                            
+                            // Review CTA Box
+                            if !a.hasWrittenReview && isFinished && a.isCustomer {
+                                ReviewCTA { _ in }
+                                .padding(.bottom, 24)
+                            }
+                            
+                            if let rev = a.writtenReview {
+                                AppointmentDetailsWrittenReview(
+                                    customerAvatar: a.customer.avatar ?? "",
+                                    isCustomer: a.isCustomer,
+                                    review: rev.review,
+                                    rating: rev.rating,
+                                    onOpenCancelSheet: {}
+                                )
+                            }
+                            
+                            if let message = a.message {
+                                Text(message)
+                                    .font(.body)
+                                    .padding(.top, 8)
+                            }
+                        }
+                        
+                        Spacer().frame(height: 16)
                     }
-                    .padding(.vertical)
-                }
-                
-                Text("location")
-                    .font(.headline.bold())
-                
-                HStack {
-                    Image(systemName: "location")
-                    Text(appointment?.business.address ?? "")
-                }
-                
-                if let coord = location {
-                    Map(position: $position) {
-                        Marker("Centrul Bucurestiului", coordinate: coord)
-                    }
-                    .frame(height: 220)
-                    .padding(.top, .base)
-                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                    .onAppear {
-                        position = .region(MKCoordinateRegion(
-                            center: coord,
-                            span: MKCoordinateSpan(latitudeDelta: 0.01, longitudeDelta: 0.01)
-                        ))
-                    }
+                    .padding(.horizontal, .xl)
                 }
             }
-            .frame(maxWidth: .infinity)
-            .padding()
+            .background(Color.backgroundSB)
             .navigationBarHidden(true)
         }
-    }
 }
 
 #Preview("Light") {
     AppointmentDetailsScreen(
         appointmentId: 1,
-        onGoToCancel: {}
+        isFinished: true
     )
 }
 
 #Preview("Dark") {
     AppointmentDetailsScreen(
         appointmentId: 1,
-        onGoToCancel: {}
+        isFinished: true
     )
         .preferredColorScheme(.dark)
 }

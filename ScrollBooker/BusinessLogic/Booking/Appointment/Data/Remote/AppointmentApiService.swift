@@ -11,6 +11,7 @@ import Foundation
 
 protocol AppointmentApiService: Sendable {
     func fetchUserAppointments(page: Int, limit: Int) async throws -> PaginatedResponseDTO<AppointmentDto>
+    func getAppointmentById(id: Int) async throws -> AppointmentDto
 }
 
 final class AppointmentAPIImpl: AppointmentApiService {
@@ -30,6 +31,13 @@ final class AppointmentAPIImpl: AppointmentApiService {
             "appointments/me",
             method: .get,
             query: query
+        )
+    }
+    
+    func getAppointmentById(id: Int) async throws -> AppointmentDto {
+        return try await client.request(
+            "appointments/\(id)",
+            method: .get
         )
     }
 }

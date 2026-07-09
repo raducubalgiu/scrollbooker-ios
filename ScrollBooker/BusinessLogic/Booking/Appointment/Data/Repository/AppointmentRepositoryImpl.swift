@@ -23,4 +23,9 @@ final class AppointmentRepositoryImpl: AppointmentRepository {
             try Appointment(dto: $0)
         }
     }
+    
+    func getAppointmentById(id: Int) async throws -> Appointment {
+        let dto = try await api.getAppointmentById(id: id)
+        return try Appointment(dto: dto)
+    }
 }

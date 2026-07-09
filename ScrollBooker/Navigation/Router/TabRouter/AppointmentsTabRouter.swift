@@ -26,15 +26,7 @@ struct AppointmentsTabRouter: View {
                 case .appointmentDetails(let id):
                     AppointmentDetailsScreen(
                         appointmentId: id,
-                        onGoToCancel: {
-                            router.push(.appointmentCancel(id: id))
-                        }
-                    )
-                    .toolbar(.hidden, for: .tabBar)
-
-                case .appointmentCancel(let id):
-                    AppointmentCancelScreen(
-                        appointmentId: id
+                        isFinished: true
                     )
                     .toolbar(.hidden, for: .tabBar)
 

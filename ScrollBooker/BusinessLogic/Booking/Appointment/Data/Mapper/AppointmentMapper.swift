@@ -22,7 +22,7 @@ extension Appointment {
         self.endDate = end
         self.channel = AppointmentChannelEnum.fromKey(dto.channel) ?? .scrollBooker
 
-        self.status = AppointmentStatus(raw: dto.status)
+        self.status = AppointmentStatusEnum(raw: dto.status)
         self.message = dto.message
         self.isCustomer = dto.isCustomer
         

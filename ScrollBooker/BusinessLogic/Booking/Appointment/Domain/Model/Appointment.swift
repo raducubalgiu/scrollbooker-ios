@@ -13,7 +13,7 @@ struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     let startDate: Date
     let endDate: Date
     let channel: AppointmentChannelEnum
-    let status: AppointmentStatus
+    let status: AppointmentStatusEnum
     let message: String?
     let isCustomer: Bool
     let products: [AppointmentProduct]
@@ -64,33 +64,4 @@ struct AppointmentBusiness: Equatable, Hashable, Sendable {
     let address: String
     let coordinates: BusinessCoordinates
     let mapUrl: String?
-}
-
-enum AppointmentStatus: String, CaseIterable, Sendable, Codable {
-    case confirmed
-    case cancelled
-    case finished
-    case unknown
-    
-    init(raw: String) {
-        self = AppointmentStatus(rawValue: raw.lowercased()) ?? .unknown
-    }
-    
-    var title: String {
-        switch self {
-        case .confirmed: return String(localized: "appointment.status.confirmed")
-        case .cancelled: return String(localized: "appointment.status.cancelled")
-        case .finished: return String(localized: "appointment.status.finished")
-        case .unknown: return String(localized: "appointment.status.confirmed")
-        }
-    }
-    
-    var color: Color {
-        switch self {
-        case .confirmed: return .green
-        case .cancelled: return Color.errorSB
-        case .finished: return .gray
-        case .unknown: return .gray
-        }
-    }
 }

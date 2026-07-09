@@ -7,4 +7,5 @@
 
 protocol AppointmentRepository: Sendable {
     func getUserAppointments(page: Int, limit: Int) async throws -> PaginatedResponse<Appointment>
+    func getAppointmentById(id: Int) async throws -> Appointment
 }

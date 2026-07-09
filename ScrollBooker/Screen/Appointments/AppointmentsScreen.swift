@@ -27,7 +27,7 @@ struct AppointmentsScreen: View {
             )
 
             ScrollView {
-                if viewModel.uiState.isLoading {
+                if viewModel.uiState.isLoading && !viewModel.uiState.isRefreshing {
                     VStack {
                         Spacer()
 

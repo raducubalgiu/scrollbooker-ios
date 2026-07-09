@@ -17,7 +17,7 @@ final class AppointmentsViewModel: HasLoadingState {
     private let getUserAppointments: GetUserAppointmentsUseCase
 
     private var page = 1
-    private let limit = 10
+    private let limit = 20
 
     private var totalCount = 0
     private var isPaging = false

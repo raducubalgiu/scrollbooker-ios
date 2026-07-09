@@ -23,7 +23,6 @@ enum Route: Hashable {
     // Appointments
     case appointments
     case appointmentDetails(id: Int)
-    case appointmentCancel(id: Int)
     
     // Profile
     case myProfile

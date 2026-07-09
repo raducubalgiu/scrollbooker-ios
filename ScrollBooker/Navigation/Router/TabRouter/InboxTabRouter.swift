@@ -18,16 +18,16 @@ struct InboxTabRouter: View {
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
-                    case .employmentRequestRespond:
-                        EmploymentRespondScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                    case .employmentRequestRespondConsent:
-                        EmploymentRespondConsentScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                    default: Text("Route not in Feed")
+                        case .employmentRequestRespond:
+                            EmploymentRespondScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                        case .employmentRequestRespondConsent:
+                            EmploymentRespondConsentScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                            
+                        default: Text("Route not in Feed")
                     }
                 }
         }

@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct MyProfileTabRouter: View {
+struct ProfileTabRouter: View {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
     
     var body: some View {
         NavigationStack(path: $router.profilePath) {
-            MyProfileScreen(
+            ProfileScreen(
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
@@ -30,7 +30,7 @@ struct MyProfileTabRouter: View {
                         )
                     )
                 },
-                onNavigateToUserProfile: { router.push(.userProfile) }
+                onNavigateToUserProfile: {  }
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
@@ -158,29 +158,6 @@ struct MyProfileTabRouter: View {
                             EmploymentAcceptTermsScreen()
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
-//
-//                        case .userProfile:
-//                            UserProfileScreen(
-//                                onNavigateToEditProfile: { router.push(.editProfile) },
-//                                onNavigateToSettings: { router.push(.mySettings) },
-//                                onNavigateToMyBusiness: { router.push(.myBusiness) },
-//                                onNavigateToUserSocial: {
-//                                    router.push(
-//                                        .userSocial(
-//                                            userId: 13,
-//                                            username: "radu_ion",
-//                                            initialTab: SocialTab.followers,
-//                                            isBusinessOrEmployee: true,
-//                                            initialFollowersCount: 100,
-//                                            initialFollowingsCount: 200
-//                                        )
-//                                    )
-//                                },
-//                                onNavigateToUserProfile: { router.push(.userProfile) }
-//                            )
-//                                .navigationBarHidden(true)
-//                                .toolbar(.hidden, for: .tabBar)
-//                                .ignoresSafeArea(.container, edges: .bottom)
                             
                         default: Text("This Route does not exist")
                     }

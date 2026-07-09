@@ -9,7 +9,6 @@ enum Route: Hashable {
     // Feed
     case feed
     case feedSearch
-    case feedSearchResults
     
     // Inbox
     case inbox
@@ -25,10 +24,8 @@ enum Route: Hashable {
     case appointmentDetails(id: Int)
     
     // Profile
-    case myProfile
-    case myProfilePostDetail
-    case userProfile
-    case userProducts
+    case profile
+    case profilePostDetail
     
     case editProfile
     case editFullName

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MyProfileScreen: View {
+struct ProfileScreen: View {
     @State private var showMenuSheet = false
     
     var onNavigateToEditProfile: () -> Void
@@ -49,7 +49,7 @@ struct MyProfileScreen: View {
 }
 
 #Preview("Light") {
-    MyProfileScreen(
+    ProfileScreen(
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
         onNavigateToMyBusiness: {},
@@ -59,7 +59,7 @@ struct MyProfileScreen: View {
 }
 
 #Preview("Dark") {
-    MyProfileScreen(
+    ProfileScreen(
         onNavigateToEditProfile: {},
         onNavigateToSettings: {},
         onNavigateToMyBusiness: {},

@@ -12,19 +12,19 @@ struct SearchTabRouter: View {
     
     var body: some View {
         NavigationStack(path: $router.inboxPath) {
-            BusinessProfileScreen()
-//            SearchScreen(
-//                onNavigateToBusinessProfile: { id in
-//                    router.push(.businessProfile(id: id))
-//                }
-//            )
+            SearchScreen(
+                onNavigateToBusinessProfile: { id in
+                    router.push(.businessProfile(id: id))
+                }
+            )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
-//                    case .businessProfile(let id):
-//                        BusinessProfileScreen(businessId: id)
-//                            .navigationBarHidden(true)
-//                            .toolbar(.hidden, for: .tabBar)
-                    default: Text("Route not in Feed")
+                        case .businessProfile(let id):
+                            BusinessProfileScreen()
+                                .navigationBarHidden(true)
+                                .toolbar(.hidden, for: .tabBar)
+                        
+                        default: Text("Route not in Feed")
                     }
                 }
         }

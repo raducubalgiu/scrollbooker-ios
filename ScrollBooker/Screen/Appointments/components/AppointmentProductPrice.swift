@@ -36,7 +36,7 @@ struct AppointmentProductPrice: View {
                 }
                 
                 Text("\(priceWithDiscount, format: .number.precision(.fractionLength(2))) \(currencyName)")
-                    .font(.headline)
+                    .font(.subheadline.bold())
             }
             .fixedSize(horizontal: true, vertical: false)
             .layoutPriority(1)

@@ -20,7 +20,7 @@ struct ScrollBookerApp: App {
                 .environmentObject(container)
                 .environmentObject(container.session)
                 .environmentObject(theme)
-                .tint(.primarySB)
+                .tint(.onBackgroundSB)
                 .preferredColorScheme(theme.mode.prefferedColorScheme)
                 .task {
                     await container.bootstrap()

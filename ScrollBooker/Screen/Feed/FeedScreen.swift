@@ -13,62 +13,53 @@ struct FeedScreen: View {
     @Environment(\.scenePhase) private var scenePhase
 
     var onNavigateToFeedSearch: () -> Void
-    
     let posts = dummyBookNowPosts
-    
     @State private var currentIndex: Int? = 0
     
     var body: some View {
-        GeometryReader { geo in
-            let totalHeight = geo.size.height - 56 + geo.safeAreaInsets.top
-
+        GeometryReader { globalGeo in
+            let videoHeight = globalGeo.size.height
+            let videoWidth = globalGeo.size.width
+            
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
                     ForEach(Array(posts.enumerated()), id: \.element.id) { index, post in
                         ZStack {
-                            VStack(spacing: 0) {
-                                ZStack {
-                                    if let player = viewModel.players[post.id] {
-                                        PlayerView(player: player)
-                                            
-                                    }
-                                    
-                                    PostOverlayView(post: post)
-                                }
-                                .frame(height: totalHeight)
-                                
-                                Spacer(minLength: 0)
+                            if let player = viewModel.players[post.id] {
+                                PlayerView(player: player)
+                            } else {
+                                Color.black
                             }
-                            .frame(maxHeight: .infinity, alignment: .top)
+                            
+                            PostOverlayView(post: post)
                         }
-                        .containerRelativeFrame(.vertical)
+                        .frame(width: videoWidth, height: videoHeight)
                         .id(index)
                     }
                 }
                 .scrollTargetLayout()
             }
-            .ignoresSafeArea(edges: .top)
-            .scrollTargetBehavior(.paging)
+            .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
             .scrollIndicators(.never)
             .scrollPosition(id: $currentIndex)
-
-            .onAppear {
-                viewModel.prepare(posts: posts)
-                viewModel.play(index: currentIndex ?? 0, in: posts)
-            }
-            .onChange(of: currentIndex) { _, newIndex in
-               viewModel.play(index: newIndex ?? 0, in: posts)
-            }
-            .onChange(of: scenePhase) { _, phase in
-                if phase != .active { viewModel.pauseAll() }
-                else { viewModel.play(index: currentIndex ?? 0, in: posts) }
-            }
-            .onDisappear { viewModel.pauseAll() }
-            .background(Color.black)
-            .overlay(alignment: .top) {
-                FeedHeaderView(onNavigateToFeedSearch: onNavigateToFeedSearch)
-            }
         }
+        .ignoresSafeArea(edges: .top)
+        .background(Color.black)
+        .overlay(alignment: .top) {
+            FeedHeaderView(onNavigateToFeedSearch: onNavigateToFeedSearch)
+        }
+        .onAppear {
+            viewModel.prepare(posts: posts)
+            viewModel.play(index: currentIndex ?? 0, in: posts)
+        }
+        .onChange(of: currentIndex) { _, newIndex in
+           viewModel.play(index: newIndex ?? 0, in: posts)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active { viewModel.pauseAll() }
+            else { viewModel.play(index: currentIndex ?? 0, in: posts) }
+        }
+        .onDisappear { viewModel.pauseAll() }
     }
 }
 

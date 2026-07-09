@@ -23,29 +23,42 @@ struct AvatarWithRatingView: View {
                 size: size,
                 border: AvatarView.AvatarBorder(color: .divider, width: 1)
             )
-            .padding(.bottom, 12)
+            .padding(.bottom, dynamicBottomPadding)
             
             HStack(spacing: 2) {
                 Image(systemName: "star.fill")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: starFontSize, weight: .bold))
                     .foregroundColor(.ratingSB)
                 
                 Text(String(format: "%.1f", rating))
-                    .font(.system(size: 13, weight: .semibold))
+                    .font(.system(size: textFontSize, weight: .bold))
                     .foregroundColor(resolvedTextColor)
             }
-            .padding(.horizontal, 8)
-            .padding(.vertical, 4)
+            .padding(.horizontal, horizontalPadding)
+            .padding(.vertical, verticalPadding)
             .background(resolvedBadgeColor)
             .cornerRadius(15)
             .shadow(color: Color.black.opacity(0.15), radius: 2, x: 0, y: 1)
-            .offset(y: 4)
+            .offset(y: dynamicOffset)
         }
         .contentShape(Rectangle())
         .onTapGesture {
             onClick()
         }
     }
+    
+    private var avatarDiameter: CGFloat {
+        size.diameter
+    }
+    
+    private var starFontSize: CGFloat { max(9, avatarDiameter * 0.2) }
+    private var textFontSize: CGFloat { max(10, avatarDiameter * 0.23) }
+    
+    private var horizontalPadding: CGFloat { max(6, avatarDiameter * 0.13) }
+    private var verticalPadding: CGFloat { max(3, avatarDiameter * 0.08) }
+    
+    private var dynamicBottomPadding: CGFloat { max(8, avatarDiameter * 0.18) }
+    private var dynamicOffset: CGFloat { max(3, avatarDiameter * 0.06) }
     
     private var resolvedBadgeColor: Color {
         if let customColor = badgeBackgroundColor {

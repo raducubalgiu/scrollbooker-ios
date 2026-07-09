@@ -12,6 +12,8 @@ struct AppointmentDetailsHeader: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
+            Spacer().frame(height: 16)
+            
             Text(appointment.status.title)
                 .font(.subheadline)
                 .fontWeight(.semibold)
@@ -21,7 +23,7 @@ struct AppointmentDetailsHeader: View {
                 .background(appointment.status.color.opacity(0.2))
                 .cornerRadius(8)
             
-            Spacer().frame(height: 24)
+            Spacer().frame(height: 16)
             
             VStack(alignment: .leading, spacing: 8) {
                 Text("2025-05-23")
@@ -40,13 +42,13 @@ struct AppointmentDetailsHeader: View {
                     AvatarWithRatingView(
                         url: appointment.user.avatarURL,
                         rating: rating,
-                        size: .l,
+                        size: .xl,
                         onClick: {}
                     )
                 } else {
                     AvatarView(
                         imageURL: appointment.user.avatarURL,
-                        size: .l,
+                        size: .xl,
                         border: AvatarView.AvatarBorder(color: .divider, width: 1)
                     )
                 }
@@ -59,7 +61,7 @@ struct AppointmentDetailsHeader: View {
                     
                     HStack {
                         if let profession = appointment.user.profession, !profession.isEmpty {
-                            Text("\(profession) • ")
+                            Text("\(profession) •")
                         }
                         
                         Text("\(appointment.user.ratingsCount ?? 0) \("reviews")")

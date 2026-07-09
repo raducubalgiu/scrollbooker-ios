@@ -13,7 +13,6 @@ struct AppointmentsTabRouter: View {
 
     var body: some View {
         NavigationStack(path: $router.appointmentsPath) {
-
             AppointmentsScreen(
                 viewModel: container.appointmentModule.makeAppointmentsViewModel(),
                 onNavigateToAppointmentDetails: { id in
@@ -22,19 +21,17 @@ struct AppointmentsTabRouter: View {
             )
             .navigationDestination(for: Route.self) { route in
                 switch route {
+                    case .appointmentDetails(let id):
+                        AppointmentDetailsScreen(
+                            viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(appointmentId: id),
+                        )
+                        .toolbar(.hidden, for: .tabBar)
 
-                case .appointmentDetails(let id):
-                    AppointmentDetailsScreen(
-                        appointmentId: id,
-                        isFinished: true
-                    )
-                    .toolbar(.hidden, for: .tabBar)
-
-                default:
-                    Text("Route not in Appointments")
+                    default:
+                        Text("Route not in Appointments")
+                    }
                 }
             }
-        }
-        .environmentObject(router)
+            .environmentObject(router)
     }
 }

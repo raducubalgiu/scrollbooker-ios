@@ -37,4 +37,11 @@ final class AppointmentModule {
             getUserAppointments: getUserAppointmentsUseCase
         )
     }
+    
+    func makeAppointmentDetailsViewModel(appointmentId: Int) -> AppointmentDetailsViewModel {
+        AppointmentDetailsViewModel(
+            appointmentId: appointmentId,
+            getAppointmentById: getAppointmentByIdUseCase
+        )
+    }
 }

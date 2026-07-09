@@ -262,6 +262,7 @@
 "display" = "Afișare";
 "bookedServices" = "Servicii rezervate";
 "clickOnRatingToEvaluate" = "Click pe o stea pentru a evalua";
+"total" = "Total";
 
 /* --- DYNAMIC --- */
 

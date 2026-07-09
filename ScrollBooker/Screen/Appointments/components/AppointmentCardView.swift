@@ -59,7 +59,7 @@ struct AppointmentCardView: View {
                         HStack(alignment: .center) {
                             HStack(alignment: .center, spacing: 5) {
                                 Text("\(appointment.totalPriceWithDiscount, format: .number.precision(.fractionLength(2))) \(appointment.paymentCurrency.name)")
-                                    .font(.headline)
+                                    .font(.subheadline.bold())
                             
                                 if appointment.totalDiscount > 0 {
                                     Text(appointment.totalPrice, format: .number.precision(.fractionLength(2)))

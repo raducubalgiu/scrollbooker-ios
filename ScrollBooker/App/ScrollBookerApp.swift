@@ -9,17 +9,23 @@ import SwiftUI
 
 @main
 struct ScrollBookerApp: App {
+    @UIApplicationDelegateAdaptor(AppBootstrapper.self) var appDelegate
+    
     @StateObject private var theme = ThemeManager()
     @StateObject private var container = AppContainer()
     
     var body: some Scene {
         WindowGroup {
-            AppTheme(mode: theme.mode) {
-                RootRouter()
-                    .environmentObject(container)
-                    .environmentObject(container.session)
-            }
-            .environmentObject(theme)
+            RootRouter()
+                .environmentObject(container)
+                .environmentObject(container.session)
+                .environmentObject(theme)
+                .tint(.primarySB)
+                .preferredColorScheme(theme.mode.prefferedColorScheme)
+                .task {
+                    await container.bootstrap()
+                }
         }
     }
 }
+

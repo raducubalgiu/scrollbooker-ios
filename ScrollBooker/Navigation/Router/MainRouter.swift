@@ -12,34 +12,6 @@ struct MainRouter: View {
     @EnvironmentObject private var session: SessionManager
     
     var body: some View {
-//        Group {
-//            switch router.selectedTab {
-//            case .feed:
-//                FeedTabRouter(router: router)
-//            case .inbox:
-//                InboxTabRouter(router: router)
-//            case .search:
-//                SearchTabRouter(router: router)
-//            case .appointments:
-//                AppointmentsTabRouter(router: router)
-//            case .profile:
-//                MyProfileTabRouter(router: router)
-//            }
-//        }
-//        .safeAreaInset(edge: .bottom, spacing: 0) {
-//            CustomTabBar(
-//                selected: $router.selectedTab,
-//                items: [
-//                    .init(tab: .feed, title: "Acasa", systemImage: "house.fill"),
-//                    .init(tab: .inbox, title: "Inbox", systemImage: "bell.fill", badge: 10),
-//                    .init(tab: .search, title: "Cauta", systemImage: "magnifyingglass"),
-//                    .init(tab: .appointments, title: "Rezervari", systemImage: "calendar", badge: 20),
-//                    .init(tab: .profile, title: "Profil", systemImage: "person.fill")
-//                ],
-//                background: router.selectedTab == .feed ? Color.black : Color.backgroundSB
-//            )
-//        }
-        
         TabView(selection: $router.selectedTab) {
            FeedTabRouter(router: router)
                 .tabItem { Label("home", systemImage: "house") }

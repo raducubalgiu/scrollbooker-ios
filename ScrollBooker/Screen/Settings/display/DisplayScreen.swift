@@ -8,10 +8,35 @@
 import SwiftUI
 
 struct DisplayScreen: View {
+    @EnvironmentObject private var themeManager: ThemeManager
+    
     var body: some View {
-        Header(title: "Afisare")
-        
-        Spacer()
+        VStack(spacing: 0) {
+            Header(title: String(localized: "display"))
+            
+            VStack {
+                InputRadio(
+                    title: "System",
+                    isSelected: themeManager.mode == .system,
+                    onClick: { themeManager.mode = .system }
+                )
+                
+                InputRadio(
+                    title: "Light",
+                    isSelected: themeManager.mode == .light,
+                    onClick: { themeManager.mode = .light }
+                )
+                
+                InputRadio(
+                    title: "Dark",
+                    isSelected: themeManager.mode == .dark,
+                    onClick: { themeManager.mode = .dark }
+                )
+                
+                Spacer()
+            }
+            .padding(.horizontal, .base)
+        }
     }
 }
 

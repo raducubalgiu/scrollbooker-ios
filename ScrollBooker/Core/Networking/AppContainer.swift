@@ -9,35 +9,28 @@ import Foundation
 import SwiftUI
 
 @MainActor
-final class AppContainer: ObservableObject {
-
+final class AppContainer: ObservableObject, AppContainerProtocol {
     let session: SessionManager
     let apiClient: APIClient
 
-    // MARK: - Feature Modules
     let appointmentModule: AppointmentModule
     let notificationModule: NotificationModule
     let problemModule: ProblemModule
-
-    // MARK: - Legacy APIs
     let userAPI: UserAPI
 
     init() {
-        apiClient = APIClient(config: .default)
-        session = SessionManager(client: apiClient)
-
+        self.apiClient = APIClient(config: .default)
+        self.session = SessionManager(client: apiClient)
+        
+        self.appointmentModule = AppointmentModule(apiClient: apiClient)
+        self.notificationModule = NotificationModule(apiClient: apiClient)
+        self.problemModule = ProblemModule(apiClient: apiClient)
+        self.userAPI = UserAPIImpl(client: apiClient)
+    }
+    
+    func bootstrap() async {
         let authInterceptor = AuthInterceptor(sessionManager: session)
-
-        let client = apiClient
-        Task.detached {
-            await client.addInterceptor(authInterceptor)
-        }
-
-        appointmentModule = AppointmentModule(apiClient: apiClient)
-        notificationModule = NotificationModule(apiClient: apiClient)
-        problemModule = ProblemModule(apiClient: apiClient)
-
-        // MARK: - Legacy
-        userAPI = UserAPIImpl(client: apiClient)
+        await apiClient.addInterceptor(authInterceptor)
     }
 }
+

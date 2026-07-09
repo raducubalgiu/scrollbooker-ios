@@ -17,6 +17,7 @@ final class AppContainer: ObservableObject {
     // MARK: - Feature Modules
     let appointmentModule: AppointmentModule
     let notificationModule: NotificationModule
+    let problemModule: ProblemModule
 
     // MARK: - Legacy APIs
     let userAPI: UserAPI
@@ -34,6 +35,7 @@ final class AppContainer: ObservableObject {
 
         appointmentModule = AppointmentModule(apiClient: apiClient)
         notificationModule = NotificationModule(apiClient: apiClient)
+        problemModule = ProblemModule(apiClient: apiClient)
 
         // MARK: - Legacy
         userAPI = UserAPIImpl(client: apiClient)

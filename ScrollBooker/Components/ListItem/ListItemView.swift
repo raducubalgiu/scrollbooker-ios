@@ -15,6 +15,7 @@ struct ListItemView: View {
     var padding: CGFloat = 0
     var showTrailingIcon: Bool = true
     var showRipple: Bool = true
+    var color: Color = .onBackgroundSB
     
     var body: some View {
         Button {
@@ -24,13 +25,13 @@ struct ListItemView: View {
                 HStack {
                     if !(leadingIcon ?? "").isEmpty {
                         Image(systemName: leadingIcon!)
-                            .foregroundColor(.onBackgroundSB)
+                            .foregroundColor(color)
                     }
                     
                     Text(title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
-                        .foregroundColor(.onBackgroundSB)
+                        .foregroundColor(color)
                 }
                 
                 Spacer()

@@ -21,12 +21,12 @@ struct MainButton: View {
                 ProgressView()
             } else {
                 Text(title)
-                    .font(.headline.bold())
+                    .font(.subheadline.bold())
             }
         }
         .frame(maxWidth: .infinity, minHeight: 48)
         .fontWeight(.semibold)
-        .padding(.vertical, 5)
+        .padding(.vertical, 2)
         .background(
             RoundedRectangle(cornerRadius: 50)
                 .fill((isDisabled || isLoading) ? Color.surfaceSB : bgColor)

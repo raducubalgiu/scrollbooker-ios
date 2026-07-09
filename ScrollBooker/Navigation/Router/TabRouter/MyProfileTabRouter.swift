@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct MyProfileTabRouter: View {
+    @EnvironmentObject private var container: AppContainer
+    @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
     
     var body: some View {
@@ -27,43 +29,15 @@ struct MyProfileTabRouter: View {
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
                             
-                        case .account:
-                            AccountScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
-                        case .privacy:
-                            PrivacyScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
-                        case .security:
-                            SecurityScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
-                        case .notificationSettings:
-                            NotificationSettingsScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
                         case .display:
                             DisplayScreen()
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
                             
                         case .reportProblem:
-                            ReportProblemScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
-                        case .support:
-                            SupportScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
-                        case .termsAndConditions:
-                            TermsAndConditionsScreen()
+                            ReportProblemScreen(
+                                viewModel: container.problemModule.makeProblemViewModel(userId: session.userInfo?.id ?? 0)
+                            )
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
                             

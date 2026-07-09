@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct MyProfileScreen: View {
-    @EnvironmentObject private var session: SessionManager
     @State private var showMenuSheet = false
     
     var onNavigateToEditProfile: () -> Void
@@ -36,12 +35,6 @@ struct MyProfileScreen: View {
                 MyProfileActionsView(
                     onNavigateToEditProfile: onNavigateToEditProfile
                 )
-                
-                Button {
-                    session.logout()
-                } label: {
-                    Text("Logout")
-                }
             },
         )
         .sheet(isPresented: $showMenuSheet) {

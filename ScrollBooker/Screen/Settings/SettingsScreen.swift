@@ -15,27 +15,33 @@ struct SettingsItem: Identifiable, Hashable {
 }
 
 private var settingsItems = [
-    SettingsItem(name: "Cont", route: .account, icon: "person"),
-    SettingsItem(name: "Confidentialitate", route: .privacy, icon: "lock"),
-    SettingsItem(name: "Securitate", route: .security, icon: "lock.shield"),
-    SettingsItem(name: "Notificari", route: .notificationSettings, icon: "bell"),
-    SettingsItem(name: "Afisare", route: .display, icon: "moon"),
-    SettingsItem(name: "Raporteaza o problema", route: .reportProblem, icon: "flag"),
-    SettingsItem(name: "Support", route: .support, icon: "ellipsis.message"),
-    SettingsItem(name: "Termeni si conditii", route: .termsAndConditions, icon: "info.circle")
+    SettingsItem(name: "Afișare", route: .display, icon: "moon"),
+    SettingsItem(name: "Raportează o problemă", route: .reportProblem, icon: "flag")
 ]
 
 struct SettingsScreen: View {
+    @EnvironmentObject private var session: SessionManager
     @Environment(\.dismiss) private var dismiss
+    
     var onNavigate: (Route) -> Void
     
     var body: some View {
         NavigationView {
-            List(settingsItems) { item in
+            List {
+                ForEach(settingsItems) { item in
+                    ListItemView(
+                        title: item.name,
+                        leadingIcon: item.icon,
+                        onClick: { onNavigate(item.route) }
+                    )
+                }
+                
                 ListItemView(
-                    title: item.name,
-                    leadingIcon: item.icon,
-                    onClick: { onNavigate(item.route)  }
+                    title: "Deconectare",
+                    leadingIcon: "rectangle.portrait.and.arrow.right",
+                    onClick: { session.logout() },
+                    showTrailingIcon: false,
+                    color: .red
                 )
             }
             .safeAreaInset(edge: .top) {

@@ -17,40 +17,61 @@ struct Textarea: View {
     var isError: Bool = false
     var errorMessage: String = ""
     var isDisabled: Bool = false
+    var maxLength: Int = 500
     
     @FocusState private var isFocused: Bool
     
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
-            Text(label)
-                .font(.headline)
-                .foregroundColor(.onBackgroundSB)
+            if !label.isEmpty {
+                Text(label)
+                    .font(.headline)
+                    .foregroundColor(.onBackgroundSB)
+            }
             
             TextEditor(text: $text)
                 .focused($isFocused)
+                .textEditorStyle(.plain)
                 .frame(minHeight: CGFloat(height), maxHeight: CGFloat(height))
                 .scrollContentBackground(.hidden)
+                .disabled(isDisabled)
+                .onChange(of: text) { _, newValue in
+                    if newValue.count > maxLength {
+                        text = String(newValue.prefix(maxLength))
+                    }
+                }
                 .overlay(alignment: .topLeading) {
                     if text.isEmpty {
                         Text(placeholder)
                             .foregroundColor(.gray)
-                            .padding(.vertical, .s)
+                            .padding(.top, 4)
+                            .allowsHitTesting(false)
                     }
                 }
                 .overlay(
                     Rectangle()
                         .frame(height: 1)
-                        .foregroundColor(isError ? .errorSB : .gray),
+                        .foregroundColor(isError ? .errorSB : (isFocused ? .primarySB : .gray)),
                     alignment: .bottom
                 )
                 .tint(.primarySB)
             
-            if isError && !errorMessage.isEmpty {
-                HStack {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(.errorSB)
-                    Text(errorMessage).foregroundColor(.errorSB)
+            HStack(alignment: .top) {
+                if isError && !errorMessage.isEmpty {
+                    HStack(spacing: 5) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.errorSB)
+                        Text(errorMessage)
+                            .foregroundColor(.errorSB)
+                            .font(.caption)
+                    }
                 }
+                
+                Spacer()
+                
+                Text("\(text.count) / \(maxLength)")
+                    .font(.caption)
+                    .foregroundColor(text.count >= maxLength ? .errorSB : .gray)
             }
         }
         .contentShape(Rectangle())

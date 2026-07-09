@@ -38,7 +38,14 @@ enum Route: Hashable {
     case editBirthdate
     case editProfession
     
-    case userSocial
+    case userSocial(
+        userId: Int,
+        username: String,
+        initialTab: SocialTab,
+        isBusinessOrEmployee: Bool,
+        initialFollowersCount: Int,
+        initialFollowingsCount: Int
+    )
     
     case calendar
     case appointmentConfirmation

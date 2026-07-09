@@ -7,73 +7,85 @@
 
 import SwiftUI
 
-enum SocialTab: String, CaseIterable, Identifiable {
-    case reviews = "Recenzii"
-    case followers = "Urmăritori"
-    case following = "Urmărești"
-
-    var id: String { rawValue }
-}
-
 struct SocialTabsView: View {
     @Binding var selectedTab: SocialTab
     @Namespace private var indicatorNS
     
+    let followersCount: Int
+    let followingsCount: Int
+    
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Rectangle()
-                .fill(.divider)
-                .frame(height: 1)
-                .frame(maxWidth: .infinity)
-                .padding(.top, 0)
-            
-            HStack(spacing: 20) {
+        VStack(spacing: 0) {
+            HStack(spacing: 0) {
                 ForEach(SocialTab.allCases) { tab in
-                    Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.9) ) {
-                            selectedTab = tab
-                        }
+                    Button {
+                        selectTab(tab)
                     } label: {
-                        VStack(spacing: 6) {
-                            Text("\(tab.rawValue) 100")
+                        VStack(spacing: 8) {
+                            Text(labelText(for: tab))
                                 .font(.subheadline)
                                 .fontWeight(selectedTab == tab ? .bold : .medium)
-                                .foregroundStyle(selectedTab == tab ? .primary : .secondary)
+                                .foregroundStyle(selectedTab == tab ? Color.primary : Color.secondary)
+                            
                             ZStack {
-                                // indicator activ
                                 if selectedTab == tab {
                                     Capsule()
+                                        .fill(Color.primary)
                                         .matchedGeometryEffect(id: "underline", in: indicatorNS)
                                         .frame(height: 3)
-                                        .offset(y: 8)
                                 } else {
-                                    Color.clear.frame(height: 3)
+                                    Capsule()
+                                        .fill(Color.clear)
+                                        .frame(height: 3)
                                 }
                             }
                         }
                         .frame(maxWidth: .infinity)
-                        .padding(.vertical, 8)
                     }
                     .buttonStyle(.plain)
                 }
             }
             .padding(.horizontal)
+            .padding(.top, 8)
+            
+            Rectangle()
+                .fill(Color.divider)
+                .frame(height: 1)
+        }
+    }
+    
+    private func labelText(for tab: SocialTab) -> String {
+        switch tab {
+        case .reviews:
+            return "\(tab.rawValue) 0"
+        case .followers:
+            return "\(tab.rawValue) \(followersCount)"
+        case .following:
+            return "\(tab.rawValue) \(followingsCount)"
+        }
+    }
+    
+    private func selectTab(_ tab: SocialTab) {
+        let animation = Animation.spring(response: 0.25, dampingFraction: 0.85)
+        withAnimation(animation) {
+            selectedTab = tab
         }
     }
 }
 
-#Preview("Light") {
-    @Previewable @State var tab: SocialTab = .reviews
-    
-    SocialTabsView(
-        selectedTab: $tab
-    )
-}
-
-#Preview("Dark") {
-    @Previewable @State var tab: SocialTab = .reviews
-    
-    SocialTabsView(
-        selectedTab: $tab
-    )
-    .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    @Previewable @State var tab: SocialTab = .reviews
+//    
+//    SocialTabsView(
+//        selectedTab: $tab
+//    )
+//}
+//
+//#Preview("Dark") {
+//    @Previewable @State var tab: SocialTab = .reviews
+//    
+//    SocialTabsView(
+//        selectedTab: $tab
+//    )
+//    .preferredColorScheme(.dark)
+//}

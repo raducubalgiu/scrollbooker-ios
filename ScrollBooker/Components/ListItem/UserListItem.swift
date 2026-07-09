@@ -8,24 +8,24 @@
 import SwiftUI
 
 struct UserListItem: View {
-    var userMini: UserMini
+    var userSocial: UserSocial
     
     var body: some View {
         HStack {
             HStack(spacing: 12) {
                 AvatarView(
-                    imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
+                    imageURL: URL(string: userSocial.avatar ?? ""),
                     size: .l
                 )
                 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(userMini.fullName)
+                    Text(userSocial.fullName)
                         .font(.headline)
                         .foregroundColor(.onBackgroundSB)
                         .lineLimit(1)
                         .truncationMode(.tail)
                     
-                    Text("@\(userMini.username)")
+                    Text("@\(userSocial.username)")
                         .font(.subheadline)
                         .foregroundColor(.onBackgroundSB)
                         .lineLimit(1)
@@ -37,16 +37,17 @@ struct UserListItem: View {
                 Button {
                     
                 } label: {
-                    Text(userMini.isFollow ? "following" : "follow")
-                        .font(.subheadline.bold())
-                        .foregroundColor(userMini.isFollow ? .onBackgroundSB : .onPrimarySB)
+                    Text(userSocial.isFollow ? "following" : "follow")
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .foregroundColor(userSocial.isFollow ? .onBackgroundSB : .onPrimarySB)
                 }
-                .padding(.vertical, 7)
-                .padding(.horizontal, .base)
+                .padding(.vertical, .s)
+                .padding(.horizontal, .m)
                 .background(
-                    RoundedRectangle(cornerRadius: 5)
-                        .fill(userMini.isFollow ? Color.backgroundSB : Color.primarySB)
-                        .stroke(userMini.isFollow ? .divider : Color.primarySB, lineWidth: 1)
+                    RoundedRectangle(cornerRadius: 50)
+                        .fill(userSocial.isFollow ? Color.backgroundSB : Color.primarySB)
+                        .stroke(userSocial.isFollow ? .divider : Color.primarySB, lineWidth: 1)
                 )
                 .buttonStyle(.plain)
             }
@@ -57,16 +58,16 @@ struct UserListItem: View {
     }
 }
 
-#Preview("Light") {
-    UserListItem(
-        userMini: userFollowers[0]
-    )
-}
-
-#Preview("Dark") {
-    UserListItem(
-        userMini: userFollowers[0]
-    )
-        .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    UserListItem(
+//        userMini: userFollowers[0]
+//    )
+//}
+//
+//#Preview("Dark") {
+//    UserListItem(
+//        userMini: userFollowers[0]
+//    )
+//        .preferredColorScheme(.dark)
+//}
 

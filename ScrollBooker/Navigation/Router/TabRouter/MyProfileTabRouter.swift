@@ -1,5 +1,5 @@
 //
-//  MyProfileTabRouter.swift
+//  §TabRouter.swift
 //  ScrollBooker
 //
 //  Created by Raducu Balgiu on 15.08.2025.
@@ -18,11 +18,42 @@ struct MyProfileTabRouter: View {
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
-                onNavigateToUserSocial: { router.push(.userSocial) },
+                onNavigateToUserSocial: {
+                    router.push(
+                        .userSocial(
+                            userId: 13,
+                            username: "radu_ion",
+                            initialTab: .followers,
+                            isBusinessOrEmployee: true,
+                            initialFollowersCount: 100,
+                            initialFollowingsCount: 200
+                        )
+                    )
+                },
                 onNavigateToUserProfile: { router.push(.userProfile) }
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {
+                        // Global Routes
+                        case .userSocial(
+                            let userId,
+                            let username,
+                            let initialTab,
+                            let isBusinessOrEmployee,
+                            let initialFollowersCount,
+                            let initialFollowingsCount
+                        ):
+                            SocialScreen(
+                                viewModel: container.followModule.makeSocialViewModel(userId: userId),
+                                username: username,
+                                initialTab: initialTab,
+                                isBusinessOrEmployee: isBusinessOrEmployee,
+                                initialFollowersCount: initialFollowersCount,
+                                initialFollowingsCount: initialFollowingsCount
+                            )
+                            .navigationBarHidden(true)
+                            .toolbar(.hidden, for: .tabBar)
+                        
                         // Settings
                         case .mySettings:
                             SettingsScreen { route in router.push(route)}
@@ -127,24 +158,29 @@ struct MyProfileTabRouter: View {
                             EmploymentAcceptTermsScreen()
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
-                            
-                        // Global Routes
-                        case .userSocial:
-                            SocialScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
-                        case .userProfile:
-                            UserProfileScreen(
-                                onNavigateToEditProfile: { router.push(.editProfile) },
-                                onNavigateToSettings: { router.push(.mySettings) },
-                                onNavigateToMyBusiness: { router.push(.myBusiness) },
-                                onNavigateToUserSocial: { router.push(.userSocial) },
-                                onNavigateToUserProfile: { router.push(.userProfile) }
-                            )
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                                .ignoresSafeArea(.container, edges: .bottom)
+//
+//                        case .userProfile:
+//                            UserProfileScreen(
+//                                onNavigateToEditProfile: { router.push(.editProfile) },
+//                                onNavigateToSettings: { router.push(.mySettings) },
+//                                onNavigateToMyBusiness: { router.push(.myBusiness) },
+//                                onNavigateToUserSocial: {
+//                                    router.push(
+//                                        .userSocial(
+//                                            userId: 13,
+//                                            username: "radu_ion",
+//                                            initialTab: SocialTab.followers,
+//                                            isBusinessOrEmployee: true,
+//                                            initialFollowersCount: 100,
+//                                            initialFollowingsCount: 200
+//                                        )
+//                                    )
+//                                },
+//                                onNavigateToUserProfile: { router.push(.userProfile) }
+//                            )
+//                                .navigationBarHidden(true)
+//                                .toolbar(.hidden, for: .tabBar)
+//                                .ignoresSafeArea(.container, edges: .bottom)
                             
                         default: Text("This Route does not exist")
                     }

@@ -8,22 +8,49 @@
 import SwiftUI
 
 struct FollowersTabView: View {
+    let users: [UserSocial]
+    let isLoading: Bool
+    
+    var onLoadMore: (UserSocial) -> Void
+    
     var body: some View {
-        ScrollView {
-            LazyVStack {
-                ForEach(userFollowers) { userMini in
-                    UserListItem(userMini: userMini)
+        Group {
+            if users.isEmpty && !isLoading {
+                Color.clear
+            } else {
+                ZStack(alignment: .center) {
+                    
+                    ScrollView {
+                        LazyVStack(spacing: 0) {
+                            ForEach(users, id: \.id) { userSocial in
+                                UserListItem(userSocial: userSocial)
+                                    .onAppear {
+                                        onLoadMore(userSocial)
+                                    }
+                            }
+                            
+                            if isLoading && !users.isEmpty {
+                                Color.clear
+                                    .frame(height: 50)
+                            }
+                        }
+                    }
+                    
+                    if isLoading {
+                        ProgressView()
+                    }
                 }
             }
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 }
 
-#Preview("Light") {
-    FollowersTabView()
-}
-
-#Preview("Dark") {
-    FollowersTabView()
-        .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    FollowersTabView()
+//}
+//
+//#Preview("Dark") {
+//    FollowersTabView()
+//        .preferredColorScheme(.dark)
+//}

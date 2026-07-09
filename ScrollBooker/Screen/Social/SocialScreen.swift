@@ -8,34 +8,84 @@
 import SwiftUI
 
 struct SocialScreen: View {
-    @State private var selectedTab: SocialTab = .reviews
+    let viewModel: SocialViewModel
+    let username: String
+    let isBusinessOrEmployee: Bool
+    
+    let initialFollowersCount: Int
+    let initialFollowingsCount: Int
+    
+    @State private var selectedTab: SocialTab
+    
+    init(
+        viewModel: SocialViewModel,
+        username: String,
+        initialTab: SocialTab,
+        isBusinessOrEmployee: Bool,
+        initialFollowersCount: Int,
+        initialFollowingsCount: Int
+    ) {
+        self.viewModel = viewModel
+        self.username = username
+        self.isBusinessOrEmployee = isBusinessOrEmployee
+        self.initialFollowersCount = initialFollowersCount
+        self.initialFollowingsCount = initialFollowingsCount
+        _selectedTab = State(initialValue: initialTab)
+    }
     
     var body: some View {
-        Header(title: "@radu_balgiu")
-        
-        VStack(spacing: 0) {
-            SocialTabsView(selectedTab: $selectedTab)
-            
-            // CONȚINUT SWIPE-ABIL
-            TabView(selection: $selectedTab) {
-                ReviewsTabView()
-                    .tag(SocialTab.reviews)
-                FollowersTabView()
+            VStack(spacing: 0) {
+                Header(title: "@\(username)")
+                
+                SocialTabsView(
+                    selectedTab: $selectedTab,
+                    followersCount: initialFollowersCount,
+                    followingsCount: initialFollowingsCount
+                )
+                
+                TabView(selection: $selectedTab) {
+                    Text("Recenzii")
+                        .tag(SocialTab.reviews)
+                    
+                    FollowersTabView(
+                        users: viewModel.followersUiState.data,
+                        isLoading: viewModel.followersUiState.isLoading,
+                        onLoadMore: { currentUser in
+                            Task { await viewModel.loadMoreFollowersIfNeeded(currentUser: currentUser) }
+                        }
+                    )
                     .tag(SocialTab.followers)
-                FollowingsTabView()
+                    
+                    FollowingsTabView(
+                        users: viewModel.followingsUiState.data,
+                        isLoading: viewModel.followingsUiState.isLoading,
+                        onLoadMore: { currentUser in
+                            Task { await viewModel.loadMoreFollowingsIfNeeded(currentUser: currentUser) }
+                        }
+                    )
                     .tag(SocialTab.following)
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .edgesIgnoringSafeArea(.bottom)
             }
-            .tabViewStyle(.page(indexDisplayMode: .never))
+            .background(Color.backgroundSB)
+            .navigationBarHidden(true)
+            .task {
+                await viewModel.loadTabIfNeeded(tab: selectedTab)
+            }
+            .onChange(of: selectedTab) { _, newTab in
+                Task {
+                    await viewModel.loadTabIfNeeded(tab: newTab)
+                }
+            }
         }
-        .ignoresSafeArea(.container, edges: .bottom)
-    }
 }
 
-#Preview("Light") {
-    SocialScreen()
-}
-
-#Preview("Dark") {
-    SocialScreen()
-        .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    SocialScreen()
+//}
+//
+//#Preview("Dark") {
+//    SocialScreen()
+//        .preferredColorScheme(.dark)
+//}

@@ -16,6 +16,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
     let appointmentModule: AppointmentModule
     let notificationModule: NotificationModule
     let problemModule: ProblemModule
+    let followModule: FollowModule
     let userAPI: UserAPI
 
     init() {
@@ -25,6 +26,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
         self.appointmentModule = AppointmentModule(apiClient: apiClient)
         self.notificationModule = NotificationModule(apiClient: apiClient)
         self.problemModule = ProblemModule(apiClient: apiClient)
+        self.followModule = FollowModule(apiClient: apiClient)
         self.userAPI = UserAPIImpl(client: apiClient)
     }
     

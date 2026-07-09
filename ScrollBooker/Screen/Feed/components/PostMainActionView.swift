@@ -14,19 +14,14 @@ struct PostMainActionView: View {
         Button {
             onClick()
         } label: {
-            HStack {
-                Image(systemName: "calendar")
-                    .foregroundColor(.white)
-                
-                Text("Intervale disponibile")
-                    .font(.headline.bold())
-                    .foregroundColor(.white)
-            }
+            Text("Rezervă acum")
+                .font(.subheadline.bold())
+                .foregroundColor(.white)
         }
-        .padding(.vertical, 12.5)
+        .padding(.vertical, 11)
         .frame(maxWidth: .infinity)
         .background(
-            RoundedRectangle(cornerRadius: 10)
+            RoundedRectangle(cornerRadius: 50)
                 .fill(Color.primarySB)
         )
         .buttonStyle(.plain)

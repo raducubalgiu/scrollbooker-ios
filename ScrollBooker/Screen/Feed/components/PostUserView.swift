@@ -17,19 +17,12 @@ struct PostUserView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
             
-            HStack(spacing: 0) {
-                Text(user.usernameOrProfession)
-                    .font(.system(size: 16))
-                    .fontWeight(.bold)
-                    .foregroundColor(.primarySB)
-                
-                Text(" • 5 km")
-                    .font(.system(size: 16))
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+            Text(user.usernameOrProfession)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.primarySB)
             }
         }
-    }
 }
 
 #Preview("Dark") {

@@ -20,7 +20,7 @@ struct ProfileUserInfoView: View {
         HStack(spacing: 15) {
             AvatarView(
                 imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
-                size: .xl,
+                size: .xxl,
                 isOpen: isBusinessOrEmployee ? openingHours.openNow : nil,
             )
             

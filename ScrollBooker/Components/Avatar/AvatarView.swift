@@ -18,7 +18,7 @@ struct AvatarView: View {
             case .m: 40
             case .l: 48
             case .xl: 64
-            case .xxl: 96
+            case .xxl: 75
             }
         }
     }

@@ -12,6 +12,7 @@ struct PostDescriptionView: View {
     
     var body: some View {
         Text(description)
+            .font(.subheadline)
             .foregroundColor(.white)
             .lineLimit(2)
             .truncationMode(.tail)

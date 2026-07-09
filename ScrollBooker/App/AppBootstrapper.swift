@@ -5,7 +5,8 @@
 //  Created by Raducu Balgiu on 09.07.2026.
 //
 
-import SwiftUI
+import UIKit
+import AVFoundation
 import UIKit
 
 final class AppBootstrapper: NSObject, UIApplicationDelegate {
@@ -14,7 +15,7 @@ final class AppBootstrapper: NSObject, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil
     ) -> Bool {
         configureGlobalAppearance()
-        // Aici poți inițializa Firebase, Analytics, Crashlytics, etc.
+        configureAudioSession()
         return true
     }
     
@@ -27,5 +28,15 @@ final class AppBootstrapper: NSObject, UIApplicationDelegate {
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance
     }
+    
+    private func configureAudioSession() {
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Eroare la configurarea AVAudioSession: \(error.localizedDescription)")
+        }
+    }
 }
+
 

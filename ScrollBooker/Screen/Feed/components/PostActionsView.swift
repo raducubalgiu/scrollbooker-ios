@@ -13,17 +13,26 @@ struct PostActionsView: View {
     
     var body: some View {
         VStack(alignment: .center, spacing: 20) {
-            AvatarView(
-                imageURL: userAvatarURL,
-                size: .m
+//            AvatarView(
+//                imageURL: userAvatarURL,
+//                size: .m
+//            )
+            
+            AvatarWithRatingView(
+                rating: 5,
+                size: .l,
+                badgeBackgroundColor: .white,
+                onClick: {},
             )
             
             VStack(alignment: .center, spacing: 2) {
                 Image(systemName: "heart.fill")
                     .font(.system(size: 30))
                     .foregroundColor(.white)
+                
                 Text("\(counters.likeCount)")
-                    .font(.subheadline.bold())
+                    .font(.footnote)
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
             }
             
@@ -31,8 +40,10 @@ struct PostActionsView: View {
                 Image(systemName: "ellipsis.message.fill")
                     .foregroundColor(.white)
                     .font(.system(size: 30))
+                
                 Text("\(counters.commentCount)")
-                    .font(.subheadline.bold())
+                    .font(.footnote)
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
             }
             
@@ -40,8 +51,10 @@ struct PostActionsView: View {
                 Image(systemName: "bookmark.fill")
                     .font(.system(size: 30))
                     .foregroundColor(.white)
+                
                 Text("\(counters.bookmarkCount)")
-                    .font(.subheadline.bold())
+                    .font(.footnote)
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
             }
             
@@ -49,8 +62,10 @@ struct PostActionsView: View {
                 Image(systemName: "paperplane.fill")
                     .font(.system(size: 30))
                     .foregroundColor(.white)
+                
                 Text("\(counters.shareCount)")
-                    .font(.subheadline.bold())
+                    .font(.footnote)
+                    .fontWeight(.semibold)
                     .foregroundColor(.white)
             }
         }

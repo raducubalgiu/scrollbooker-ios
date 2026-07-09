@@ -47,18 +47,66 @@ struct AvatarWithRatingView: View {
         }
     }
     
-    private var avatarDiameter: CGFloat {
-        size.diameter
+    // MARK: - Configurații fixe per dimensiune (Calibrare exactă de Design)
+    
+    private var starFontSize: CGFloat {
+        switch size {
+        case .xs: 10
+        case .s:  11
+        case .m:  12
+        case .l:  13  
+        case .xl, .xxl: 15
+        }
     }
     
-    private var starFontSize: CGFloat { max(9, avatarDiameter * 0.2) }
-    private var textFontSize: CGFloat { max(10, avatarDiameter * 0.23) }
+    private var textFontSize: CGFloat {
+        switch size {
+        case .xs: 10
+        case .s:  11
+        case .m:  12
+        case .l:  13
+        case .xl, .xxl: 15
+        }
+    }
     
-    private var horizontalPadding: CGFloat { max(6, avatarDiameter * 0.13) }
-    private var verticalPadding: CGFloat { max(3, avatarDiameter * 0.08) }
+    private var horizontalPadding: CGFloat {
+        switch size {
+        case .xs, .s: 3
+        case .m, .l:  5
+        case .xl, .xxl: 6
+        }
+    }
     
-    private var dynamicBottomPadding: CGFloat { max(8, avatarDiameter * 0.18) }
-    private var dynamicOffset: CGFloat { max(3, avatarDiameter * 0.06) }
+    private var verticalPadding: CGFloat {
+        switch size {
+        case .xs, .s: 3
+        case .m, .l:  4
+        case .xl, .xxl: 5
+        }
+    }
+    
+    private var dynamicBottomPadding: CGFloat {
+        switch size {
+        case .xs: 4
+        case .s:  6
+        case .m:  8
+        case .l:  11
+        case .xl: 13
+        case .xxl: 15
+        }
+    }
+    
+    private var dynamicOffset: CGFloat {
+        switch size {
+        case .xs, .s: 2
+        case .m:  3
+        case .l:  4
+        case .xl: 5
+        case .xxl: 6
+        }
+    }
+    
+    // MARK: - Resolvers
     
     private var resolvedBadgeColor: Color {
         if let customColor = badgeBackgroundColor {

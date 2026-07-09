@@ -27,10 +27,6 @@ struct PostOverlayView: View {
                 VStack(alignment: .leading, spacing: 15) {
                     PostUserView(user: post.user)
                     
-                    if let product = post.product {
-                       PostProductView(product: product)
-                    }
-                    
                     if let description = post.description {
                         PostDescriptionView(description: description)
                     }
@@ -46,7 +42,9 @@ struct PostOverlayView: View {
                 )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
-            .padding(.m)
+            .padding(.leading, .m)
+            .padding(.bottom, .m)
+            .padding(.trailing, .s)
         }
     }
 }

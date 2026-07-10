@@ -28,4 +28,9 @@ final class AppointmentRepositoryImpl: AppointmentRepository {
         let dto = try await api.getAppointmentById(id: id)
         return try Appointment(dto: dto)
     }
+    
+    func cancelAppointment(id: Int, request: AppointmentCancelRequest) async throws -> Appointment {
+        let dto = try await api.cancelAppointment(id: id, request: request)
+        return try Appointment(dto: dto)
+    }
 }

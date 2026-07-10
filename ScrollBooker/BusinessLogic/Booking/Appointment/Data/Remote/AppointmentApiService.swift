@@ -12,6 +12,7 @@ import Foundation
 protocol AppointmentApiService: Sendable {
     func fetchUserAppointments(page: Int, limit: Int) async throws -> PaginatedResponseDTO<AppointmentDto>
     func getAppointmentById(id: Int) async throws -> AppointmentDto
+    func cancelAppointment(id: Int, request: AppointmentCancelRequest) async throws -> AppointmentDto
 }
 
 final class AppointmentAPIImpl: AppointmentApiService {
@@ -40,4 +41,12 @@ final class AppointmentAPIImpl: AppointmentApiService {
             method: .get
         )
     }
+    
+    func cancelAppointment(id: Int, request: AppointmentCancelRequest) async throws -> AppointmentDto {
+            return try await client.request(
+                "appointments/\(id)/cancel-appointment",
+                method: .put,
+                body: request
+            )
+        }
 }

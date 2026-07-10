@@ -11,29 +11,23 @@ import MapKit
 struct AppointmentDetailsScreen: View {
     let viewModel: AppointmentDetailsViewModel
     
+    @State private var activeSheet: AppointmentDetailsSheet? = nil
+    
     var body: some View {
         VStack(spacing: 0) {
             Header(title: String(localized: "bookingDetails"))
             
             if viewModel.isLoading && viewModel.uiState.data == nil {
-                Spacer()
-                ProgressView()
-                    .tint(.primarySB)
-                Spacer()
-            } else if let errorMessage = viewModel.errorMessage {
-                VStack(spacing: 16) {
-                    Text(errorMessage)
-                        .foregroundColor(.errorSB)
-                        .multilineTextAlignment(.center)
-                    
-                    Button(String(localized: "retry")) {
-                        Task { await viewModel.refresh() }
-                    }
-                    .buttonStyle(.borderedProminent)
+                LoadingView()
+            }
+
+            else if let errorMessage = viewModel.errorMessage {
+                ErrorView(message: errorMessage) {
+                    Task { await viewModel.refresh() }
                 }
-                .padding()
-                .frame(maxHeight: .infinity)
-            } else if let a = viewModel.uiState.data {
+            }
+
+            else if let a = viewModel.uiState.data {
                 ScrollView {
                     VStack(alignment: .leading, spacing: 0) {
                         AppointmentDetailsHeader(appointment: a)
@@ -71,14 +65,19 @@ struct AppointmentDetailsScreen: View {
                         .padding(.bottom, .xl)
                         
                         AppointmentDetailsActions(
+                            appointmentId: a.id,
                             status: a.status,
                             isCustomer: a.isCustomer,
-                            onNavigateToCancel: {}
+                            onOpenCancelSheet: { id in
+                                self.activeSheet = .cancelAppointment
+                            }
                         )
                         .padding(.bottom, .xl)
                         
                         if !a.hasWrittenReview && viewModel.isFinished && a.isCustomer {
-                            ReviewCTA { _ in }
+                            ReviewCTA { rating in
+                                self.activeSheet = .writeReview(rating: rating)
+                            }
                             .padding(.bottom, 24)
                         }
                         
@@ -105,6 +104,25 @@ struct AppointmentDetailsScreen: View {
                 .refreshable {
                     await viewModel.refresh()
                 }
+                .sheet(item: $activeSheet) { sheetType in
+                    switch sheetType {
+                    case .writeReview(let rating):
+                        WriteReviewSheetView(rating: rating)
+                        
+                        
+                    case .cancelAppointment:
+                        CancelAppointmentSheetView { finalReason in
+                            await viewModel.cancelCurrentAppointment(reason: finalReason)
+                            }
+                        }
+                    }
+                }
+
+            else {
+                ContentUnavailableView(
+                    String(localized: "noDetailsAvailable"),
+                    systemImage: "calendar.badge.exclamationmark"
+                )
             }
         }
         .background(Color.backgroundSB)

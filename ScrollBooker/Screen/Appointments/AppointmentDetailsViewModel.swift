@@ -13,8 +13,10 @@ import Observation
 final class AppointmentDetailsViewModel: HasLoadingState {
     var uiState = UiState(data: Appointment?.none)
     
-    private let getAppointmentById: GetAppointmentByIdUseCase
+    private let session: SessionManager
     private let appointmentId: Int
+    private let getAppointmentById: GetAppointmentByIdUseCase
+    private let cancelAppointment: CancelAppointmentUseCase
     
     var isFinished: Bool {
         uiState.data?.status == .finished
@@ -30,34 +32,35 @@ final class AppointmentDetailsViewModel: HasLoadingState {
         set { uiState.errorMessage = newValue }
     }
     
-    init(appointmentId: Int, getAppointmentById: GetAppointmentByIdUseCase) {
+    init(
+        session: SessionManager,
+        appointmentId: Int,
+        getAppointmentById: GetAppointmentByIdUseCase,
+        cancelAppointment: CancelAppointmentUseCase
+    ) {
+        self.session = session
         self.appointmentId = appointmentId
         self.getAppointmentById = getAppointmentById
+        self.cancelAppointment = cancelAppointment
     }
     
     func loadAppointment() async {
         guard uiState.data == nil else { return }
-        
         uiState.errorMessage = nil
         
         do {
             let result = try await withVisibleLoading {
                 try await getAppointmentById(id: appointmentId)
             }
-            
             uiState.data = result
-            
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
-            
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             uiState.errorMessage = message
         }
     }
     
     func refresh() async {
         guard !uiState.isRefreshing else { return }
-        
         uiState.isRefreshing = true
         uiState.errorMessage = nil
         
@@ -65,12 +68,34 @@ final class AppointmentDetailsViewModel: HasLoadingState {
             let result = try await getAppointmentById(id: appointmentId)
             uiState.data = result
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
-            
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             uiState.errorMessage = message
         }
-        
         uiState.isRefreshing = false
+    }
+    
+    func cancelCurrentAppointment(reason: String) async {
+        uiState.errorMessage = nil
+        
+        do {
+            guard let userId = session.userInfo?.id else {
+                uiState.errorMessage = "User session not found"
+                return
+            }
+            
+            let updatedAppointment = try await withVisibleLoading {
+                try await cancelAppointment(
+                    id: appointmentId,
+                    canceledReason: reason,
+                    canceledByUserId: userId
+                )
+            }
+            
+            uiState.data = updatedAppointment
+            
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            uiState.errorMessage = message
+        }
     }
 }

@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppointmentsTabRouter: View {
     @EnvironmentObject private var container: AppContainer
+    @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
 
     var body: some View {
@@ -23,7 +24,10 @@ struct AppointmentsTabRouter: View {
                 switch route {
                     case .appointmentDetails(let id):
                         AppointmentDetailsScreen(
-                            viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(appointmentId: id),
+                            viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
+                                appointmentId: id,
+                                session: session
+                            ),
                         )
                         .toolbar(.hidden, for: .tabBar)
 

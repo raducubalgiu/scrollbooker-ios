@@ -27,10 +27,10 @@ final class UserProfileModule {
         GetUserProfileUseCase(repository: repository)
     }()
     
-
-//    func makeAppointmentsViewModel() -> AppointmentsViewModel {
-//        AppointmentsViewModel(
-//            getUserAppointments: getUserAppointmentsUseCase
-//        )
-//    }
+    func makeProfileViewModel(username: String) -> ProfileViewModel {
+        ProfileViewModel(
+            username: username,
+            getUserProfile: getUserProfile
+        )
+    }
 }

@@ -17,14 +17,17 @@ struct MainButton: View {
     
     var body: some View {
         Button(action: onClick) {
-            if (isLoading) {
-                ProgressView()
-            } else {
-                Text(title)
-                    .font(.subheadline.bold())
+            Group {
+                if isLoading {
+                    ProgressView()
+                } else {
+                    Text(title)
+                        .font(.subheadline.bold())
+                }
             }
+            .frame(maxWidth: .infinity, minHeight: 48)
+            .contentShape(Rectangle())
         }
-        .frame(maxWidth: .infinity, minHeight: 48)
         .fontWeight(.semibold)
         .padding(.vertical, 2)
         .background(
@@ -33,7 +36,7 @@ struct MainButton: View {
         )
         .foregroundColor(isDisabled ? .gray : color)
         .padding(.vertical)
-        .disabled(isDisabled)
+        .disabled(isDisabled || isLoading)
         .buttonStyle(.plain)
     }
 }

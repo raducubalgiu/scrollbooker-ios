@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct AppointmentDetailsActions: View {
+    let appointmentId: Int
     let status: AppointmentStatusEnum
     let isCustomer: Bool
-    var onNavigateToCancel: () -> Void
+    var onOpenCancelSheet: (Int) -> Void
     
     var body: some View {
         VStack {
@@ -18,7 +19,9 @@ struct AppointmentDetailsActions: View {
             case .inProgress:
                 MainButton(
                     title: String(localized: "cancel"),
-                    onClick: onNavigateToCancel,
+                    onClick: {
+                        onOpenCancelSheet(appointmentId)
+                    },
                     bgColor: .errorSB
                 )
             case .finished:

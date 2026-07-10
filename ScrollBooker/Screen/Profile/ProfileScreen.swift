@@ -8,63 +8,57 @@
 import SwiftUI
 
 struct ProfileScreen: View {
+    let viewModel: ProfileViewModel
+    
     @State private var showMenuSheet = false
     
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
-    var onNavigateToUserSocial: () -> Void
     var onNavigateToUserProfile: () -> Void
-    
-    var user = dummyUserProfile
+    var onNavigateToUserSocial: () -> Void
     
     var body: some View {
-        ProfileLayout(
-            user: user,
-            onNavigateToUserSocial: onNavigateToUserSocial,
-            onNavigateToUserProfile: onNavigateToUserProfile,
-            header: {
-                MyProfileHeaderView(
-                    username: "@\(user.username)",
-                    onOpenMenuSheet: { showMenuSheet = true }
+        Group {
+            if viewModel.isLoading && viewModel.uiState.data == nil {
+                ProgressView()
+            } else if let user = viewModel.uiState.data {
+                ProfileLayout(
+                    user: user,
+                    onNavigateToUserSocial: onNavigateToUserSocial,
+                    onNavigateToUserProfile: onNavigateToUserProfile,
+                    header: {
+                        MyProfileHeaderView(
+                            username: "@\(user.username)",
+                            onOpenMenuSheet: { showMenuSheet = true }
+                        )
+                        .padding(.vertical)
+                        .padding(.horizontal)
+                    },
+                    actions: {
+                        MyProfileActionsView(
+                            onNavigateToEditProfile: onNavigateToEditProfile
+                        )
+                    }
                 )
-                .padding(.vertical)
-                .padding(.horizontal)
-            },
-            actions: {
-                MyProfileActionsView(
-                    onNavigateToEditProfile: onNavigateToEditProfile
+                .sheet(isPresented: $showMenuSheet) {
+                    ProfileMenuSheetView(
+                        showMenuSheet: $showMenuSheet,
+                        onCreatePost: {},
+                        onNavigateToMyBusiness: onNavigateToMyBusiness,
+                        onNavigateToSettings: onNavigateToSettings
+                    )
+                }
+            } else {
+                ContentUnavailableView(
+                    String(localized: "profileUnavailable"),
+                    systemImage: "person.crop.circle.badge.exclamationmark"
                 )
-            },
-        )
-        .sheet(isPresented: $showMenuSheet) {
-            ProfileMenuSheetView(
-                showMenuSheet: $showMenuSheet,
-                onCreatePost: {},
-                onNavigateToMyBusiness: onNavigateToMyBusiness,
-                onNavigateToSettings: onNavigateToSettings
-            )
+            }
+        }
+        .navigationBarHidden(true)
+        .task {
+            await viewModel.loadProfile()
         }
     }
-}
-
-#Preview("Light") {
-    ProfileScreen(
-        onNavigateToEditProfile: {},
-        onNavigateToSettings: {},
-        onNavigateToMyBusiness: {},
-        onNavigateToUserSocial: {},
-        onNavigateToUserProfile: {}
-    )
-}
-
-#Preview("Dark") {
-    ProfileScreen(
-        onNavigateToEditProfile: {},
-        onNavigateToSettings: {},
-        onNavigateToMyBusiness: {},
-        onNavigateToUserSocial: {},
-        onNavigateToUserProfile: {}
-    )
-        .preferredColorScheme(.dark)
 }

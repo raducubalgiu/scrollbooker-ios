@@ -15,9 +15,11 @@ struct ProfileTabRouter: View {
     var body: some View {
         NavigationStack(path: $router.profilePath) {
             ProfileScreen(
+                viewModel: container.userProfileModule.makeProfileViewModel(username: session.userInfo?.username ?? ""),
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
+                onNavigateToUserProfile: {  },
                 onNavigateToUserSocial: {
                     router.push(
                         .userSocial(
@@ -30,7 +32,6 @@ struct ProfileTabRouter: View {
                         )
                     )
                 },
-                onNavigateToUserProfile: {  }
             )
                 .navigationDestination(for: Route.self) { route in
                     switch route {

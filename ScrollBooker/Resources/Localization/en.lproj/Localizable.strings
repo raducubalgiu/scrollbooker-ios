@@ -264,6 +264,11 @@
 "clickOnRatingToEvaluate" = "Click pe o stea pentru a evalua";
 "total" = "Total";
 
+"others" = "Altele";
+"reasonCancel_cannotArrive" = "Nu mai pot ajunge la programare";
+"reasonCancel_foundBetterOffer" = "Am găsit o ofertă mai bună";
+"reasonCancel_bookedByMistake" = "Am rezervat din greșeală";
+
 /* --- DYNAMIC --- */
 
 "appointment.status.confirmed" = "Confirmat";

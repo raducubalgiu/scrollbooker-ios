@@ -31,6 +31,10 @@ final class AppointmentModule {
     private lazy var getAppointmentByIdUseCase: GetAppointmentByIdUseCase = {
         GetAppointmentByIdUseCase(repository: repository)
     }()
+    
+    private lazy var cancelAppointment: CancelAppointmentUseCase = {
+        CancelAppointmentUseCase(repository: repository)
+    }()
 
     func makeAppointmentsViewModel() -> AppointmentsViewModel {
         AppointmentsViewModel(
@@ -38,10 +42,15 @@ final class AppointmentModule {
         )
     }
     
-    func makeAppointmentDetailsViewModel(appointmentId: Int) -> AppointmentDetailsViewModel {
+    func makeAppointmentDetailsViewModel(
+        appointmentId: Int,
+        session: SessionManager
+    ) -> AppointmentDetailsViewModel {
         AppointmentDetailsViewModel(
+            session: session,
             appointmentId: appointmentId,
-            getAppointmentById: getAppointmentByIdUseCase
+            getAppointmentById: getAppointmentByIdUseCase,
+            cancelAppointment: cancelAppointment
         )
     }
 }

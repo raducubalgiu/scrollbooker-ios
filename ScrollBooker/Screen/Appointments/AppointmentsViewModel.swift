@@ -26,8 +26,6 @@ final class AppointmentsViewModel: HasLoadingState {
         uiState.data.count < totalCount
     }
 
-    // MARK: - HasLoadingState conformance (proxy către uiState)
-
     var isLoading: Bool {
         get { uiState.isLoading }
         set { uiState.isLoading = newValue }
@@ -88,18 +86,9 @@ final class AppointmentsViewModel: HasLoadingState {
         }
 
         do {
-            let response: PaginatedResponse<Appointment>
+            let response = try await getUserAppointments(page: page, limit: limit)
 
             if isFirstPage {
-                response = try await withVisibleLoading {
-                    try await getUserAppointments(page: page, limit: limit)
-                }
-            } else {
-                response = try await getUserAppointments(page: page, limit: limit)
-            }
-
-            if isFirstPage {
-
                 uiState.data = response.results
 
             } else {

@@ -86,21 +86,12 @@ final class InboxViewModel: HasLoadingState {
         }
 
         do {
-            let response: PaginatedResponse<Notification>
-
-            if isFirstPage {
-                response = try await withVisibleLoading {
-                    try await getUserNotifications(page: page, limit: limit)
-                }
-            } else {
-                response = try await getUserNotifications(page: page, limit: limit)
-            }
+            let response =  try await getUserNotifications(page: page, limit: limit)
 
             if isFirstPage {
                 uiState.data = response.results
 
             } else {
-
                 let existingIds = Set(uiState.data.map(\.id))
 
                 let unique = response.results.filter {

@@ -28,75 +28,32 @@ struct AppointmentsScreen: View {
 
             ScrollView {
                 if viewModel.uiState.isLoading && !viewModel.uiState.isRefreshing {
-                    VStack {
-                        Spacer()
-
-                        ProgressView()
-                            .scaleEffect(1.2)
-
-                        Spacer()
-                    }
-                    .frame(minHeight: 400)
-
+                    LoadingView()
                 } else if let error = viewModel.uiState.errorMessage {
-                    VStack(spacing: 16) {
-                        Text("❌")
-                            .font(.system(size: 40))
-
-                        Text(error)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-
-                        Button("Retry") {
-                            Task {
-                                await viewModel.refresh()
-                            }
-                        }
-                        .buttonStyle(.borderedProminent)
-
+                    ErrorView(message: error) {
+                        Task { await viewModel.refresh() }
                     }
-                    .padding(.top, 60)
-
-                } else if viewModel.uiState.data.isEmpty {
-                    VStack {
-
-                        Text("Nu ai nicio programare activă.")
-                            .foregroundColor(.secondary)
-
-                    }
-                    .padding(.top, 100)
-
+                } else if viewModel.uiState.data.isEmpty && !viewModel.uiState.isLoading {
+                    NoDataView(
+                        title: String(localized: "bookings"),
+                        message: String(localized: "notFoundAppointments"),
+                        systemImage: "calendar.badge.clock"
+                    )
                 } else {
-                    LazyVStack(spacing: 0) {
-                        ForEach(viewModel.uiState.data) { appointment in
-                            AppointmentCardView(
-                                appointment: appointment,
-                                onClick: {
-                                    onNavigateToAppointmentDetails(
-                                        appointment.id
-                                    )
-                                }
-                            )
-                            .onAppear {
-                                Task {
-                                    await viewModel.loadMoreIfNeeded(
-                                        currentAppointment: appointment
-                                    )
-                                }
+                    AppointmentsListView(
+                        appointments: viewModel.uiState.data,
+                        onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
+                        onItemAppear: { appointment in
+                            Task {
+                                await viewModel.loadMoreIfNeeded(currentAppointment: appointment)
                             }
-
-                            Divider()
-
                         }
-
-                    }
-
+                    )
                 }
             }
             .refreshable {
                 await viewModel.refresh()
             }
-
         }
         .task {
             await viewModel.initialLoadIfNeeded()

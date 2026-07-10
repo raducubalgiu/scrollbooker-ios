@@ -15,7 +15,6 @@ struct SectionMap: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Containerul hărții statice (FĂRĂ frame maxWidth: .infinity extern)
             ZStack {
                 AsyncImage(url: URL(string: mapUrl)) { phase in
                     switch phase {
@@ -23,8 +22,6 @@ struct SectionMap: View {
                         image
                             .resizable()
                             .aspectRatio(contentMode: .fill)
-                            // SOLUȚIA ENTERPRISE: Forțăm doar imaginea descărcată cu succes
-                            // să ocupe exact spațiul oferit de padding-ul ecranului părinte, fără overflow
                             .frame(minWidth: 0, maxWidth: .infinity, minHeight: 0, maxHeight: .infinity)
                             
                     case .failure:
@@ -40,27 +37,24 @@ struct SectionMap: View {
                     }
                 }
             }
-            // Fixăm doar înălțimea brută pe container. Lățimea va fi dictată 100% natural de padding-ul ecranului tău!
             .frame(height: 220)
             .cornerRadius(16)
-            .clipped() // FOARTE IMPORTANT: Decupează orice pixel din imagine care tinde să iasă din colțurile rotunjite
+            .clipped()
             .contentShape(Rectangle())
             .onTapGesture {
                 redirectToMaps()
             }
             
             if displayDirectionsButton {
-                            Spacer().frame(height: 16) // SpacingM din tema ta
-                            
-                            MainButton(
-                                title: String(localized: "navigationDirections"),
-                                onClick: {
-                                    redirectToMaps()
-                                },
-                                bgColor: .surfaceSB,       // Culorile din SurfaceBG / OnSurfaceBG
-                                color: .primary            // Culoarea textului de pe hărți
-                            )
-                        }
+                Spacer().frame(height: 16)
+                
+                MainButton(
+                    title: String(localized: "navigationDirections"),
+                    onClick: { redirectToMaps()},
+                    bgColor: .surfaceSB,
+                    color: .primary
+                )
+            }
         }
     }
     

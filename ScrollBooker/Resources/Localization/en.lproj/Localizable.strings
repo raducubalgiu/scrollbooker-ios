@@ -269,6 +269,22 @@
 "reasonCancel_foundBetterOffer" = "Am găsit o ofertă mai bună";
 "reasonCancel_bookedByMistake" = "Am rezervat din greșeală";
 
+"rating_1" = "Nu mi-a plăcut deloc";
+"rating_2" = "Nu prea mi-a plăcut";
+"rating_3" = "A fost ok";
+"rating_4" = "Mi-a plăcut";
+"rating_5" = "Mi-a plăcut foarte mult";
+
+"writeAReview" = "Scrie o recenzie";
+"yourReview" = "Recenzia ta";
+"howWasYourExperience" = "Cum a fost experiența ta?";
+"howWasYourExperienceDescription" = "Recenzia ta îi ajută pe alții să facă alegeri potrivite, iar business-ul să-și îmbunătățească serviciile.";
+"shareSomeDetailsAboutYourExperience" = "Împărtășește câteva detalii (atmosferă, rezultate, comunicare…)";
+"from5" = "din 5";
+"navigationDirections" = "Direcții de navigare";
+
+"errorOccured" = "A apărut o eroare";
+
 /* --- DYNAMIC --- */
 
 "appointment.status.confirmed" = "Confirmat";

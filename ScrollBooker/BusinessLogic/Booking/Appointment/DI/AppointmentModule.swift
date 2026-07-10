@@ -9,7 +9,6 @@ import Foundation
 
 @MainActor
 final class AppointmentModule {
-
     private let apiClient: APIClient
 
     init(apiClient: APIClient) {
@@ -44,13 +43,17 @@ final class AppointmentModule {
     
     func makeAppointmentDetailsViewModel(
         appointmentId: Int,
-        session: SessionManager
+        session: SessionManager,
+        createReviewUseCase: CreateReviewUseCase,
+        updateReviewUseCase: UpdateReviewUseCase
     ) -> AppointmentDetailsViewModel {
         AppointmentDetailsViewModel(
             session: session,
             appointmentId: appointmentId,
             getAppointmentById: getAppointmentByIdUseCase,
-            cancelAppointment: cancelAppointment
+            cancelAppointment: cancelAppointment,
+            createReviewUseCase: createReviewUseCase,
+            updateReviewUseCase: updateReviewUseCase
         )
     }
 }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct StarRatingView: View {
     let rating: Double
-    let imageScale: Image.Scale = .medium
+    var imageScale: Image.Scale = .medium
     
     private let max = 5
     

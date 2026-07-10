@@ -26,8 +26,10 @@ struct AppointmentsTabRouter: View {
                         AppointmentDetailsScreen(
                             viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
                                 appointmentId: id,
-                                session: session
-                            ),
+                                session: session,
+                                createReviewUseCase: container.reviewModule.createReviewUseCase,
+                                updateReviewUseCase: container.reviewModule.updateReviewUseCase
+                            )
                         )
                         .toolbar(.hidden, for: .tabBar)
 

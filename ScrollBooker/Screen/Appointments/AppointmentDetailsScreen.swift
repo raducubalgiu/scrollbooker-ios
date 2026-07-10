@@ -35,7 +35,7 @@ struct AppointmentDetailsScreen: View {
                         Text("\(String(localized: "bookedServices")):")
                             .font(.headline)
                             .fontWeight(.semibold)
-                            .padding(.vertical, .xl)
+                            .padding(.vertical, .base)
                         
                         ForEach(Array(a.products.enumerated()), id: \.offset) { index, prod in
                             AppointmentProductPrice(
@@ -62,7 +62,7 @@ struct AppointmentDetailsScreen: View {
                             discount: a.totalDiscount,
                             currencyName: a.paymentCurrency.name
                         )
-                        .padding(.bottom, .xl)
+                        .padding(.bottom, .base)
                         
                         AppointmentDetailsActions(
                             appointmentId: a.id,
@@ -72,13 +72,13 @@ struct AppointmentDetailsScreen: View {
                                 self.activeSheet = .cancelAppointment
                             }
                         )
-                        .padding(.bottom, .xl)
+                        .padding(.bottom, .base)
                         
                         if !a.hasWrittenReview && viewModel.isFinished && a.isCustomer {
                             ReviewCTA { rating in
                                 self.activeSheet = .writeReview(rating: rating)
                             }
-                            .padding(.bottom, 24)
+                            .padding(.bottom, .base)
                         }
                         
                         if let rev = a.writtenReview {
@@ -89,6 +89,7 @@ struct AppointmentDetailsScreen: View {
                                 rating: rev.rating,
                                 onOpenCancelSheet: {}
                             )
+                            .padding(.bottom, .base)
                         }
                         
                         if let message = a.message {
@@ -97,7 +98,11 @@ struct AppointmentDetailsScreen: View {
                                 .padding(.top, 8)
                         }
                         
-                        Spacer().frame(height: 16)
+                        SectionMap(
+                            mapUrl: a.business.mapUrl ?? "",
+                            coordinates: a.business.coordinates,
+                            fullName: a.user.fullName,
+                        )
                     }
                     .padding(.horizontal, .xl)
                 }
@@ -106,13 +111,26 @@ struct AppointmentDetailsScreen: View {
                 }
                 .sheet(item: $activeSheet) { sheetType in
                     switch sheetType {
-                    case .writeReview(let rating):
-                        WriteReviewSheetView(rating: rating)
+                        case .writeReview(let rating):
+                            WriteReviewSheetView(rating: rating) { selectedRating, message in
+                                guard let userId = a.user.id else {
+                                    viewModel.errorMessage = "User ID is missing"
+                                    return
+                                }
+                                
+                                let productId = a.products.first?.id ?? 0
+                                
+                                await viewModel.createReview(
+                                    review: message,
+                                    rating: selectedRating,
+                                    userId: userId,
+                                    productId: productId
+                                )
+                            }
                         
-                        
-                    case .cancelAppointment:
-                        CancelAppointmentSheetView { finalReason in
-                            await viewModel.cancelCurrentAppointment(reason: finalReason)
+                        case .cancelAppointment:
+                            CancelAppointmentSheetView { finalReason in
+                                await viewModel.cancelCurrentAppointment(reason: finalReason)
                             }
                         }
                     }

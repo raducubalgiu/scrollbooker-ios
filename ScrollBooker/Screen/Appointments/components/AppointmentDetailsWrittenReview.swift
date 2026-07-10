@@ -20,7 +20,7 @@ struct AppointmentDetailsWrittenReview: View {
                 HStack(spacing: 8) {
                     AvatarView(
                         imageURL: URL(string: customerAvatar),
-                        size: .xs
+                        size: .s
                     )
                     
                     VStack(alignment: .leading, spacing: 2) {
@@ -28,7 +28,10 @@ struct AppointmentDetailsWrittenReview: View {
                             .font(.subheadline)
                             .foregroundColor(.gray)
                         
-//                        RatingsStars(starSize: 18, rating: Double(rating))
+                        StarRatingView(
+                            rating: Double(rating),
+                            imageScale: .small
+                        )
                     }
                 }
                 
@@ -46,7 +49,7 @@ struct AppointmentDetailsWrittenReview: View {
             
             if let reviewText = review, !reviewText.isEmpty {
                 Text(reviewText)
-                    .font(.body)
+                    .font(.subheadline)
                     .italic()
                     .lineLimit(2)
             }

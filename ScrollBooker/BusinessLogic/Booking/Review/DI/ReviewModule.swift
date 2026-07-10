@@ -23,11 +23,11 @@ final class ReviewModule {
         ReviewRepositoryImpl(api: apiService)
     }()
     
-    private lazy var createReviewUseCase: CreateReviewUseCase = {
+    lazy var createReviewUseCase: CreateReviewUseCase = {
         CreateReviewUseCase(repository: repository)
     }()
     
-    private lazy var updateReviewUseCase: UpdateReviewUseCase = {
+    lazy var updateReviewUseCase: UpdateReviewUseCase = {
         UpdateReviewUseCase(repository: repository)
     }()
 }

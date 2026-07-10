@@ -13,15 +13,15 @@ struct ReviewCTA: View {
     var body: some View {
         VStack(spacing: 24) {
             Text(String(localized: "clickOnRatingToEvaluate"))
-                .font(.headline)
+                .font(.subheadline)
                 .foregroundColor(.gray)
             
-            HStack(spacing: 8) {
+            HStack(spacing: 5) {
                 ForEach(1...5, id: \.self) { rating in
                     Image(systemName: "star")
                         .font(.system(size: 28))
                         .foregroundColor(.gray)
-                        .frame(width: 50, height: 50)
+                        .frame(width: 40, height: 40)
                         .contentShape(Rectangle())
                         .onTapGesture {
                             onRatingClick(rating)

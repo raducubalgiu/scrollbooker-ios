@@ -23,14 +23,16 @@ final class UserProfileModule {
         UserProfileRepositoryImpl(api: apiService)
     }()
 
-    private lazy var getUserProfile: GetUserProfileUseCase = {
+    private lazy var getUserProfileUseCase: GetUserProfileUseCase = {
         GetUserProfileUseCase(repository: repository)
     }()
     
-    func makeProfileViewModel(username: String) -> ProfileViewModel {
+    func makeProfileViewModel(
+        session: SessionManager
+    ) -> ProfileViewModel {
         ProfileViewModel(
-            username: username,
-            getUserProfile: getUserProfile
+            session: session,
+            getUserProfileUseCase: getUserProfileUseCase
         )
     }
 }

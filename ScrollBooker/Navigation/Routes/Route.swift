@@ -60,7 +60,6 @@ enum Route: Hashable {
     case myCalendar
     case myServices
     case mySchedules
-    case myCurrencies
     
     case myProducts
     case addProduct

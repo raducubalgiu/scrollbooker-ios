@@ -44,13 +44,6 @@ private var myBusinessPages = [
     ),
     
     MyBusinessPage(
-        title: "Valute",
-        description: String(localized: "paymentMethodsDetails"),
-        icon: "creditcard",
-        route: .myCurrencies
-    ),
-    
-    MyBusinessPage(
         title: String(localized: "employees"),
         description: "Detalii despre angajatii tai",
         icon: "person.2",

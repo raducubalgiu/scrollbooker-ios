@@ -12,27 +12,40 @@ struct ProfileTabRouter: View {
     @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
     
+    @State private var viewModel: ProfileViewModel?
+    
     var body: some View {
         NavigationStack(path: $router.profilePath) {
-            ProfileScreen(
-                viewModel: container.userProfileModule.makeProfileViewModel(username: session.userInfo?.username ?? ""),
-                onNavigateToEditProfile: { router.push(.editProfile) },
-                onNavigateToSettings: { router.push(.mySettings) },
-                onNavigateToMyBusiness: { router.push(.myBusiness) },
-                onNavigateToUserProfile: {  },
-                onNavigateToUserSocial: {
-                    router.push(
-                        .userSocial(
-                            userId: 13,
-                            username: "radu_ion",
-                            initialTab: .followers,
-                            isBusinessOrEmployee: true,
-                            initialFollowersCount: 100,
-                            initialFollowingsCount: 200
+                Group {
+                    if let stableViewModel = viewModel {
+                        ProfileScreen(
+                            viewModel: stableViewModel,
+                            onNavigateToEditProfile: { router.push(.editProfile) },
+                            onNavigateToSettings: { router.push(.mySettings) },
+                            onNavigateToMyBusiness: { router.push(.myBusiness) },
+                            onNavigateToUserProfile: { },
+                            onNavigateToUserSocial: {
+                                router.push(
+                                    .userSocial(
+                                        userId: 13,
+                                        username: "radu_ion",
+                                        initialTab: .followers,
+                                        isBusinessOrEmployee: true,
+                                        initialFollowersCount: 100,
+                                        initialFollowingsCount: 200
+                                    )
+                                )
+                            }
                         )
-                    )
-                },
-            )
+                    } else {                        ProgressView()
+                            .tint(.primarySB)
+                    }
+                }
+                .onAppear {
+                    if viewModel == nil {
+                        viewModel = container.userProfileModule.makeProfileViewModel(session: session)
+                    }
+                }
                 .navigationDestination(for: Route.self) { route in
                     switch route {
                         // Global Routes
@@ -106,7 +119,7 @@ struct ProfileTabRouter: View {
                         
                         // My Business
                         case .myBusiness:
-                            MyBusinessScreen { route in router.push(route) }
+                            MyBusinessScreen() { route in router.push(route) }
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
                         
@@ -117,11 +130,6 @@ struct ProfileTabRouter: View {
                             
                         case .myCalendar:
                             MyCalendarScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                            
-                        case .myCurrencies:
-                            MyCurrenciesScreen()
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
                             
@@ -136,7 +144,9 @@ struct ProfileTabRouter: View {
                                 .toolbar(.hidden, for: .tabBar)
                             
                         case .myServices:
-                            MyServicesScreen()
+                            MyServicesScreen(
+                                viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session)
+                            )
                                 .navigationBarHidden(true)
                                 .toolbar(.hidden, for: .tabBar)
                             

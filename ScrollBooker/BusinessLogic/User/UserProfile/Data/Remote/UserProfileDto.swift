@@ -39,7 +39,6 @@ struct BusinessOwnerDTO: Codable{
     let fullname: String
     let username: String
     let avatar: String?
-    let is_follow: Bool
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }

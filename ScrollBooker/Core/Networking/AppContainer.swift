@@ -13,6 +13,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
     let session: SessionManager
     let apiClient: APIClient
 
+    let servieDomainModule: ServiceDomainModule
     let reviewModule: ReviewModule
     let userProfileModule: UserProfileModule
     let appointmentModule: AppointmentModule
@@ -25,6 +26,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
         self.apiClient = APIClient(config: .default)
         self.session = SessionManager(client: apiClient)
         
+        self.servieDomainModule = ServiceDomainModule(apiClient: apiClient)
         self.reviewModule = ReviewModule(apiClient: apiClient)
         self.userProfileModule = UserProfileModule(apiClient: apiClient)
         self.appointmentModule = AppointmentModule(apiClient: apiClient)

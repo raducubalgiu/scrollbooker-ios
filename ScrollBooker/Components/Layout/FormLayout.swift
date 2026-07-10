@@ -32,7 +32,8 @@ struct FormLayout<Content: View>: View {
                 .padding(.bottom, .xxs)
             
             Text(subHeadline)
-                .font(.system(size: 19))
+                .font(.subheadline)
+                .fontWeight(.semibold)
                 .foregroundColor(.gray)
                 .padding(.bottom)
             
@@ -50,7 +51,7 @@ struct FormLayout<Content: View>: View {
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .padding(.top, .xl)
+        .padding(.top, .base)
         .padding(.horizontal, .xl)
         .ignoresSafeArea(.keyboard, edges: .bottom)
     }

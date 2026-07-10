@@ -9,20 +9,39 @@ import SwiftUI
 
 struct ProfileScreen: View {
     let viewModel: ProfileViewModel
-    
-    @State private var showMenuSheet = false
-    
+        
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
     var onNavigateToUserProfile: () -> Void
     var onNavigateToUserSocial: () -> Void
+
+    @State private var showMenuSheet = false
+
+    // Constructorul devine mult mai curat și nativ, fără mutații de pointeri (_viewModel)
+    init(
+        viewModel: ProfileViewModel,
+        onNavigateToEditProfile: @escaping () -> Void = { },
+        onNavigateToSettings: @escaping () -> Void = { },
+        onNavigateToMyBusiness: @escaping () -> Void = { },
+        onNavigateToUserProfile: @escaping () -> Void = { },
+        onNavigateToUserSocial: @escaping () -> Void = { }
+    ) {
+        self.viewModel = viewModel
+        self.onNavigateToEditProfile = onNavigateToEditProfile
+        self.onNavigateToSettings = onNavigateToSettings
+        self.onNavigateToMyBusiness = onNavigateToMyBusiness
+        self.onNavigateToUserProfile = onNavigateToUserProfile
+        self.onNavigateToUserSocial = onNavigateToUserSocial
+    }
     
     var body: some View {
         Group {
             if viewModel.isLoading && viewModel.uiState.data == nil {
                 ProgressView()
+                    .tint(.primarySB)
             } else if let user = viewModel.uiState.data {
+                // Acum că modelul este ascultat corect, blocul se va debloca instant la primirea codului 200
                 ProfileLayout(
                     user: user,
                     onNavigateToUserSocial: onNavigateToUserSocial,
@@ -49,14 +68,29 @@ struct ProfileScreen: View {
                         onNavigateToSettings: onNavigateToSettings
                     )
                 }
+            } else if let errorMessage = viewModel.errorMessage {
+                // DACĂ DECODRE-A EȘUEAZĂ, VEZI IMEDIAT CÂMPUL GREȘIT PE ECRAN!
+                ContentUnavailableView {
+                    Label("Eroare Decodare Date", systemImage: "exclamationmark.triangle")
+                        .foregroundColor(.errorSB)
+                } description: {
+                    Text(errorMessage)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } actions: {
+                    Button("Reîncearcă") {
+                        Task { await viewModel.refresh() }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
             } else {
+                // Această ramură va fi acum doar starea inițială curată, înainte de load
                 ContentUnavailableView(
                     String(localized: "profileUnavailable"),
                     systemImage: "person.crop.circle.badge.exclamationmark"
                 )
             }
         }
-        .navigationBarHidden(true)
         .task {
             await viewModel.loadProfile()
         }

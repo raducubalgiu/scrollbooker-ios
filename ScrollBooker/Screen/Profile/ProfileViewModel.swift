@@ -14,8 +14,8 @@ import Observation
 final class ProfileViewModel: HasLoadingState {
     var uiState = UiState(data: UserProfile?.none)
     
-    private let getUserProfile: GetUserProfileUseCase
-    private let username: String
+    private let session: SessionManager
+    private let getUserProfileUseCase: GetUserProfileUseCase
     
     var isLoading: Bool {
         get { uiState.isLoading }
@@ -27,19 +27,24 @@ final class ProfileViewModel: HasLoadingState {
         set { uiState.errorMessage = newValue }
     }
     
-    init(username: String, getUserProfile: GetUserProfileUseCase) {
-        self.username = username
-        self.getUserProfile = getUserProfile
+    init(session: SessionManager, getUserProfileUseCase: GetUserProfileUseCase) {
+        self.session = session
+        self.getUserProfileUseCase = getUserProfileUseCase
     }
-    
+        
     func loadProfile() async {
         guard uiState.data == nil else { return }
         
         uiState.errorMessage = nil
         
         do {
+            guard let username = session.userInfo?.username else {
+                uiState.errorMessage = "Username not found"
+                return
+            }
+            
             let result = try await withVisibleLoading {
-                try await getUserProfile(username: username)
+                try await getUserProfileUseCase(username: username)
             }
             
             uiState.data = result
@@ -59,7 +64,12 @@ final class ProfileViewModel: HasLoadingState {
         uiState.errorMessage = nil
         
         do {
-            let result = try await getUserProfile(username: username)
+            guard let username = session.userInfo?.username else {
+                uiState.errorMessage = "Username not found"
+                return
+            }
+            
+            let result = try await getUserProfileUseCase(username: username)
             uiState.data = result
         } catch {
             let message = (error as? LocalizedError)?.errorDescription

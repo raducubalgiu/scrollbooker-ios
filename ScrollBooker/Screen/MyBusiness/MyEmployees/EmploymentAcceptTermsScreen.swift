@@ -8,9 +8,16 @@
 import SwiftUI
 
 struct EmploymentAcceptTermsScreen: View {
-    let viewModel: MyEmployeesViewModel
+    @Bindable var viewModel: MyEmployeesViewModel
+    
     let onBack: () -> Void
     let onNext: () -> Void
+    
+    @State private var isTermsAccepted = false
+    
+    private var isButtonDisabled: Bool {
+        viewModel.isSaving || !isTermsAccepted
+    }
     
     var body: some View {
         FormLayout(
@@ -19,47 +26,50 @@ struct EmploymentAcceptTermsScreen: View {
             enableBottomButton: true,
             enableBack: true,
             buttonTitle: String(localized: "send"),
-            isDisabled: viewModel.isSaving,
+            isDisabled: isButtonDisabled,
             isLoading: viewModel.isSaving,
             onBack: onBack,
             onClick: {
-//                Task {
-//                    let result = await viewModel.createEmploymentRequest()
-//                    switch result {
-//                    case .success:
-//                        onNext()
-//                    case .failure:
-//                        break
-//                    }
-//                }
+                // Notă: Când vei decomenta acțiunea, ea va rula asincron în siguranță pe baza validării noastre
+                // Task {
+                //     let result = await viewModel.createEmploymentRequest()
+                //     switch result {
+                //     case .success:
+                //         onNext()
+                //     case .failure:
+                //         break
+                //     }
+                // }
             }
         ) {
-            VStack(alignment: .leading, spacing: 0) {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 12) {
-                        Text("Some Text")
-                        Text("Some Text")
-                        Text("Some Text")
-                        Text("Some Text")
-                        Text("Some Text")
-                        Text("Some Text")
-                        Text("Some Text")
-                        Text("Some Text")
+            VStack {
+                switch viewModel.consentState {
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error(let message):
+                    ErrorView(message: message) {
+                        Task { await viewModel.getConsentTerms() }
                     }
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding()
+                    
+                case .empty:
+                    NoDataView(
+                        title: String(localized: "acceptTerms"),
+                        message: String(localized: "termsNotFound"),
+                        systemImage: "doc.plaintext.fill"
+                    )
+                    
+                case .success(let consent):
+                    EmploymentConsentView(
+                        text: consent.text,
+                        isTermsAccepted: $isTermsAccepted
+                    )
                 }
-                .background(
-                    RoundedRectangle(cornerRadius: 16, style: .continuous)
-                        .fill(Color.surfaceSB)
-                )
-                
-                // Textul de confirmare a termenilor de dedesubt
-                Text(String(localized: "acceptTermsAndConditions"))
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-                    .padding(.top, .m)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .task {
+            await viewModel.getConsentTerms()
         }
     }
 }

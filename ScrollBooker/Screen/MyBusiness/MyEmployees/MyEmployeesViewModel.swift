@@ -40,6 +40,14 @@ enum ProfessionsState: Equatable {
     case error(String)
 }
 
+enum ConsentState: Equatable {
+    case idle
+    case loading
+    case empty
+    case success(Consent)
+    case error(String)
+}
+
 
 @Observable
 @MainActor
@@ -48,6 +56,7 @@ final class MyEmployeesViewModel: HasLoadingState {
     private(set) var requestsState: RequestsTabState = .idle
     private(set) var searchState: EmployeeSearchState = .idle
     private(set) var professionsState: ProfessionsState = .idle
+    private(set) var consentState: ConsentState = .idle
     
     var searchUserResults: [SearchUser] = []
     var searchTextEmployee: String = "" {
@@ -62,6 +71,7 @@ final class MyEmployeesViewModel: HasLoadingState {
     var employeesUiState = UiState(data: [Employee]())
     var employmentRequestUiState = UiState(data: [EmploymentRequest]())
     var professionsUiState = UiState(data: [Profession]())
+    var consentUiState = UiState<Consent?>(data: nil)
     var isSaving: Bool = false
         
     let session: SessionManager
@@ -69,6 +79,7 @@ final class MyEmployeesViewModel: HasLoadingState {
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
     private let cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase
     private let getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase
+    private let getConsentByNameUseCase: GetConsentByNameUseCase
     
     private let searchUsersUseCase: SearchUsersUseCase
     private var searchTask: Task<Void, Never>? = nil
@@ -78,7 +89,8 @@ final class MyEmployeesViewModel: HasLoadingState {
             employeesState == .loading ||
             requestsState == .loading ||
             searchState == .loading ||
-            professionsState == .loading
+            professionsState == .loading ||
+            consentState == .loading
         }
         set { /* Gestionat automat prin stări */ }
     }
@@ -89,6 +101,7 @@ final class MyEmployeesViewModel: HasLoadingState {
             if case .error(let msg) = requestsState { return msg }
             if case .error(let msg) = searchState { return msg }
             if case .error(let msg) = professionsState { return msg }
+            if case .error(let msg) = consentState { return msg }
             return nil
         }
         set { /* Gestionat automat prin stări */ }
@@ -100,7 +113,8 @@ final class MyEmployeesViewModel: HasLoadingState {
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
         cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase,
         searchUsersUseCase: SearchUsersUseCase,
-        getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase
+        getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase,
+        getConsentByNameUseCase: GetConsentByNameUseCase
     ) {
         self.session = session
         self.getUserEmploymentRequestsUseCase = getUserEmploymentRequestsUseCase
@@ -108,6 +122,7 @@ final class MyEmployeesViewModel: HasLoadingState {
         self.cancelEmploymentRequestUseCase = cancelEmploymentRequestUseCase
         self.searchUsersUseCase = searchUsersUseCase
         self.getProfessionsByBusinessTypeUseCase = getProfessionsByBusinessTypeUseCase
+        self.getConsentByNameUseCase = getConsentByNameUseCase
     }
     
     func getEmployeesByOwner() async {
@@ -278,6 +293,26 @@ final class MyEmployeesViewModel: HasLoadingState {
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             professionsState = .error(message)
+        }
+    }
+    
+    func getConsentTerms() async {
+        guard consentUiState.data == nil else { return }
+        guard consentState != .loading else { return }
+        
+        consentState = .loading
+        
+        do {
+            let consent = try await withVisibleLoading {
+                try await getConsentByNameUseCase(consentName: .employmentRequestsInitiation)
+            }
+            
+            self.consentUiState.data = consent
+            self.consentState = .success(consent)
+            
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            consentState = .error(message)
         }
     }
 }

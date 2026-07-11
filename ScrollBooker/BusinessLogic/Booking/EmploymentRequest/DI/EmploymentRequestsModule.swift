@@ -35,7 +35,8 @@ final class EmploymentRequestModule {
         session: SessionManager,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
         searchUsersUseCase: SearchUsersUseCase,
-        getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase
+        getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase,
+        getConsentByNameUseCase: GetConsentByNameUseCase
     ) -> MyEmployeesViewModel {
         MyEmployeesViewModel(
             session: session,
@@ -43,7 +44,8 @@ final class EmploymentRequestModule {
             getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
             cancelEmploymentRequestUseCase: cancelEmploymentRequestUseCase,
             searchUsersUseCase: searchUsersUseCase,
-            getProfessionsByBusinessTypeUseCase: getProfessionsByBusinessTypeUseCase
+            getProfessionsByBusinessTypeUseCase: getProfessionsByBusinessTypeUseCase,
+            getConsentByNameUseCase: getConsentByNameUseCase
         )
     }
 }

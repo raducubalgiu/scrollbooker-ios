@@ -8,9 +8,9 @@
 import SwiftUI
 
 struct FeedSearchScreen: View {
-    @Environment(\.dismiss) private var dismiss
-    @State private var searchText: String = ""
+    @Bindable var viewModel: FeedSearchViewModel
     
+    @Environment(\.dismiss) private var dismiss
     @FocusState private var isSearchFieldFocused: Bool
     
     var body: some View {
@@ -21,21 +21,27 @@ struct FeedSearchScreen: View {
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title2)
-                        .foregroundColor(.primary)
                 }
                 
                 HStack {
                     Image(systemName: "magnifyingglass")
                         .foregroundColor(.gray)
                     
-                    TextField("Caută", text: $searchText)
+                    TextField(
+                        String(localized: "search"),
+                        text: $viewModel.searchText
+                    )
                         .autocorrectionDisabled()
                         .textInputAutocapitalization(.never)
                         .focused($isSearchFieldFocused)
+                        .submitLabel(.search)
+                        .onSubmit {
+                            viewModel.performInstantSearch()
+                        }
                     
-                    if !searchText.isEmpty {
+                    if !viewModel.searchText.isEmpty {
                         Button(action: {
-                            searchText = ""
+                            viewModel.searchText = ""
                         }) {
                             Image(systemName: "xmark.circle.fill")
                                 .foregroundColor(.gray)
@@ -50,23 +56,49 @@ struct FeedSearchScreen: View {
             .padding(.horizontal)
             .padding(.vertical, 8)
             
-            Divider()
-            
-            // Conținutul ecranului
-            Spacer()
+            VStack {
+                switch viewModel.searchState {
+                    case .idle:
+                        VStack {
+                            Spacer()
+                            Text("Caută utilizatori în aplicație")
+                                .foregroundColor(.gray)
+                            Spacer()
+                        }
+                        
+                    case .loading:
+                        LoadingView()
+                        
+                    case .empty:
+                        NoDataView(
+                            title: "Cauta",
+                            message: "Nu s-a găsit niciun rezultat pentru \"\(viewModel.searchText)\""
+                        )
+                        
+                    case .success(let users):
+                        List(users) { user in
+                            HStack {
+                                Text(user.fullName)
+                                    .font(.body)
+                                Spacer()
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .listStyle(.plain)
+                        .scrollDismissesKeyboard(.immediately)
+                        
+                    case .error(let message):
+                        ErrorView(
+                            message: message,
+                            retryAction: { viewModel.performInstantSearch() }
+                        )
+                    }
+                }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .navigationBarHidden(true)
         .onAppear {
             isSearchFieldFocused = true
         }
     }
-}
-
-#Preview("Light") {
-    FeedSearchScreen()
-}
-
-#Preview("Dark") {
-    FeedSearchScreen()
-    .preferredColorScheme(.dark)
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct FeedTabRouter: View {
+    @EnvironmentObject private var container: AppContainer
     @ObservedObject var router: Router
     
     var body: some View {
@@ -23,7 +24,9 @@ struct FeedTabRouter: View {
             .navigationDestination(for: Route.self) { route in
                 switch route {
                     case .feedSearch:
-                        FeedSearchScreen()
+                        FeedSearchScreen(
+                            viewModel: container.searchModule.makeFeedSearchViewModel()
+                        )
                             .navigationBarHidden(true)
                     
                     default: Text("Route not in Feed")

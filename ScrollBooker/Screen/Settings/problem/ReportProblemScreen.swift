@@ -8,13 +8,9 @@
 import SwiftUI
 
 struct ReportProblemScreen: View {
-    @State private var viewModel: ReportProblemViewModel
+    let viewModel: ReportProblemViewModel
     @Environment(\.dismiss) private var dismiss
         
-    init(viewModel: ReportProblemViewModel) {
-        _viewModel = State(initialValue: viewModel)
-    }
-    
     var body: some View {
         @Bindable var vm = viewModel
         

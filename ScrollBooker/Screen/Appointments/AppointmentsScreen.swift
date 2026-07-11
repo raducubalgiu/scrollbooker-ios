@@ -8,16 +8,8 @@
 import SwiftUI
 
 struct AppointmentsScreen: View {
-    @State private var viewModel: AppointmentsViewModel
+    let viewModel: AppointmentsViewModel
     let onNavigateToAppointmentDetails: (Int) -> Void
-
-    init(
-        viewModel: AppointmentsViewModel,
-        onNavigateToAppointmentDetails: @escaping (Int) -> Void = { _ in }
-    ) {
-        _viewModel = State(initialValue: viewModel)
-        self.onNavigateToAppointmentDetails = onNavigateToAppointmentDetails
-    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,35 +18,49 @@ struct AppointmentsScreen: View {
                 enableBack: false
             )
 
-            ScrollView {
-                if viewModel.uiState.isLoading && !viewModel.uiState.isRefreshing {
+            Group {
+                switch viewModel.viewState {
+                case .idle, .loading:
                     LoadingView()
-                } else if let error = viewModel.uiState.errorMessage {
-                    ErrorView(message: error) {
+                    
+                case .error(let message):
+                    ErrorView(message: message) {
                         Task { await viewModel.refresh() }
                     }
-                }
-                else if viewModel.uiState.data.isEmpty && !viewModel.uiState.isLoading {
+                    
+                case .empty:
                     NoDataView(
                         title: String(localized: "bookings"),
                         message: String(localized: "notFoundAppointments"),
                         systemImage: "calendar.badge.clock"
                     )
-                } else {
-                    AppointmentsListView(
-                        appointments: viewModel.uiState.data,
-                        onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
-                        onItemAppear: { appointment in
-                            Task {
-                                await viewModel.loadMoreIfNeeded(currentAppointment: appointment)
+                    
+                case .success(let appointments):
+                    ScrollView {
+                        LazyVStack(spacing: 12) {
+                            AppointmentsListView(
+                                appointments: appointments,
+                                onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
+                                onItemAppear: { appointment in
+                                    Task {
+                                        await viewModel.loadMoreIfNeeded(currentAppointment: appointment)
+                                    }
+                                }
+                            )
+                            
+                            if viewModel.isPaging {
+                                ProgressView()
+                                    .padding(.vertical)
                             }
                         }
-                    )
+                        .padding(.top)
+                    }
+                    .refreshable {
+                        await viewModel.refresh()
+                    }
                 }
             }
-            .refreshable {
-                await viewModel.refresh()
-            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .task {
             await viewModel.initialLoadIfNeeded()

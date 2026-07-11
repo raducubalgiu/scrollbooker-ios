@@ -8,34 +8,44 @@
 import Foundation
 import Observation
 
+enum AppointmentsState {
+    case idle
+    case loading
+    case empty
+    case success([Appointment])
+    case error(String)
+}
+
 @Observable
 @MainActor
 final class AppointmentsViewModel: HasLoadingState {
-    var uiState = UiState(data: [Appointment](), isLoading: true)
+    var uiState = UiState(data: [Appointment]())
+    
+    private(set) var viewState: AppointmentsState = .idle
+    private(set) var isPaging: Bool = false
+    private(set) var isRefreshing: Bool = false
 
     private let getUserAppointments: GetUserAppointmentsUseCase
     private var page = 1
     private let limit = 20
     private var totalCount = 0
-    private var isPaging = false
 
     var hasMore: Bool {
         uiState.data.count < totalCount
     }
 
     var isLoading: Bool {
-        get { uiState.isLoading }
-        set { uiState.isLoading = newValue }
+        get { if case .loading = viewState { return true }; return false }
+        set { if newValue { viewState = .loading } }
     }
 
     var errorMessage: String? {
-        get { uiState.errorMessage }
-        set { uiState.errorMessage = newValue }
+        get { if case .error(let msg) = viewState { return msg }; return nil }
+        set { if let msg = newValue { viewState = .error(msg) } }
     }
 
     init(getUserAppointments: GetUserAppointmentsUseCase) {
         self.getUserAppointments = getUserAppointments
-        self.uiState.isLoading = true
     }
 
     func initialLoadIfNeeded() async {
@@ -44,19 +54,16 @@ final class AppointmentsViewModel: HasLoadingState {
     }
 
     func refresh() async {
-        guard !uiState.isRefreshing else { return }
-        uiState.isRefreshing = true
+        guard !isRefreshing else { return }
+        isRefreshing = true
         page = 1
         await load(isFirstPage: true)
-        uiState.isRefreshing = false
+        isRefreshing = false
     }
 
     func loadMoreIfNeeded(currentAppointment: Appointment?) async {
-        guard hasMore else { return }
-        guard !uiState.isLoading else { return }
-        guard !uiState.isRefreshing else { return }
-        guard !isPaging else { return }
-
+        guard hasMore, !isPaging, !isRefreshing, !isLoading else { return }
+        
         guard let current = currentAppointment,
               current.id == uiState.data.last?.id
         else { return }
@@ -67,9 +74,8 @@ final class AppointmentsViewModel: HasLoadingState {
     }
 
     private func load(isFirstPage: Bool) async {
-        if isFirstPage {
-            uiState.errorMessage = nil
-            uiState.isLoading = true
+        if isFirstPage && !isRefreshing {
+            viewState = .loading
         }
 
         do {
@@ -85,17 +91,21 @@ final class AppointmentsViewModel: HasLoadingState {
 
             totalCount = response.count
             page += 1
+            
+            if uiState.data.isEmpty {
+                viewState = .empty
+            } else {
+                viewState = .success(uiState.data)
+            }
 
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
 
             if isFirstPage {
-                uiState.errorMessage = message
+                viewState = .error(message)
+            } else {
+                print("Eroare la încărcarea paginii următoare: \(message)")
             }
-        }
-        
-        if isFirstPage {
-            uiState.isLoading = false
         }
     }
 }

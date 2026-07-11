@@ -65,3 +65,33 @@ struct AppointmentBusiness: Equatable, Hashable, Sendable {
     let coordinates: BusinessCoordinates
     let mapUrl: String?
 }
+
+extension Appointment {
+    func copy(
+        hasWrittenReview: Bool? = nil,
+        writtenReview: AppointmentWrittenReview? = nil // Modificat în optional simplu
+    ) -> Appointment {
+        Appointment(
+            id: self.id,
+            startDate: self.startDate,
+            endDate: self.endDate,
+            channel: self.channel,
+            status: self.status,
+            message: self.message,
+            isCustomer: self.isCustomer,
+            products: self.products,
+            user: self.user,
+            customer: self.customer,
+            business: self.business,
+            totalPrice: self.totalPrice,
+            totalPriceWithDiscount: self.totalPriceWithDiscount,
+            totalDiscount: self.totalDiscount,
+            totalDuration: self.totalDuration,
+            paymentCurrency: self.paymentCurrency,
+            hasWrittenReview: hasWrittenReview ?? self.hasWrittenReview,
+            hasVideoReview: self.hasVideoReview,
+            // Dacă writtenReview primit este nil, păstrează-l pe cel actual (self.writtenReview)
+            writtenReview: writtenReview ?? self.writtenReview
+        )
+    }
+}

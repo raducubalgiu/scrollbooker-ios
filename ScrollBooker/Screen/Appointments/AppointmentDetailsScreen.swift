@@ -9,160 +9,140 @@ import SwiftUI
 import MapKit
 
 struct AppointmentDetailsScreen: View {
-    let viewModel: AppointmentDetailsViewModel
-    
+    @Bindable var viewModel: AppointmentDetailsViewModel
     @State private var activeSheet: AppointmentDetailsSheet? = nil
     
     var body: some View {
         VStack(spacing: 0) {
             Header(title: String(localized: "bookingDetails"))
             
-            if viewModel.isLoading && viewModel.uiState.data == nil {
-                LoadingView()
-            }
-
-            else if let errorMessage = viewModel.errorMessage {
-                ErrorView(message: errorMessage) {
-                    Task { await viewModel.refresh() }
-                }
-            }
-
-            else if let a = viewModel.uiState.data {
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 0) {
-                        AppointmentDetailsHeader(appointment: a)
-                        
-                        Text("\(String(localized: "bookedServices")):")
-                            .font(.headline)
-                            .fontWeight(.semibold)
-                            .padding(.vertical, .base)
-                        
-                        ForEach(Array(a.products.enumerated()), id: \.offset) { index, prod in
-                            AppointmentProductPrice(
-                                name: prod.name,
-                                price: prod.price,
-                                priceWithDiscount: prod.priceWithDiscount,
-                                discount: prod.discount,
-                                currencyName: prod.currency.name
-                            )
+            VStack {
+                switch viewModel.viewState {
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error(let message):
+                    ErrorView(message: message) {
+                        Task { await viewModel.refresh() }
+                    }
+                    
+                case .success(let appointment):
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 0) {
+                            AppointmentDetailsHeader(appointment: appointment)
                             
-                            if index < a.products.count - 1 {
-                                Divider()
-                                    .padding(.vertical, .base)
+                            Text("\(String(localized: "bookedServices")):")
+                                .font(.headline)
+                                .fontWeight(.semibold)
+                                .padding(.vertical, .base)
+                            
+                            ForEach(Array(appointment.products.enumerated()), id: \.offset) { index, prod in
+                                AppointmentProductPrice(
+                                    name: prod.name,
+                                    price: prod.price,
+                                    priceWithDiscount: prod.priceWithDiscount,
+                                    discount: prod.discount,
+                                    currencyName: prod.currency.name
+                                )
+                                
+                                if index < appointment.products.count - 1 {
+                                    Divider()
+                                        .padding(.vertical, .base)
+                                }
                             }
-                        }
-                        
-                        Divider()
-                            .padding(.vertical, .base)
-                        
-                        AppointmentProductPrice(
-                            name: String(localized: "total"),
-                            price: a.totalPrice,
-                            priceWithDiscount: a.totalPriceWithDiscount,
-                            discount: a.totalDiscount,
-                            currencyName: a.paymentCurrency.name
-                        )
-                        .padding(.bottom, .base)
-                        
-                        AppointmentDetailsActions(
-                            appointmentId: a.id,
-                            status: a.status,
-                            isCustomer: a.isCustomer,
-                            onOpenCancelSheet: { id in
-                                self.activeSheet = .cancelAppointment
-                            }
-                        )
-                        .padding(.bottom, .base)
-                        
-                        if !a.hasWrittenReview && viewModel.isFinished && a.isCustomer {
-                            ReviewCTA { rating in
-                                self.activeSheet = .writeReview(rating: rating)
-                            }
-                            .padding(.bottom, .base)
-                        }
-                        
-                        if let rev = a.writtenReview {
-                            AppointmentDetailsWrittenReview(
-                                customerAvatar: a.customer.avatar ?? "",
-                                isCustomer: a.isCustomer,
-                                review: rev.review,
-                                rating: rev.rating,
-                                onOpenCancelSheet: {}
+                            
+                            Divider()
+                                .padding(.vertical, .base)
+                            
+                            AppointmentProductPrice(
+                                name: String(localized: "total"),
+                                price: appointment.totalPrice,
+                                priceWithDiscount: appointment.totalPriceWithDiscount,
+                                discount: appointment.totalDiscount,
+                                currencyName: appointment.paymentCurrency.name
                             )
                             .padding(.bottom, .base)
-                        }
-                        
-                        if let message = a.message {
-                            Text(message)
-                                .font(.body)
-                                .padding(.top, 8)
-                        }
-                        
-                        SectionMap(
-                            mapUrl: a.business.mapUrl ?? "",
-                            coordinates: a.business.coordinates,
-                            fullName: a.user.fullName,
-                        )
-                    }
-                    .padding(.horizontal, .xl)
-                }
-                .refreshable {
-                    await viewModel.refresh()
-                }
-                .sheet(item: $activeSheet) { sheetType in
-                    switch sheetType {
-                        case .writeReview(let rating):
-                            WriteReviewSheetView(rating: rating) { selectedRating, message in
-                                guard let userId = a.user.id else {
-                                    viewModel.errorMessage = "User ID is missing"
-                                    return
+                            
+                            AppointmentDetailsActions(
+                                appointmentId: appointment.id,
+                                status: appointment.status,
+                                isCustomer: appointment.isCustomer,
+                                onOpenCancelSheet: { _ in
+                                    self.activeSheet = .cancelAppointment
                                 }
-                                
-                                let productId = a.products.first?.id ?? 0
-                                
-                                await viewModel.createReview(
-                                    review: message,
-                                    rating: selectedRating,
-                                    userId: userId,
-                                    productId: productId
+                            )
+                            .padding(.bottom, .base)
+                            
+                            if !appointment.hasWrittenReview && viewModel.isFinished && appointment.isCustomer {
+                                ReviewCTA { rating in
+                                    self.activeSheet = .writeReview(rating: rating)
+                                }
+                                .padding(.bottom, .base)
+                            }
+                            
+                            if let rev = appointment.writtenReview {
+                                AppointmentDetailsWrittenReview(
+                                    customerAvatar: appointment.customer.avatar ?? "",
+                                    isCustomer: appointment.isCustomer,
+                                    review: rev.review,
+                                    rating: rev.rating,
+                                    onOpenCancelSheet: {}
                                 )
+                                .padding(.bottom, .base)
                             }
-                        
-                        case .cancelAppointment:
-                            CancelAppointmentSheetView { finalReason in
-                                await viewModel.cancelCurrentAppointment(reason: finalReason)
+                            
+                            if let message = appointment.message {
+                                Text(message)
+                                    .font(.body)
+                                    .padding(.top, 8)
                             }
+                            
+                            SectionMap(
+                                mapUrl: appointment.business.mapUrl ?? "",
+                                coordinates: appointment.business.coordinates,
+                                fullName: appointment.user.fullName
+                            )
                         }
+                        .padding(.horizontal, .xl)
+                    }
+                    .refreshable {
+                        await viewModel.refresh()
                     }
                 }
-
-            else {
-                ContentUnavailableView(
-                    String(localized: "noDetailsAvailable"),
-                    systemImage: "calendar.badge.exclamationmark"
-                )
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .background(Color.backgroundSB)
         .navigationBarHidden(true)
         .task {
             await viewModel.loadAppointment()
         }
+        .sheet(item: $activeSheet) { sheetType in
+            if let appointmentData = viewModel.uiState.data {
+                switch sheetType {
+                case .writeReview(let rating):
+                    WriteReviewSheetView(rating: rating) { selectedRating, message in
+                        guard let userId = appointmentData.user.id else {
+                            viewModel.errorMessage = "User ID is missing"
+                            return
+                        }
+                        
+                        let productId = appointmentData.products.first?.id ?? 0
+                        
+                        await viewModel.createReview(
+                            review: message,
+                            rating: selectedRating,
+                            userId: userId,
+                            productId: productId
+                        )
+                    }
+                    
+                case .cancelAppointment:
+                    CancelAppointmentSheetView { finalReason in
+                        await viewModel.cancelCurrentAppointment(reason: finalReason)
+                    }
+                }
+            }
+        }
     }
 }
-
-
-//#Preview("Light") {
-//    AppointmentDetailsScreen(
-//        appointmentId: 1,
-//        isFinished: true
-//    )
-//}
-//
-//#Preview("Dark") {
-//    AppointmentDetailsScreen(
-//        appointmentId: 1,
-//        isFinished: true
-//    )
-//        .preferredColorScheme(.dark)
-//}

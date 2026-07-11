@@ -8,10 +8,19 @@
 import Foundation
 import Observation
 
+enum AppointmentDetailsState: Equatable {
+    case idle
+    case loading
+    case success(Appointment)
+    case error(String)
+}
+
 @Observable
 @MainActor
 final class AppointmentDetailsViewModel: HasLoadingState {
     var uiState = UiState(data: Appointment?.none)
+    
+    private(set) var viewState: AppointmentDetailsState = .idle
     
     private let session: SessionManager
     private let appointmentId: Int
@@ -25,12 +34,12 @@ final class AppointmentDetailsViewModel: HasLoadingState {
     }
     
     var isLoading: Bool {
-        get { uiState.isLoading }
+        get { if case .loading = viewState { return true }; return uiState.isLoading }
         set { uiState.isLoading = newValue }
     }
     
     var errorMessage: String? {
-        get { uiState.errorMessage }
+        get { if case .error(let msg) = viewState { return msg }; return uiState.errorMessage }
         set { uiState.errorMessage = newValue }
     }
     
@@ -52,6 +61,9 @@ final class AppointmentDetailsViewModel: HasLoadingState {
     
     func loadAppointment() async {
         guard uiState.data == nil else { return }
+        guard viewState != .loading else { return }
+        
+        viewState = .loading
         uiState.errorMessage = nil
         
         do {
@@ -59,9 +71,10 @@ final class AppointmentDetailsViewModel: HasLoadingState {
                 try await getAppointmentById(id: appointmentId)
             }
             uiState.data = result
+            viewState = .success(result)
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            uiState.errorMessage = message
+            viewState = .error(message)
         }
     }
     
@@ -73,19 +86,26 @@ final class AppointmentDetailsViewModel: HasLoadingState {
         do {
             let result = try await getAppointmentById(id: appointmentId)
             uiState.data = result
+            viewState = .success(result)
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            uiState.errorMessage = message
+            if uiState.data == nil {
+                viewState = .error(message)
+            } else {
+                uiState.errorMessage = message
+            }
         }
         uiState.isRefreshing = false
     }
     
     func cancelCurrentAppointment(reason: String) async {
         uiState.errorMessage = nil
+        uiState.isLoading = true
         
         do {
             guard let userId = session.userInfo?.id else {
                 uiState.errorMessage = "User session not found"
+                uiState.isLoading = false
                 return
             }
             
@@ -98,22 +118,20 @@ final class AppointmentDetailsViewModel: HasLoadingState {
             }
             
             uiState.data = updatedAppointment
+            viewState = .success(updatedAppointment)
+            uiState.isLoading = false
             
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             uiState.errorMessage = message
+            uiState.isLoading = false
         }
     }
     
-    func createReview(
-        review: String,
-        rating: Int,
-        userId: Int,
-        productId: Int
-    ) async {
+    func createReview(review: String, rating: Int, userId: Int, productId: Int) async {
         guard let currentAppointment = uiState.data else { return }
-        
         uiState.errorMessage = nil
+        uiState.isLoading = true
         
         let request = ReviewCreateRequest(
             review: review,
@@ -128,33 +146,17 @@ final class AppointmentDetailsViewModel: HasLoadingState {
                 try await createReviewUseCase(id: appointmentId, request: request)
             }
             
+            uiState.isLoading = false
+            
             updateStateWithNewReview(newReview, from: currentAppointment)
             
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             uiState.errorMessage = message
+            uiState.isLoading = false
         }
     }
-    
-    func updateReview(reviewId: Int, rating: Int, review: String) async {
-//        guard let currentAppointment = uiState.data else { return }
-//        uiState.errorMessage = nil
-//        
-//        let request = ReviewUpdateRequest(rating: rating, review: review)
-//        
-//        do {
-//            let updatedReview = try await withVisibleLoading {
-//                try await updateReviewUseCase(id: reviewId, request: request)
-//            }
-//            
-//            updateStateWithNewReview(updatedReview, from: currentAppointment)
-//            
-//        } catch {
-//            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-//            uiState.errorMessage = message
-//        }
-    }
-    
+
     private func updateStateWithNewReview(_ review: Review, from current: Appointment) {
         let appointmentReview = AppointmentWrittenReview(
             id: review.id,
@@ -162,28 +164,12 @@ final class AppointmentDetailsViewModel: HasLoadingState {
             rating: review.rating
         )
         
-        let updatedAppointment = Appointment(
-            id: current.id,
-            startDate: current.startDate,
-            endDate: current.endDate,
-            channel: current.channel,
-            status: current.status,
-            message: current.message,
-            isCustomer: current.isCustomer,
-            products: current.products,
-            user: current.user,
-            customer: current.customer,
-            business: current.business,
-            totalPrice: current.totalPrice,
-            totalPriceWithDiscount: current.totalPriceWithDiscount,
-            totalDiscount: current.totalDiscount,
-            totalDuration: current.totalDuration,
-            paymentCurrency: current.paymentCurrency,
+        let updatedAppointment = current.copy(
             hasWrittenReview: true,
-            hasVideoReview: current.hasVideoReview,
             writtenReview: appointmentReview
         )
         
         self.uiState.data = updatedAppointment
+        self.viewState = .success(updatedAppointment)
     }
 }

@@ -25,7 +25,8 @@ struct EmployeesFlowContainer: View {
             container.employmentRequestModule.makeMyEmployeesViewModel(
                 session: session,
                 getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
-                searchUsersUseCase: container.searchModule.searchUsersUseCase
+                searchUsersUseCase: container.searchModule.searchUsersUseCase,
+                getProfessionsByBusinessTypeUseCase: container.professionModule.getProfessionsByBusinessTypeUseCase
             )
         )
     }

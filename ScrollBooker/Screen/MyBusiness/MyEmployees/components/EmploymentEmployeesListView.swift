@@ -9,13 +9,12 @@ import SwiftUI
 
 struct EmploymentEmployeesListView: View {
     let users: [SearchUser]
-    
     @Binding var selectedUser: SearchUser?
     
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
-                ForEach(users) { user in
+                ForEach(Array(users.enumerated()), id: \.element.id) { index, user in
                     Button(action: {
                         if selectedUser?.id == user.id {
                             selectedUser = nil
@@ -34,7 +33,6 @@ struct EmploymentEmployeesListView: View {
                                     .font(.subheadline.bold())
                                     .foregroundColor(.primary)
                                 
-
                                 Text("@\(user.username)")
                                     .font(.footnote)
                                     .foregroundColor(.secondary)
@@ -53,7 +51,7 @@ struct EmploymentEmployeesListView: View {
                                         .frame(width: 10, height: 10)
                                 } else {
                                     Circle()
-                                        .stroke(Color.gray.opacity(0.5), lineWidth: 1)
+                                        .stroke(Color(.tertiaryLabel), lineWidth: 1)
                                         .frame(width: 25, height: 25)
                                 }
                             }
@@ -63,11 +61,16 @@ struct EmploymentEmployeesListView: View {
                     }
                     .buttonStyle(.plain)
                     
-                    Divider()
-                        .padding(.leading, 64)
+                    if index < users.count - 1 {
+                        Divider()
+                            .background(Color(.separator))
+                            .padding(.vertical, 8)
+                            .padding(.leading, 56)
+                    }
                 }
             }
         }
         .scrollDismissesKeyboard(.immediately)
     }
 }
+

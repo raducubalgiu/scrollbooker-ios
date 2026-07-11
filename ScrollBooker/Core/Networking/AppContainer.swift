@@ -13,6 +13,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
     let session: SessionManager
     let apiClient: APIClient
 
+    let professionModule: ProfessionModule
     let searchModule: SearchModule
     let employeesModule: EmployeesModule
     let employmentRequestModule: EmploymentRequestModule
@@ -29,6 +30,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
         self.apiClient = APIClient(config: .default)
         self.session = SessionManager(client: apiClient)
         
+        self.professionModule = ProfessionModule(apiClient: apiClient)
         self.searchModule = SearchModule(apiClient: apiClient)
         self.employeesModule = EmployeesModule(apiClient: apiClient)
         self.employmentRequestModule = EmploymentRequestModule(apiClient: apiClient)

@@ -8,34 +8,35 @@
 import SwiftUI
 
 struct MyBusinessCardView: View {
-    var title: String = ""
-    var description: String = ""
-    var icon: String = ""
-    var onClick: () -> Void
+    let title: String
+    let description: String
+    let icon: String
+    let onClick: () -> Void
     
     var body: some View {
-        Button {
-            onClick()
-        } label: {
+        Button(action: onClick) {
             VStack(alignment: .leading, spacing: 15) {
                 Image(systemName: icon)
-                    .font(.system(size: 20))
-                    .foregroundColor(.onBackgroundSB)
+                    .font(.system(size: 24))
+                    .foregroundColor(.onSurfaceSB)
                 
                 Text(title)
-                    .font(.headline)
-                    .fontWeight(.bold)
+                    .font(.subheadline.bold())
                     .foregroundColor(.onBackgroundSB)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
                 
                 Text(description)
-                    .font(.subheadline)
-                    .foregroundColor(.onSurfaceSB)
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+                    .lineLimit(3, reservesSpace: true)
+                    .truncationMode(.tail)
+                    .multilineTextAlignment(.leading)
             }
-            .padding(.xl)
-            .frame(maxWidth: .infinity, minHeight: CGFloat(180))
+            .padding(.base)
+            .frame(maxWidth: .infinity, alignment: .leading)
             .background(Color.surfaceSB)
             .cornerRadius(12)
-            .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
     }

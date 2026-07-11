@@ -18,7 +18,6 @@ struct ProfileScreen: View {
 
     @State private var showMenuSheet = false
 
-    // Constructorul devine mult mai curat și nativ, fără mutații de pointeri (_viewModel)
     init(
         viewModel: ProfileViewModel,
         onNavigateToEditProfile: @escaping () -> Void = { },
@@ -41,7 +40,6 @@ struct ProfileScreen: View {
                 ProgressView()
                     .tint(.primarySB)
             } else if let user = viewModel.uiState.data {
-                // Acum că modelul este ascultat corect, blocul se va debloca instant la primirea codului 200
                 ProfileLayout(
                     user: user,
                     onNavigateToUserSocial: onNavigateToUserSocial,

@@ -11,6 +11,7 @@ import Observation
 @Observable
 @MainActor
 final class MyEmployeesViewModel: HasLoadingState {
+    // Cele două stări de UI independente pentru fiecare tab în parte
     var employeesUiState = UiState(data: [Employee]())
     var employmentRequestUiState = UiState(data: [EmploymentRequest]())
     var isSaving: Bool = false
@@ -19,16 +20,29 @@ final class MyEmployeesViewModel: HasLoadingState {
     private let getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
     
+    // MARK: - HasLoadingState Conformance (Unificată Enterprise)
+    
+    /// Devine true dacă oricare dintre cele două tab-uri încarcă date activ pe rețea
     var isLoading: Bool {
-        get { employeesUiState.isLoading }
-        set { employeesUiState.isLoading = newValue }
+        get { employeesUiState.isLoading || employmentRequestUiState.isLoading }
+        set {
+            // Când utilitarul withVisibleLoading modifică flag-ul, îl propagăm în ambele stări
+            employeesUiState.isLoading = newValue
+            employmentRequestUiState.isLoading = newValue
+        }
     }
 
+    /// Prinde și expune în UI eroarea sosită de pe oricare dintre tab-uri
     var errorMessage: String? {
-        get { employeesUiState.errorMessage }
-        set { employeesUiState.errorMessage = newValue }
+        get { employeesUiState.errorMessage ?? employmentRequestUiState.errorMessage }
+        set {
+            // Sincronizăm curățarea sau setarea erorilor pe ambele containere
+            employeesUiState.errorMessage = newValue
+            employmentRequestUiState.errorMessage = newValue
+        }
     }
  
+    // MARK: - Init
     init(
         session: SessionManager,
         getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase,
@@ -39,6 +53,9 @@ final class MyEmployeesViewModel: HasLoadingState {
         self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
     }
     
+    // MARK: - Public Actions
+    
+    /// Încarcă lista de angajați pentru primul tab
     func getEmployeesByOwner() async {
         guard employeesUiState.data.isEmpty else { return }
         
@@ -64,6 +81,7 @@ final class MyEmployeesViewModel: HasLoadingState {
         }
     }
     
+    /// Încarcă cererile de angajare pentru al doilea tab
     func getUserEmploymentRequests() async {
         guard employmentRequestUiState.data.isEmpty else { return }
         
@@ -86,14 +104,6 @@ final class MyEmployeesViewModel: HasLoadingState {
                 ?? error.localizedDescription
             
             employmentRequestUiState.errorMessage = message
-        }
-    }
-    
-    func cancelEmploymentRequest(id: Int) {
-        Task {
-            isSaving = true
-            // try? await cancelUseCase.execute(id: id)
-            isSaving = false
         }
     }
 }

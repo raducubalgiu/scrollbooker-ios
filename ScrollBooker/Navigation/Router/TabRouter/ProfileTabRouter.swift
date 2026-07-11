@@ -7,6 +7,24 @@
 
 import SwiftUI
 
+struct HidesBottomBarWhenPushed: UIViewControllerRepresentable {
+    func makeUIViewController(context: Context) -> UIViewController {
+        let vc = UIViewController()
+        vc.view.backgroundColor = .clear
+        DispatchQueue.main.async {
+            vc.hidesBottomBarWhenPushed = true
+        }
+        return vc
+    }
+    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+}
+
+extension View {
+    func hidesBottomBarWhenPushed() -> some View {
+        self.background(HidesBottomBarWhenPushed().frame(width: 0, height: 0))
+    }
+}
+
 struct ProfileTabRouter: View {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
@@ -66,101 +84,84 @@ struct ProfileTabRouter: View {
                             initialFollowingsCount: initialFollowingsCount
                         )
                         .navigationBarHidden(true)
-                        .toolbar(.hidden, for: .tabBar)
-                        
-                        // Settings
+                    
+                    // Settings
                     case .mySettings:
                         SettingsScreen { route in router.push(route)}
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .display:
                         DisplayScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
                         
                     case .reportProblem:
                         ReportProblemScreen(
                             viewModel: container.problemModule.makeProblemViewModel(userId: session.userInfo?.id ?? 0)
                         )
                         .navigationBarHidden(true)
-                        .toolbar(.hidden, for: .tabBar)
                         
                         // Edit Profile
                     case .editProfile:
                         EditProfileScreen { route in router.push(route) }
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .editFullName:
                         EditNameScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .editUsername:
                         EditUsernameScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .editBio:
                         EditBioScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .editGender:
                         EditGenderScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .editBirthdate:
                         EditBirthdateScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                         // My Business
                     case .myBusiness:
                         MyBusinessScreen() { route in router.push(route) }
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .myBusinessDetails:
                         MyBusinessDetailsScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .myCalendar:
                         MyCalendarScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .myProducts:
                         MyProductsScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .mySchedules:
                         MySchedulesScreen()
-                            .navigationBarHidden(true)
-                            .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
                         
                     case .myServices:
                         MyServicesScreen(
                             viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session)
                         )
                         .navigationBarHidden(true)
-                        .toolbar(.hidden, for: .tabBar)
-                        
-                case .myEmployees:
-                    EmployeesFlowContainer(
-                        container: container,
-                        session: session
-                    )
-                    .navigationBarHidden(true)
-                    .toolbar(.hidden, for: .tabBar)
-                        
+                    
+                    case .myEmployees:
+                        EmployeesFlowContainer(
+                            container: container,
+                            session: session
+                        )
+                        .navigationBarHidden(true)
+                            
                     default: Text("Route not in Feed")
                 }
             }
         }
+        .toolbar(router.profilePath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }

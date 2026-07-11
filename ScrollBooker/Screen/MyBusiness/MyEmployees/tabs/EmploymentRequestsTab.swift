@@ -79,9 +79,9 @@ struct EmploymentRequestsTab: View {
                 String(localized: "delete"),
                 role: .destructive
             ) {
-                if !viewModel.isSaving {
-                    viewModel.cancelEmploymentRequest(id: id)
-                }
+//                if !viewModel.isSaving {
+//                    viewModel.cancelEmploymentRequest(id: id)
+//                }
                 employmentRequestId = nil
             }
             

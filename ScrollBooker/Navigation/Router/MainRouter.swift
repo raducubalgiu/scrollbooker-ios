@@ -13,7 +13,7 @@ struct MainRouter: View {
     
     var body: some View {
         TabView(selection: $router.selectedTab) {
-           FeedTabRouter(router: router)
+            FeedTabRouter(router: router)
                 .tabItem { Label("home", systemImage: "house") }
                 .tag(MainTab.feed)
             

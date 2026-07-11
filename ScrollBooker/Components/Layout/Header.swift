@@ -10,14 +10,20 @@ import SwiftUI
 struct Header: View {
     var title: String = ""
     var enableBack: Bool = true
+    var onBack: (() -> Void)? = nil
+
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         HStack {
             VStack {
-                if(enableBack) {
+                if enableBack {
                     Button {
-                        dismiss()
+                        if let onBack {
+                            onBack()
+                        } else {
+                            dismiss()
+                        }
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 22.5))
@@ -27,16 +33,11 @@ struct Header: View {
                 }
             }
             .frame(width: 44, height: 44)
-            
+
             Spacer()
-            
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.onBackgroundSB)
-            
+            Text(title).font(.headline).foregroundColor(.onBackgroundSB)
             Spacer()
-            
-            VStack {  }.frame(width: 44, height: 44)
+            VStack { }.frame(width: 44, height: 44)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }

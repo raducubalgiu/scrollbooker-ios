@@ -17,43 +17,51 @@ struct FormLayout<Content: View>: View {
     var isDisabled: Bool = false
     var isLoading: Bool = false
     
+    var onBack: (() -> Void)? = nil
     var onClick: (() -> Void) = {  }
     
     @ViewBuilder var content: () -> Content
 
     var body: some View {
-        if(enableBack) {
-            Header()
-        }
-        
-        VStack(alignment: .leading) {
-            Text(headline)
-                .font(.largeTitle.bold())
-                .padding(.bottom, .xxs)
-            
-            Text(subHeadline)
-                .font(.subheadline)
-                .fontWeight(.semibold)
-                .foregroundColor(.gray)
-                .padding(.bottom)
-            
-            content()
-            
-            Spacer(minLength: 0)
-            
-            if enableBottomButton {
-                MainButton(
-                    title: buttonTitle,
-                    onClick: onClick,
-                    isDisabled: isDisabled,
-                    isLoading: isLoading
+        VStack {
+            if(enableBack) {
+                Header(
+                    enableBack: true,
+                    onBack: onBack
                 )
             }
+            
+            VStack(alignment: .leading) {
+                Text(headline)
+                    .font(.largeTitle.bold())
+                    .padding(.bottom, .xxs)
+                
+                Text(subHeadline)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.gray)
+                    .padding(.bottom)
+                
+                content()
+                
+                Spacer(minLength: 0)
+                
+                if enableBottomButton {
+                    MainButton(
+                        title: buttonTitle,
+                        onClick: onClick,
+                        isDisabled: isDisabled,
+                        isLoading: isLoading
+                    )
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
+            .padding(.top, .base)
+            .padding(.horizontal, .xl)
+            .ignoresSafeArea(.keyboard, edges: .bottom)
         }
-        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .leading)
-        .padding(.top, .base)
-        .padding(.horizontal, .xl)
-        .ignoresSafeArea(.keyboard, edges: .bottom)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .background(Color.backgroundSB)
     }
 }
 

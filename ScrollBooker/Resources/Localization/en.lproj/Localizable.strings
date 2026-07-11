@@ -96,6 +96,8 @@
 "dismissal" = "Concediere";
 "hireDate" = "Data angajării";
 "sendAnEmploymentRequest" = "Trimite o cerere de angajare";
+"areYouSureDeleteEmploymentRequest" = "Ești sigur că vrei să ștergi această cerere de angajare?";
+"deleteRequest" = "Ștergere cerere";
 "notFoundEmploymentRequests" = "Nu au fost găsite cereri de angajare";
 "sendTheRequest" = "Trimite cererea";
 "assignJob" = "Atribuie o funcție";
@@ -283,8 +285,10 @@
 "from5" = "din 5";
 "navigationDirections" = "Direcții de navigare";
 
-"errorOccured" = "A apărut o eroare";
+"retry" = "Reîncearcă";
+"errorOccurred" = "A apărut o eroare";
 "notFoundAppointments" = "Nu au fost găsite rezervări";
+"notFoundEmployees" = "Momentan nu ai nici un angajat";
 
 /* --- DYNAMIC --- */
 

@@ -33,7 +33,8 @@ struct AppointmentsScreen: View {
                     ErrorView(message: error) {
                         Task { await viewModel.refresh() }
                     }
-                } else if viewModel.uiState.data.isEmpty && !viewModel.uiState.isLoading {
+                }
+                else if viewModel.uiState.data.isEmpty && !viewModel.uiState.isLoading {
                     NoDataView(
                         title: String(localized: "bookings"),
                         message: String(localized: "notFoundAppointments"),

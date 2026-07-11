@@ -142,7 +142,9 @@ struct ProfileTabRouter: View {
                         .navigationBarHidden(true)
                         
                     case .mySchedules:
-                        MySchedulesScreen()
+                        MySchedulesScreen(
+                            viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session)
+                        )
                         .navigationBarHidden(true)
                         
                     case .myServices:

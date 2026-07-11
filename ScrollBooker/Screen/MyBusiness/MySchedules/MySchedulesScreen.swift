@@ -8,28 +8,35 @@
 import SwiftUI
 
 struct MySchedulesScreen: View {
-    @State private var schedules: [Schedule] = [
-        Schedule(id: 1, dayOfWeek: "Luni", startTime: "09:00", endTime: "17:00"),
-        Schedule(id: 2, dayOfWeek: "Marți", startTime: "null", endTime: "null"),
-        Schedule(id: 3, dayOfWeek: "Miercuri", startTime: "10:00", endTime: "15:00")
-    ]
-    @State private var isSaving = false
+    let viewModel: MySchedulesViewModel
     
     var body: some View {
-        MySchedulesSectionView(
-            schedules: $schedules,
-            isSaving: isSaving,
-            onUpdateRow: { updatedSchedule in
-                if let index = schedules.firstIndex(where: { $0.id == updatedSchedule.id }) {
-                    schedules[index] = updatedSchedule
+        VStack(spacing: 0) {
+            switch viewModel.viewState {
+            case .idle, .loading:
+                LoadingView()
+                
+            case .error(let message):
+                ErrorView(message: message) {
+                    Task { await viewModel.loadSchedules() }
                 }
-            },
-            onHandleSave: {
-                print("Se salvează datele...")
-            },
-            onBack: {
-                print("Înapoi")
+                
+            case .success:
+                if !viewModel.uiState.data.isEmpty {
+                    MySchedulesSectionView(
+                        viewModel: viewModel
+                    )
+                } else {
+                    NoDataView(
+                        title: String(localized: "schedule"),
+                        message: String(localized: "noScheduleFound"),
+                        systemImage: "calendar.badge.exclamationmark"
+                    )
+                }
             }
-        )
+        }
+        .task {
+            await viewModel.loadSchedules()
+        }
     }
 }

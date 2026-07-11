@@ -11,19 +11,23 @@ extension Schedule {
     init(dto: ScheduleDto) {
         self.id = dto.id
         self.dayOfWeek = dto.day_of_week
-        self.startTime = dto.start_time
-        self.endTime = dto.end_time
+        self.startTime = dto.start_time.map { String($0.prefix(5)) }
+        self.endTime = dto.end_time.map { String($0.prefix(5)) }
     }
     
     func toDto() -> ScheduleDto {
+        let formattedStart = startTime.map { $0.count == 5 ? "\($0):00" : $0 }
+        let formattedEnd = endTime.map { $0.count == 5 ? "\($0):00" : $0 }
+        
         return ScheduleDto(
             id: id,
             day_of_week: dayOfWeek,
-            start_time: startTime,
-            end_time: endTime
+            start_time: formattedStart,
+            end_time: formattedEnd
         )
     }
 }
+
 
 extension Array where Element == ScheduleDto {
     func toDomain() -> [Schedule] {

@@ -42,7 +42,7 @@ struct AddReviewCaptureInputView: View {
                 )
                 .lineLimit(4, reservesSpace: true)
                 .padding()
-                .background(Color(.secondarySystemBackground))
+                .background(Color.surfaceSB)
                 .cornerRadius(12)
                 .disabled(isSaving)
                 

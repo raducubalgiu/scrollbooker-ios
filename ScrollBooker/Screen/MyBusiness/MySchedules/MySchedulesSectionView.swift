@@ -8,47 +8,60 @@
 import SwiftUI
 
 struct MySchedulesSectionView: View {
-    @Binding var schedules: [Schedule]
-    let isSaving: Bool
-    let onUpdateRow: (Schedule) -> Void
-    let onHandleSave: () -> Void
-    let onBack: () -> Void
+    let viewModel: MySchedulesViewModel
     
     @State private var showErrors = false
     
     private var isFormValid: Bool {
-        schedules.allSatisfy { isScheduleValid(start: $0.startTime, end: $0.endTime) }
+        viewModel.uiState.data.allSatisfy { isScheduleValid(start: $0.startTime, end: $0.endTime) }
     }
     
-//    private var invalidScheduleIds: Set<String> {
-//        Set(schedules.filter { !isScheduleValid(start: $0.startTime, end: $0.endTime) }.map { $0.id })
-//    }
+    private var invalidScheduleIds: Set<Int> {
+        Set(viewModel.uiState.data.filter { !isScheduleValid(start: $0.startTime, end: $0.endTime) }.map { $0.id })
+    }
     
     var body: some View {
-        // Folosim exact parametrii pe care îi are FormLayout-ul tău din proiect
         FormLayout(
             headline: String(localized: "schedule"),
             subHeadline: String(localized: "scheduleSubheaderDescription"),
+            enableBottomButton: true,
             enableBack: true,
-            buttonTitle: String(localized: "save")
+            buttonTitle: String(localized: "save"),
+            isDisabled: viewModel.isSaving,
+            isLoading: viewModel.isSaving,
+            onClick: {
+                if isFormValid {
+                    showErrors = false
+                    Task { await viewModel.saveSchedules() }
+                } else {
+                    withAnimation { showErrors = true }
+                }
+            }
         ) {
-            // Conținutul principal (Trailing Closure)
             ScrollView {
-                VStack(spacing: 16) {
-                    ForEach(schedules) { schedule in
+                VStack(spacing: 24) {
+                    ForEach(viewModel.uiState.data) { schedule in
                         ScheduleRow(
                             schedule: schedule,
                             onChange: { start, end in
-//                                var updated = schedule
-//                                updated.startTime = start == "null" ? nil : start
-//                                updated.endTime = end == "null" ? nil : end
-//                                onUpdateRow(updated)
+                                let cleanStart = start == "null" ? nil : start
+                                let cleanEnd = end == "null" ? nil : end
+                                
+                                let updated = Schedule(
+                                    id: schedule.id,
+                                    dayOfWeek: schedule.dayOfWeek,
+                                    startTime: cleanStart,
+                                    endTime: cleanEnd
+                                )
+                                
+                                viewModel.updateLocalScheduleRow(updatedSchedule: updated)
                             },
-                            isNotValid: false,
+                            isNotValid: invalidScheduleIds.contains(schedule.id),
                             showErrors: showErrors
                         )
                     }
                 }
+                .padding(.top, 12)
             }
         }
     }

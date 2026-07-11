@@ -32,7 +32,7 @@ struct ReviewCTA: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, 24)
         .padding(.horizontal, 16)
-        .background(Color(.secondarySystemBackground)) // Corespondentul SurfaceBG
+        .background(Color.surfaceSB)
         .cornerRadius(12)
     }
 }

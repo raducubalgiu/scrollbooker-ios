@@ -15,24 +15,38 @@ struct ScheduleRow: View {
     
     private var slots: [TimeOption] {
         var list = [TimeOption(value: "null", name: String(localized: "closed"))]
-        let hours = ["08:00", "09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00"]
-        list.append(contentsOf: hours.map { TimeOption(value: $0, name: $0) })
+        
+        var current = Calendar.current.startOfDay(for: Date())
+        let endDate = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: current) ?? current
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "HH:mm"
+        
+        while current <= endDate {
+            let timeString = formatter.string(from: current)
+            list.append(TimeOption(value: timeString, name: timeString))
+            
+            guard let next = Calendar.current.date(byAdding: .minute, value: 30, to: current) else { break }
+            current = next
+            
+            if Calendar.current.component(.day, from: current) != Calendar.current.component(.day, from: endDate) {
+                break
+            }
+        }
+        
         return list
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 16) {
-                // Textul cu ziua săptămânii (Lățime fixă 90dp ca în Compose)
-                Text(schedule.dayOfWeek)
-                    .font(.body)
+                Text(schedule.localizedDayOfWeek)
+                    .font(.subheadline)
                     .fontWeight(.semibold)
-                    .foregroundColor(.primary)
+                    .foregroundColor(.onBackgroundSB)
                     .frame(width: 90, alignment: .leading)
                 
-                // Cele două dropdown-uri (InputSelect în Compose)
                 HStack(spacing: 16) {
-                    // Dropdown Start Time
                     InputSelectView(
                         placeholder: String(localized: "closed"),
                         options: slots,
@@ -43,7 +57,6 @@ struct ScheduleRow: View {
                     )
                     .frame(maxWidth: .infinity)
                     
-                    // Dropdown End Time
                     InputSelectView(
                         placeholder: String(localized: "closed"),
                         options: slots,
@@ -56,20 +69,21 @@ struct ScheduleRow: View {
                 }
             }
             
-            // Zona de eroare animată (Echivalent AnimatedVisibility)
             if isNotValid && showErrors {
-                HStack(alignment: .center, spacing: 8) {
-                    Image(systemName: "exclamationmark.triangle") // Icons.Outlined.Warning
-                        .foregroundColor(.red) // Culoarea Error
-                    
-                    Text("Data de start nu poate fi mai mare decat data de sfarsit")
-                        .font(.footnote)
-                        .foregroundColor(.red)
+                VStack(alignment: .leading, spacing: 0) {
+                    HStack(alignment: .center, spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle")
+                            .foregroundColor(.red)
+                        
+                        Text("Data de start nu poate fi mai mare decat data de sfarsit")
+                            .font(.footnote)
+                            .foregroundColor(.red)
+                    }
+                    .padding(.top, .base)
                 }
-                .padding(.top, 16) // BasePadding
-                .transition(.opacity.combined(with: .move(edge: .top))) // Animație fluidă la apariție
+                .transition(.move(edge: .top).combined(with: .opacity))
             }
         }
-        .animation(.default, value: isNotValid && showErrors) // Activează animația în SwiftUI
+        .animation(.easeInOut(duration: 0.2), value: isNotValid && showErrors)
     }
 }

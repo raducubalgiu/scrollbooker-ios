@@ -32,6 +32,7 @@ struct InputSelectView: View {
                 let currentName = options.first(where: { $0.value == selectedOption })?.name ?? placeholder
                 
                 Text(currentName)
+                    .font(.subheadline)
                     .foregroundColor(selectedOption == "null" ? .gray : .primary)
                 Spacer()
                 

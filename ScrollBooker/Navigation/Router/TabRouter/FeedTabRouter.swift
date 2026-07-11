@@ -15,15 +15,21 @@ struct FeedTabRouter: View {
             FeedScreen(
                 onNavigateToFeedSearch: { router.push(.feedSearch) }
             )
-                .navigationDestination(for: Route.self) { route in
-                    switch route {
-                        case .feedSearch:
-                            FeedSearchScreen()
-                            .toolbar(.hidden, for: .tabBar)
-                        
-                        default: Text("Route not in Feed")
-                    }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .background(Color.black)
+            .toolbarBackground(Color.black, for: .tabBar)
+            .toolbarBackground(.visible, for: .tabBar)
+            .toolbarColorScheme(.dark, for: .tabBar)
+            .navigationDestination(for: Route.self) { route in
+                switch route {
+                    case .feedSearch:
+                        FeedSearchScreen()
+                            .navigationBarHidden(true)
+                    
+                    default: Text("Route not in Feed")
                 }
+            }
         }
+        .toolbar(router.feedPath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }

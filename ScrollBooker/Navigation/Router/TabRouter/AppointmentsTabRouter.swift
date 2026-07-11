@@ -31,7 +31,7 @@ struct AppointmentsTabRouter: View {
                                 updateReviewUseCase: container.reviewModule.updateReviewUseCase
                             )
                         )
-                        .toolbar(.hidden, for: .tabBar)
+                        .navigationBarHidden(true)
 
                     default:
                         Text("Route not in Appointments")
@@ -39,5 +39,6 @@ struct AppointmentsTabRouter: View {
                 }
             }
             .environmentObject(router)
+            .toolbar(router.appointmentsPath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }

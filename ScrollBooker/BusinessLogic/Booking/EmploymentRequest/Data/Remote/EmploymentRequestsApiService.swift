@@ -10,6 +10,7 @@ import Foundation
 protocol EmploymentRequestApiService: Sendable {
     func getUserEmploymentRequests(userId: Int) async throws -> [EmploymentRequestDto]
     func cancelEmploymentRequest(employmentId: Int) async throws -> NoContent
+    func createEmploymentRequest(request: EmploymentRequestCreate) async throws -> NoContent
 }
 
 final class EmploymentRequestAPIImpl: EmploymentRequestApiService {
@@ -29,6 +30,14 @@ final class EmploymentRequestAPIImpl: EmploymentRequestApiService {
         try await client.request(
             "employment-requests/\(employmentId)/cancel",
             method: .delete
+        )
+    }
+    
+    func createEmploymentRequest(request: EmploymentRequestCreate) async throws -> NoContent {
+        try await client.request(
+            "employment-requests",
+            method: .post,
+            body: request
         )
     }
 }

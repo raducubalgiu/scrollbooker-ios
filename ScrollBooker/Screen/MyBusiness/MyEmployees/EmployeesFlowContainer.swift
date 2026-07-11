@@ -27,7 +27,8 @@ struct EmployeesFlowContainer: View {
                 getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
                 searchUsersUseCase: container.searchModule.searchUsersUseCase,
                 getProfessionsByBusinessTypeUseCase: container.professionModule.getProfessionsByBusinessTypeUseCase,
-                getConsentByNameUseCase: container.consentModule.getConsentByNameUseCase
+                getConsentByNameUseCase: container.consentModule.getConsentByNameUseCase,
+                createEmploymentRequestUseCase: container.employmentRequestModule.createEmploymentRequestUseCase
             )
         )
     }

@@ -31,12 +31,17 @@ final class EmploymentRequestModule {
         CancelEmploymentRequestUseCase(repository: repository)
     }()
     
+    lazy var createEmploymentRequestUseCase: CreateEmploymentRequestUseCase = {
+        CreateEmploymentRequestUseCase(repository: repository)
+    }()
+    
     func makeMyEmployeesViewModel(
         session: SessionManager,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
         searchUsersUseCase: SearchUsersUseCase,
         getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase,
-        getConsentByNameUseCase: GetConsentByNameUseCase
+        getConsentByNameUseCase: GetConsentByNameUseCase,
+        createEmploymentRequestUseCase: CreateEmploymentRequestUseCase
     ) -> MyEmployeesViewModel {
         MyEmployeesViewModel(
             session: session,
@@ -45,7 +50,8 @@ final class EmploymentRequestModule {
             cancelEmploymentRequestUseCase: cancelEmploymentRequestUseCase,
             searchUsersUseCase: searchUsersUseCase,
             getProfessionsByBusinessTypeUseCase: getProfessionsByBusinessTypeUseCase,
-            getConsentByNameUseCase: getConsentByNameUseCase
+            getConsentByNameUseCase: getConsentByNameUseCase,
+            createEmploymentRequestUseCase: createEmploymentRequestUseCase
         )
     }
 }

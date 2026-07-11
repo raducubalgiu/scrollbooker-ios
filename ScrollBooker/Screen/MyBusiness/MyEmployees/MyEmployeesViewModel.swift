@@ -80,6 +80,7 @@ final class MyEmployeesViewModel: HasLoadingState {
     private let cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase
     private let getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase
     private let getConsentByNameUseCase: GetConsentByNameUseCase
+    private let createEmploymentRequestUseCase: CreateEmploymentRequestUseCase
     
     private let searchUsersUseCase: SearchUsersUseCase
     private var searchTask: Task<Void, Never>? = nil
@@ -114,7 +115,8 @@ final class MyEmployeesViewModel: HasLoadingState {
         cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase,
         searchUsersUseCase: SearchUsersUseCase,
         getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase,
-        getConsentByNameUseCase: GetConsentByNameUseCase
+        getConsentByNameUseCase: GetConsentByNameUseCase,
+        createEmploymentRequestUseCase: CreateEmploymentRequestUseCase
     ) {
         self.session = session
         self.getUserEmploymentRequestsUseCase = getUserEmploymentRequestsUseCase
@@ -123,6 +125,7 @@ final class MyEmployeesViewModel: HasLoadingState {
         self.searchUsersUseCase = searchUsersUseCase
         self.getProfessionsByBusinessTypeUseCase = getProfessionsByBusinessTypeUseCase
         self.getConsentByNameUseCase = getConsentByNameUseCase
+        self.createEmploymentRequestUseCase = createEmploymentRequestUseCase
     }
     
     func getEmployeesByOwner() async {
@@ -315,4 +318,48 @@ final class MyEmployeesViewModel: HasLoadingState {
             consentState = .error(message)
         }
     }
+    
+    func createEmploymentRequest() async -> Result<Void, Error> {
+            guard let selectedUser = selectedUserForEmployment else {
+                return .failure(NSError(domain: "EmploymentFlow", code: 400, userInfo: [NSLocalizedDescriptionKey: "Employee not selected"]))
+            }
+            
+            let employeeId = selectedUser.id
+            
+            guard let selectedProfession = selectedProfessionForEmployment else {
+                return .failure(NSError(domain: "EmploymentFlow", code: 400, userInfo: [NSLocalizedDescriptionKey: "Profession not selected"]))
+            }
+            
+            guard let consent = consentUiState.data else {
+                return .failure(NSError(domain: "EmploymentFlow", code: 400, userInfo: [NSLocalizedDescriptionKey: "Consent terms not loaded"]))
+            }
+            
+            guard !isSaving else {
+                return .failure(NSError(domain: "EmploymentFlow", code: 429, userInfo: [NSLocalizedDescriptionKey: "Request already in progress"]))
+            }
+            
+            isSaving = true
+            
+            do {
+                _ = try await withVisibleLoading {
+                    try await createEmploymentRequestUseCase(
+                        employmentId: employeeId,
+                        professionId: selectedProfession.id,
+                        consentId: consent.id
+                    )
+                }
+                
+                self.employmentRequestUiState.data = []
+                self.requestsState = .idle
+                
+                isSaving = false
+                return .success(())
+                
+            } catch {
+                let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                self.consentState = .error(message)
+                isSaving = false
+                return .failure(error)
+            }
+        }
 }

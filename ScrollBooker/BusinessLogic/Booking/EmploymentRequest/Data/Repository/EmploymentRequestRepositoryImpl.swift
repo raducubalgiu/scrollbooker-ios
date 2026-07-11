@@ -25,4 +25,8 @@ final class EmploymentRequestRepositoryImpl: EmploymentRequestRepository {
     func cancelEmploymentRequest(employmentId: Int) async throws -> NoContent {
         return try await api.cancelEmploymentRequest(employmentId: employmentId)
     }
+    
+    func createEmploymentRequest(request: EmploymentRequestCreate) async throws -> NoContent {
+        return try await api.createEmploymentRequest(request: request)
+    }
 }

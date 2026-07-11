@@ -30,16 +30,16 @@ struct EmploymentAcceptTermsScreen: View {
             isLoading: viewModel.isSaving,
             onBack: onBack,
             onClick: {
-                // Notă: Când vei decomenta acțiunea, ea va rula asincron în siguranță pe baza validării noastre
-                // Task {
-                //     let result = await viewModel.createEmploymentRequest()
-                //     switch result {
-                //     case .success:
-                //         onNext()
-                //     case .failure:
-                //         break
-                //     }
-                // }
+                Task {
+                    let result = await viewModel.createEmploymentRequest()
+                    switch result {
+                        case .success:
+                            onNext()
+                            
+                        case .failure:
+                            break
+                        }
+                }
             }
         ) {
             VStack {

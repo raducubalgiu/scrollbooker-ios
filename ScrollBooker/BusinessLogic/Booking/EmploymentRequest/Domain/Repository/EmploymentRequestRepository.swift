@@ -8,4 +8,5 @@
 protocol EmploymentRequestRepository: Sendable {
     func getUserEmploymentRequests(userId: Int) async throws -> [EmploymentRequest]
     func cancelEmploymentRequest(employmentId: Int) async throws -> NoContent
+    func createEmploymentRequest(request: EmploymentRequestCreate) async throws -> NoContent
 }

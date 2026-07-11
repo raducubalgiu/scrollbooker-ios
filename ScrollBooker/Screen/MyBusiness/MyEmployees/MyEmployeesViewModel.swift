@@ -8,10 +8,29 @@
 import Foundation
 import Observation
 
+enum EmployeesTabState: Equatable {
+    case idle
+    case loading
+    case success([Employee])
+    case empty
+    case error(String)
+}
+
+enum RequestsTabState: Equatable {
+    case idle
+    case loading
+    case success([EmploymentRequest])
+    case empty
+    case error(String)
+}
+
+
 @Observable
 @MainActor
 final class MyEmployeesViewModel: HasLoadingState {
-    // Cele două stări de UI independente pentru fiecare tab în parte
+    private(set) var employeesState: EmployeesTabState = .idle
+    private(set) var requestsState: RequestsTabState = .idle
+    
     var employeesUiState = UiState(data: [Employee]())
     var employmentRequestUiState = UiState(data: [EmploymentRequest]())
     var isSaving: Bool = false
@@ -20,29 +39,21 @@ final class MyEmployeesViewModel: HasLoadingState {
     private let getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
     
-    // MARK: - HasLoadingState Conformance (Unificată Enterprise)
-    
-    /// Devine true dacă oricare dintre cele două tab-uri încarcă date activ pe rețea
+    // MARK: - HasLoadingState (Sincronizat corect)
     var isLoading: Bool {
-        get { employeesUiState.isLoading || employmentRequestUiState.isLoading }
-        set {
-            // Când utilitarul withVisibleLoading modifică flag-ul, îl propagăm în ambele stări
-            employeesUiState.isLoading = newValue
-            employmentRequestUiState.isLoading = newValue
-        }
+        get { employeesState == .loading || requestsState == .loading }
+        set { /* Not needed anymore, handled by state */ }
     }
 
-    /// Prinde și expune în UI eroarea sosită de pe oricare dintre tab-uri
     var errorMessage: String? {
-        get { employeesUiState.errorMessage ?? employmentRequestUiState.errorMessage }
-        set {
-            // Sincronizăm curățarea sau setarea erorilor pe ambele containere
-            employeesUiState.errorMessage = newValue
-            employmentRequestUiState.errorMessage = newValue
+        get {
+            if case .error(let msg) = employeesState { return msg }
+            if case .error(let msg) = requestsState { return msg }
+            return nil
         }
+        set { /* Handled by state */ }
     }
  
-    // MARK: - Init
     init(
         session: SessionManager,
         getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase,
@@ -53,18 +64,16 @@ final class MyEmployeesViewModel: HasLoadingState {
         self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
     }
     
-    // MARK: - Public Actions
-    
-    /// Încarcă lista de angajați pentru primul tab
     func getEmployeesByOwner() async {
         guard employeesUiState.data.isEmpty else { return }
-        
-        employeesUiState.errorMessage = nil
+        guard employeesState != .loading else { return }
         
         guard let businessOwnerId = session.userInfo?.businessOwnerId else {
-            employeesUiState.errorMessage = "User ID not found in session"
+            employeesState = .error("User ID not found in session")
             return
         }
+        
+        employeesState = .loading
         
         do {
             let data = try await withVisibleLoading {
@@ -73,24 +82,28 @@ final class MyEmployeesViewModel: HasLoadingState {
             
             self.employeesUiState.data = data
             
-        } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
+            if data.isEmpty {
+                employeesState = .empty
+            } else {
+                employeesState = .success(data)
+            }
             
-            employeesUiState.errorMessage = message
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            employeesState = .error(message)
         }
     }
     
-    /// Încarcă cererile de angajare pentru al doilea tab
     func getUserEmploymentRequests() async {
         guard employmentRequestUiState.data.isEmpty else { return }
-        
-        employmentRequestUiState.errorMessage = nil
+        guard requestsState != .loading else { return }
         
         guard let userId = session.userInfo?.id else {
-            employmentRequestUiState.errorMessage = "User ID not found in session"
+            requestsState = .error("User ID not found in session")
             return
         }
+        
+        requestsState = .loading
         
         do {
             let data = try await withVisibleLoading {
@@ -99,11 +112,15 @@ final class MyEmployeesViewModel: HasLoadingState {
             
             self.employmentRequestUiState.data = data
             
-        } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
+            if data.isEmpty {
+                requestsState = .empty
+            } else {
+                requestsState = .success(data)
+            }
             
-            employmentRequestUiState.errorMessage = message
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            requestsState = .error(message)
         }
     }
 }

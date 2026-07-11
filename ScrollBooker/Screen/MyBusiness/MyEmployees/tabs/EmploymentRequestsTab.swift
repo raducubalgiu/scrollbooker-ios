@@ -14,46 +14,34 @@ struct EmploymentRequestsTab: View {
     @State private var openModal = false
     @State private var employmentRequestId: Int? = nil
     
-    private var uiState: UiState<[EmploymentRequest]> {
-        viewModel.employmentRequestUiState
-    }
-    
-    private var requests: [EmploymentRequest] {
-        uiState.data
-    }
-    
-    private var isLoading: Bool {
-        uiState.isLoading
-    }
-    
-    private var errorMessage: String? {
-        uiState.errorMessage
-    }
-    
     var body: some View {
         VStack(spacing: 0) {
             VStack {
-                if isLoading && requests.isEmpty {
-                    LoadingView()
-                } else if let errorMessage {
-                    ErrorView(message: errorMessage) {
-                        Task { await viewModel.getUserEmploymentRequests() }
-                    }
-                } else if requests.isEmpty {
-                    NoDataView(
-                        title: String(localized: "employmentRequests"),
-                        message: String(localized: "notFoundEmploymentRequests"),
-                        systemImage: "briefcase"
-                    )
-                } else {
-                    EmploymentRequestsListView(
-                        requests: requests,
-                        onRequestClick: { id in
-                            employmentRequestId = id
-                            openModal = true
+                switch viewModel.requestsState {
+                    case .idle, .loading:
+                        LoadingView()
+                        
+                    case .error(let message):
+                        ErrorView(message: message) {
+                            Task { await viewModel.getUserEmploymentRequests() }
                         }
-                    )
-                }
+                        
+                    case .empty:
+                        NoDataView(
+                            title: String(localized: "employmentRequests"),
+                            message: String(localized: "notFoundEmploymentRequests"),
+                            systemImage: "briefcase"
+                        )
+                        
+                    case .success(let requests):
+                        EmploymentRequestsListView(
+                            requests: requests,
+                            onRequestClick: { id in
+                                employmentRequestId = id
+                                openModal = true
+                            }
+                        )
+                    }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
@@ -79,9 +67,10 @@ struct EmploymentRequestsTab: View {
                 String(localized: "delete"),
                 role: .destructive
             ) {
-//                if !viewModel.isSaving {
-//                    viewModel.cancelEmploymentRequest(id: id)
-//                }
+                // Notă: Când vei decomenta acțiunea, va rula asincron la fel de curat
+                // if !viewModel.isSaving {
+                //     viewModel.cancelEmploymentRequest(id: id)
+                // }
                 employmentRequestId = nil
             }
             
@@ -91,8 +80,8 @@ struct EmploymentRequestsTab: View {
             ) {
                 employmentRequestId = nil
             }
-        } message: {
-            _ in Text(String(localized: "areYouSureDeleteEmploymentRequest"))
+        } message: { _ in
+            Text(String(localized: "areYouSureDeleteEmploymentRequest"))
         }
     }
 }

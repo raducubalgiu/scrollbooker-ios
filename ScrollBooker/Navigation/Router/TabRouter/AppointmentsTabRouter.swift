@@ -12,14 +12,22 @@ struct AppointmentsTabRouter: View {
     @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
 
+    @State private var viewModel: AppointmentsViewModel?
+
     var body: some View {
         NavigationStack(path: $router.appointmentsPath) {
-            AppointmentsScreen(
-                viewModel: container.appointmentModule.makeAppointmentsViewModel(),
-                onNavigateToAppointmentDetails: { id in
-                    router.push(.appointmentDetails(id: id))
+            Group {
+                if let viewModel = viewModel {
+                    AppointmentsScreen(
+                        viewModel: viewModel,
+                        onNavigateToAppointmentDetails: { id in
+                            router.push(.appointmentDetails(id: id))
+                        }
+                    )
+                } else {
+                    Color.clear
                 }
-            )
+            }
             .navigationDestination(for: Route.self) { route in
                 switch route {
                     case .appointmentDetails(let id):
@@ -40,5 +48,10 @@ struct AppointmentsTabRouter: View {
             }
             .environmentObject(router)
             .toolbar(router.appointmentsPath.isEmpty ? .visible : .hidden, for: .tabBar)
+            .onAppear {
+                if viewModel == nil {
+                    viewModel = container.appointmentModule.makeAppointmentsViewModel()
+                }
+            }
     }
 }

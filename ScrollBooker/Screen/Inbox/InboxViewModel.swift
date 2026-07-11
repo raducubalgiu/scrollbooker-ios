@@ -8,32 +8,40 @@
 import Foundation
 import Observation
 
+enum InboxState: Equatable {
+    case idle
+    case loading
+    case empty
+    case success([Notification])
+    case error(String)
+}
+
 @Observable
 @MainActor
 final class InboxViewModel: HasLoadingState {
-
     var uiState = UiState(data: [Notification]())
+    
+    private(set) var viewState: InboxState = .idle
+    private(set) var isPaging: Bool = false
+    private(set) var isRefreshing: Bool = false
 
     private let getUserNotifications: GetUserNotificationsUseCase
-
     private var page = 1
     private let limit = 20
-
     private var totalCount = 0
-    private var isPaging = false
 
     var hasMore: Bool {
         uiState.data.count < totalCount
     }
 
     var isLoading: Bool {
-        get { uiState.isLoading }
-        set { uiState.isLoading = newValue }
+        get { if case .loading = viewState { return true }; return false }
+        set { if newValue { viewState = .loading } }
     }
 
     var errorMessage: String? {
-        get { uiState.errorMessage }
-        set { uiState.errorMessage = newValue }
+        get { if case .error(let msg) = viewState { return msg }; return nil }
+        set { if let msg = newValue { viewState = .error(msg) } }
     }
 
     init(getUserNotifications: GetUserNotificationsUseCase) {
@@ -41,80 +49,63 @@ final class InboxViewModel: HasLoadingState {
     }
 
     func initialLoadIfNeeded() async {
-
         guard uiState.data.isEmpty else { return }
-
         await load(isFirstPage: true)
     }
 
     func refresh() async {
-
-        guard !uiState.isRefreshing else { return }
-
-        uiState.isRefreshing = true
+        guard !isRefreshing else { return }
+        isRefreshing = true
         page = 1
-
         await load(isFirstPage: true)
-
-        uiState.isRefreshing = false
+        isRefreshing = false
     }
 
     func loadMoreIfNeeded(currentNotification: Notification?) async {
-
-        guard hasMore else { return }
-        guard !uiState.isLoading else { return }
-        guard !uiState.isRefreshing else { return }
-        guard !isPaging else { return }
+        guard hasMore, !isPaging, !isRefreshing, !isLoading else { return }
 
         guard let current = currentNotification,
               current.id == uiState.data.last?.id
-        else {
-            return
-        }
+        else { return }
 
         isPaging = true
-
         await load(isFirstPage: false)
-
         isPaging = false
     }
 
     private func load(isFirstPage: Bool) async {
-
-        if isFirstPage {
-            uiState.errorMessage = nil
+        if isFirstPage && !isRefreshing {
+            viewState = .loading
         }
 
         do {
-            let response =  try await getUserNotifications(page: page, limit: limit)
+            let response = try await getUserNotifications(page: page, limit: limit)
 
             if isFirstPage {
                 uiState.data = response.results
-
             } else {
                 let existingIds = Set(uiState.data.map(\.id))
-
-                let unique = response.results.filter {
-                    !existingIds.contains($0.id)
-                }
-
+                let unique = response.results.filter { !existingIds.contains($0.id) }
                 uiState.data.append(contentsOf: unique)
-
             }
 
             totalCount = response.count
             page += 1
 
-        } catch {
-
-            let message = (error as? LocalizedError)?
-                .errorDescription
-                ?? error.localizedDescription
-
-            if isFirstPage {
-                uiState.errorMessage = message
+            if uiState.data.isEmpty {
+                viewState = .empty
+            } else {
+                viewState = .success(uiState.data)
             }
 
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+
+            if isFirstPage {
+                viewState = .error(message)
+            } else {
+                print("Eroare la încărcarea paginii următoare din Inbox: \(message)")
+            }
         }
     }
 }

@@ -8,86 +8,48 @@
 import SwiftUI
 
 struct InboxScreen: View {
-    @State private var viewModel: InboxViewModel
-
-    init(viewModel: InboxViewModel) {
-        _viewModel = State(initialValue: viewModel)
-
-    }
+    let viewModel: InboxViewModel
 
     var body: some View {
         VStack(spacing: 0) {
             Header(
-                title: String(localized: "bookings"),
+                title: String(localized: "notifications"),
                 enableBack: false
             )
 
-            ScrollView {
-                if viewModel.uiState.isLoading && !viewModel.uiState.isRefreshing {
-                    VStack {
-                        Spacer()
-
-                        ProgressView()
-                            .scaleEffect(1.2)
-
-                        Spacer()
-                    }
-                    .frame(minHeight: 400)
-
-                } else if let error = viewModel.uiState.errorMessage {
-                    VStack(spacing: 16) {
-                        Text("❌")
-                            .font(.system(size: 40))
-
-                        Text(error)
-                            .foregroundColor(.secondary)
-                            .multilineTextAlignment(.center)
-
-                        Button("Retry") {
-                            Task {
-                                await viewModel.refresh()
-                            }
+            VStack {
+                switch viewModel.viewState {
+                    case .idle, .loading:
+                        LoadingView()
+                        
+                    case .error(let message):
+                        ErrorView(message: message) {
+                            Task { await viewModel.refresh() }
                         }
-                        .buttonStyle(.borderedProminent)
-
-                    }
-                    .padding(.top, 60)
-
-                } else if viewModel.uiState.data.isEmpty {
-                    VStack {
-
-                        Text("Nu ai nicio programare activă.")
-                            .foregroundColor(.secondary)
-
-                    }
-                    .padding(.top, 100)
-
-                } else {
-                    LazyVStack(spacing: 0) {
-                        ForEach(viewModel.uiState.data) { notification in
-                            NotificationItemView(
-                                notification: notification,
-                                onNavigateToUserProfile: { _ in },
-                                onNavigateToEmploymentRequest: { _ in },
-                                onNavigateToAppointmentDetails: { _ in }
-                            )
-                            .onAppear {
+                        
+                    case .empty:
+                        NoDataView(
+                            title: String(localized: "notifications"),
+                            message: String(localized: "notFoundNotifications"),
+                            systemImage: "bell.badge"
+                        )
+                        
+                    case .success(let notifications):
+                        NotificationsListView(
+                            notifications: notifications,
+                            isPaging: viewModel.isPaging,
+                            onRefresh: {
+                                await viewModel.refresh()
+                            },
+                            onItemAppear: { notification in
                                 Task {
-                                    await viewModel.loadMoreIfNeeded(
-                                        currentNotification: notification
-                                    )
+                                    await viewModel.loadMoreIfNeeded(currentNotification: notification)
                                 }
                             }
-                        }
-
+                        )
                     }
-
-                }
             }
-            .refreshable {
-                await viewModel.refresh()
-            }
-
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
         .task {
             await viewModel.initialLoadIfNeeded()

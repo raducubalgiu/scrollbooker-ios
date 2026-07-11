@@ -24,47 +24,70 @@ enum RequestsTabState: Equatable {
     case error(String)
 }
 
+enum EmployeeSearchState: Equatable {
+    case idle
+    case loading
+    case empty
+    case success([SearchUser])
+    case error(String)
+}
+
 
 @Observable
 @MainActor
 final class MyEmployeesViewModel: HasLoadingState {
     private(set) var employeesState: EmployeesTabState = .idle
     private(set) var requestsState: RequestsTabState = .idle
+    private(set) var searchState: EmployeeSearchState = .idle
+    var searchUserResults: [SearchUser] = []
+    
+    var searchTextEmployee: String = "" {
+        didSet {
+            triggerDebouncedEmployeeSearch()
+        }
+    }
+    
+    var selectedUserForEmployment: SearchUser? = nil
     
     var employeesUiState = UiState(data: [Employee]())
     var employmentRequestUiState = UiState(data: [EmploymentRequest]())
     var isSaving: Bool = false
-    
+        
     let session: SessionManager
     private let getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
     private let cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase
     
-    // MARK: - HasLoadingState (Sincronizat corect)
+    private let searchUsersUseCase: SearchUsersUseCase
+    private var searchTask: Task<Void, Never>? = nil
+    
     var isLoading: Bool {
-        get { employeesState == .loading || requestsState == .loading }
-        set { /* Not needed anymore, handled by state */ }
+        get { employeesState == .loading || requestsState == .loading || searchState == .loading }
+        set { /* Gestionat automat prin stări */ }
     }
 
     var errorMessage: String? {
         get {
             if case .error(let msg) = employeesState { return msg }
             if case .error(let msg) = requestsState { return msg }
+            if case .error(let msg) = searchState { return msg }
             return nil
         }
-        set { /* Handled by state */ }
+        set { /* Gestionat automat prin stări */ }
     }
  
     init(
         session: SessionManager,
         getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
-        cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase
+        cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase,
+        searchUsersUseCase: SearchUsersUseCase
     ) {
         self.session = session
         self.getUserEmploymentRequestsUseCase = getUserEmploymentRequestsUseCase
         self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
         self.cancelEmploymentRequestUseCase = cancelEmploymentRequestUseCase
+        self.searchUsersUseCase = searchUsersUseCase
     }
     
     func getEmployeesByOwner() async {
@@ -157,4 +180,54 @@ final class MyEmployeesViewModel: HasLoadingState {
                 isSaving = false
             }
         }
+    
+    private func triggerDebouncedEmployeeSearch() {
+        searchTask?.cancel()
+        
+        let cleanQuery = searchTextEmployee.trimmingCharacters(in: .whitespacesAndNewlines)
+        
+        guard !cleanQuery.isEmpty else {
+            self.searchState = .idle
+            self.searchUserResults = []
+            return
+        }
+        
+        searchTask = Task {
+            do {
+                try await Task.sleep(for: .seconds(0.3))
+                
+                guard !Task.isCancelled else { return }
+                
+                if case .success = searchState, !searchUserResults.isEmpty {
+                    return
+                }
+                
+                self.searchState = .loading
+                
+                let users = try await searchUsersUseCase(query: cleanQuery, roleClient: true)
+                
+                guard !Task.isCancelled else { return }
+                
+                self.searchUserResults = users
+                
+                if users.isEmpty {
+                    self.searchState = .empty
+                } else {
+                    self.searchState = .success(users)
+                }
+                
+            } catch is CancellationError {
+
+            } catch {
+                guard !Task.isCancelled else { return }
+                let friendlyError = error.localizedDescription
+                self.searchState = .error(friendlyError)
+            }
+        }
+    }
+    
+    func performInstantEmployeeSearch() {
+        searchTask?.cancel()
+        triggerDebouncedEmployeeSearch()
+    }
 }

@@ -33,13 +33,15 @@ final class EmploymentRequestModule {
     
     func makeMyEmployeesViewModel(
         session: SessionManager,
-        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        searchUsersUseCase: SearchUsersUseCase
     ) -> MyEmployeesViewModel {
         MyEmployeesViewModel(
             session: session,
             getUserEmploymentRequestsUseCase: getUserEmploymentRequestsUseCase,
             getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
-            cancelEmploymentRequestUseCase: cancelEmploymentRequestUseCase
+            cancelEmploymentRequestUseCase: cancelEmploymentRequestUseCase,
+            searchUsersUseCase: searchUsersUseCase
         )
     }
 }

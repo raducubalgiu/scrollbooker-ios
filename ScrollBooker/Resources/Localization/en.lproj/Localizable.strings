@@ -290,6 +290,12 @@
 "notFoundAppointments" = "Nu au fost găsite rezervări";
 "notFoundEmployees" = "Momentan nu ai nici un angajat";
 
+"selectEmployee" = "Selectează angajat";
+"searchEmployeeAndSelectToContinue" = "Caută angajatul în lista de mai jos și selectează-l pentru a continua";
+"searchEmployeeIdleMessage" = "Introdu numele sau username-ul pentru a căuta";
+"users" = "Utilizatori";
+"notFoundUsers" = "Nu au fost găsiți utilizatori";
+
 /* --- DYNAMIC --- */
 
 "appointment.status.confirmed" = "Confirmat";

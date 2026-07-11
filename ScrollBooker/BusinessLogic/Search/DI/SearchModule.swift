@@ -23,7 +23,7 @@ final class SearchModule {
         SearchRepositoryImpl(api: apiService)
     }()
 
-    private lazy var searchUsersUseCase: SearchUsersUseCase = {
+    lazy var searchUsersUseCase: SearchUsersUseCase = {
         SearchUsersUseCase(repository: repository)
     }()
 

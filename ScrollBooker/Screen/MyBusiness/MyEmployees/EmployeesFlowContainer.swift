@@ -24,7 +24,8 @@ struct EmployeesFlowContainer: View {
         _viewModel = State(initialValue:
             container.employmentRequestModule.makeMyEmployeesViewModel(
                 session: session,
-                getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner
+                getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+                searchUsersUseCase: container.searchModule.searchUsersUseCase
             )
         )
     }

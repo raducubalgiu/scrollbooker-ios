@@ -23,35 +23,12 @@ struct FeedSearchScreen: View {
                         .font(.title2)
                 }
                 
-                HStack {
-                    Image(systemName: "magnifyingglass")
-                        .foregroundColor(.gray)
-                    
-                    TextField(
-                        String(localized: "search"),
-                        text: $viewModel.searchText
-                    )
-                        .autocorrectionDisabled()
-                        .textInputAutocapitalization(.never)
-                        .focused($isSearchFieldFocused)
-                        .submitLabel(.search)
-                        .onSubmit {
-                            viewModel.performInstantSearch()
-                        }
-                    
-                    if !viewModel.searchText.isEmpty {
-                        Button(action: {
-                            viewModel.searchText = ""
-                        }) {
-                            Image(systemName: "xmark.circle.fill")
-                                .foregroundColor(.gray)
-                        }
-                    }
-                }
-                .padding(.horizontal, 12)
-                .padding(.vertical, 8)
-                .background(Color.surfaceSB)
-                .cornerRadius(8)
+                SearchBarView(
+                    text: $viewModel.searchText,
+                    placeholder: String(localized: "search"),
+                    onSubmit: { viewModel.performInstantSearch() },
+                    onClear: {}
+                )
             }
             .padding(.horizontal)
             .padding(.vertical, 8)

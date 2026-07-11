@@ -8,18 +8,21 @@
 import SwiftUI
 
 struct EmploymentSelectEmployeeScreen: View {
-    let viewModel: MyEmployeesViewModel
+    @Bindable var viewModel: MyEmployeesViewModel
+    
     let onBack: () -> Void
     let onNext: () -> Void
     
+    @FocusState private var isSearchFieldFocused: Bool
+    
     private var isButtonDisabled: Bool {
-        viewModel.isSaving
+        viewModel.isSaving || viewModel.selectedUserForEmployment == nil
     }
     
     var body: some View {
         FormLayout(
-            headline: String(localized: "selectEmployeeTitle"),
-            subHeadline: String(localized: "selectEmployeeSubtitle"),
+            headline: String(localized: "selectEmployee"),
+            subHeadline: String(localized: "searchEmployeeAndSelectToContinue"),
             enableBottomButton: true,
             enableBack: true,
             buttonTitle: String(localized: "next"),
@@ -31,17 +34,49 @@ struct EmploymentSelectEmployeeScreen: View {
             }
         ) {
             VStack(spacing: 16) {
-                Spacer()
+                SearchBarView(
+                    text: $viewModel.searchTextEmployee,
+                    onSubmit: { viewModel.performInstantEmployeeSearch() },
+                    onClear: { viewModel.selectedUserForEmployment = nil }
+                )
                 
-                Text("Aici va veni componenta de căutare și selecție utilizator.")
-                    .font(.body)
-                    .foregroundColor(.secondary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal, 24)
-                
-                Spacer()
+                VStack {
+                    switch viewModel.searchState {
+                    case .idle:
+                        NoDataView(
+                            title: String(localized: "users"),
+                            message: String(localized: "searchEmployeeIdleMessage"),
+                            systemImage: "person.badge.plus"
+                        )
+                        
+                    case .loading:
+                        LoadingView()
+                        
+                    case .empty:
+                        NoDataView(
+                            title: String(localized: "users"),
+                            message: String(localized: "notFoundUsers"),
+                            systemImage: "person.slash"
+                        )
+                        
+                    case .success(let users):
+                        EmploymentEmployeesListView(
+                            users: users,
+                            selectedUser: $viewModel.selectedUserForEmployment
+                        )
+                        
+                    case .error(let message):
+                        ErrorView(message: message) {
+                            viewModel.performInstantEmployeeSearch()
+                        }
+                    }
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
+        }
+        .onAppear {
+            isSearchFieldFocused = true
         }
     }
 }

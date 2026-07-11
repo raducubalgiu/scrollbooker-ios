@@ -30,21 +30,24 @@ struct MyServicesScreen: View {
             }
         ) {
             VStack {
-                if viewModel.isLoading && viewModel.uiState.data.isEmpty {
-                    LoadingView()
-                } else if let errorMessage = viewModel.errorMessage {
-                    ErrorView(message: errorMessage) {
-                        Task { await viewModel.loadServices() }
-                    }
-                } else {
-                    MyServicesListView(
-                        data: viewModel.uiState.data,
-                        selectedServiceIds: viewModel.selectedServiceIds,
-                        onToggleService: { serviceId in
-                            viewModel.toggleService(serviceId: serviceId)
+                switch viewModel.viewState {
+                    case .idle, .loading:
+                        LoadingView()
+                        
+                    case .error(let message):
+                        ErrorView(message: message) {
+                            Task { await viewModel.loadServices() }
                         }
-                    )
-                }
+                        
+                    case .success(let domains):
+                        MyServicesListView(
+                            data: domains,
+                            selectedServiceIds: viewModel.selectedServiceIds,
+                            onToggleService: { serviceId in
+                                viewModel.toggleService(serviceId: serviceId)
+                            }
+                        )
+                    }
             }
         }
         .task {

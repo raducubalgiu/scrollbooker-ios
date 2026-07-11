@@ -8,10 +8,19 @@
 import Foundation
 import Observation
 
+enum MyServicesState: Equatable {
+    case idle
+    case loading
+    case success([SelectedServiceDomainsWithServices])
+    case error(String)
+}
+
 @Observable
 @MainActor
 final class MyServicesViewModel: HasLoadingState {
     var uiState = UiState(data: [SelectedServiceDomainsWithServices]())
+    
+    private(set) var viewState: MyServicesState = .idle
     
     private let session: SessionManager
     private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
@@ -25,12 +34,12 @@ final class MyServicesViewModel: HasLoadingState {
     }
     
     var isLoading: Bool {
-        get { uiState.isLoading }
+        get { if case .loading = viewState { return true }; return uiState.isLoading }
         set { uiState.isLoading = newValue }
     }
 
     var errorMessage: String? {
-        get { uiState.errorMessage }
+        get { if case .error(let msg) = viewState { return msg }; return uiState.errorMessage }
         set { uiState.errorMessage = newValue }
     }
     
@@ -45,14 +54,15 @@ final class MyServicesViewModel: HasLoadingState {
     }
     
     func loadServices() async {
-        guard uiState.data.isEmpty else { return }
-        
-        uiState.errorMessage = nil
+        guard viewState != .loading else { return }
         
         guard let businessId = session.userInfo?.businessId else {
-            uiState.errorMessage = "Business ID not found in session"
+            viewState = .error("Business ID not found in session")
             return
         }
+        
+        viewState = .loading
+        uiState.errorMessage = nil
         
         do {
             let data = try await withVisibleLoading {
@@ -71,11 +81,11 @@ final class MyServicesViewModel: HasLoadingState {
             self.defaultSelectedServiceIds = initialSelectedIds
             self.selectedServiceIds = initialSelectedIds
             
-        } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
+            viewState = .success(data)
             
-            uiState.errorMessage = message
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            viewState = .error(message)
         }
     }
     
@@ -88,12 +98,10 @@ final class MyServicesViewModel: HasLoadingState {
     }
     
     func updateBusinessServices() async {
-        uiState.errorMessage = nil
+        guard let businessId = session.userInfo?.businessId else { return }
 
-        guard let businessId = session.userInfo?.businessId else {
-            uiState.errorMessage = "Business ID not found in session"
-            return
-        }
+        uiState.isLoading = true
+        uiState.errorMessage = nil
         
         let serviceIdsArray = Array(selectedServiceIds)
         
@@ -114,11 +122,14 @@ final class MyServicesViewModel: HasLoadingState {
             
             self.defaultSelectedServiceIds = freshSelectedIds
             self.selectedServiceIds = freshSelectedIds
-        } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
             
+            viewState = .success(updatedData)
+            uiState.isLoading = false
+            
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             uiState.errorMessage = message
+            uiState.isLoading = false
         }
     }
 }

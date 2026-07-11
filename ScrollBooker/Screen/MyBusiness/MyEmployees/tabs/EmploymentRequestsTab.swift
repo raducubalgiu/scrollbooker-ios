@@ -18,30 +18,31 @@ struct EmploymentRequestsTab: View {
         VStack(spacing: 0) {
             VStack {
                 switch viewModel.requestsState {
-                    case .idle, .loading:
-                        LoadingView()
-                        
-                    case .error(let message):
-                        ErrorView(message: message) {
-                            Task { await viewModel.getUserEmploymentRequests() }
-                        }
-                        
-                    case .empty:
-                        NoDataView(
-                            title: String(localized: "employmentRequests"),
-                            message: String(localized: "notFoundEmploymentRequests"),
-                            systemImage: "briefcase"
-                        )
-                        
-                    case .success(let requests):
-                        EmploymentRequestsListView(
-                            requests: requests,
-                            onRequestClick: { id in
-                                employmentRequestId = id
-                                openModal = true
-                            }
-                        )
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error(let message):
+                    ErrorView(message: message) {
+                        Task { await viewModel.getUserEmploymentRequests() }
                     }
+                    
+                case .empty:
+                    NoDataView(
+                        title: String(localized: "employmentRequests"),
+                        message: String(localized: "notFoundEmploymentRequests"),
+                        systemImage: "briefcase"
+                    )
+                    
+                case .success:
+                    EmploymentRequestsListView(
+                        requests: viewModel.employmentRequestUiState.data,
+                        onRequestClick: { id in
+                            employmentRequestId = id
+                            openModal = true
+                        }
+                    )
+                    .animation(.default, value: viewModel.employmentRequestUiState.data)
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             
@@ -67,10 +68,9 @@ struct EmploymentRequestsTab: View {
                 String(localized: "delete"),
                 role: .destructive
             ) {
-                // Notă: Când vei decomenta acțiunea, va rula asincron la fel de curat
-                // if !viewModel.isSaving {
-                //     viewModel.cancelEmploymentRequest(id: id)
-                // }
+                Task {
+                    await viewModel.cancelEmploymentRequest(employmentId: id)
+                }
                 employmentRequestId = nil
             }
             

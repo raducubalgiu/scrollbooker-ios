@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileScreen: View {
-    let viewModel: ProfileViewModel
+    @Bindable var viewModel: ProfileViewModel
         
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
@@ -35,11 +35,30 @@ struct ProfileScreen: View {
     }
     
     var body: some View {
-        Group {
-            if viewModel.isLoading && viewModel.uiState.data == nil {
+        VStack(spacing: 0) {
+            switch viewModel.viewState {
+            case .idle, .loading:
                 ProgressView()
                     .tint(.primarySB)
-            } else if let user = viewModel.uiState.data {
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+            case .error(let message):
+                ContentUnavailableView {
+                    Label("Eroare Decodare Date", systemImage: "exclamationmark.triangle")
+                        .foregroundColor(.errorSB)
+                } description: {
+                    Text(message)
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                } actions: {
+                    Button("Reîncearcă") {
+                        Task { await viewModel.refresh() }
+                    }
+                    .buttonStyle(.borderedProminent)
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+            case .success(let user):
                 ProfileLayout(
                     user: user,
                     onNavigateToUserSocial: onNavigateToUserSocial,
@@ -66,27 +85,6 @@ struct ProfileScreen: View {
                         onNavigateToSettings: onNavigateToSettings
                     )
                 }
-            } else if let errorMessage = viewModel.errorMessage {
-                // DACĂ DECODRE-A EȘUEAZĂ, VEZI IMEDIAT CÂMPUL GREȘIT PE ECRAN!
-                ContentUnavailableView {
-                    Label("Eroare Decodare Date", systemImage: "exclamationmark.triangle")
-                        .foregroundColor(.errorSB)
-                } description: {
-                    Text(errorMessage)
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                } actions: {
-                    Button("Reîncearcă") {
-                        Task { await viewModel.refresh() }
-                    }
-                    .buttonStyle(.borderedProminent)
-                }
-            } else {
-                // Această ramură va fi acum doar starea inițială curată, înainte de load
-                ContentUnavailableView(
-                    String(localized: "profileUnavailable"),
-                    systemImage: "person.crop.circle.badge.exclamationmark"
-                )
             }
         }
         .task {

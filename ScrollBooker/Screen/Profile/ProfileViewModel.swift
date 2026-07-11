@@ -9,21 +9,29 @@
 import Foundation
 import Observation
 
+enum ProfileState: Equatable {
+    case idle
+    case loading
+    case success(UserProfile)
+    case error(String)
+}
+
 @Observable
 @MainActor
 final class ProfileViewModel: HasLoadingState {
     var uiState = UiState(data: UserProfile?.none)
-    
+
+    private(set) var viewState: ProfileState = .idle    
     private let session: SessionManager
     private let getUserProfileUseCase: GetUserProfileUseCase
     
     var isLoading: Bool {
-        get { uiState.isLoading }
+        get { if case .loading = viewState { return true }; return uiState.isLoading }
         set { uiState.isLoading = newValue }
     }
     
     var errorMessage: String? {
-        get { uiState.errorMessage }
+        get { if case .error(let msg) = viewState { return msg }; return uiState.errorMessage }
         set { uiState.errorMessage = newValue }
     }
     
@@ -34,26 +42,24 @@ final class ProfileViewModel: HasLoadingState {
         
     func loadProfile() async {
         guard uiState.data == nil else { return }
+        guard viewState != .loading else { return }
         
+        viewState = .loading
         uiState.errorMessage = nil
         
+        guard let username = session.userInfo?.username else {
+            viewState = .error("Username not found")
+            return
+        }
+        
         do {
-            guard let username = session.userInfo?.username else {
-                uiState.errorMessage = "Username not found"
-                return
-            }
-            
-            let result = try await withVisibleLoading {
-                try await getUserProfileUseCase(username: username)
-            }
+            let result = try await getUserProfileUseCase(username: username)
             
             uiState.data = result
-            
+            viewState = .success(result)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
-            
-            uiState.errorMessage = message
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            viewState = .error(message)
         }
     }
     
@@ -63,19 +69,24 @@ final class ProfileViewModel: HasLoadingState {
         uiState.isRefreshing = true
         uiState.errorMessage = nil
         
+        guard let username = session.userInfo?.username else {
+            uiState.errorMessage = "Username not found"
+            uiState.isRefreshing = false
+            return
+        }
+        
         do {
-            guard let username = session.userInfo?.username else {
-                uiState.errorMessage = "Username not found"
-                return
-            }
-            
             let result = try await getUserProfileUseCase(username: username)
             uiState.data = result
+            viewState = .success(result)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription
-                ?? error.localizedDescription
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             
-            uiState.errorMessage = message
+            if uiState.data == nil {
+                viewState = .error(message)
+            } else {
+                uiState.errorMessage = message
+            }
         }
         
         uiState.isRefreshing = false

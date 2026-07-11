@@ -38,6 +38,7 @@ final class MyEmployeesViewModel: HasLoadingState {
     let session: SessionManager
     private let getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
+    private let cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase
     
     // MARK: - HasLoadingState (Sincronizat corect)
     var isLoading: Bool {
@@ -57,11 +58,13 @@ final class MyEmployeesViewModel: HasLoadingState {
     init(
         session: SessionManager,
         getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase,
-        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase
     ) {
         self.session = session
         self.getUserEmploymentRequestsUseCase = getUserEmploymentRequestsUseCase
         self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
+        self.cancelEmploymentRequestUseCase = cancelEmploymentRequestUseCase
     }
     
     func getEmployeesByOwner() async {
@@ -123,4 +126,35 @@ final class MyEmployeesViewModel: HasLoadingState {
             requestsState = .error(message)
         }
     }
+    
+    func cancelEmploymentRequest(employmentId: Int) async {
+            guard !isSaving else { return }
+            
+            isSaving = true
+            
+            if case .error = requestsState {
+                // Dacă ecranul era blocat pe eroare (teoretic nu e cazul la ștergere), îl resetăm
+            }
+            
+            do {
+                _ = try await withVisibleLoading {
+                    try await cancelEmploymentRequestUseCase(employmentId: employmentId)
+                }
+                
+                self.employmentRequestUiState.data.removeAll { $0.id == employmentId }
+                if employmentRequestUiState.data.isEmpty {
+                    self.requestsState = .empty
+                } else {
+                    self.requestsState = .success(employmentRequestUiState.data)
+                }
+                
+                isSaving = false
+                
+            } catch {
+                let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                
+                print("Eroare la anularea cererii de angajare: \(message)")
+                isSaving = false
+            }
+        }
 }

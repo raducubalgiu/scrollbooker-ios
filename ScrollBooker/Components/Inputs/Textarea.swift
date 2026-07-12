@@ -9,56 +9,53 @@ import SwiftUI
 
 struct Textarea: View {
     @Binding var text: String
-    
-    var label: String
     var placeholder: String
-    var height: Int = 100
+    var label: String
     
     var isError: Bool = false
     var errorMessage: String = ""
     var isDisabled: Bool = false
-    var maxLength: Int = 500
+    var maxLength: Int? = nil
     
     @FocusState private var isFocused: Bool
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
-            if !label.isEmpty {
-                Text(label)
-                    .font(.headline)
-                    .foregroundColor(.onBackgroundSB)
+        VStack(alignment: .leading, spacing: 12) {
+            Text(label)
+                .font(.headline)
+                .foregroundColor(.onBackgroundSB)
+            
+            ZStack(alignment: .topLeading) {
+                if text.isEmpty {
+                    Text(placeholder)
+                        .foregroundColor(.gray.opacity(0.5))
+                        .padding(.horizontal, 4)
+                        .padding(.vertical, 8)
+                }
+                
+                TextEditor(text: $text)
+                    .tint(.primarySB)
+                    .focused($isFocused)
+                    .disabled(isDisabled)
+                    .frame(height: 120)
+                    .scrollContentBackground(.hidden)
+                    .background(Color.clear)
+                    .onChange(of: text) { oldValue, newValue in
+                        if let maxLength = maxLength, newValue.count > maxLength {
+                            text = String(newValue.prefix(maxLength))
+                        }
+                    }
             }
+            .overlay(
+                Rectangle()
+                    .frame(height: 1)
+                    .foregroundColor(isError ? .errorSB : (isFocused ? .primarySB : .gray.opacity(0.5))),
+                alignment: .bottom
+            )
             
-            TextEditor(text: $text)
-                .focused($isFocused)
-                .textEditorStyle(.plain)
-                .frame(minHeight: CGFloat(height), maxHeight: CGFloat(height))
-                .scrollContentBackground(.hidden)
-                .disabled(isDisabled)
-                .onChange(of: text) { _, newValue in
-                    if newValue.count > maxLength {
-                        text = String(newValue.prefix(maxLength))
-                    }
-                }
-                .overlay(alignment: .topLeading) {
-                    if text.isEmpty {
-                        Text(placeholder)
-                            .foregroundColor(.gray)
-                            .padding(.top, 4)
-                            .allowsHitTesting(false)
-                    }
-                }
-                .overlay(
-                    Rectangle()
-                        .frame(height: 1)
-                        .foregroundColor(isError ? .errorSB : (isFocused ? .primarySB : .gray)),
-                    alignment: .bottom
-                )
-                .tint(.primarySB)
-            
-            HStack(alignment: .top) {
+            HStack {
                 if isError && !errorMessage.isEmpty {
-                    HStack(spacing: 5) {
+                    HStack(spacing: 4) {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(.errorSB)
                         Text(errorMessage)
@@ -69,9 +66,11 @@ struct Textarea: View {
                 
                 Spacer()
                 
-                Text("\(text.count) / \(maxLength)")
-                    .font(.caption)
-                    .foregroundColor(text.count >= maxLength ? .errorSB : .gray)
+                if let max = maxLength {
+                    Text("\(text.count)/\(max)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .contentShape(Rectangle())
@@ -80,46 +79,4 @@ struct Textarea: View {
             isFocused = true
         }
     }
-}
-
-#Preview("Light") {
-    @Previewable @State var text: String = ""
-    
-    Textarea(
-        text: $text,
-        label: "Placeholder",
-        placeholder: "Adauga o descriere"
-    )
-    .padding()
-    
-    Spacer()
-}
-
-#Preview("Dark") {
-    @Previewable @State var text: String = ""
-    
-    Textarea(
-        text: $text,
-        label: "Placeholder",
-        placeholder: "Adauga o descriere"
-    )
-    .preferredColorScheme(.dark)
-    .padding()
-    
-    Spacer()
-}
-
-#Preview("Error") {
-    @Previewable @State var text: String = ""
-    
-    Textarea(
-        text: $text,
-        label: "Placeholder",
-        placeholder: "Adauga o descriere",
-        isError: true,
-        errorMessage: "Acest camp este obligatoriu"
-    )
-    .padding()
-    
-    Spacer()
 }

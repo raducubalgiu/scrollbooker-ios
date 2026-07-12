@@ -32,19 +32,22 @@ final class MyProfileViewModel: HasLoadingState {
     let updateUserFullNameUseCase: UpdateUserFullNameUseCase
     let updateUserGenderUseCase: UpdateUserGenderUseCase
     let updateUserBirthdateUseCase: UpdateUserBirthdateUseCase
+    let updateUserBioUseCase: UpdateUserBioUseCase
     
     init(
         session: SessionManager,
         profileController: ProfileController,
         updateUserFullNameUseCase: UpdateUserFullNameUseCase,
         updateUserGenderUseCase: UpdateUserGenderUseCase,
-        updateUserBirthdateUseCase: UpdateUserBirthdateUseCase
+        updateUserBirthdateUseCase: UpdateUserBirthdateUseCase,
+        updateUserBioUseCase: UpdateUserBioUseCase
     ) {
         self.session = session
         self.profileController = profileController
         self.updateUserFullNameUseCase = updateUserFullNameUseCase
         self.updateUserGenderUseCase = updateUserGenderUseCase
         self.updateUserBirthdateUseCase = updateUserBirthdateUseCase
+        self.updateUserBioUseCase = updateUserBioUseCase
     }
     
     func loadProfile() async {
@@ -93,7 +96,7 @@ final class MyProfileViewModel: HasLoadingState {
         let birthDateString = formatter.string(from: selectedBirthdate)
         
         do {
-            let result = try await withVisibleLoading {
+            _ = try await withVisibleLoading {
                 try await updateUserBirthdateUseCase(birthdate: birthDateString)
             }
             
@@ -130,7 +133,26 @@ final class MyProfileViewModel: HasLoadingState {
         isLoading = false
     }
     
-    func updateBio(newBio: String) async {
-        // Logica de editare bio...
+    func updateBio(bio: String) async {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let result = try await withVisibleLoading {
+                try await updateUserBioUseCase(bio: bio)
+            }
+            
+            if let currentProfile = profileController.uiState.data {
+                profileController.uiState.data = currentProfile.copy(bio: result.bio)
+            }
+            
+            isSaved = true
+        } catch {
+            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+        
+        isLoading = false
     }
 }

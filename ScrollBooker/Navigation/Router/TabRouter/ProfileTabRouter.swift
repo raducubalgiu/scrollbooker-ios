@@ -58,11 +58,18 @@ struct ProfileTabRouter: View {
                         
                     // MARK: - Edit Profile Flow
                     case .editProfile:
-                        EditProfileScreen(
-                            onNavigate: { r in router.push(r) },
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
+                        if let stableViewModel = viewModel {
+                            EditProfileScreen(
+                                viewModel: stableViewModel,
+                                onNavigate: { r in router.push(r) },
+                                onBack: { router.pop() }
+                            )
+                        } else {
+                            LoadingView()
+                                .onAppear {
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                }
+                        }
                         
                     case .editFullName:
                         if let stableViewModel = viewModel {
@@ -84,10 +91,17 @@ struct ProfileTabRouter: View {
                             .toolbar(.hidden, for: .navigationBar)
                         
                     case .editBio:
-                        EditBioScreen(
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
+                        if let stableViewModel = viewModel {
+                            EditBioScreen(
+                                viewModel: stableViewModel,
+                                onBack: { router.pop() }
+                            )
+                        } else {
+                            LoadingView()
+                                .onAppear {
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                }
+                        }
                         
                     case .editGender:
                         if let stableViewModel = viewModel {

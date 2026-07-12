@@ -22,8 +22,8 @@ struct EditGenderScreen: View {
     
     var body: some View {
         FormLayout(
-            headline: String(localized: "chooseYourGender", defaultValue: "Alege genul tău"),
-            subHeadline: String(localized: "genderLabelDescription", defaultValue: "Aceste informații ne ajută să îți personalizăm experiența în aplicație."),
+            headline: String(localized: "chooseYourGender"),
+            subHeadline: String(localized: "genderLabelDescription"),
             enableBottomButton: true,
             enableBack: true,
             buttonTitle: String(localized: "save"),

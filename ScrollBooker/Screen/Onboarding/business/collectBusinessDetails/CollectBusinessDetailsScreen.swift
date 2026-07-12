@@ -31,8 +31,8 @@ struct CollectBusinessDetailsScreen: View {
                 
                 Textarea(
                     text: $description,
-                    label: "Descriere",
                     placeholder: "Adauga o descriere",
+                    label: "Descriere",
                 )
             }
         }

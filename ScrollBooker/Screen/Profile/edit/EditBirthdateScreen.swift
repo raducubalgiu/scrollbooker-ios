@@ -17,11 +17,11 @@ struct EditBirthdateScreen: View {
     
     var body: some View {
         FormLayout(
-            headline: String(localized: "dateOfBirth", defaultValue: "Data nașterii"),
-            subHeadline: String(localized: "dateOfBirthLabelDescription", defaultValue: "Te rugăm să introduci data nașterii. Aceasta nu va fi afișată public."),
+            headline: String(localized: "dateOfBirth"),
+            subHeadline: String(localized: "dateOfBirthLabelDescription"),
             enableBottomButton: true,
             enableBack: true,
-            buttonTitle: String(localized: "save", defaultValue: "Salvează"),
+            buttonTitle: String(localized: "save"),
             isDisabled: isButtonDisabled,
             isLoading: viewModel.isLoading,
             onBack: onBack,

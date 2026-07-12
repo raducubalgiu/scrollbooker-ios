@@ -16,16 +16,15 @@ struct ReportProblemScreen: View {
         
         VStack {
             HeaderView(
-                title: "Raportează o problemă",
+                title: String(localized: "reportAProblem"),
                 onBack: onBack
             )
             
             VStack {
                 Textarea(
                     text: $vm.text,
+                    placeholder: String(localized: "describeTheProblem"),
                     label: "",
-                    placeholder: "Descrie problema aici...",
-                    height: 150
                 )
                 
                 if let error = viewModel.errorMessage {
@@ -39,7 +38,7 @@ struct ReportProblemScreen: View {
                 Spacer()
                 
                 MainButton(
-                    title: "Trimite",
+                    title: String(localized: "send"),
                     onClick: {
                         Task { await viewModel.submitProblem() }
                     },

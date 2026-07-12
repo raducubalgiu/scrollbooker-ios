@@ -19,7 +19,7 @@ struct EditNameScreen: View {
     private var errorMessage: String? {
         if newFullName.isEmpty { return nil }
         if newFullName.count < minLength {
-            return "Numele trebuie să aibă minim \(minLength) caractere"
+            return String(localized: "name_min_length_error \(minLength)")
         }
         return nil
     }

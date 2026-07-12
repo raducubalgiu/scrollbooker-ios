@@ -38,6 +38,7 @@
 "notifications" = "Notificări";
 "display" = "Afișare";
 "reportProblem" = "Raportează o problemă";
+"describeTheProblem" = "Descrie problema aici...";
 "support" = "Suport";
 "termsAndConditions" = "Termeni și condiții";
 "cancel" = "Anulează";
@@ -69,7 +70,10 @@
 "genderLabelDescription" = "Ne ajută să îți oferim servicii relevante pentru tine";
 "delete" = "Șterge";
 "aboutYou" = "Despre tine";
+"writeSomethingAboutYou" = "Scrie câteva cuvinte despre tine";
 "dontHaveAppointmentsYet" = "Nu ai nici o proramare momentan";
+"bio_length_error %d" = "Biografia nu poate depăși %d de caractere";
+"name_min_length_error %d" = "Numele trebuie să aibă minim %d caractere";
 "reviews" = "Recenzii";
 "followers" = "Urmăritori";
 "dontFoundResults" = "Nu au fost găsite rezultate";

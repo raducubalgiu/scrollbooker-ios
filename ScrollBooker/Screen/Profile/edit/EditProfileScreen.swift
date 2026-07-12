@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EditProfileScreen: View {
+    let viewModel: MyProfileViewModel
     var onNavigate: (Route) -> Void
     var onBack: () -> Void
     
@@ -35,7 +36,7 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text("Radu Ion")
+                            Text(viewModel.profileController.uiState.data?.fullName ?? "")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             
@@ -57,7 +58,7 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text("radu_ion")
+                            Text(viewModel.profileController.uiState.data?.username ?? "")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             
@@ -79,9 +80,11 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text("")
+                            Text(viewModel.profileController.uiState.data?.bio ?? "")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
+                                .lineLimit(1)
+                                .truncationMode(.tail)
                             
                             Image(systemName: "chevron.right")
                                 .foregroundColor(.gray)
@@ -101,7 +104,7 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text(String(localized: "preferNotToSay"))
+                            Text("")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             
@@ -123,7 +126,7 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text(String(localized: "preferNotToSay"))
+                            Text("")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             

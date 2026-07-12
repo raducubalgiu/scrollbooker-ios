@@ -8,63 +8,33 @@
 import SwiftUI
 
 struct UserProfileActions: View {
+    var isBusinessOrEmployee: Bool
+    var isFollow: Bool
+    var isFollowEnabled: Bool
+    
+    var onFollow: () -> Void
+    var onNavigateToBooking: () -> Void
+    
     var body: some View {
-        HStack {
-            Button {
-                
-            } label: {
-                Text("follow")
+        HStack(spacing: 8) {
+            if isBusinessOrEmployee {
+                ProfileActionButton(
+                    title: String(localized: "bookNow"),
+                    backgroundColor: Color.primarySB,
+                    foregroundColor: Color.onPrimarySB,
+                    onClick: onNavigateToBooking
+                )
             }
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .fontWeight(.semibold)
-            .foregroundColor(Color.onPrimarySB)
-            .background(
-                RoundedRectangle(cornerRadius: 50)
-                    .fill(Color.primarySB)
-            )
             
-            Button {
-                
-            }
-            label: {
-                HStack {
-                    Image(systemName: "calendar")
-                    Text("Calendar")
-                }
-            }
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .fontWeight(.semibold)
-            .foregroundColor(Color.onSurfaceSB)
-            .background(
-                RoundedRectangle(cornerRadius: 50)
-                    .fill(Color.surfaceSB)
+            ProfileActionButton(
+                title: isFollow ? String(localized: "following") : String(localized: "follow"),
+                isOutlined: isFollow,
+                backgroundColor: Color.surfaceSB,
+                foregroundColor: Color.onSurfaceSB,
+                onClick: onFollow
             )
-            
-            Button {
-                
-            }
-            label: {
-                Image(systemName: "arrowtriangle.down.fill")
-                    .foregroundColor(.onSurfaceSB)
-            }
-            .frame(height: 50)
-            .frame(width: 50)
-            .fontWeight(.semibold)
-            .foregroundColor(Color.onSurfaceSB)
-            .background(
-                RoundedRectangle(cornerRadius: 50)
-                    .fill(Color.surfaceSB)
-            )
+            .disabled(!isFollowEnabled)
         }
         .padding(.horizontal)
     }
-}
-
-#Preview("Light") {
-    UserProfileActions()
-}
-
-#Preview("Dark") {
-    UserProfileActions()
-        .preferredColorScheme(.dark)
 }

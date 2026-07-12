@@ -24,7 +24,8 @@ enum Route: Hashable {
     case appointmentDetails(id: Int)
     
     // Profile
-    case profile
+    case myProfile
+    case userProfile(userId: Int, username: String)
     case profilePostDetail
     
     case editProfile

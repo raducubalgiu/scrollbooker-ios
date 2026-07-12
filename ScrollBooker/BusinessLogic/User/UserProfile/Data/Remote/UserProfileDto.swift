@@ -50,7 +50,7 @@ struct UserCountersDTO: Codable {
     let products_count: Int
     let posts_count: Int
     let ratings_count: Int
-    let ratings_average: Decimal
+    let ratings_average: Float
 }
 
 struct OpeningHoursDTO: Codable {

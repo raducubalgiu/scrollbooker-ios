@@ -48,6 +48,18 @@ struct GlobalNavigationModifier: ViewModifier {
                 ),
                 onBack: { router.pop() }
             )
+            
+        case .userProfile(let userId, let username):
+            UserProfileScreen(
+                viewModel: container.userProfileModule.makeUserProfileViewModel(userId: userId, username: username),
+                onNavigateToEditProfile: { router.push(.editProfile) },
+                onNavigateToSettings: { router.push(.mySettings) },
+                onNavigateToMyBusiness: { router.push(.myBusiness) },
+                onNavigateToUserProfile: { },
+                onNavigateToUserSocial: {},
+                onBack: { router.pop() }
+            )
+            
         case .userSocial(let userId, let username, let initialTab, let isBusinessOrEmployee, let followers, let followings):
             SocialScreen(
                 viewModel: container.followModule.makeSocialViewModel(userId: userId),

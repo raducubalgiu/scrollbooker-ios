@@ -18,9 +18,11 @@ struct InboxTabRouter: View {
         NavigationStack(path: $bindableRouter.inboxPath) {
             Group {
                 if let viewModel = inboxViewModel {
-                    InboxScreen(viewModel: viewModel, onNavigateToAppointmentDetails: { id in
-                        router.push(.appointmentDetails(id: id))
-                    })
+                    InboxScreen(
+                        viewModel: viewModel,
+                        onNavigateToAppointmentDetails: { id in router.push(.appointmentDetails(id: id)) },
+                        onNavigateToUserProfile: { id, username in router.push(.userProfile(userId: id, username: username)) }
+                    )
                 } else {
                     ProgressView()
                 }

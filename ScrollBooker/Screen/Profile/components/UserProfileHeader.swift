@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct UserProfileHeader: View {
+struct UserProfileHeaderView: View {
     var username: String
-    @Environment(\.dismiss) private var dismiss
+    var onBack: () -> Void
     
     var body: some View {
         HStack {
             Button {
-                dismiss()
+                onBack()
             } label: {
                 Image(systemName: "chevron.left")
                     .foregroundColor(.onBackgroundSB)
@@ -36,13 +36,4 @@ struct UserProfileHeader: View {
         }
         .frame(maxWidth: .infinity)
     }
-}
-
-#Preview("Light") {
-    UserProfileHeader(username: "radu_balgiu")
-}
-
-#Preview("Dark") {
-    UserProfileHeader(username: "radu_balgiu")
-        .preferredColorScheme(.dark)
 }

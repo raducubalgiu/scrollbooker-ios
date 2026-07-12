@@ -14,6 +14,7 @@ struct NotificationsListView: View {
     let onItemAppear: (Notification) -> Void
     
     var onNavigateToAppointmentDetails: (Int) -> Void
+    var onNavigateToUserProfile: (Int, String) -> Void
     
     var body: some View {
         ScrollView {
@@ -21,7 +22,7 @@ struct NotificationsListView: View {
                 ForEach(notifications) { notification in
                     NotificationItemView(
                         notification: notification,
-                        onNavigateToUserProfile: { _ in },
+                        onNavigateToUserProfile: onNavigateToUserProfile,
                         onNavigateToEmploymentRequest: { _ in },
                         onNavigateToAppointmentDetails: onNavigateToAppointmentDetails
                     )

@@ -8,44 +8,32 @@
 import SwiftUI
 
 struct MyProfileActionsView: View {
+    var isBusinessOrEmployee: Bool = false
+    
     var onNavigateToEditProfile: () -> Void
+    var onNavigateToMyCalendar: () -> Void
+    var onShareProfile: () -> Void
     
     var body: some View {
-        HStack {
-            Button {
-                onNavigateToEditProfile()
-            } label: {
-                Text("Editeaza profilul")
-            }
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .fontWeight(.semibold)
-            .foregroundColor(Color.onSurfaceSB)
-            .background(
-                RoundedRectangle(cornerRadius: 50)
-                    .fill(Color.surfaceSB)
+        HStack(spacing: 8) {
+            ProfileActionButton(
+                title: String(localized: "editProfile"),
+                onClick: onNavigateToEditProfile
             )
             
-            Button {
-                
+            if isBusinessOrEmployee {
+                ProfileActionButton(
+                    title: "Calendar",
+                    startIcon: "calendar",
+                    onClick: onNavigateToMyCalendar
+                )
+            } else {
+                ProfileActionButton(
+                    title: String(localized: "shareProfile"),
+                    onClick: onShareProfile
+                )
             }
-            label: {
-                HStack {
-                    Image(systemName: "calendar")
-                    Text("Calendar")
-                }
-            }
-            .frame(maxWidth: .infinity, minHeight: 50)
-            .fontWeight(.semibold)
-            .foregroundColor(Color.onSurfaceSB)
-            .background(
-                RoundedRectangle(cornerRadius: 50)
-                    .fill(Color.surfaceSB)
-            )
         }
         .padding(.horizontal)
     }
-}
-
-#Preview {
-    MyProfileActionsView(onNavigateToEditProfile: {})
 }

@@ -12,26 +12,31 @@ struct ProfileUserInfoView: View {
     var fullName: String
     var profession: String
     var isBusinessOrEmployee: Bool
-    var ratingsAverage: Decimal
+    var ratingsAverage: Float
     var openingHours: OpeningHours
     var onShowOpeningHoursSheet: () -> Void
     
     var body: some View {
         HStack(spacing: 15) {
             AvatarView(
-                imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
+                imageURL: url,
                 size: .xxl,
                 isOpen: isBusinessOrEmployee ? openingHours.openNow : nil,
             )
             
-            VStack(alignment: .leading, spacing: 7) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text(fullName)
                     .font(.headline.bold())
-                HStack {
+                
+                HStack(spacing: 6) {
                     Text(profession)
+                        .font(.subheadline)
+                        .foregroundColor(.gray)
+                    
                     Image(systemName: "star.fill")
                         .foregroundColor(.primarySB)
-                    Text("\(ratingsAverage)")
+                    
+                    Text("\(ratingsAverage.formatRating())")
                         .font(.headline.bold())
                 }
                 

@@ -295,6 +295,7 @@
 "users" = "Utilizatori";
 "notFoundUsers" = "Nu au fost găsiți utilizatori";
 "details" = "Detalii";
+"bookNow" = "Rezervă acum";
 
 /* --- NOTIFICATIONS --- */
 "notification_received_new" = "ai primit o notificare nouă";

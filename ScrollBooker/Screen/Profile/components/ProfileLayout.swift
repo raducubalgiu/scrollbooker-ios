@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct ProfileLayout<Header: View, Actions: View>: View {
-    var user: UserProfile
-    var onNavigateToUserSocial: () -> Void
-    var onNavigateToUserProfile: () -> Void
-    
-    @State private var showOpeningHoursSheet = false
+    let user: UserProfile
+    let onNavigateToUserSocial: () -> Void
+    let onNavigateToUserProfile: () -> Void
+    let onShowOpeningHours: () -> Void
     
     @ViewBuilder var header: () -> Header
     @ViewBuilder var actions: () -> Actions
@@ -27,7 +26,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                         counters: user.counters,
                         onNavigateToUserSocial: onNavigateToUserSocial
                     )
-                    .padding(.vertical, .xl)
+                    .padding(.vertical, .base)
 
                     ProfileUserInfoView(
                         url: user.avatarURL,
@@ -36,7 +35,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                         isBusinessOrEmployee: user.isBusinessOrEmployee,
                         ratingsAverage: user.counters.ratingsAverage,
                         openingHours: user.openingHours,
-                        onShowOpeningHoursSheet: { showOpeningHoursSheet = true }
+                        onShowOpeningHoursSheet: onShowOpeningHours
                     )
 
                     actions()
@@ -48,19 +47,17 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                         )
                     }
 
-// Phase 2
-//                    ProfileContactView()
-
                     if let description = user.bio {
-                        ProfileDescriptionView(description: description)
+                        Text(description)
+                            .font(.subheadline)
+                            .multilineTextAlignment(.center)
+                            .padding(.horizontal, .xxl)
                     }
                     
-//                    ProfileTabView()
-                }
-                .sheet(isPresented: $showOpeningHoursSheet) {
-                    OpeningHoursSheetView()
+                    // ProfileTabView() -> Va folosi datele din noul tău ProfileController
                 }
             }
+            .scrollIndicators(.hidden)
         }
     }
 }

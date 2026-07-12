@@ -27,12 +27,18 @@ final class UserProfileModule {
         GetUserProfileUseCase(repository: repository)
     }()
     
-    func makeProfileViewModel(
-        session: SessionManager
-    ) -> ProfileViewModel {
-        ProfileViewModel(
+    func makeMyProfileViewModel(session: SessionManager) -> MyProfileViewModel {
+        MyProfileViewModel(
             session: session,
-            getUserProfileUseCase: getUserProfileUseCase
+            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase)
+        )
+    }
+
+    func makeUserProfileViewModel(userId: Int, username: String) -> UserProfileViewModel {
+        UserProfileViewModel(
+            userId: userId,
+            username: username,
+            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase)
         )
     }
 }

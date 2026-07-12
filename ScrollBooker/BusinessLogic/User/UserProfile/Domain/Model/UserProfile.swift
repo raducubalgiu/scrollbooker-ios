@@ -50,7 +50,7 @@ struct UserCounters: Codable, Hashable, Sendable {
     let productsCount: Int
     let postsCount: Int
     let ratingsCount: Int
-    let ratingsAverage: Decimal
+    let ratingsAverage: Float
 }
 
 struct OpeningHours: Codable, Hashable, Sendable {

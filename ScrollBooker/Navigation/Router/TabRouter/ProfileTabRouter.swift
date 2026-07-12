@@ -11,7 +11,7 @@ struct ProfileTabRouter: View {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
     var router: Router
-    @State private var viewModel: ProfileViewModel?
+    @State private var viewModel: MyProfileViewModel?
     
     var body: some View {
         @Bindable var bindableRouter = router
@@ -19,15 +19,14 @@ struct ProfileTabRouter: View {
         NavigationStack(path: $bindableRouter.profilePath) {
             Group {
                 if let stableViewModel = viewModel {
-                    ProfileScreen(
+                    MyProfileScreen(
                         viewModel: stableViewModel,
                         onNavigateToEditProfile: { router.push(.editProfile) },
                         onNavigateToSettings: { router.push(.mySettings) },
                         onNavigateToMyBusiness: { router.push(.myBusiness) },
                         onNavigateToUserProfile: { },
-                        onNavigateToUserSocial: {
-                            router.push(.userSocial(userId: 13, username: "radu_ion", initialTab: .followers, isBusinessOrEmployee: true, initialFollowersCount: 100, initialFollowingsCount: 200))
-                        }
+                        onNavigateToUserSocial: {},
+                        onNavigateToMyCalendar: {}
                     )
                 } else {
                     ProgressView()
@@ -147,7 +146,7 @@ struct ProfileTabRouter: View {
         }
         .onAppear {
             if viewModel == nil {
-                viewModel = container.userProfileModule.makeProfileViewModel(session: session)
+                viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
             }
         }
     }

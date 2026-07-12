@@ -7,17 +7,20 @@
 
 import SwiftUI
 
+import SwiftUI
+import Observation
+
+@Observable
 @MainActor
-final class Router: ObservableObject {
-    @Published var feedPath = NavigationPath()
-    @Published var inboxPath = NavigationPath()
-    @Published var searchPath  = NavigationPath()
-    @Published var appointmentsPath = NavigationPath()
-    @Published var profilePath = NavigationPath()
+final class Router {
+    var feedPath = NavigationPath()
+    var inboxPath = NavigationPath()
+    var searchPath = NavigationPath()
+    var appointmentsPath = NavigationPath()
+    var profilePath = NavigationPath()
     
-    @Published var selectedTab: MainTab = .feed
+    var selectedTab: MainTab = .feed
     
-    /// Adaugă un ecran nou pe stiva tab-ului curent (Push)
     func push(_ route: Route) {
         switch selectedTab {
         case .feed: feedPath.append(route)
@@ -28,8 +31,6 @@ final class Router: ObservableObject {
         }
     }
     
-    /// Șterge ultimul ecran de pe stiva tab-ului curent (Back / Pop)
-    /// Util pentru butoane custom de „Înapoi” din interfață
     func pop() {
         switch selectedTab {
         case .feed: if !feedPath.isEmpty { feedPath.removeLast() }
@@ -40,8 +41,6 @@ final class Router: ObservableObject {
         }
     }
     
-    /// Resetează IMEDIAT doar tab-ul curent înapoi la ecranul principal (Pop to Root)
-    /// Folosit când utilizatorul apasă din nou pe iconița tab-ului activ din tab bar
     func popToRoot() {
         switch selectedTab {
         case .feed: feedPath = .init()
@@ -52,7 +51,6 @@ final class Router: ObservableObject {
         }
     }
     
-    /// Resetează absolut toate stivele din aplicație (ex: la Logout)
     func resetAll() {
         feedPath = .init()
         inboxPath = .init()
@@ -60,6 +58,6 @@ final class Router: ObservableObject {
         appointmentsPath = .init()
         profilePath = .init()
     }
- }
+}
 
 enum MainTab: Int { case feed, inbox, search, appointments, profile }

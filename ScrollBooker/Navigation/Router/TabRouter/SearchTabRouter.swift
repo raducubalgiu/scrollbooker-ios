@@ -8,17 +8,29 @@
 import SwiftUI
 
 struct SearchTabRouter: View {
-    @ObservedObject var router: Router
+    var router: Router
     
     var body: some View {
-        NavigationStack(path: $router.searchPath) {
+        @Bindable var bindableRouter = router
+        
+        NavigationStack(path: $bindableRouter.searchPath) {
             SearchScreen(
                 onNavigateToBusinessProfile: { id in
                     router.push(.businessProfile(id: id))
                 }
             )
-                .withGlobalNavigation()
+            .withNavigation { route in
+                switch route {
+                    case .businessProfile(_):
+                        BusinessProfileScreen()
+                            .toolbar(.hidden, for: .tabBar)
+                    default:
+                        nil
+                    }
+            }
         }
+        .toolbar(router.searchPath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }
+
 

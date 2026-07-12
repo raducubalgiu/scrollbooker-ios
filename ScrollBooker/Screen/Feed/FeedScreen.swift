@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct FeedScreen: View {
-    @EnvironmentObject var router: Router
     @StateObject private var viewModel = FeedViewModel()
     @Environment(\.scenePhase) private var scenePhase
 

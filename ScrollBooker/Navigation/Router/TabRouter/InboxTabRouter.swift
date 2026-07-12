@@ -9,11 +9,13 @@ import SwiftUI
 
 struct InboxTabRouter: View {
     @EnvironmentObject private var container: AppContainer
-    @ObservedObject var router: Router
+    var router: Router
     @State private var inboxViewModel: InboxViewModel?
     
     var body: some View {
-        NavigationStack(path: $router.inboxPath) {
+        @Bindable var bindableRouter = router
+        
+        NavigationStack(path: $bindableRouter.inboxPath) {
             Group {
                 if let viewModel = inboxViewModel {
                     InboxScreen(viewModel: viewModel, onNavigateToAppointmentDetails: { id in
@@ -27,15 +29,12 @@ struct InboxTabRouter: View {
                 switch route {
                     case .employmentRequestRespond:
                         EmploymentRespondScreen(
-                            onBack: { router.pop() },
+                            onBack: { router.pop() }
                         )
-                            .toolbar(.hidden, for: .navigationBar)
-                        
                     case .employmentRequestRespondConsent:
                         EmploymentRespondConsentScreen(
-                            onBack: { router.pop() },
+                            onBack: { router.pop() }
                         )
-                            .toolbar(.hidden, for: .navigationBar)
                     default:
                         nil
                     }
@@ -44,8 +43,11 @@ struct InboxTabRouter: View {
         .toolbar(router.inboxPath.isEmpty ? .visible : .hidden, for: .tabBar)
         .onAppear {
             if inboxViewModel == nil {
-                inboxViewModel = container.notificationModule.makeNotificationsViewModel()
+                Task { @MainActor in
+                    inboxViewModel = container.notificationModule.makeNotificationsViewModel()
+                }
             }
         }
     }
 }
+

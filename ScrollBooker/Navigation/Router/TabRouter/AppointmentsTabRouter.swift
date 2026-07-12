@@ -9,19 +9,22 @@ import SwiftUI
 
 struct AppointmentsTabRouter: View {
     @EnvironmentObject private var container: AppContainer
-    @ObservedObject var router: Router
+    var router: Router
     @State private var viewModel: AppointmentsViewModel?
 
     var body: some View {
-        NavigationStack(path: $router.appointmentsPath) {
+        @Bindable var bindableRouter = router
+        
+        NavigationStack(path: $bindableRouter.appointmentsPath) {
             Group {
                 if let viewModel = viewModel {
                     AppointmentsScreen(
                         viewModel: viewModel,
-                        onNavigateToAppointmentDetails: { id in router.push(.appointmentDetails(id: id)
-                        )
-                }
-            )} else {
+                        onNavigateToAppointmentDetails: { id in
+                            router.push(.appointmentDetails(id: id))
+                        }
+                    )
+                } else {
                     ProgressView()
                 }
             }
@@ -30,7 +33,9 @@ struct AppointmentsTabRouter: View {
         .toolbar(router.appointmentsPath.isEmpty ? .visible : .hidden, for: .tabBar)
         .onAppear {
             if viewModel == nil {
-                viewModel = container.appointmentModule.makeAppointmentsViewModel()
+                Task { @MainActor in
+                    viewModel = container.appointmentModule.makeAppointmentsViewModel()
+                }
             }
         }
     }

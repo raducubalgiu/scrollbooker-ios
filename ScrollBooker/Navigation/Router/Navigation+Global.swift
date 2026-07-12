@@ -12,68 +12,58 @@ enum DestinationResult<V: View> {
     case unhandled
 }
 
+import SwiftUI
+
 struct GlobalNavigationModifier: ViewModifier {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
-    @EnvironmentObject private var router: Router
-    
+    @Environment(Router.self) private var router
+
     let localDestination: (Route) -> (any View)?
     
     func body(content: Content) -> some View {
         content
             .navigationDestination(for: Route.self) { route in
-                if let localView = localDestination(route) {
-                    AnyView(localView)
-                } else {
-                    globalScreen(for: route)
+                Group {
+                    if let localView = localDestination(route) {
+                        AnyView(localView)
+                    } else {
+                        globalScreen(for: route)
+                    }
                 }
+                .toolbar(.hidden, for: .navigationBar)
             }
     }
     
     @ViewBuilder
     private func globalScreen(for route: Route) -> some View {
         switch route {
-            case .appointmentDetails(let id):
-                AppointmentDetailsScreen(
-                    viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
-                        appointmentId: id,
-                        session: session,
-                        createReviewUseCase: container.reviewModule.createReviewUseCase,
-                        updateReviewUseCase: container.reviewModule.updateReviewUseCase
-                    ),
-                    onBack: { router.pop() }
-                )
-                    .toolbar(.hidden, for: .navigationBar)
-                
-            case .userSocial(
-                let userId,
-                let username,
-                let initialTab,
-                let isBusinessOrEmployee,
-                let followers,
-                let followings
-            ):
-                SocialScreen(
-                    viewModel: container.followModule.makeSocialViewModel(userId: userId),
-                    onBack: { router.pop() },
-                    username: username,
-                    initialTab: initialTab,
-                    isBusinessOrEmployee: isBusinessOrEmployee,
-                    initialFollowersCount: followers,
-                    initialFollowingsCount: followings
-                )
-                    .toolbar(.hidden, for: .navigationBar)
-                
-        case .businessProfile(_):
-                BusinessProfileScreen()
-                    .toolbar(.hidden, for: .navigationBar)
-                    .toolbar(.hidden, for: .tabBar)
-                
-            default:
-                Text("Route \(String(describing: route)) not implemented globally")
-            }
+        case .appointmentDetails(let id):
+            AppointmentDetailsScreen(
+                viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
+                    appointmentId: id,
+                    session: session,
+                    createReviewUseCase: container.reviewModule.createReviewUseCase,
+                    updateReviewUseCase: container.reviewModule.updateReviewUseCase
+                ),
+                onBack: { router.pop() }
+            )
+        case .userSocial(let userId, let username, let initialTab, let isBusinessOrEmployee, let followers, let followings):
+            SocialScreen(
+                viewModel: container.followModule.makeSocialViewModel(userId: userId),
+                onBack: { router.pop() },
+                username: username,
+                initialTab: initialTab,
+                isBusinessOrEmployee: isBusinessOrEmployee,
+                initialFollowersCount: followers,
+                initialFollowingsCount: followings
+            )
+        default:
+            Text("Route \(String(describing: route)) not implemented globally")
+        }
     }
 }
+
 
 extension View {
     func withNavigation(localDestination: @escaping (Route) -> (any View)?) -> some View {

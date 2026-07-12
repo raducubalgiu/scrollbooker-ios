@@ -10,11 +10,13 @@ import SwiftUI
 struct ProfileTabRouter: View {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
-    @ObservedObject var router: Router
+    var router: Router
     @State private var viewModel: ProfileViewModel?
     
     var body: some View {
-        NavigationStack(path: $router.profilePath) {
+        @Bindable var bindableRouter = router
+        
+        NavigationStack(path: $bindableRouter.profilePath) {
             Group {
                 if let stableViewModel = viewModel {
                     ProfileScreen(
@@ -31,6 +33,7 @@ struct ProfileTabRouter: View {
                     ProgressView()
                 }
             }
+            .toolbar(router.profilePath.isEmpty ? .visible : .hidden, for: .tabBar)
             .withNavigation { route in
                 switch route {
                     // MARK: - Settings Flow
@@ -147,6 +150,5 @@ struct ProfileTabRouter: View {
                 viewModel = container.userProfileModule.makeProfileViewModel(session: session)
             }
         }
-        .toolbar(router.profilePath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }

@@ -37,6 +37,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
         fullName: String? = nil,
         username: String? = nil,
         gender: String? = nil,
+        dateOfBirth: String? = nil,
         bio: String? = nil,
         isFollow: Bool? = nil
     ) -> UserProfile {

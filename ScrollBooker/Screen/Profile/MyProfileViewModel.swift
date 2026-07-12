@@ -27,19 +27,24 @@ final class MyProfileViewModel: HasLoadingState {
         set { profileController.errorMessage = newValue }
     }
     
+    var selectedBirthdate: Date = Date()
+    
     let updateUserFullNameUseCase: UpdateUserFullNameUseCase
     let updateUserGenderUseCase: UpdateUserGenderUseCase
+    let updateUserBirthdateUseCase: UpdateUserBirthdateUseCase
     
     init(
         session: SessionManager,
         profileController: ProfileController,
         updateUserFullNameUseCase: UpdateUserFullNameUseCase,
-        updateUserGenderUseCase: UpdateUserGenderUseCase
+        updateUserGenderUseCase: UpdateUserGenderUseCase,
+        updateUserBirthdateUseCase: UpdateUserBirthdateUseCase
     ) {
         self.session = session
         self.profileController = profileController
         self.updateUserFullNameUseCase = updateUserFullNameUseCase
         self.updateUserGenderUseCase = updateUserGenderUseCase
+        self.updateUserBirthdateUseCase = updateUserBirthdateUseCase
     }
     
     func loadProfile() async {
@@ -78,6 +83,30 @@ final class MyProfileViewModel: HasLoadingState {
         isLoading = false
     }
     
+    func updateBirthDate() async {
+        guard !isLoading else { return }
+        isLoading = true
+        errorMessage = nil
+        
+        let formatter = ISO8601DateFormatter()
+        formatter.formatOptions = [.withFullDate]
+        let birthDateString = formatter.string(from: selectedBirthdate)
+        
+        do {
+            let result = try await withVisibleLoading {
+                try await updateUserBirthdateUseCase(birthdate: birthDateString)
+            }
+            
+            if let currentProfile = profileController.uiState.data {
+                profileController.uiState.data = currentProfile.copy(dateOfBirth: birthDateString)
+            }
+            isSaved = true
+        } catch {
+            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+        isLoading = false
+    }
+
     func updateGender(genderEnum: GenderTypeEnum) async {
         guard !isLoading else { return }
         

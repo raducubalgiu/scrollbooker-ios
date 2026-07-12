@@ -103,10 +103,17 @@ struct ProfileTabRouter: View {
                         }
                         
                     case .editBirthdate:
-                        EditBirthdateScreen(
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
+                        if let stableViewModel = viewModel {
+                            EditBirthdateScreen(
+                                viewModel: stableViewModel,
+                                onBack: { router.pop() }
+                            )
+                        } else {
+                            LoadingView()
+                                .onAppear {
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                }
+                        }
                         
                     // MARK: - My Business Flow
                     case .myBusiness:

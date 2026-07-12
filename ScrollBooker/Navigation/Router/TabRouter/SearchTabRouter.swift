@@ -11,22 +11,12 @@ struct SearchTabRouter: View {
     @ObservedObject var router: Router
     
     var body: some View {
-        NavigationStack(path: $router.inboxPath) {
-            SearchScreen(
-                onNavigateToBusinessProfile: { id in
-                    router.push(.businessProfile(id: id))
-                }
-            )
-                .navigationDestination(for: Route.self) { route in
-                    switch route {
-                        case .businessProfile(let id):
-                            BusinessProfileScreen()
-                                .navigationBarHidden(true)
-                                .toolbar(.hidden, for: .tabBar)
-                        
-                        default: Text("Route not in Feed")
-                    }
-                }
+        NavigationStack(path: $router.searchPath) {
+            SearchScreen(onNavigateToBusinessProfile: { id in
+                router.push(.businessProfile(id: id))
+            })
+            .withGlobalNavigation()
         }
     }
 }
+

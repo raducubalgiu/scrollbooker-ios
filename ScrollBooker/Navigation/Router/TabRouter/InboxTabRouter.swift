@@ -9,49 +9,32 @@ import SwiftUI
 
 struct InboxTabRouter: View {
     @EnvironmentObject private var container: AppContainer
-    @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
-    
     @State private var inboxViewModel: InboxViewModel?
     
     var body: some View {
         NavigationStack(path: $router.inboxPath) {
             Group {
                 if let viewModel = inboxViewModel {
-                    InboxScreen(
-                        viewModel: viewModel,
-                        onNavigateToAppointmentDetails: { id in
-                            router.push(.appointmentDetails(id: id))
-                        }
-                    )
+                    InboxScreen(viewModel: viewModel, onNavigateToAppointmentDetails: { id in
+                        router.push(.appointmentDetails(id: id))
+                    })
                 } else {
-                    Color.clear
+                    ProgressView()
                 }
             }
-            .navigationDestination(for: Route.self) { route in
+            .withNavigation { route in
                 switch route {
-                    case .employmentRequestRespond:
-                        EmploymentRespondScreen()
-                        
-                    case .employmentRequestRespondConsent:
-                        EmploymentRespondConsentScreen()
-                    
-                    case .appointmentDetails(id: let id):
-                        AppointmentDetailsScreen(
-                            viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
-                                appointmentId: id,
-                                session: session,
-                                createReviewUseCase: container.reviewModule.createReviewUseCase,
-                                updateReviewUseCase: container.reviewModule.updateReviewUseCase
-                            )
-                        )
-                        .navigationBarHidden(true)
-                        
-                    default:
-                        Text("Route not in Inbox")
+                case .employmentRequestRespond:
+                    EmploymentRespondScreen()
+                case .employmentRequestRespondConsent:
+                    EmploymentRespondConsentScreen()
+                default:
+                    nil
                 }
             }
         }
+        .toolbar(router.inboxPath.isEmpty ? .visible : .hidden, for: .tabBar)
         .onAppear {
             if inboxViewModel == nil {
                 inboxViewModel = container.notificationModule.makeNotificationsViewModel()

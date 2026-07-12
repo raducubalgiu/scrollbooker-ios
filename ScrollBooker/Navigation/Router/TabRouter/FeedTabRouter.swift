@@ -13,26 +13,23 @@ struct FeedTabRouter: View {
     
     var body: some View {
         NavigationStack(path: $router.feedPath) {
-            FeedScreen(
-                onNavigateToFeedSearch: { router.push(.feedSearch) }
-            )
+            FeedScreen(onNavigateToFeedSearch: { router.push(.feedSearch) })
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black)
             .toolbarBackground(Color.black, for: .tabBar)
             .toolbarBackground(.visible, for: .tabBar)
             .toolbarColorScheme(.dark, for: .tabBar)
-            .navigationDestination(for: Route.self) { route in
+            .withNavigation { route in
                 switch route {
-                    case .feedSearch:
-                        FeedSearchScreen(
-                            viewModel: container.searchModule.makeFeedSearchViewModel()
-                        )
-                            .navigationBarHidden(true)
-                    
-                    default: Text("Route not in Feed")
+                case .feedSearch:
+                    FeedSearchScreen(viewModel: container.searchModule.makeFeedSearchViewModel())
+                        .toolbar(.hidden, for: .navigationBar)
+                default:
+                    nil
                 }
             }
         }
         .toolbar(router.feedPath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }
+

@@ -12,6 +12,7 @@ struct Header: View {
     var enableBack: Bool = true
     var onBack: (() -> Void)? = nil
 
+    @EnvironmentObject private var router: Router
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
@@ -22,7 +23,16 @@ struct Header: View {
                         if let onBack {
                             onBack()
                         } else {
-                            dismiss()
+                            if  router.feedPath.isEmpty &&
+                                router.inboxPath.isEmpty &&
+                                router.searchPath.isEmpty &&
+                                router.appointmentsPath.isEmpty &&
+                                router.profilePath.isEmpty
+                            {
+                                dismiss()
+                            } else {
+                                router.pop()
+                            }
                         }
                     } label: {
                         Image(systemName: "chevron.left")
@@ -35,7 +45,9 @@ struct Header: View {
             .frame(width: 44, height: 44)
 
             Spacer()
-            Text(title).font(.headline).foregroundColor(.onBackgroundSB)
+            Text(title)
+                .font(.headline)
+                .foregroundColor(.onBackgroundSB)
             Spacer()
             VStack { }.frame(width: 44, height: 44)
         }

@@ -8,8 +8,13 @@
 import SwiftUI
 
 struct EmploymentRespondConsentScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: String(localized: "termsAndConditions"))
+        HeaderView(
+            title: String(localized: "termsAndConditions"),
+            onBack: onBack
+        )
         
         VStack {
             ScrollView {
@@ -43,10 +48,14 @@ struct EmploymentRespondConsentScreen: View {
 }
 
 #Preview("Light") {
-    EmploymentRespondConsentScreen()
+    EmploymentRespondConsentScreen(
+        onBack: {}
+    )
 }
 
 #Preview("Dark") {
-    EmploymentRespondConsentScreen()
+    EmploymentRespondConsentScreen(
+        onBack: {}
+    )
         .preferredColorScheme(.dark)
 }

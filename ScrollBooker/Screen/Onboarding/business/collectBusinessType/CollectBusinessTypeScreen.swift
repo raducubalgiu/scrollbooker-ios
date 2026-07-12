@@ -13,6 +13,7 @@ struct CollectBusinessTypeScreen: View {
             headline: "Ce business ai?",
             subHeadline: "Alege categoria care descrie cel mai bine activitatea ta",
             buttonTitle: "Pasul urmator",
+            onBack: {}
         ) {
             
         }

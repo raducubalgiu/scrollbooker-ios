@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MyServicesScreen: View {
     let viewModel: MyServicesViewModel
+    var onBack: () -> Void
     
     private var isButtonDisabled: Bool {
         viewModel.isLoading || viewModel.selectedServiceIds.isEmpty || !viewModel.hasChanges
@@ -23,6 +24,7 @@ struct MyServicesScreen: View {
             buttonTitle: String(localized: "save"),
             isDisabled: isButtonDisabled,
             isLoading: viewModel.isLoading,
+            onBack: onBack,
             onClick: {
                 Task {
                     await viewModel.updateBusinessServices()

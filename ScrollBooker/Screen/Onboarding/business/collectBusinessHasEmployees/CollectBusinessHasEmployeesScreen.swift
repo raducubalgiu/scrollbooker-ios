@@ -13,6 +13,7 @@ struct CollectBusinessHasEmployeesScreen: View {
             headline: "Ai angajati care primesc programari?",
             subHeadline: "",
             buttonTitle: "Pasul urmator",
+            onBack: {}
         ) {
             Text(
                 "Daca da, fiecare angajat va avea propriul calendar si isi va gestiona propriile produse separat."

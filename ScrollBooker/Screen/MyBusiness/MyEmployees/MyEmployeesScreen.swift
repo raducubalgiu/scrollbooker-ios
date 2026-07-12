@@ -21,7 +21,7 @@ struct MyEmployeesScreen: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            Header(
+            HeaderView(
                 title: String(localized: "employees"),
                 enableBack: true,
                 onBack: onBack

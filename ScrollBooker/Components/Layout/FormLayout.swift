@@ -17,7 +17,7 @@ struct FormLayout<Content: View>: View {
     var isDisabled: Bool = false
     var isLoading: Bool = false
     
-    var onBack: (() -> Void)? = nil
+    var onBack: () -> Void
     var onClick: (() -> Void) = {  }
     
     @ViewBuilder var content: () -> Content
@@ -25,7 +25,7 @@ struct FormLayout<Content: View>: View {
     var body: some View {
         VStack {
             if(enableBack) {
-                Header(
+                HeaderView(
                     enableBack: true,
                     onBack: onBack
                 )
@@ -70,6 +70,7 @@ struct FormLayout<Content: View>: View {
         headline: "Logare",
         subHeadline: "Please login to continue",
         buttonTitle: "Login",
+        onBack: {},
         onClick: {  }
     ) {
         Text("Some View")
@@ -81,6 +82,7 @@ struct FormLayout<Content: View>: View {
         headline: "Logare",
         subHeadline: "Please login to continue",
         buttonTitle: "Login",
+        onBack: {},
         onClick: {  }
     ) {
         Text("Some View")

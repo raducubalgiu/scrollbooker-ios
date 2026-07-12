@@ -17,8 +17,13 @@ let texts = [
 ]
 
 struct EmploymentRespondScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: "")
+        HeaderView(
+            title: "",
+            onBack: onBack
+        )
         
         ScrollView {
             VStack(alignment: .leading) {
@@ -58,10 +63,14 @@ struct EmploymentRespondScreen: View {
 }
 
 #Preview("Light") {
-    EmploymentRespondScreen()
+    EmploymentRespondScreen(
+        onBack: {}
+    )
 }
 
 #Preview("Dark") {
-    EmploymentRespondScreen()
+    EmploymentRespondScreen(
+        onBack: {}
+    )
         .preferredColorScheme(.dark)
 }

@@ -8,23 +8,14 @@
 import SwiftUI
 
 struct EditBirthdateScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: String(localized: "birthdate"))
+        HeaderView(
+            title: String(localized: "birthdate"),
+            onBack: onBack
+        )
         
         Spacer()
     }
 }
-
-#Preview("Light") {
-    EditBirthdateScreen()
-    
-    Spacer()
-}
-
-#Preview("Dark") {
-    EditBirthdateScreen()
-        .preferredColorScheme(.dark)
-    
-    Spacer()
-}
-

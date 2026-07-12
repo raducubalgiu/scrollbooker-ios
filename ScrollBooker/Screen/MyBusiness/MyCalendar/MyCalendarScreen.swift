@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct MyCalendarScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: String(localized: "myCalendar"))
+        HeaderView(
+            title: String(localized: "myCalendar"),
+            onBack: onBack
+        )
         
         Spacer()
     }
-}
-
-#Preview {
-    MyCalendarScreen()
 }

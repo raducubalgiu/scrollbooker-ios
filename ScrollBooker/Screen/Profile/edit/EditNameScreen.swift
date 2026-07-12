@@ -8,22 +8,14 @@
 import SwiftUI
 
 struct EditNameScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: String(localized: "name"))
+        HeaderView(
+            title: String(localized: "name"),
+            onBack: onBack
+        )
         
         Spacer()
     }
-}
-
-#Preview("Light") {
-    EditNameScreen()
-    
-    Spacer()
-}
-
-#Preview("Dark") {
-    EditNameScreen()
-        .preferredColorScheme(.dark)
-    
-    Spacer()
 }

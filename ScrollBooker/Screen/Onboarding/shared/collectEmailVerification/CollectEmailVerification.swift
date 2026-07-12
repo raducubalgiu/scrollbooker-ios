@@ -15,7 +15,8 @@ struct CollectEmailVerification: View {
             headline: "Email Verification",
             subHeadline: "",
             buttonTitle: "Verify",
-            onClick: { Task { await session.verifyEmail() } }
+            onBack: {},
+            onClick: { Task { await session.verifyEmail() } },
         ) {
             
         }

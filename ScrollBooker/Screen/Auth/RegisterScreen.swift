@@ -28,6 +28,7 @@ struct RegisterScreen: View {
             headline: String(localized: "register"),
             subHeadline: String(localized: "registerMessage"),
             enableBottomButton: false,
+            onBack: {}
         ) {
             Input(
                 label: String(localized: "email"),

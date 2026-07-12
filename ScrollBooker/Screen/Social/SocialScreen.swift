@@ -9,6 +9,8 @@ import SwiftUI
 
 struct SocialScreen: View {
     let viewModel: SocialViewModel
+    var onBack: () -> Void
+    
     let username: String
     let isBusinessOrEmployee: Bool
     
@@ -19,6 +21,7 @@ struct SocialScreen: View {
     
     init(
         viewModel: SocialViewModel,
+        onBack: @escaping () -> Void,
         username: String,
         initialTab: SocialTab,
         isBusinessOrEmployee: Bool,
@@ -26,6 +29,7 @@ struct SocialScreen: View {
         initialFollowingsCount: Int
     ) {
         self.viewModel = viewModel
+        self.onBack = onBack
         self.username = username
         self.isBusinessOrEmployee = isBusinessOrEmployee
         self.initialFollowersCount = initialFollowersCount
@@ -35,7 +39,10 @@ struct SocialScreen: View {
     
     var body: some View {
             VStack(spacing: 0) {
-                Header(title: "@\(username)")
+                HeaderView(
+                    title: "@\(username)",
+                    onBack: onBack
+                )
                 
                 SocialTabsView(
                     selectedTab: $selectedTab,

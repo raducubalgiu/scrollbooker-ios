@@ -9,15 +9,15 @@ import SwiftUI
 
 struct FeedSearchScreen: View {
     @Bindable var viewModel: FeedSearchViewModel
+    var onBack: () -> Void
     
-    @Environment(\.dismiss) private var dismiss
     @FocusState private var isSearchFieldFocused: Bool
     
     var body: some View {
         VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Button(action: {
-                    dismiss()
+                    onBack()
                 }) {
                     Image(systemName: "chevron.left")
                         .font(.title2)

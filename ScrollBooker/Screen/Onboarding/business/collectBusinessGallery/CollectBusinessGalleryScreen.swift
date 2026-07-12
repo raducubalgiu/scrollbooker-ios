@@ -13,6 +13,7 @@ struct CollectBusinessGalleryScreen: View {
             headline: "Galerie Foto",
             subHeadline: "Incarca cateva imagini de la locatie - o prezentare vizuala buna atrage mai multi clienti",
             buttonTitle: "Pasul urmator",
+            onBack: {}
         ) {
             
         }

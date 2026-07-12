@@ -9,10 +9,14 @@ import SwiftUI
 
 struct EditProfileScreen: View {
     var onNavigate: (Route) -> Void
+    var onBack: () -> Void
     
     var body: some View {
         VStack {
-            Header(title: String(localized: "editProfile"))
+            HeaderView(
+                title: String(localized: "editProfile"),
+                onBack: onBack
+            )
             
             VStack(alignment: .leading) {
                 Text(String(localized: "aboutYou"))
@@ -135,13 +139,4 @@ struct EditProfileScreen: View {
             .padding(.horizontal)
         }
     }
-}
-
-#Preview("Light") {
-    EditProfileScreen { _ in }
-}
-
-#Preview("Dark") {
-    EditProfileScreen { _ in }
-        .preferredColorScheme(.dark)
 }

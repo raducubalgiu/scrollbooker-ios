@@ -16,6 +16,7 @@ struct RegisterBusinessScreen: View {
             headline: String(localized: "registerBusiness"),
             subHeadline: String(localized: "registerBusinessDescription"),
             enableBottomButton: false,
+            onBack: {}
         ) {
             Input(
                 label: "Email",

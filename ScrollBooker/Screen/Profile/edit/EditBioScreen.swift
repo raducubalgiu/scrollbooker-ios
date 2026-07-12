@@ -8,22 +8,14 @@
 import SwiftUI
 
 struct EditBioScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: String(localized: "biography"))
+        HeaderView(
+            title: String(localized: "biography"),
+            onBack: onBack
+        )
         
         Spacer()
     }
-}
-
-#Preview("Light") {
-    EditBioScreen()
-    
-    Spacer()
-}
-
-#Preview("Dark") {
-    EditBioScreen()
-        .preferredColorScheme(.dark)
-    
-    Spacer()
 }

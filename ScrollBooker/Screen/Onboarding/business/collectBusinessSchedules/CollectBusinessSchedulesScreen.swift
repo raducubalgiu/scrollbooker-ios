@@ -13,6 +13,7 @@ struct CollectBusinessSchedulesScreen: View {
             headline: "Schedules",
             subHeadline: "Adauga serviciile pe care le desfasori la locatie",
             buttonTitle: "Pasul urmator",
+            onBack: {}
         ) {
             
         }

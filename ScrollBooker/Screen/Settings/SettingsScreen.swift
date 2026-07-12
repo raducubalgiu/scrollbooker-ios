@@ -21,9 +21,9 @@ private var settingsItems = [
 
 struct SettingsScreen: View {
     @EnvironmentObject private var session: SessionManager
-    @Environment(\.dismiss) private var dismiss
     
     var onNavigate: (Route) -> Void
+    var onBack: () -> Void
     
     var body: some View {
         NavigationView {
@@ -50,7 +50,7 @@ struct SettingsScreen: View {
             .navigationTitle("Setari")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
-                    Button(action: { dismiss() }) {
+                    Button(action: { onBack() }) {
                         Image(systemName: "chevron.left")
                             .foregroundColor(.onBackgroundSB)
                     }
@@ -63,13 +63,4 @@ struct SettingsScreen: View {
         .navigationBarBackButtonHidden(true)
         .navigationBarHidden(true)
     }
-}
-
-#Preview("Light") {
-    SettingsScreen { _ in }
-}
-
-#Preview("Dark") {
-    SettingsScreen { _ in }
-        .preferredColorScheme(.dark)
 }

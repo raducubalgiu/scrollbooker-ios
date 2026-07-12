@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MySchedulesScreen: View {
     let viewModel: MySchedulesViewModel
+    var onBack: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -24,7 +25,8 @@ struct MySchedulesScreen: View {
             case .success:
                 if !viewModel.uiState.data.isEmpty {
                     MySchedulesSectionView(
-                        viewModel: viewModel
+                        viewModel: viewModel,
+                        onBack: onBack
                     )
                 } else {
                     NoDataView(

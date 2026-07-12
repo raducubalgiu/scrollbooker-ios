@@ -9,59 +9,55 @@ import SwiftUI
 
 struct ReportProblemScreen: View {
     let viewModel: ReportProblemViewModel
-    @Environment(\.dismiss) private var dismiss
+    var onBack: () -> Void
         
     var body: some View {
         @Bindable var vm = viewModel
         
         VStack {
-                Header(title: "Raportează o problemă")
+            HeaderView(
+                title: "Raportează o problemă",
+                onBack: onBack
+            )
+            
+            VStack {
+                Textarea(
+                    text: $vm.text,
+                    label: "",
+                    placeholder: "Descrie problema aici...",
+                    height: 150
+                )
                 
-                VStack {
-                    Textarea(
-                        text: $vm.text,
-                        label: "",
-                        placeholder: "Descrie problema aici...",
-                        height: 150
-                    )
-                    
-                    if let error = viewModel.errorMessage {
-                        Text(error)
-                            .font(.caption)
-                            .foregroundColor(.errorSB)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .padding(.top, 4)
-                    }
-                    
-                    Spacer()
-                    
-                    MainButton(
-                        title: "Trimite",
-                        onClick: {
-                            Task { await viewModel.submitProblem() }
-                        },
-                        isDisabled: !viewModel.isInputValid || viewModel.isLoading,
-                        isLoading: viewModel.isLoading
-                    )
+                if let error = viewModel.errorMessage {
+                    Text(error)
+                        .font(.caption)
+                        .foregroundColor(.errorSB)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.top, 4)
                 }
-                .padding(.horizontal)
+                
+                Spacer()
+                
+                MainButton(
+                    title: "Trimite",
+                    onClick: {
+                        Task { await viewModel.submitProblem() }
+                    },
+                    isDisabled: !viewModel.isInputValid || viewModel.isLoading,
+                    isLoading: viewModel.isLoading
+                )
             }
-            .navigationBarHidden(true)
-            .background(Color.backgroundSB)
-            .onTapGesture {
-                UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+            .padding(.horizontal)
+        }
+        .navigationBarHidden(true)
+        .background(Color.backgroundSB)
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
+        .onChange(of: viewModel.isSuccess) { _, success in
+            if success {
+                onBack()
             }
-            .onChange(of: viewModel.isSuccess) { _, success in
-                if success { dismiss() }
-            }
+        }
     }
 }
-//
-//#Preview("Light") {
-//    ReportProblemScreen()
-//}
-//
-//#Preview("Dark") {
-//    ReportProblemScreen()
-//        .preferredColorScheme(.dark)
-//}

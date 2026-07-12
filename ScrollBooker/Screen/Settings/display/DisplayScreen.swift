@@ -9,10 +9,14 @@ import SwiftUI
 
 struct DisplayScreen: View {
     @EnvironmentObject private var themeManager: ThemeManager
+    var onBack: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: String(localized: "display"))
+            HeaderView(
+                title: String(localized: "display"),
+                onBack: onBack
+            )
             
             VStack {
                 InputRadio(
@@ -38,8 +42,4 @@ struct DisplayScreen: View {
             .padding(.horizontal, .base)
         }
     }
-}
-
-#Preview {
-    DisplayScreen()
 }

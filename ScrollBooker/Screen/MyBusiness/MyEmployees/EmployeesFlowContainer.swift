@@ -10,17 +10,21 @@ import SwiftUI
 struct EmployeesFlowContainer: View {
     let container: AppContainer
     let session: SessionManager
-
-    @Environment(\.dismiss) private var dismissFlow
+    var onBack: () -> Void
 
     @State private var viewModel: MyEmployeesViewModel
     @State private var steps: [EmploymentFlowStep] = [.list]
 
     private let iosNavigationAnimation = Animation.smooth(duration: 0.35, extraBounce: 0)
 
-    init(container: AppContainer, session: SessionManager) {
+    init(
+        container: AppContainer,
+        onBack: @escaping () -> Void,
+        session: SessionManager
+    ) {
         self.container = container
         self.session = session
+        self.onBack = onBack
         _viewModel = State(initialValue:
             container.employmentRequestModule.makeMyEmployeesViewModel(
                 session: session,
@@ -44,7 +48,7 @@ struct EmployeesFlowContainer: View {
             if steps.count > 1 {
                 steps.removeLast()
             } else {
-                dismissFlow()
+                onBack()
             }
         }
     }
@@ -69,7 +73,7 @@ struct EmployeesFlowContainer: View {
         case .list:
             MyEmployeesScreen(
                 viewModel: viewModel,
-                onBack: { dismissFlow() },
+                onBack: { onBack() },
                 onNavigateToSearchUser: { push(.selectEmployee) }
             )
         case .selectEmployee:
@@ -88,7 +92,7 @@ struct EmployeesFlowContainer: View {
             EmploymentAcceptTermsScreen(
                 viewModel: viewModel,
                 onBack: back,
-                onNext: { dismissFlow() }
+                onNext: { onBack() }
             )
         }
     }

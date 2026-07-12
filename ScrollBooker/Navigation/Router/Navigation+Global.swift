@@ -15,6 +15,7 @@ enum DestinationResult<V: View> {
 struct GlobalNavigationModifier: ViewModifier {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
+    @EnvironmentObject private var router: Router
     
     let localDestination: (Route) -> (any View)?
     
@@ -32,36 +33,45 @@ struct GlobalNavigationModifier: ViewModifier {
     @ViewBuilder
     private func globalScreen(for route: Route) -> some View {
         switch route {
-        case .appointmentDetails(let id):
-            AppointmentDetailsScreen(
-                viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
-                    appointmentId: id,
-                    session: session,
-                    createReviewUseCase: container.reviewModule.createReviewUseCase,
-                    updateReviewUseCase: container.reviewModule.updateReviewUseCase
+            case .appointmentDetails(let id):
+                AppointmentDetailsScreen(
+                    viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
+                        appointmentId: id,
+                        session: session,
+                        createReviewUseCase: container.reviewModule.createReviewUseCase,
+                        updateReviewUseCase: container.reviewModule.updateReviewUseCase
+                    ),
+                    onBack: { router.pop() }
                 )
-            )
-            .toolbar(.hidden, for: .navigationBar)
-            
-        case .userSocial(let userId, let username, let initialTab, let isBusinessOrEmployee, let followers, let followings):
-            SocialScreen(
-                viewModel: container.followModule.makeSocialViewModel(userId: userId),
-                username: username,
-                initialTab: initialTab,
-                isBusinessOrEmployee: isBusinessOrEmployee,
-                initialFollowersCount: followers,
-                initialFollowingsCount: followings
-            )
-            .toolbar(.hidden, for: .navigationBar)
-            
-        case .businessProfile(let id):
-            BusinessProfileScreen()
-                .toolbar(.hidden, for: .navigationBar)
-                .toolbar(.hidden, for: .tabBar)
-            
-        default:
-            Text("Route \(String(describing: route)) not implemented globally")
-        }
+                    .toolbar(.hidden, for: .navigationBar)
+                
+            case .userSocial(
+                let userId,
+                let username,
+                let initialTab,
+                let isBusinessOrEmployee,
+                let followers,
+                let followings
+            ):
+                SocialScreen(
+                    viewModel: container.followModule.makeSocialViewModel(userId: userId),
+                    onBack: { router.pop() },
+                    username: username,
+                    initialTab: initialTab,
+                    isBusinessOrEmployee: isBusinessOrEmployee,
+                    initialFollowersCount: followers,
+                    initialFollowingsCount: followings
+                )
+                    .toolbar(.hidden, for: .navigationBar)
+                
+        case .businessProfile(_):
+                BusinessProfileScreen()
+                    .toolbar(.hidden, for: .navigationBar)
+                    .toolbar(.hidden, for: .tabBar)
+                
+            default:
+                Text("Route \(String(describing: route)) not implemented globally")
+            }
     }
 }
 

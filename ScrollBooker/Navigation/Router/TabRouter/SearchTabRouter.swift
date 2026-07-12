@@ -12,10 +12,12 @@ struct SearchTabRouter: View {
     
     var body: some View {
         NavigationStack(path: $router.searchPath) {
-            SearchScreen(onNavigateToBusinessProfile: { id in
-                router.push(.businessProfile(id: id))
-            })
-            .withGlobalNavigation()
+            SearchScreen(
+                onNavigateToBusinessProfile: { id in
+                    router.push(.businessProfile(id: id))
+                }
+            )
+                .withGlobalNavigation()
         }
     }
 }

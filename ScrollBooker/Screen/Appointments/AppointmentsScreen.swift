@@ -13,9 +13,10 @@ struct AppointmentsScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(
+            HeaderView(
                 title: String(localized: "bookings"),
-                enableBack: false
+                enableBack: false,
+                onBack: {}
             )
 
             Group {

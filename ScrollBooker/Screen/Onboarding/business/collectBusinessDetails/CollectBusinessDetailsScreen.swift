@@ -16,7 +16,8 @@ struct CollectBusinessDetailsScreen: View {
             headline: "Prezentarea locatiei",
             subHeadline: "Spune-ne cum se numeste business-ul tau si ofera cateva detalii despre servicii sau orice crezi ca este important",
             buttonTitle: "Pasul urmator",
-            isDisabled: name.isEmpty
+            isDisabled: name.isEmpty,
+            onBack: {}
         ) {
             
             VStack(alignment: .leading) {

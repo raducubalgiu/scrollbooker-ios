@@ -8,21 +8,30 @@
 import SwiftUI
 
 struct EditGenderScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: String(localized: "gender"))
+        HeaderView(
+            title: String(localized: "gender"),
+            onBack: onBack
+        )
         
         Spacer()
     }
 }
 
 #Preview("Light") {
-    EditGenderScreen()
+    EditGenderScreen(
+        onBack: {}
+    )
     
     Spacer()
 }
 
 #Preview("Dark") {
-    EditGenderScreen()
+    EditGenderScreen(
+        onBack: {}
+    )
         .preferredColorScheme(.dark)
     
     Spacer()

@@ -14,9 +14,10 @@ struct InboxScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            Header(
+            HeaderView(
                 title: String(localized: "notifications"),
-                enableBack: false
+                enableBack: false,
+                onBack: {}
             )
 
             VStack {

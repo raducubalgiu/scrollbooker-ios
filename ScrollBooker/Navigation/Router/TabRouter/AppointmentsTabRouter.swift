@@ -16,10 +16,12 @@ struct AppointmentsTabRouter: View {
         NavigationStack(path: $router.appointmentsPath) {
             Group {
                 if let viewModel = viewModel {
-                    AppointmentsScreen(viewModel: viewModel, onNavigateToAppointmentDetails: { id in
-                        router.push(.appointmentDetails(id: id))
-                    })
-                } else {
+                    AppointmentsScreen(
+                        viewModel: viewModel,
+                        onNavigateToAppointmentDetails: { id in router.push(.appointmentDetails(id: id)
+                        )
+                }
+            )} else {
                     ProgressView()
                 }
             }

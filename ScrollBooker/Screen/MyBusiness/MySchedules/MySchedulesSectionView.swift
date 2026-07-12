@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MySchedulesSectionView: View {
     let viewModel: MySchedulesViewModel
+    var onBack: () -> Void
     
     @State private var showErrors = false
     
@@ -29,6 +30,7 @@ struct MySchedulesSectionView: View {
             buttonTitle: String(localized: "save"),
             isDisabled: viewModel.isSaving,
             isLoading: viewModel.isSaving,
+            onBack: onBack,
             onClick: {
                 if isFormValid {
                     showErrors = false

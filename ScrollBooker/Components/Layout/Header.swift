@@ -7,33 +7,18 @@
 
 import SwiftUI
 
-struct Header: View {
+struct HeaderView: View {
     var title: String = ""
     var enableBack: Bool = true
-    var onBack: (() -> Void)? = nil
-
-    @EnvironmentObject private var router: Router
-    @Environment(\.dismiss) private var dismiss
+    //var onBack: (() -> Void)? = nil
+    var onBack: () -> Void
 
     var body: some View {
         HStack {
             VStack {
                 if enableBack {
                     Button {
-                        if let onBack {
-                            onBack()
-                        } else {
-                            if  router.feedPath.isEmpty &&
-                                router.inboxPath.isEmpty &&
-                                router.searchPath.isEmpty &&
-                                router.appointmentsPath.isEmpty &&
-                                router.profilePath.isEmpty
-                            {
-                                dismiss()
-                            } else {
-                                router.pop()
-                            }
-                        }
+                        onBack()
                     } label: {
                         Image(systemName: "chevron.left")
                             .font(.system(size: 22.5))
@@ -53,21 +38,4 @@ struct Header: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-}
-
-#Preview("Light") {
-    Header(
-        title: "Header"
-    )
-    
-    Spacer()
-}
-
-#Preview("Dark") {
-    Header(
-        title: "Header"
-    )
-    .preferredColorScheme(.dark)
-    
-    Spacer()
 }

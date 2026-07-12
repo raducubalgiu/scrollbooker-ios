@@ -6,15 +6,18 @@
 //
 
 import SwiftUI
-import MapKit
 
 struct AppointmentDetailsScreen: View {
     @Bindable var viewModel: AppointmentDetailsViewModel
     @State private var activeSheet: AppointmentDetailsSheet? = nil
+    var onBack: () -> Void
     
     var body: some View {
         VStack(spacing: 0) {
-            Header(title: String(localized: "bookingDetails"))
+            HeaderView(
+                title: String(localized: "bookingDetails"),
+                onBack: onBack
+            )
             
             VStack {
                 switch viewModel.viewState {
@@ -120,28 +123,28 @@ struct AppointmentDetailsScreen: View {
         .sheet(item: $activeSheet) { sheetType in
             if let appointmentData = viewModel.uiState.data {
                 switch sheetType {
-                case .writeReview(let rating):
-                    WriteReviewSheetView(rating: rating) { selectedRating, message in
-                        guard let userId = appointmentData.user.id else {
-                            viewModel.errorMessage = "User ID is missing"
-                            return
+                    case .writeReview(let rating):
+                        WriteReviewSheetView(rating: rating) { selectedRating, message in
+                            guard let userId = appointmentData.user.id else {
+                                viewModel.errorMessage = "User ID is missing"
+                                return
+                            }
+                            
+                            let productId = appointmentData.products.first?.id ?? 0
+                            
+                            await viewModel.createReview(
+                                review: message,
+                                rating: selectedRating,
+                                userId: userId,
+                                productId: productId
+                            )
                         }
                         
-                        let productId = appointmentData.products.first?.id ?? 0
-                        
-                        await viewModel.createReview(
-                            review: message,
-                            rating: selectedRating,
-                            userId: userId,
-                            productId: productId
-                        )
+                    case .cancelAppointment:
+                        CancelAppointmentSheetView { finalReason in
+                            await viewModel.cancelCurrentAppointment(reason: finalReason)
+                        }
                     }
-                    
-                case .cancelAppointment:
-                    CancelAppointmentSheetView { finalReason in
-                        await viewModel.cancelCurrentAppointment(reason: finalReason)
-                    }
-                }
             }
         }
     }

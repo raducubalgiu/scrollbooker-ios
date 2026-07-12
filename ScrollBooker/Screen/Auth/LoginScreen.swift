@@ -26,6 +26,7 @@ struct LoginScreen: View {
             headline: String(localized: "login"),
             subHeadline: String(localized: "loginMessage"),
             enableBottomButton: false,
+            onBack: {}
         ) {
             Input(
                 label: String(localized: "username"),

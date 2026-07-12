@@ -15,6 +15,7 @@ struct CollectBusinessAdressScreen: View {
             headline: "Adresa locatiei",
             subHeadline: "Adauga adresa locatiei une vei primi clientii",
             buttonTitle: "Pasul urmator",
+            onBack: {}
         ) {
             
         }

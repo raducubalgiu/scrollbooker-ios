@@ -33,55 +33,113 @@ struct ProfileTabRouter: View {
             }
             .withNavigation { route in
                 switch route {
-                // MARK: - Settings Flow
-                case .mySettings:
-                    SettingsScreen { r in router.push(r) }
-                        .toolbar(.hidden, for: .navigationBar)
-                case .display:
-                    DisplayScreen()
-                case .reportProblem:
-                    ReportProblemScreen(viewModel: container.problemModule.makeProblemViewModel(userId: session.userInfo?.id ?? 0))
-                        .toolbar(.hidden, for: .navigationBar)
-                    
-                // MARK: - Edit Profile Flow
-                case .editProfile:
-                    EditProfileScreen { r in router.push(r) }
-                        .toolbar(.hidden, for: .navigationBar)
-                case .editFullName:
-                    EditNameScreen().toolbar(.hidden, for: .navigationBar)
-                case .editUsername:
-                    EditUsernameScreen().toolbar(.hidden, for: .navigationBar)
-                case .editBio:
-                    EditBioScreen().toolbar(.hidden, for: .navigationBar)
-                case .editGender:
-                    EditGenderScreen().toolbar(.hidden, for: .navigationBar)
-                case .editBirthdate:
-                    EditBirthdateScreen().toolbar(.hidden, for: .navigationBar)
-                    
-                // MARK: - My Business Flow
-                case .myBusiness:
-                    MyBusinessScreen { r in router.push(r) }
-                        .toolbar(.hidden, for: .navigationBar)
-                case .myBusinessDetails:
-                    MyBusinessDetailsScreen().toolbar(.hidden, for: .navigationBar)
-                case .myCalendar:
-                    MyCalendarScreen().toolbar(.hidden, for: .navigationBar)
-                case .myProducts:
-                    MyProductsScreen().toolbar(.hidden, for: .navigationBar)
-                case .mySchedules:
-                    MySchedulesScreen(viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session))
-                        .toolbar(.hidden, for: .navigationBar)
-                case .myServices:
-                    MyServicesScreen(viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session))
-                        .toolbar(.hidden, for: .navigationBar)
-                case .myEmployees:
-                    EmployeesFlowContainer(container: container, session: session)
-                        .toolbar(.hidden, for: .navigationBar)
-                    
-                // Pentru orice altă rută (care este globală), returnăm nil
-                default:
-                    nil
-                }
+                    // MARK: - Settings Flow
+                    case .mySettings:
+                        SettingsScreen(
+                            onNavigate: { r in router.push(r) },
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .display:
+                        DisplayScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .reportProblem:
+                        ReportProblemScreen(
+                            viewModel: container.problemModule.makeProblemViewModel(userId: session.userInfo?.id ?? 0),
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    // MARK: - Edit Profile Flow
+                    case .editProfile:
+                        EditProfileScreen(
+                            onNavigate: { r in router.push(r) },
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .editFullName:
+                        EditNameScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .editUsername:
+                        EditUsernameScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .editBio:
+                        EditBioScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .editGender:
+                        EditGenderScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .editBirthdate:
+                        EditBirthdateScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    // MARK: - My Business Flow
+                    case .myBusiness:
+                        MyBusinessScreen (
+                            onNavigate: { r in router.push(r) },
+                            onBack: { router.pop() }
+                        )
+                           .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .myBusinessDetails:
+                        MyBusinessDetailsScreen()
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .myCalendar:
+                        MyCalendarScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                    case .myProducts:
+                        MyProductsScreen(
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .mySchedules:
+                        MySchedulesScreen(
+                            viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session),
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .myServices:
+                        MyServicesScreen(
+                            viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session),
+                            onBack: { router.pop() }
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .myEmployees:
+                        EmployeesFlowContainer(
+                            container: container,
+                            onBack: { router.pop() },
+                            session: session,
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+            
+                    default:
+                        nil
+                    }
             }
         }
         .onAppear {

@@ -53,9 +53,13 @@ private var myBusinessPages = [
 
 struct MyBusinessScreen: View {
     var onNavigate: (Route) -> Void
+    var onBack: () -> Void
     
     var body: some View {
-        Header(title: "Afacerea mea")
+        HeaderView(
+            title: "Afacerea mea",
+            onBack: onBack
+        )
         
         let columns = [
             GridItem(.flexible(), spacing: 8),
@@ -85,17 +89,4 @@ struct MyBusinessPage: Identifiable {
     let description: String
     let icon: String
     let route: Route
-}
-
-#Preview("Light") {
-    MyBusinessScreen(
-        onNavigate: { _ in }
-    )
-}
-
-#Preview("Dark") {
-    MyBusinessScreen(
-        onNavigate: { _ in }
-    )
-        .preferredColorScheme(.dark)
 }

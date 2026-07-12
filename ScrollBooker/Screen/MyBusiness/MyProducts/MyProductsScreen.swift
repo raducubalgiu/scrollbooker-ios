@@ -8,13 +8,20 @@
 import SwiftUI
 
 struct MyProductsScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: "Produsele mele")
+        HeaderView(
+            title: "Produsele mele",
+            onBack: onBack
+        )
         
         Spacer()
     }
 }
 
 #Preview {
-    MyProductsScreen()
+    MyProductsScreen(
+        onBack: {}
+    )
 }

@@ -25,13 +25,20 @@ struct InboxTabRouter: View {
             }
             .withNavigation { route in
                 switch route {
-                case .employmentRequestRespond:
-                    EmploymentRespondScreen()
-                case .employmentRequestRespondConsent:
-                    EmploymentRespondConsentScreen()
-                default:
-                    nil
-                }
+                    case .employmentRequestRespond:
+                        EmploymentRespondScreen(
+                            onBack: { router.pop() },
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .employmentRequestRespondConsent:
+                        EmploymentRespondConsentScreen(
+                            onBack: { router.pop() },
+                        )
+                            .toolbar(.hidden, for: .navigationBar)
+                    default:
+                        nil
+                    }
             }
         }
         .toolbar(router.inboxPath.isEmpty ? .visible : .hidden, for: .tabBar)

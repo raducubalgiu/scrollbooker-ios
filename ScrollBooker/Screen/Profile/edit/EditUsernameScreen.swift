@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct EditUsernameScreen: View {
+    var onBack: () -> Void
+    
     var body: some View {
-        Header(title: "Username")
+        HeaderView(
+            title: "Username",
+            onBack: onBack
+        )
         
         Spacer()
     }
-}
-
-#Preview {
-    EditUsernameScreen()
 }

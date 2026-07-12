@@ -42,7 +42,7 @@ struct EditNameScreen: View {
                     if viewModel.isLoading {
                         ProgressView().tint(.primarySB)
                     } else {
-                        Text("Salvează")
+                        Text(String(localized: "save"))
                             .font(.subheadline.bold())
                             .foregroundColor(isEnabled ? .primarySB : .secondary)
                     }
@@ -53,8 +53,8 @@ struct EditNameScreen: View {
             VStack {
                 InputEdit(
                     text: $newFullName,
-                    placeholder: "Numele tău",
-                    label: "Nume complet",
+                    placeholder: String(localized: "yourName"),
+                    label: String(localized: "fullname"),
                     isError: errorMessage != nil,
                     errorMessage: errorMessage ?? "",
                     isDisabled: viewModel.isLoading,

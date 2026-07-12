@@ -24,7 +24,7 @@ struct InputEdit: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             Text(label)
-                .font(.headline)
+                .font(.subheadline.bold())
                 .foregroundColor(.onBackgroundSB)
             
             HStack {
@@ -63,7 +63,9 @@ struct InputEdit: View {
                     HStack {
                         Image(systemName: "exclamationmark.triangle.fill")
                             .foregroundColor(.errorSB)
-                        Text(errorMessage).foregroundColor(.errorSB)
+                        Text(errorMessage)
+                            .font(.subheadline)
+                            .foregroundColor(.errorSB)
                     }
                 }
                 

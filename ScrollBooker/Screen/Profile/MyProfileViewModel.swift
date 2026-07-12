@@ -18,15 +18,14 @@ final class MyProfileViewModel: HasLoadingState {
     var isSaved = false
     
     var isLoading: Bool {
-        get { if case .loading = profileController.viewState { return true }; return profileController.uiState.isLoading }
-        set { profileController.uiState.isLoading = newValue }
+        get { profileController.isLoading }
+        set { profileController.isLoading = newValue }
     }
-    
+
     var errorMessage: String? {
-        get { if case .error(let msg) = profileController.viewState { return msg }; return profileController.uiState.errorMessage }
-        set { profileController.uiState.errorMessage = newValue }
+        get { profileController.errorMessage }
+        set { profileController.errorMessage = newValue }
     }
-    
     
     let updateUserFullNameUseCase: UpdateUserFullNameUseCase
     

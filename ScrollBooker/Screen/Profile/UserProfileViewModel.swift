@@ -16,13 +16,13 @@ final class UserProfileViewModel: HasLoadingState {
     let username: String
     
     var isLoading: Bool {
-        get { if case .loading = profileController.viewState { return true }; return profileController.uiState.isLoading }
-        set { profileController.uiState.isLoading = newValue }
+        get { profileController.isLoading }
+        set { profileController.isLoading = newValue }
     }
-    
+
     var errorMessage: String? {
-        get { if case .error(let msg) = profileController.viewState { return msg }; return profileController.uiState.errorMessage }
-        set { profileController.uiState.errorMessage = newValue }
+        get { profileController.errorMessage }
+        set { profileController.errorMessage = newValue }
     }
     
     init(
@@ -36,9 +36,7 @@ final class UserProfileViewModel: HasLoadingState {
     }
     
     func loadProfile() async {
-        await withVisibleLoading() {
-            await profileController.fetchProfile(username: username)
-        }
+        await profileController.fetchProfile(username: username)
     }
     
     func refresh() async {

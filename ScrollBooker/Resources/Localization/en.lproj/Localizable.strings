@@ -296,6 +296,8 @@
 "notFoundUsers" = "Nu au fost găsiți utilizatori";
 "details" = "Detalii";
 "bookNow" = "Rezervă acum";
+"yourName" = "Numele tău";
+"fullname" = "Numele complet";
 
 /* --- NOTIFICATIONS --- */
 "notification_received_new" = "ai primit o notificare nouă";

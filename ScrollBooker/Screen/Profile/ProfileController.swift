@@ -10,9 +10,29 @@ import Observation
 
 @Observable
 @MainActor
-final class ProfileController {
+final class ProfileController: HasLoadingState {
     var uiState = UiState(data: UserProfile?.none)
     private(set) var viewState: ProfileState = .idle
+    
+    var isLoading: Bool {
+        get {
+            if case .loading = viewState { return true }
+            return uiState.isLoading
+        }
+        set {
+            uiState.isLoading = newValue
+        }
+    }
+    
+    var errorMessage: String? {
+        get {
+            if case .error(let msg) = viewState { return msg }
+            return uiState.errorMessage
+        }
+        set {
+            uiState.errorMessage = newValue
+        }
+    }
     
     private let getUserProfileUseCase: GetUserProfileUseCase
     
@@ -20,10 +40,20 @@ final class ProfileController {
         self.getUserProfileUseCase = getUserProfileUseCase
     }
     
-    func fetchProfile(username: String) async {
+    func fetchProfile(username: String, hasMinLoading: Bool = false) async {
         guard uiState.data == nil else { return }
         guard viewState != .loading else { return }
         
+        if hasMinLoading {
+            await withVisibleLoading {
+                await performFetch(username: username)
+            }
+        } else {
+            await performFetch(username: username)
+        }
+    }
+    
+    private func performFetch(username: String) async {
         viewState = .loading
         uiState.errorMessage = nil
         

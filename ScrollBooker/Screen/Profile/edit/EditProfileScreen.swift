@@ -20,7 +20,7 @@ struct EditProfileScreen: View {
             
             VStack(alignment: .leading) {
                 Text(String(localized: "aboutYou"))
-                    .font(.headline.bold())
+                    .font(.subheadline.bold())
                     .foregroundColor(.gray)
                     .padding(.top, .base)
                 
@@ -29,7 +29,7 @@ struct EditProfileScreen: View {
                 } label: {
                     HStack {
                         Text(String(localized: "name"))
-                            .font(.headline.bold())
+                            .font(.subheadline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()
@@ -51,7 +51,7 @@ struct EditProfileScreen: View {
                 } label: {
                     HStack {
                         Text(String(localized: "username"))
-                            .font(.headline.bold())
+                            .font(.subheadline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()
@@ -72,8 +72,8 @@ struct EditProfileScreen: View {
                     onNavigate(.editBio)
                 } label: {
                     HStack {
-                        Text(String(localized: "bio"))
-                            .font(.headline.bold())
+                        Text(String(localized: "biography"))
+                            .font(.subheadline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()
@@ -95,7 +95,7 @@ struct EditProfileScreen: View {
                 } label: {
                     HStack {
                         Text(String(localized: "gender"))
-                            .font(.headline.bold())
+                            .font(.subheadline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()
@@ -117,7 +117,7 @@ struct EditProfileScreen: View {
                 } label: {
                     HStack {
                         Text(String(localized: "birthdate"))
-                            .font(.headline.bold())
+                            .font(.subheadline.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Spacer()

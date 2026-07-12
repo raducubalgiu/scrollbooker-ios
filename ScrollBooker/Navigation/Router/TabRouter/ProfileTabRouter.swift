@@ -90,10 +90,17 @@ struct ProfileTabRouter: View {
                             .toolbar(.hidden, for: .navigationBar)
                         
                     case .editGender:
-                        EditGenderScreen(
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
+                        if let stableViewModel = viewModel {
+                            EditGenderScreen(
+                                viewModel: stableViewModel,
+                                onBack: { router.pop() }
+                            )
+                        } else {
+                            LoadingView()
+                                .onAppear {
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                }
+                        }
                         
                     case .editBirthdate:
                         EditBirthdateScreen(

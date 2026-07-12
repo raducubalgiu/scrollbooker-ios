@@ -299,6 +299,10 @@
 "yourName" = "Numele tău";
 "fullname" = "Numele complet";
 
+"gender_male" = "Masculin";
+"gender_female" = "Feminin";
+"gender_other" = "Altele";
+
 /* --- NOTIFICATIONS --- */
 "notification_received_new" = "ai primit o notificare nouă";
 

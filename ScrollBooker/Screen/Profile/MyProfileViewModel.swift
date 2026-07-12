@@ -28,15 +28,18 @@ final class MyProfileViewModel: HasLoadingState {
     }
     
     let updateUserFullNameUseCase: UpdateUserFullNameUseCase
+    let updateUserGenderUseCase: UpdateUserGenderUseCase
     
     init(
         session: SessionManager,
         profileController: ProfileController,
-        updateUserFullNameUseCase: UpdateUserFullNameUseCase
+        updateUserFullNameUseCase: UpdateUserFullNameUseCase,
+        updateUserGenderUseCase: UpdateUserGenderUseCase
     ) {
         self.session = session
         self.profileController = profileController
         self.updateUserFullNameUseCase = updateUserFullNameUseCase
+        self.updateUserGenderUseCase = updateUserGenderUseCase
     }
     
     func loadProfile() async {
@@ -65,6 +68,29 @@ final class MyProfileViewModel: HasLoadingState {
             
             if let currentProfile = profileController.uiState.data {
                 profileController.uiState.data = currentProfile.copy(fullName: result.fullName)
+            }
+            
+            isSaved = true
+        } catch {
+            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+        
+        isLoading = false
+    }
+    
+    func updateGender(genderEnum: GenderTypeEnum) async {
+        guard !isLoading else { return }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let result = try await withVisibleLoading {
+                try await updateUserGenderUseCase(gender: genderEnum.rawValue)
+            }
+            
+            if let currentProfile = profileController.uiState.data {
+                profileController.uiState.data = currentProfile.copy(gender: result.gender)
             }
             
             isSaved = true

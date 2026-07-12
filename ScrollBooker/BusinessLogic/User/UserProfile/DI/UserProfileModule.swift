@@ -31,11 +31,16 @@ final class UserProfileModule {
         UpdateUserFullNameUseCase(repository: repository)
     }()
     
+    private lazy var updateUserGenderUseCase: UpdateUserGenderUseCase = {
+        UpdateUserGenderUseCase(repository: repository)
+    }()
+    
     func makeMyProfileViewModel(session: SessionManager) -> MyProfileViewModel {
         MyProfileViewModel(
             session: session,
             profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase),
-            updateUserFullNameUseCase: updateUserFullNameUseCase
+            updateUserFullNameUseCase: updateUserFullNameUseCase,
+            updateUserGenderUseCase: updateUserGenderUseCase
         )
     }
 

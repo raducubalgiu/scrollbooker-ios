@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 enum NotificationType: String, Equatable, Hashable, Sendable {
     case follow
@@ -23,12 +24,6 @@ enum NotificationType: String, Equatable, Hashable, Sendable {
     case employmentRequestDenied = "employment_request_denied"
     case businessValidation = "business_validation"
     case unknown
-}
-
-extension NotificationType {
-    init(from rawValue: String) {
-        self = NotificationType(rawValue: rawValue) ?? .unknown
-    }
 }
 
 struct FollowNotificationData: Equatable, Hashable {}
@@ -130,20 +125,6 @@ enum NotificationData: Equatable, Hashable {
     case unknown
 }
 
-extension NotificationData {
-    var likePost: LikePostNotificationData? {
-        if case .likePost(let d) = self { return d }
-        return nil
-    }
-    var employmentRequest: EmploymentRequestNotificationData? {
-        if case .employmentRequest(let d) = self { return d }
-        return nil
-    }
-    // adaugă restul dacă ai nevoie de ele des în UI
-}
-
-// MARK: - Root models
-
 struct NotificationSender: Equatable, Hashable {
     let id: Int
     let fullName: String
@@ -160,4 +141,132 @@ struct Notification: Identifiable, Equatable, Hashable {
     let isRead: Bool
     let isDeleted: Bool
     let sender: NotificationSender
+}
+
+// Extensions
+
+extension NotificationType {
+    init(from rawValue: String) {
+        self = NotificationType(rawValue: rawValue) ?? .unknown
+    }
+    
+    var badgeConfig: (icon: String, color: Color)? {
+        switch self {
+            case .likePost:
+                return ("heart.fill", .red)
+            case .commentPost:
+                return ("bubble.left.fill", Color(red: 0, green: 0.69, blue: 1))
+            case .repost:
+                return ("arrow.2.squarepath", Color(red: 0, green: 0.9, blue: 0.46))
+            case .mentionPost:
+                return ("at", Color(red: 0.61, green: 0.15, blue: 0.69))
+            case .appointmentBooked, .appointmentRescheduled, .appointmentReminder:
+                return ("calendar", Color(red: 0.16, green: 0.47, blue: 1))
+            case .appointmentCanceled:
+                return ("calendar", .red)
+            case .appointmentReviewed:
+                return nil
+            case .employmentRequest, .employmentRequestAccepted:
+                return ("briefcase.fill", Color(red: 1, green: 0.57, blue: 0))
+            case .employmentRequestDenied:
+                return ("briefcase.fill", .red)
+            case .businessValidation:
+                return ("checkmark.seal.fill", Color(red: 0.3, green: 0.69, blue: 0.31))
+            case .follow, .unknown:
+                return nil
+        }
+    }
+}
+
+extension NotificationData {
+    var likePost: LikePostNotificationData? {
+        if case .likePost(let d) = self { return d }
+        return nil
+    }
+    var employmentRequest: EmploymentRequestNotificationData? {
+        if case .employmentRequest(let d) = self { return d }
+        return nil
+    }
+    
+    var contentText: String {
+        switch self {
+            case .follow:
+                return String(localized: "notification_follow")
+
+            case .likePost(let d):
+                if d.totalCount > 1 {
+                    return String(
+                        localized: LocalizedStringResource("notification_like_post_and_others",
+                        defaultValue: "ți-a apreciat postarea ta și încă \(d.totalCount - 1) persoane")
+                    )
+                }
+                return String(localized: "notification_like_post")
+
+            case .commentPost:
+                return String(localized: "notification_comment")
+
+            case .repost:
+                return String(localized: "notification_repost")
+
+            case .mentionPost:
+                return String(localized: "notification_mention_post")
+
+            case .appointmentBooked(let d):
+                let dateText = d.startDate.asISO8601Date()?.asFormattedString() ?? d.startDate
+                return String(
+                    localized: LocalizedStringResource("notification_appointment_booked",
+                    defaultValue: "a efectuat o programare pentru data de \(dateText)")
+                )
+
+            case .appointmentCanceled(let d):
+                if let reason = d.canceledReason, !reason.isEmpty {
+                    return String(
+                        localized: LocalizedStringResource("notification_appointment_canceled_with_reason",
+                        defaultValue: "a anulat programarea. Motiv: \(reason)")
+                    )
+                }
+                return String(localized: "notification_appointment_canceled")
+
+            case .appointmentRescheduled(let d):
+                let dateText = d.newStartDate.asISO8601Date()?.asFormattedString() ?? d.newStartDate
+                return String(
+                    localized: LocalizedStringResource("notification_appointment_rescheduled",
+                    defaultValue: "Programarea a fost replanificată pe \(dateText)")
+                )
+
+            case .appointmentReminder:
+                return String(localized: "notification_appointment_reminder")
+
+            case .appointmentReviewed(let d):
+                return String(
+                    localized: LocalizedStringResource("notification_appointment_reviewed",
+                    defaultValue: "A lăsat o recenzie de \(d.rating) stele pentru programarea finalizată.")
+                )
+
+            case .employmentRequest(let d):
+                return String(
+                    localized: LocalizedStringResource("notification_employment_request",
+                    defaultValue: "Ai primit o cerere de angajare pentru rolul de \(d.professionName)")
+                )
+
+            case .employmentRequestAccepted:
+                return String(localized: "notification_employment_accepted")
+
+            case .employmentRequestDenied:
+                return String(localized: "notification_employment_denied")
+
+            case .businessValidation(let d):
+                if d.isApproved {
+                    return String(localized: "notification_business_validation_approved")
+                }
+                let reason = d.reason ?? String(localized: "unspecified")
+                return String(
+                    localized: LocalizedStringResource("notification_business_validation_rejected",
+                    defaultValue: "Afacerea ta a fost respinsă. Motiv: \(reason)")
+                )
+
+            case .unknown:
+                return String(localized: "notification_received_new")
+            }
+        }
 }

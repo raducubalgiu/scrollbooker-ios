@@ -28,7 +28,7 @@ struct NotificationItemView: View {
                         .truncationMode(.tail)
                 }
 
-                Text(contentText)
+                Text(notification.data.contentText)
                     .font(.footnote)
                     .foregroundColor(.secondary)
                     .lineLimit(2)
@@ -58,7 +58,7 @@ struct NotificationItemView: View {
                 size: .l
             )
 
-            if let badge = badgeConfig {
+            if let badge = notification.type.badgeConfig {
                 Circle()
                     .fill(badge.color)
                     .frame(width: 18, height: 18)
@@ -71,94 +71,6 @@ struct NotificationItemView: View {
                         Circle().stroke(Color(.systemBackground), lineWidth: 2)
                     )
             }
-        }
-    }
-
-    private var badgeConfig: (icon: String, color: Color)? {
-        switch notification.type {
-        case .likePost:
-            return ("heart.fill", .red)
-        case .commentPost:
-            return ("bubble.left.fill", Color(red: 0, green: 0.69, blue: 1))
-        case .repost:
-            return ("arrow.2.squarepath", Color(red: 0, green: 0.9, blue: 0.46))
-        case .mentionPost:
-            return ("at", Color(red: 0.61, green: 0.15, blue: 0.69))
-        case .appointmentBooked, .appointmentRescheduled, .appointmentReminder:
-            return ("calendar", Color(red: 0.16, green: 0.47, blue: 1))
-        case .appointmentCanceled:
-            return ("calendar", .red)
-        case .appointmentReviewed:
-            return nil
-        case .employmentRequest, .employmentRequestAccepted:
-            return ("briefcase.fill", Color(red: 1, green: 0.57, blue: 0))
-        case .employmentRequestDenied:
-            return ("briefcase.fill", .red)
-        case .businessValidation:
-            return ("checkmark.seal.fill", Color(red: 0.3, green: 0.69, blue: 0.31))
-        case .follow, .unknown:
-            return nil
-        }
-    }
-
-    private var contentText: String {
-        switch notification.data {
-        case .follow:
-            return String(localized: "startedFollowingYou")
-
-        case .likePost(let d):
-            if d.totalCount > 1 {
-                return String(localized: "likedYourPostAndOthers \(d.totalCount - 1)")
-            }
-            return String(localized: "likedYourPost")
-
-        case .commentPost:
-            return String(localized: "commentedOnYourPost")
-
-        case .repost:
-            return String(localized: "repostedYourPost")
-
-        case .mentionPost:
-            return String(localized: "mentionedYouInAPost")
-
-        case .appointmentBooked(let d):
-            let dateText = d.startDate.asISO8601Date()?.asFormattedString() ?? d.startDate
-            return String(localized: "bookedAppointmentFor \(dateText)")
-
-        case .appointmentCanceled(let d):
-            if let reason = d.canceledReason, !reason.isEmpty {
-                return String(localized: "canceledAppointmentWithReason \(reason)")
-            }
-            return String(localized: "canceledAppointment")
-
-        case .appointmentRescheduled(let d):
-            let dateText = d.newStartDate.asISO8601Date()?.asFormattedString() ?? d.newStartDate
-            return String(localized: "appointmentRescheduledTo \(dateText)")
-
-        case .appointmentReminder:
-            return String(localized: "appointmentReminderMessage")
-
-        case .appointmentReviewed(let d):
-            return String(localized: "leftReviewForAppointment \(d.rating)")
-
-        case .employmentRequest(let d):
-            return String(localized: "receivedEmploymentRequest \(d.professionName)")
-
-        case .employmentRequestAccepted:
-            return String(localized: "acceptedYourEmploymentRequest")
-
-        case .employmentRequestDenied:
-            return String(localized: "deniedYourEmploymentRequest")
-
-        case .businessValidation(let d):
-            if d.isApproved {
-                return String(localized: "businessValidatedSuccessfully")
-            }
-            let reason = d.reason ?? String(localized: "unspecified")
-            return String(localized: "businessValidationDeniedWithReason \(reason)")
-
-        case .unknown:
-            return String(localized: "newNotificationReceived")
         }
     }
 

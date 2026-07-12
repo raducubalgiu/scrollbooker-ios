@@ -27,7 +27,6 @@
 "forMe" = "Pentru mine";
 "follow" = "Urmărește";
 "following" = "Urmărești";
-"startedFollowingYou" = "a început să te urmărească";
 "sentYouAnEmploymentRequest" = "ți-a trimis o cerere de angajare";
 "likedYourPost" = "ți-a apreciat postarea";
 "settings" = "Setări";
@@ -295,9 +294,38 @@
 "searchEmployeeIdleMessage" = "Introdu numele sau username-ul pentru a căuta";
 "users" = "Utilizatori";
 "notFoundUsers" = "Nu au fost găsiți utilizatori";
+"details" = "Detalii";
+
+/* --- NOTIFICATIONS --- */
+"notification_received_new" = "ai primit o notificare nouă";
+
+/* --- NOTIFICATIONS SOCIAL --- */
+"notification_follow" = "a început să te urmărească";
+"notification_like_post" = "ți-a apreciat postarea";
+"notification_like_post_and_others" = "a apreciat postarea ta și încă %lld persoane";
+"notification_comment" = "a comentat la postarea ta";
+"notification_repost" = "ți-a repostat postarea";
+"notification_mention_post" = "te-a menționat într-o postare";
+
+/* --- NOTIFICATIONS APPOINTMENTS --- */
+"notification_appointment_booked" = "a efectuat o programare pentru data de %@";
+"notification_appointment_canceled_with_reason" = "a anulat programarea. Motiv: %@";
+"notification_appointment_canceled" = "a anulat rezervarea";
+"notification_appointment_rescheduled" = "Programarea a fost replanificată pe %@";
+"notification_appointment_reminder" = "Memento: Ai o programare stabilită în curând.";
+"notification_appointment_reviewed" = "a lăsat o recenzie de %lld stele pentru programarea finalizată.";
+
+/* --- NOTIFICATIONS EMPLOYMENT REQUESTS --- */
+"notification_employment_request" = "ai primit o cerere de angajare pentru rolul de %@";
+"notification_employment_accepted" = "a acceptat cererea ta de angajare.";
+"notification_employment_denied" = "a respins cererea ta de angajare.";
+
+/* --- NOTIFICATIONS BUSINESS VALIDATIONS --- */
+"notification_business_validation_approved" = "Afacerea ta a fost validată cu succes de administratori.";
+"notification_business_validation_rejected" = "Afacerea ta a fost respinsă de administratori. Motiv: %@";
+
 
 /* --- DYNAMIC --- */
-
 "appointment.status.confirmed" = "Confirmat";
 "appointment.status.finished" = "Finalizat";
 "appointment.status.cancelled" = "Anulat";

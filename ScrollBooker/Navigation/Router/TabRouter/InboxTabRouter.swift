@@ -9,6 +9,7 @@ import SwiftUI
 
 struct InboxTabRouter: View {
     @EnvironmentObject private var container: AppContainer
+    @EnvironmentObject private var session: SessionManager
     @ObservedObject var router: Router
     
     @State private var inboxViewModel: InboxViewModel?
@@ -17,7 +18,12 @@ struct InboxTabRouter: View {
         NavigationStack(path: $router.inboxPath) {
             Group {
                 if let viewModel = inboxViewModel {
-                    InboxScreen(viewModel: viewModel)
+                    InboxScreen(
+                        viewModel: viewModel,
+                        onNavigateToAppointmentDetails: { id in
+                            router.push(.appointmentDetails(id: id))
+                        }
+                    )
                 } else {
                     Color.clear
                 }
@@ -29,6 +35,17 @@ struct InboxTabRouter: View {
                         
                     case .employmentRequestRespondConsent:
                         EmploymentRespondConsentScreen()
+                    
+                    case .appointmentDetails(id: let id):
+                        AppointmentDetailsScreen(
+                            viewModel: container.appointmentModule.makeAppointmentDetailsViewModel(
+                                appointmentId: id,
+                                session: session,
+                                createReviewUseCase: container.reviewModule.createReviewUseCase,
+                                updateReviewUseCase: container.reviewModule.updateReviewUseCase
+                            )
+                        )
+                        .navigationBarHidden(true)
                         
                     default:
                         Text("Route not in Inbox")

@@ -13,6 +13,8 @@ struct NotificationsListView: View {
     let onRefresh: () async -> Void
     let onItemAppear: (Notification) -> Void
     
+    var onNavigateToAppointmentDetails: (Int) -> Void
+    
     var body: some View {
         ScrollView {
             LazyVStack(spacing: 0) {
@@ -21,7 +23,7 @@ struct NotificationsListView: View {
                         notification: notification,
                         onNavigateToUserProfile: { _ in },
                         onNavigateToEmploymentRequest: { _ in },
-                        onNavigateToAppointmentDetails: { _ in }
+                        onNavigateToAppointmentDetails: onNavigateToAppointmentDetails
                     )
                     .onAppear {
                         onItemAppear(notification)

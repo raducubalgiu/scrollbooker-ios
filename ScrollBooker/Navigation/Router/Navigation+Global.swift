@@ -60,15 +60,22 @@ struct GlobalNavigationModifier: ViewModifier {
                 onBack: { router.pop() }
             )
             
-        case .userSocial(let userId, let username, let initialTab, let isBusinessOrEmployee, let followers, let followings):
+        case .userSocial(
+            let userId,
+            let username,
+            let initialTab,
+            let isBusinessOrEmployee,
+            let followersCount,
+            let followingsCount
+        ):
             SocialScreen(
                 viewModel: container.followModule.makeSocialViewModel(userId: userId),
                 onBack: { router.pop() },
                 username: username,
-                initialTab: initialTab,
                 isBusinessOrEmployee: isBusinessOrEmployee,
-                initialFollowersCount: followers,
-                initialFollowingsCount: followings
+                followersCount: followersCount,
+                followingsCount: followingsCount,
+                selectedTab: initialTab
             )
         default:
             Text("Route \(String(describing: route)) not implemented globally")

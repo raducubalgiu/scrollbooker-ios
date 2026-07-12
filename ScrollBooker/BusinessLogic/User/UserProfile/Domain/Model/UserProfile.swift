@@ -32,6 +32,38 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     let address: String?
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
+    
+    func copy(
+        fullName: String? = nil,
+        username: String? = nil,
+        bio: String? = nil,
+        isFollow: Bool? = nil
+    ) -> UserProfile {
+        UserProfile(
+            id: self.id,
+            username: username ?? self.username,
+            fullName: fullName ?? self.fullName,
+            avatar: self.avatar,
+            gender: self.gender,
+            dateOfBirth: self.dateOfBirth,
+            bio: bio ?? self.bio,
+            website: self.website,
+            publicEmail: self.publicEmail,
+            instagram: self.instagram,
+            tiktok: self.tiktok,
+            businessId: self.businessId,
+            businessTypeId: self.businessTypeId,
+            counters: self.counters,
+            profession: self.profession,
+            openingHours: self.openingHours,
+            isFollow: isFollow ?? self.isFollow,
+            businessOwner: self.businessOwner,
+            isOwnProfile: self.isOwnProfile,
+            isBusinessOrEmployee: self.isBusinessOrEmployee,
+            distanceKm: self.distanceKm,
+            address: self.address
+        )
+    }
 }
 
 struct BusinessOwner: Codable, Hashable, Sendable {
@@ -60,6 +92,7 @@ struct OpeningHours: Codable, Hashable, Sendable {
     let nextOpenTime: String?
 }
 
+// Extensions
 extension OpeningHours {
     var formattedStatus: String {
         let daysMap: [String: String] = [

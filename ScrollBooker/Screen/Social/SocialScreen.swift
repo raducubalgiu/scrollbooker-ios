@@ -11,88 +11,61 @@ struct SocialScreen: View {
     let viewModel: SocialViewModel
     var onBack: () -> Void
     
-    let username: String
-    let isBusinessOrEmployee: Bool
+    var username: String
+    var isBusinessOrEmployee: Bool
     
-    let initialFollowersCount: Int
-    let initialFollowingsCount: Int
+    var followersCount: Int
+    var followingsCount: Int
     
-    @State private var selectedTab: SocialTab
-    
-    init(
-        viewModel: SocialViewModel,
-        onBack: @escaping () -> Void,
-        username: String,
-        initialTab: SocialTab,
-        isBusinessOrEmployee: Bool,
-        initialFollowersCount: Int,
-        initialFollowingsCount: Int
-    ) {
-        self.viewModel = viewModel
-        self.onBack = onBack
-        self.username = username
-        self.isBusinessOrEmployee = isBusinessOrEmployee
-        self.initialFollowersCount = initialFollowersCount
-        self.initialFollowingsCount = initialFollowingsCount
-        _selectedTab = State(initialValue: initialTab)
-    }
+    @State var selectedTab: SocialTab
     
     var body: some View {
-            VStack(spacing: 0) {
-                HeaderView(
-                    title: "@\(username)",
-                    onBack: onBack
-                )
+        VStack(spacing: 0) {
+            HeaderView(
+                title: "@\(username)",
+                onBack: onBack
+            )
+            
+            SocialTabsView(
+                selectedTab: $selectedTab,
+                followersCount: followersCount,
+                followingsCount: followingsCount
+            )
+            
+            TabView(selection: $selectedTab) {
+                Text("Recenzii")
+                    .tag(SocialTab.reviews)
                 
-                SocialTabsView(
-                    selectedTab: $selectedTab,
-                    followersCount: initialFollowersCount,
-                    followingsCount: initialFollowingsCount
+                FollowersTabView(
+                    users: viewModel.followersUiState.data,
+                    isLoading: viewModel.followersUiState.isLoading,
+                    onLoadMore: { currentUser in
+                        Task { await viewModel.loadMoreFollowersIfNeeded(currentUser: currentUser) }
+                    }
                 )
+                .tag(SocialTab.followers)
                 
-                TabView(selection: $selectedTab) {
-                    Text("Recenzii")
-                        .tag(SocialTab.reviews)
-                    
-                    FollowersTabView(
-                        users: viewModel.followersUiState.data,
-                        isLoading: viewModel.followersUiState.isLoading,
-                        onLoadMore: { currentUser in
-                            Task { await viewModel.loadMoreFollowersIfNeeded(currentUser: currentUser) }
-                        }
-                    )
-                    .tag(SocialTab.followers)
-                    
-                    FollowingsTabView(
-                        users: viewModel.followingsUiState.data,
-                        isLoading: viewModel.followingsUiState.isLoading,
-                        onLoadMore: { currentUser in
-                            Task { await viewModel.loadMoreFollowingsIfNeeded(currentUser: currentUser) }
-                        }
-                    )
-                    .tag(SocialTab.following)
-                }
-                .tabViewStyle(.page(indexDisplayMode: .never))
-                .edgesIgnoringSafeArea(.bottom)
+                FollowingsTabView(
+                    users: viewModel.followingsUiState.data,
+                    isLoading: viewModel.followingsUiState.isLoading,
+                    onLoadMore: { currentUser in
+                        Task { await viewModel.loadMoreFollowingsIfNeeded(currentUser: currentUser) }
+                    }
+                )
+                .tag(SocialTab.following)
             }
-            .background(Color.backgroundSB)
-            .navigationBarHidden(true)
-            .task {
-                await viewModel.loadTabIfNeeded(tab: selectedTab)
-            }
-            .onChange(of: selectedTab) { _, newTab in
-                Task {
-                    await viewModel.loadTabIfNeeded(tab: newTab)
-                }
+            .tabViewStyle(.page(indexDisplayMode: .never))
+            .edgesIgnoringSafeArea(.bottom)
+        }
+        .background(Color.backgroundSB)
+        .navigationBarHidden(true)
+        .task {
+            await viewModel.loadTabIfNeeded(tab: selectedTab)
+        }
+        .onChange(of: selectedTab) { _, newTab in
+            Task {
+                await viewModel.loadTabIfNeeded(tab: newTab)
             }
         }
+    }
 }
-
-//#Preview("Light") {
-//    SocialScreen()
-//}
-//
-//#Preview("Dark") {
-//    SocialScreen()
-//        .preferredColorScheme(.dark)
-//}

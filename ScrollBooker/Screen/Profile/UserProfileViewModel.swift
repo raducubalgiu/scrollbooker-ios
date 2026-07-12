@@ -25,7 +25,11 @@ final class UserProfileViewModel: HasLoadingState {
         set { profileController.uiState.errorMessage = newValue }
     }
     
-    init(userId: Int, username: String, profileController: ProfileController) {
+    init(
+        userId: Int,
+        username: String,
+        profileController: ProfileController
+    ) {
         self.userId = userId
         self.username = username
         self.profileController = profileController

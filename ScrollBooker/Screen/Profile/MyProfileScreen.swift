@@ -22,44 +22,41 @@ struct MyProfileScreen: View {
     var body: some View {
         VStack(spacing: 0) {
             switch viewModel.profileController.viewState {
-                case .idle, .loading:
-                    ProgressView()
-                        .tint(.primarySB)
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    
-                case .error(let message):
-                    ErrorView(message: message) {
-                        Task { await viewModel.loadProfile() }
-                    }
-                    
-                case .success(let user):
+            case .idle, .loading:
+                ProgressView()
+                    .tint(.primarySB)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                
+            case .error:
+                ErrorView(message: String(localized: "errorOccurred")) {
+                    Task { await viewModel.loadProfile() }
+                }
+                
+            case .success:
+                if let user = viewModel.profileController.uiState.data {
                     ProfileLayout(
                         user: user,
                         onNavigateToUserSocial: onNavigateToUserSocial,
                         onNavigateToUserProfile: onNavigateToUserProfile,
-                        onShowOpeningHours: {
-                            activeSheet = .openingHours
-                        },
+                        onShowOpeningHours: { activeSheet = .openingHours },
                         header: {
                             MyProfileHeaderView(
                                 username: "@\(user.username)",
-                                onOpenMenuSheet: {
-                                    activeSheet = .menu
-                                }
+                                onOpenMenuSheet: { activeSheet = .menu }
                             )
-                            .padding(.vertical)
-                            .padding(.horizontal)
+                            .padding(.vertical).padding(.horizontal)
                         },
                         actions: {
                             MyProfileActionsView(
                                 isBusinessOrEmployee: user.isBusinessOrEmployee,
                                 onNavigateToEditProfile: onNavigateToEditProfile,
                                 onNavigateToMyCalendar: onNavigateToMyCalendar,
-                                onShareProfile: {},
+                                onShareProfile: {}
                             )
                         }
                     )
                 }
+            }
         }
         .task {
             await viewModel.loadProfile()

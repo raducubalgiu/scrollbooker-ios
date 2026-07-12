@@ -27,10 +27,15 @@ final class UserProfileModule {
         GetUserProfileUseCase(repository: repository)
     }()
     
+    private lazy var updateUserFullNameUseCase: UpdateUserFullNameUseCase = {
+        UpdateUserFullNameUseCase(repository: repository)
+    }()
+    
     func makeMyProfileViewModel(session: SessionManager) -> MyProfileViewModel {
         MyProfileViewModel(
             session: session,
-            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase)
+            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase),
+            updateUserFullNameUseCase: updateUserFullNameUseCase
         )
     }
 
@@ -38,7 +43,7 @@ final class UserProfileModule {
         UserProfileViewModel(
             userId: userId,
             username: username,
-            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase)
+            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase),
         )
     }
 }

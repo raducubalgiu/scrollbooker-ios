@@ -17,6 +17,8 @@ struct InputEdit: View {
     var isDisabled: Bool = false
     var onClear: () -> Void
     
+    var maxLength: Int? = nil
+    
     @FocusState private var isFocused: Bool
     
     var body: some View {
@@ -34,6 +36,11 @@ struct InputEdit: View {
                 .focused($isFocused)
                 .disabled(isDisabled)
                 .padding(.vertical, .base)
+                .onChange(of: text) { oldValue, newValue in
+                    if let maxLength = maxLength, newValue.count > maxLength {
+                        text = String(newValue.prefix(maxLength))
+                    }
+                }
                 
                 if !text.isEmpty {
                     Button {
@@ -51,11 +58,21 @@ struct InputEdit: View {
                 alignment: .bottom
             )
             
-            if isError && !errorMessage.isEmpty {
-                HStack {
-                    Image(systemName: "exclamationmark.triangle.fill")
-                        .foregroundColor(.errorSB)
-                    Text(errorMessage).foregroundColor(.errorSB)
+            HStack {
+                if isError && !errorMessage.isEmpty {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.errorSB)
+                        Text(errorMessage).foregroundColor(.errorSB)
+                    }
+                }
+                
+                Spacer()
+                
+                if let max = maxLength {
+                    Text("\(text.count)/\(max)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
                 }
             }
         }

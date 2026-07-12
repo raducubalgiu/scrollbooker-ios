@@ -65,10 +65,17 @@ struct ProfileTabRouter: View {
                             .toolbar(.hidden, for: .navigationBar)
                         
                     case .editFullName:
-                        EditNameScreen(
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
+                        if let stableViewModel = viewModel {
+                            EditNameScreen(
+                                viewModel: stableViewModel,
+                                onBack: { router.pop() }
+                            )
+                        } else {
+                            LoadingView()
+                                .onAppear {
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                }
+                        }
                         
                     case .editUsername:
                         EditUsernameScreen(

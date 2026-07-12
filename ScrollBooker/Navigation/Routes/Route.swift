@@ -41,8 +41,8 @@ enum Route: Hashable {
         username: String,
         initialTab: SocialTab,
         isBusinessOrEmployee: Bool,
-        initialFollowersCount: Int,
-        initialFollowingsCount: Int
+        followersCount: Int,
+        followingsCount: Int
     )
     
     case calendar

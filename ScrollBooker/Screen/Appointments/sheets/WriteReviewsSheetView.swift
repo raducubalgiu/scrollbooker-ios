@@ -37,7 +37,10 @@ struct WriteReviewSheetView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeaderView(title: String(localized: "writeAReview"))
+            SheetHeaderView(
+                onDismiss: { dismiss() },
+                title: String(localized: "writeAReview")
+            )
             
             ScrollView {
                 VStack(spacing: 24) {

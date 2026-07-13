@@ -55,12 +55,14 @@ final class MyProductsViewModel: HasLoadingState {
         uiState.errorMessage = nil
         
         do {
-            let productsData = try await getProductsByBusinessAndEmployeeUseCase(
-                businessId: businessId,
-                employeeId: nil,
-                onlyServicesWithProducts: false,
-                productsLimitPerService: nil
-            )
+            let productsData = try await withVisibleLoading {
+                try await getProductsByBusinessAndEmployeeUseCase(
+                    businessId: businessId,
+                    employeeId: nil,
+                    onlyServicesWithProducts: false,
+                    productsLimitPerService: nil
+                )
+            }
             
             viewState = .success(productsData)
         } catch {

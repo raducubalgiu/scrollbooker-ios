@@ -69,7 +69,7 @@ struct AppointmentBusiness: Equatable, Hashable, Sendable {
 extension Appointment {
     func copy(
         hasWrittenReview: Bool? = nil,
-        writtenReview: AppointmentWrittenReview? = nil // Modificat în optional simplu
+        writtenReview: AppointmentWrittenReview? = nil
     ) -> Appointment {
         Appointment(
             id: self.id,
@@ -90,7 +90,6 @@ extension Appointment {
             paymentCurrency: self.paymentCurrency,
             hasWrittenReview: hasWrittenReview ?? self.hasWrittenReview,
             hasVideoReview: self.hasVideoReview,
-            // Dacă writtenReview primit este nil, păstrează-l pe cel actual (self.writtenReview)
             writtenReview: writtenReview ?? self.writtenReview
         )
     }

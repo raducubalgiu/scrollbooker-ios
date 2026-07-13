@@ -48,13 +48,14 @@ struct ProfileUserInfoView: View {
                             .foregroundColor(.onBackgroundSB)
                         
                         Text(openingHours.formattedStatus)
-                            .font(.subheadline.weight(.semibold))
+                            .font(.subheadline)
                             .foregroundColor(.onBackgroundSB)
                         
                         Image(systemName: "chevron.down")
                             .foregroundColor(.onBackgroundSB)
                     }
                 }
+                .padding(.top, .xxs)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

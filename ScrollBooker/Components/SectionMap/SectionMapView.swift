@@ -46,8 +46,6 @@ struct SectionMap: View {
             }
             
             if displayDirectionsButton {
-                Spacer().frame(height: 16)
-                
                 MainButton(
                     title: String(localized: "navigationDirections"),
                     onClick: { redirectToMaps()},

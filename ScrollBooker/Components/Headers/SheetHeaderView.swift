@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SheetHeaderView: View {
-    @Environment(\.dismiss) private var dismiss
+    var onDismiss: () -> Void
     
     var title: String = ""
     var showDivider: Bool = true
@@ -29,7 +29,7 @@ struct SheetHeaderView: View {
                     Spacer()
                     
                     Button {
-                        dismiss()
+                        onDismiss()
                     } label: {
                         Image(systemName: "xmark")
                             .font(.system(size: 14, weight: .bold))
@@ -41,7 +41,6 @@ struct SheetHeaderView: View {
             }
             .padding(.horizontal, .base)
             .padding(.vertical, .s)
-            .frame(minHeight: 48)
             
             if showDivider {
                 Divider()

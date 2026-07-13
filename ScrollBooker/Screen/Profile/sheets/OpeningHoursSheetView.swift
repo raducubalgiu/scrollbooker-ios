@@ -7,55 +7,50 @@
 
 import SwiftUI
 
+struct ViewHeightKey: PreferenceKey {
+    static var defaultValue: CGFloat = 0
+    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
+        value = max(value, nextValue())
+    }
+}
+
 struct OpeningHoursSheetView: View {
-    @State private var measuredHeight: CGFloat = 0
+    @Environment(\.dismiss) private var dismiss
+    @State private var contentHeight: CGFloat = 300
     
     var body: some View {
-        VStack {
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: 10)
-                    Text("Luni")
-                        .font(.headline)
-                }
-                
-                Spacer()
-                
-                Text("09:00 - 18:00")
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
+        VStack(spacing: 16) {
+            SheetHeaderView(
+                onDismiss: { dismiss() },
+                title: String(localized: "schedule")
+            )
             
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: 10)
-                    Text("Marti")
-                        .font(.headline)
+            VStack {
+                ForEach(["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"], id: \.self) { zi in
+                    HStack {
+                        HStack {
+                            Circle().fill(Color.green).frame(width: 10, height: 10)
+                            Text(zi).font(.headline)
+                        }
+                        Spacer()
+                        Text("09:00 - 18:00").font(.headline)
+                    }
                 }
-                
-                Spacer()
-                
-                Text("09:00 - 18:00")
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
+            }.padding()
         }
-        .padding()
+        .fixedSize(horizontal: false, vertical: true)
         .background(
             GeometryReader { geo in
                 Color.clear
-                    .onAppear { measuredHeight = geo.size.height }
-                    .onChange(of: geo.size.height) { _, new in
-                        measuredHeight = new
-                    }
+                    .preference(key: ViewHeightKey.self, value: geo.size.height)
             }
         )
-        .presentationDetents([.height(max(100, measuredHeight + 16))])
-        .presentationContentInteraction(.resizes)
+        .onPreferenceChange(ViewHeightKey.self) { newValue in
+            if newValue > 0 {
+                contentHeight = newValue
+            }
+        }
+        .presentationDetents([.height(contentHeight + 16)])
         .presentationDragIndicator(.hidden)
         .presentationCornerRadius(25)
     }

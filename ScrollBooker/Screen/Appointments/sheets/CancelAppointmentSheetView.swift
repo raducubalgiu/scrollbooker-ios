@@ -45,7 +45,10 @@ struct CancelAppointmentSheetView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeaderView(title: String(localized: "cancelAppointment"))
+            SheetHeaderView(
+                onDismiss: { dismiss() },
+                title: String(localized: "cancelAppointment"),
+            )
             
             ScrollView {
                 VStack(spacing: 0) {

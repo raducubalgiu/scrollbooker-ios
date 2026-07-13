@@ -75,7 +75,6 @@ struct MyProfileScreen: View {
                 )
             case .openingHours:
                 OpeningHoursSheetView()
-                    .presentationDetents([.medium, .large])
             }
         }
     }

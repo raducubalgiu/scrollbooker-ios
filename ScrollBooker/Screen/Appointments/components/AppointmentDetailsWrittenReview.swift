@@ -56,7 +56,7 @@ struct AppointmentDetailsWrittenReview: View {
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(16)
-        .background(Color(.secondarySystemBackground))
+        .background(Color.surfaceSB)
         .cornerRadius(12)
     }
 }

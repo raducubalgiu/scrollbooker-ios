@@ -26,7 +26,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                         counters: user.counters,
                         onNavigateToUserSocial: onNavigateToUserSocial
                     )
-                    .padding(.vertical, .base)
+                    .padding(.vertical, .xl)
 
                     ProfileUserInfoView(
                         url: user.avatarURL,

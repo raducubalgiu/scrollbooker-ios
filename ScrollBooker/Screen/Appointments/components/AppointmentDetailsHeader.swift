@@ -31,7 +31,7 @@ struct AppointmentDetailsHeader: View {
                     .fontWeight(.semibold)
                 
                 Text("(\(appointment.totalDuration) min)")
-                    .font(.body)
+                    .font(.subheadline)
                     .foregroundColor(.gray)
             }
             

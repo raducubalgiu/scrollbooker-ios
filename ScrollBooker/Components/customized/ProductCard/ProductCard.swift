@@ -42,14 +42,15 @@ struct ProductCard: View {
             HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(product.name)
-                        .font(.subheadline.bold())
+                        .font(.headline)
+                        .fontWeight(.semibold)
                         .foregroundColor(.onBackgroundSB)
                         .lineLimit(2)
                     
                     Spacer().frame(height: 4)
                     
                     Text(productSummaryText)
-                        .font(.body)
+                        .font(.subheadline)
                         .foregroundColor(.gray)
                         .lineLimit(2)
                     
@@ -92,6 +93,7 @@ struct ProductCard: View {
                     .foregroundColor(.errorSB)
             }
         }
+        .padding(.vertical, .base)
         .contentShape(Rectangle())
         .onTapGesture {
             onOpenProductDetail(product)

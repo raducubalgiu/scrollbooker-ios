@@ -13,7 +13,6 @@ struct MyProductsScreen: View {
     var onNavigateAddProduct: () -> Void
     var onNavigateEditProduct: (Int, Int) -> Void // serviceId, productId
     
-    // Forțăm explicit tipul opțional Hashable pentru poziția de scroll
     @State private var activeSectionId: Int? = nil
     
     var body: some View {
@@ -75,7 +74,7 @@ struct MyProductsScreen: View {
                     activeSectionId: activeSectionId ?? fallbackId,
                     serviceGroups: serviceGroups
                 ) { clickedTabId in
-                    withAnimation(.easeInOut) {
+                    withAnimation(.easeInOut(duration: 0.3)) {
                         activeSectionId = clickedTabId
                         proxy.scrollTo(clickedTabId, anchor: .top)
                     }
@@ -89,13 +88,15 @@ struct MyProductsScreen: View {
     @ViewBuilder
     private func productsScrollView(serviceGroups: [BusinessServicesWithProducts]) -> some View {
         ScrollView {
-            LazyVStack(alignment: .leading, spacing: 12) {
+            LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(serviceGroups, id: \.service.id) { group in
-                    // Extragem toată logica complexă a unui grup într-o funcție dedicată
-                    serviceSectionRow(group: group)
+                    VStack(alignment: .leading, spacing: 12) {
+                        serviceSectionRow(group: group)
+                    }
+                    .id(group.service.id)
                 }
             }
-            .padding(16)
+            .padding(.horizontal, 16)
             .scrollTargetLayout()
         }
         .scrollPosition(id: $activeSectionId, anchor: .top)
@@ -103,19 +104,15 @@ struct MyProductsScreen: View {
     
     @ViewBuilder
     private func serviceSectionRow(group: BusinessServicesWithProducts) -> some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Text(group.service.name)
-                .font(.title2)
-                .bold()
-                .foregroundColor(.onBackgroundSB)
-                .padding(.top, 12)
-                .padding(.bottom, .base)
-        }
-        .id(group.service.id)
+        Text(group.service.name)
+            .font(.title2)
+            .bold()
+            .foregroundColor(.onBackgroundSB)
+            .padding(.top, .base)
         
         if group.products.isEmpty {
             Text("Nu au fost găsite servicii pentru această categorie.")
-                .font(.body)
+                .font(.subheadline)
                 .foregroundColor(.gray)
                 .padding(.bottom, .base)
         } else {
@@ -133,7 +130,6 @@ struct MyProductsScreen: View {
                 if group.products.last?.id != product.id {
                     Divider()
                         .background(Color.gray.opacity(0.3))
-                        .padding(.vertical, .base)
                 }
             }
         }

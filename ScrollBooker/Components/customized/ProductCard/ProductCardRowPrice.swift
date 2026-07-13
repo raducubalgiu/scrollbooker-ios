@@ -15,17 +15,18 @@ struct ProductCardRowPrice: View {
     var body: some View {
         HStack(alignment: .center, spacing: 8) {
             Text("\(priceWithDiscount) RON")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.headline)
+                .fontWeight(.semibold)
                 .foregroundColor(Color.onBackgroundSB)
             
             if discount > 0 {
                 Text("100")
-                    .font(.body)
+                    .font(.subheadline)
                     .strikethrough()
                     .foregroundColor(.gray)
                 
                 Text("(-\(discount)%)")
-                    .font(.system(size: 16))
+                    .font(.subheadline)
                     .foregroundColor(.errorSB)
             }
             

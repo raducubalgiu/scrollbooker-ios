@@ -14,10 +14,10 @@ enum ProductTypeEnum: String, CaseIterable, Equatable, Hashable, Sendable, Codab
     
     static func fromKey(_ key: String?) -> ProductTypeEnum? {
         guard let key = key else { return nil }
-        return ProductTypeEnum(rawValue: key)
+        return ProductTypeEnum(rawValue: key.lowercased())
     }
     
     static func fromKeys(_ keys: [String]) -> [ProductTypeEnum] {
-        return keys.compactMap { ProductTypeEnum(rawValue: $0) }
+        return keys.compactMap { ProductTypeEnum(rawValue: $0.lowercased()) }
     }
 }

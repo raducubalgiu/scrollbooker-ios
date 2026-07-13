@@ -10,7 +10,7 @@ import SwiftUI
 struct ProfileLayout<Header: View, Actions: View>: View {
     let user: UserProfile
     let onNavigateToUserSocial: () -> Void
-    let onNavigateToUserProfile: () -> Void
+    let onNavigateToUserProfile: (Int, String) -> Void
     let onShowOpeningHours: () -> Void
     
     @ViewBuilder var header: () -> Header

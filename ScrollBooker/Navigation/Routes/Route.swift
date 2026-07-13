@@ -68,12 +68,6 @@ enum Route: Hashable {
     
     // Settings
     case mySettings
-    case account
-    case privacy
-    case security
-    case notificationSettings
     case display
     case reportProblem
-    case support
-    case termsAndConditions
 }

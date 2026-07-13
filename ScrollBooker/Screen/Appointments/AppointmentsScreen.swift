@@ -21,45 +21,36 @@ struct AppointmentsScreen: View {
 
             Group {
                 switch viewModel.viewState {
-                case .idle, .loading:
-                    LoadingView()
-                    
-                case .error(let message):
-                    ErrorView(message: message) {
-                        Task { await viewModel.refresh() }
-                    }
-                    
-                case .empty:
-                    NoDataView(
-                        title: String(localized: "bookings"),
-                        message: String(localized: "notFoundAppointments"),
-                        systemImage: "calendar.badge.clock"
-                    )
-                    
-                case .success(let appointments):
-                    ScrollView {
-                        LazyVStack(spacing: 12) {
-                            AppointmentsListView(
-                                appointments: appointments,
-                                onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
-                                onItemAppear: { appointment in
-                                    Task {
-                                        await viewModel.loadMoreIfNeeded(currentAppointment: appointment)
-                                    }
-                                }
-                            )
-                            
-                            if viewModel.isPaging {
-                                ProgressView()
-                                    .padding(.vertical)
-                            }
+                    case .idle, .loading:
+                        LoadingView()
+                        
+                    case .error(let message):
+                        ErrorView(message: message) {
+                            Task { await viewModel.refresh() }
                         }
-                        .padding(.top)
+                        
+                    case .empty:
+                        NoDataView(
+                            title: String(localized: "bookings"),
+                            message: String(localized: "notFoundAppointments"),
+                            systemImage: "calendar.badge.clock"
+                        )
+                        
+                    case .success(let appointments):
+                        AppointmentsListView(
+                            appointments: appointments,
+                            isPaging: viewModel.isPaging,
+                            onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
+                            onItemAppear: { appointment in
+                                Task {
+                                    await viewModel.loadMoreIfNeeded(currentAppointment: appointment)
+                                }
+                            },
+                            onRefresh: {
+                                await viewModel.refresh()
+                            }
+                        )
                     }
-                    .refreshable {
-                        await viewModel.refresh()
-                    }
-                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

@@ -16,7 +16,7 @@ struct ReportProblemScreen: View {
         
         VStack {
             HeaderView(
-                title: String(localized: "reportAProblem"),
+                title: String(localized: "reportProblem"),
                 onBack: onBack
             )
             

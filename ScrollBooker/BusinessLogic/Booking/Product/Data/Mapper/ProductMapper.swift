@@ -12,21 +12,33 @@ extension Product {
         self.id = dto.id
         self.name = dto.name
         self.description = dto.description
-        self.serviceId = dto.service_id
-        self.businessId = dto.business_id
-        self.businessOwnerId = dto.business_owner_id
-        self.currencyId = dto.currency_id
-        self.canBeBooked = dto.can_be_booked
+        self.serviceId = dto.serviceId
+        self.businessId = dto.businessId
+        self.businessOwnerId = dto.businessOwnerId
+        self.currencyId = dto.currencyId
+        self.canBeBooked = dto.canBeBooked
         
         self.type = ProductTypeEnum.fromKey(dto.type)
         
-        self.sessionsCount = dto.sessions_count
-        self.validityDays = dto.validity_days
-        self.hasDifferentPrices = dto.has_different_prices
+        self.sessionsCount = dto.sessionsCount
+        self.validityDays = dto.validityDays
+        self.hasDifferentPrices = dto.hasDifferentPrices
         
-        self.startingOffering = StartingOffering(dto: dto.starting_offering)
+        self.startingOffering = ProductStartingOffering(dto: dto.startingOffering)
         self.variants = dto.variants.map { ProductVariant(dto: $0) }
         self.filters = dto.filters.map { ProductFilter(dto: $0) }
+    }
+}
+
+extension ProductStartingOffering {
+    init(dto: ProductStartingOfferingDto) {
+        self.variantId = dto.variantId
+        self.variantName = dto.variantName
+        self.duration = dto.duration
+        self.userId = dto.userId
+        self.price = dto.price
+        self.discount = dto.discount
+        self.priceWithDiscount = dto.priceWithDiscount
     }
 }
 
@@ -35,22 +47,9 @@ extension ProductVariant {
         self.id = dto.id
         self.name = dto.name
         self.duration = dto.duration
-        self.startingOffering = StartingOffering(dto: dto.starting_offering)
-        self.hasDifferentPrices = dto.has_different_prices
+        self.startingOffering = ProductOffering(dto: dto.startingOffering)
+        self.hasDifferentPrices = dto.hasDifferentPrices
         self.offerings = dto.offerings.map { ProductOffering(dto: $0) }
-    }
-}
-
-extension StartingOffering {
-    init(dto: StartingOfferingDto) {
-        self.id = dto.id
-        self.variantId = dto.variant_id
-        self.variantName = dto.variant_name
-        self.duration = dto.duration
-        self.userId = dto.user_id
-        self.price = dto.price
-        self.discount = dto.discount
-        self.priceWithDiscount = dto.price_with_discount
     }
 }
 
@@ -60,7 +59,7 @@ extension ProductOffering {
         self.user = ProductOfferingUser(dto: dto.user)
         self.price = dto.price
         self.discount = dto.discount
-        self.priceWithDiscount = dto.price_with_discount
+        self.priceWithDiscount = dto.priceWithDiscount
     }
 }
 
@@ -68,9 +67,15 @@ extension ProductOfferingUser {
     init(dto: ProductOfferingUserDto) {
         self.id = dto.id
         self.username = dto.username
-        self.fullName = dto.fullname
+        self.fullName = dto.fullName
         self.profession = dto.profession
         self.avatar = dto.avatar
+    }
+}
+
+extension ProductOfferingUserDto {
+    var toDomain: ProductOfferingUser {
+        ProductOfferingUser(dto: self)
     }
 }
 
@@ -79,13 +84,13 @@ extension ProductFilter {
         self.id = dto.id
         self.name = dto.name
         
-        self.subFilters = dto.sub_filters.map { SubFilter(dto: $0) }
+        self.subFilters = dto.subFilters.map { SubFilter(dto: $0) }
         
         self.type = FilterTypeEnum.fromKey(dto.type)
         self.unit = dto.unit
         self.minim = dto.minim
         self.maxim = dto.maxim
-        self.displayAsTab = dto.display_as_tab
+        self.displayAsTab = dto.displayAsTab
     }
 }
 

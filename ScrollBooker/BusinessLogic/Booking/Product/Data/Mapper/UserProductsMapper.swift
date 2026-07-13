@@ -9,7 +9,7 @@ import Foundation
 
 extension UserProducts {
     init(dto: UserProductsDto) {
-        self.totalCount = dto.total_count
+        self.totalCount = dto.totalCount
         self.data = dto.data.map { BusinessServicesWithProducts(dto: $0) }
     }
 }

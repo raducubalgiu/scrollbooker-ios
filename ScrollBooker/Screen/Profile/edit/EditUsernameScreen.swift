@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct EditUsernameScreen: View {
+    let viewModel: MyProfileViewModel
     var onBack: () -> Void
     
     var body: some View {

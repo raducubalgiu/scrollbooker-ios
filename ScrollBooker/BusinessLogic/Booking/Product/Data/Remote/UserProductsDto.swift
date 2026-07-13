@@ -7,12 +7,22 @@
 
 import Foundation
 
-struct UserProductsDto: Codable {
-    let total_count: Int
+struct UserProductsDto: Decodable {
+    let totalCount: Int
     let data: [BusinessServicesWithProductsDto]
+    
+    enum CodingKeys: String, CodingKey {
+        case totalCount = "total_count"
+        case data
+    }
 }
 
-struct BusinessServicesWithProductsDto: Codable {
+struct BusinessServicesWithProductsDto: Decodable {
     let service: ServiceDto
     let products: [ProductDto]
+    
+    enum CodingKeys: String, CodingKey {
+        case service
+        case products
+    }
 }

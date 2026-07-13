@@ -188,16 +188,41 @@ actor APIClient {
         }
     
     private func handleResponse<T: Decodable>(_ http: HTTPURLResponse, data: Data) throws -> T {
-        switch http.statusCode {
-        case 200..<300:
-            if T.self == Empty.self { return Empty() as! T }
-            do { return try decoder.decode(T.self, from: data) }
-            catch { throw APIError.decoding(error) }
-        case 401: throw APIError.unauthorized
-        case 404: throw APIError.notFound
-        default: throw APIError.server(status: http.statusCode, data: data)
+            guard (200...299).contains(http.statusCode) else {
+                throw APIError.server(status: http.statusCode, data: data)
+            }
+            
+            do {
+                return try self.decoder.decode(T.self, from: data)
+            } catch let error as DecodingError {
+                print("------- 🚨 EROARE DE DECODARE DETALIATĂ 🚨 -------")
+                switch error {
+                case .typeMismatch(let type, let context):
+                    let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                    print("❌ TIP INCORECT: Se aștepta tipul '\(type)' la cheia: [ \(path) ]")
+                    print("💡 Detalii backend: \(context.debugDescription)")
+                    
+                case .valueNotFound(let type, let context):
+                    let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                    print("❌ VALOARE NULL: Câmpul non-opțional '\(type)' a primit null în JSON la cheia: [ \(path) ]")
+                    
+                case .keyNotFound(let key, let context):
+                    let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                    print("❌ CHEIE LIPSĂ: Serverul nu a trimis cheia '\(key.stringValue)' în structura: [ \(path) ]")
+                    
+                case .dataCorrupted(let context):
+                    print("❌ JSON INVALID: Datele sunt corupte structural la nivel de text JSON: \(context.debugDescription)")
+                    
+                @unknown default:
+                    print("❌ Eroare de decodare necunoscută: \(error)")
+                }
+                print("-------------------------------------------------")
+                throw error
+            } catch {
+                print("⚠️ Alt tip de eroare apărut la procesarea datelor: \(error.localizedDescription)")
+                throw error
+            }
         }
-    }
     
     private func executeWithRetry<T>(attempts: Int, action: @escaping () async throws -> T) async throws -> T {
         do {
@@ -249,20 +274,21 @@ struct LossyDecimal: Codable, Hashable, Sendable {
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         
-        // 1. Încercăm să îl decodăm ca număr (Double)
+        // 1. Încercăm să îl decodăm ca număr (Double) - PROTEJAT la pierderea de precizie
         if let numericValue = try? container.decode(Double.self) {
-            self.wrappedValue = Decimal(numericValue)
+            // Conversia prin String ne asigură că prețul rămâne curat, de ex. "19.99" în loc de "19.990000002"
+            self.wrappedValue = Decimal(string: String(numericValue)) ?? Decimal(numericValue)
             return
         }
         
-        // 2. Încercăm să îl decodăm ca String (Cazul tău FastAPI: "100.0")
+        // 2. Încercăm ca String (Cazul FastAPI: "100.0")
         if let stringValue = try? container.decode(String.self),
            let decimalValue = Decimal(string: stringValue) {
             self.wrappedValue = decimalValue
             return
         }
         
-        // 3. Fallback sigur: Încercăm decodarea nativă a sistemului
+        // 3. Fallback sigur
         self.wrappedValue = try container.decode(Decimal.self)
     }
     
@@ -283,14 +309,14 @@ struct LossyOptionalDecimal: Codable, Hashable, Sendable {
     init(from decoder: Decoder) throws {
         let container = try decoder.singleValueContainer()
         
-        // Dacă valoarea lipsește sau este null în JSON, returnăm nil în siguranță
         if container.decodeNil() {
             self.wrappedValue = nil
             return
         }
         
         if let numericValue = try? container.decode(Double.self) {
-            self.wrappedValue = Decimal(numericValue)
+            // Aceeași optimizare pentru precizie și aici
+            self.wrappedValue = Decimal(string: String(numericValue)) ?? Decimal(numericValue)
             return
         }
         
@@ -300,7 +326,6 @@ struct LossyOptionalDecimal: Codable, Hashable, Sendable {
             return
         }
         
-        // Dacă e alt format ciudat, încercăm decodarea nativă opțională
         self.wrappedValue = try? container.decode(Decimal.self)
     }
     

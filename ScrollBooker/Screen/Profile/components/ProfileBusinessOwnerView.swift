@@ -9,19 +9,21 @@ import SwiftUI
 
 struct ProfileBusinessOwnerView: View {
     var businessOwner: BusinessOwner
-    var onNavigateToUserProfile: () -> Void
+    var onNavigateToUserProfile: (Int, String) -> Void
     
     var body: some View {
         Button {
-            onNavigateToUserProfile()
+            onNavigateToUserProfile(businessOwner.id, businessOwner.fullName)
         } label: {
             HStack {
                 Image(systemName: "repeat")
                     .foregroundColor(.onBackgroundSB)
+                
                 AvatarView(
-                    imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"),
+                    imageURL: businessOwner.avatarURL,
                     size: .s
                 )
+                
                 Text(businessOwner.fullName)
                     .font(.headline)
                     .foregroundColor(.onBackgroundSB)
@@ -30,19 +32,3 @@ struct ProfileBusinessOwnerView: View {
         .buttonStyle(.plain)
     }
 }
-
-#Preview("Light") {
-    ProfileBusinessOwnerView(
-        businessOwner: dummyUserProfile.businessOwner!,
-        onNavigateToUserProfile: {}
-    )
-}
-
-#Preview("Dark") {
-    ProfileBusinessOwnerView(
-        businessOwner: dummyUserProfile.businessOwner!,
-        onNavigateToUserProfile: {}
-    )
-    .preferredColorScheme(.dark)
-}
-

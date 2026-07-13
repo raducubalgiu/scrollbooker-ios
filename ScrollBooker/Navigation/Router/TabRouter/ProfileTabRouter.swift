@@ -24,9 +24,11 @@ struct ProfileTabRouter: View {
                         onNavigateToEditProfile: { router.push(.editProfile) },
                         onNavigateToSettings: { router.push(.mySettings) },
                         onNavigateToMyBusiness: { router.push(.myBusiness) },
-                        onNavigateToUserProfile: { },
+                        onNavigateToUserProfile: { userId, username in
+                            router.push(.userProfile(userId: userId, username: username))
+                        },
                         onNavigateToUserSocial: {},
-                        onNavigateToMyCalendar: {}
+                        onNavigateToMyCalendar: { router.push(.myCalendar) }
                     )
                 } else {
                     ProgressView()
@@ -35,28 +37,23 @@ struct ProfileTabRouter: View {
             .toolbar(router.profilePath.isEmpty ? .visible : .hidden, for: .tabBar)
             .withNavigation { route in
                 switch route {
-                    // MARK: - Settings Flow
                     case .mySettings:
                         SettingsScreen(
                             onNavigate: { r in router.push(r) },
                             onBack: { router.pop() }
                         )
-                            .toolbar(.hidden, for: .navigationBar)
                         
                     case .display:
                         DisplayScreen(
                             onBack: { router.pop() }
                         )
-                            .toolbar(.hidden, for: .navigationBar)
                         
                     case .reportProblem:
                         ReportProblemScreen(
                             viewModel: container.problemModule.makeProblemViewModel(userId: session.userInfo?.id ?? 0),
                             onBack: { router.pop() }
                         )
-                            .toolbar(.hidden, for: .navigationBar)
                         
-                    // MARK: - Edit Profile Flow
                     case .editProfile:
                         if let stableViewModel = viewModel {
                             EditProfileScreen(
@@ -85,10 +82,17 @@ struct ProfileTabRouter: View {
                         }
                         
                     case .editUsername:
-                        EditUsernameScreen(
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
+                        if let stableViewModel = viewModel {
+                            EditUsernameScreen(
+                                viewModel: stableViewModel,
+                                onBack: { router.pop() }
+                            )
+                        } else {
+                            LoadingView()
+                                .onAppear {
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                }
+                        }
                         
                     case .editBio:
                         if let stableViewModel = viewModel {
@@ -135,36 +139,32 @@ struct ProfileTabRouter: View {
                             onNavigate: { r in router.push(r) },
                             onBack: { router.pop() }
                         )
-                           .toolbar(.hidden, for: .navigationBar)
                         
                     case .myBusinessDetails:
                         MyBusinessDetailsScreen()
-                            .toolbar(.hidden, for: .navigationBar)
-                        
-                    case .myCalendar:
-                        MyCalendarScreen(
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
-                    case .myProducts:
-                        MyProductsScreen(
-                            onBack: { router.pop() }
-                        )
-                            .toolbar(.hidden, for: .navigationBar)
-                        
+                    
                     case .mySchedules:
                         MySchedulesScreen(
                             viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session),
                             onBack: { router.pop() }
                         )
-                            .toolbar(.hidden, for: .navigationBar)
-                        
+                    
+                    case .myProducts:
+                        MyProductsScreen(
+                            viewModel: container.productModule.makeMyProductsViewModel(session: session),
+                            onBack: { router.pop() },
+                            onNavigateAddProduct: {},
+                            onNavigateEditProduct: { _, _ in }
+                        )
+                    
                     case .myServices:
                         MyServicesScreen(
                             viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session),
                             onBack: { router.pop() }
                         )
-                            .toolbar(.hidden, for: .navigationBar)
+                        
+                    case .myCalendar:
+                        MyCalendarScreen(onBack: { router.pop() })
                         
                     case .myEmployees:
                         EmployeesFlowContainer(
@@ -172,7 +172,6 @@ struct ProfileTabRouter: View {
                             onBack: { router.pop() },
                             session: session,
                         )
-                            .toolbar(.hidden, for: .navigationBar)
             
                     default:
                         nil

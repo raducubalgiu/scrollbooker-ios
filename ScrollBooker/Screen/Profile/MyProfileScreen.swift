@@ -13,7 +13,7 @@ struct MyProfileScreen: View {
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
-    var onNavigateToUserProfile: () -> Void
+    var onNavigateToUserProfile: (Int, String) -> Void
     var onNavigateToUserSocial: () -> Void
     var onNavigateToMyCalendar: () -> Void
 

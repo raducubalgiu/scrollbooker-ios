@@ -9,24 +9,37 @@ import SwiftUI
 
 struct AppointmentsListView: View {
     let appointments: [Appointment]
+    var isPaging: Bool = false
+    
     let onNavigateToAppointmentDetails: (Int) -> Void
     let onItemAppear: (Appointment) -> Void
+    let onRefresh: () async -> Void
 
     var body: some View {
-        LazyVStack(spacing: 0) {
-            ForEach(appointments) { appointment in
-                AppointmentCardView(
-                    appointment: appointment,
-                    onClick: {
-                        onNavigateToAppointmentDetails(appointment.id)
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(appointments) { appointment in
+                    AppointmentCardView(
+                        appointment: appointment,
+                        onClick: {
+                            onNavigateToAppointmentDetails(appointment.id)
+                        }
+                    )
+                    .onAppear {
+                        onItemAppear(appointment)
                     }
-                )
-                .onAppear {
-                    onItemAppear(appointment)
-                }
 
-                Divider()
+                    Divider()
+                }
+                
+                if isPaging {
+                    ProgressView()
+                        .padding(.vertical)
+                }
             }
+        }
+        .refreshable {
+            await onRefresh()
         }
     }
 }

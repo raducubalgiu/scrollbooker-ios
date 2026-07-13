@@ -18,8 +18,8 @@ extension BookingFlow {
 extension BookingFlowBusiness {
     init(dto: BookingFlowBusinessDto) {
         self.owner = BookingFlowUser(dto: dto.owner)
-        self.hasEmployees = dto.has_employees
-        self.formattedAddress = dto.formatted_address
+        self.hasEmployees = dto.hasEmployees
+        self.formattedAddress = dto.formattedAddress
     }
 }
 
@@ -27,10 +27,10 @@ extension BookingFlowUser {
     init(dto: BookingFlowUserDto) {
         self.id = dto.id
         self.username = dto.username
-        self.fullName = dto.fullname
+        self.fullName = dto.fullName
         self.profession = dto.profession
         self.avatar = dto.avatar
-        self.ratingsCount = dto.ratings_count
-        self.ratingsAverage = Double(dto.ratings_average)
+        self.ratingsCount = dto.ratingsCount
+        self.ratingsAverage = Double(dto.ratingsAverage)
     }
 }

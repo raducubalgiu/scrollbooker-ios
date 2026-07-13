@@ -55,7 +55,9 @@ struct GlobalNavigationModifier: ViewModifier {
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
-                onNavigateToUserProfile: { },
+                onNavigateToUserProfile: { userId, username in
+                    router.push(.userProfile(userId: userId, username: username))
+                },
                 onNavigateToUserSocial: {},
                 onBack: { router.pop() }
             )

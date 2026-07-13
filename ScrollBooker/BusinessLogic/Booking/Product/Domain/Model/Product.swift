@@ -16,43 +16,36 @@ struct Product: Identifiable, Equatable, Hashable, Sendable {
     let businessOwnerId: Int
     let currencyId: Int
     let canBeBooked: Bool
-
     let type: ProductTypeEnum?
     let sessionsCount: Int?
     let validityDays: Int?
     let hasDifferentPrices: Bool
-
-    let startingOffering: StartingOffering
+    let startingOffering: ProductStartingOffering
     let variants: [ProductVariant]
     let filters: [ProductFilter]
+}
+
+struct ProductStartingOffering: Equatable, Hashable, Sendable {
+    let variantId: Int
+    let variantName: String
+    let duration: Int
+    let userId: Int
+    var price: Decimal
+    var discount: Decimal
+    var priceWithDiscount: Decimal
 }
 
 struct ProductVariant: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String
     let duration: Int
-    let startingOffering: StartingOffering
+    let startingOffering: ProductOffering
     let hasDifferentPrices: Bool
-
     let offerings: [ProductOffering]
-}
-
-struct StartingOffering: Identifiable, Equatable, Hashable, Sendable {
-    let id: Int
-    let variantId: Int
-    let variantName: String?
-
-    let duration: Int
-    let userId: Int
-
-    let price: Decimal
-    let discount: Decimal
-    let priceWithDiscount: Decimal
 }
 
 struct ProductOffering: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
-
     let user: ProductOfferingUser
     let price: Decimal
     let discount: Decimal
@@ -65,8 +58,6 @@ struct ProductOfferingUser: Identifiable, Equatable, Hashable, Sendable {
     let fullName: String
     let profession: String
     let avatar: String?
-    
-    var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
 struct ProductFilter: Identifiable, Equatable, Hashable, Sendable {

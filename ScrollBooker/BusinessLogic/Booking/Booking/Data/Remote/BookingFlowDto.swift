@@ -7,24 +7,46 @@
 
 import Foundation
 
-struct BookingFlowDto: Codable {
+struct BookingFlowDto: Decodable {
     let business: BookingFlowBusinessDto
     let products: UserProductsDto
     let employees: [BookingFlowUserDto]
+    
+    enum CodingKeys: String, CodingKey {
+        case business
+        case products
+        case employees
+    }
 }
 
-struct BookingFlowBusinessDto: Codable {
+struct BookingFlowBusinessDto: Decodable {
     let owner: BookingFlowUserDto
-    let has_employees: Bool
-    let formatted_address: String
+    let hasEmployees: Bool
+    let formattedAddress: String
+    
+    enum CodingKeys: String, CodingKey {
+        case owner
+        case hasEmployees = "has_employees"
+        case formattedAddress = "formatted_address"
+    }
 }
 
-struct BookingFlowUserDto: Codable {
+struct BookingFlowUserDto: Decodable {
     let id: Int
     let username: String
-    let fullname: String
+    let fullName: String
     let profession: String
     let avatar: String?
-    let ratings_count: Int
-    let ratings_average: Float
+    let ratingsCount: Int
+    let ratingsAverage: Float
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case fullName = "fullname"
+        case profession
+        case avatar
+        case ratingsCount = "ratings_count"
+        case ratingsAverage = "ratings_average"
+    }
 }

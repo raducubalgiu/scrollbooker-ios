@@ -12,7 +12,7 @@ private var myBusinessPages = [
         title: String(localized: "location"),
         description: String(localized: "businessLocationDetails"),
         icon: "location",
-        route: .mySchedules
+        route: .myBusinessDetails
     ),
     
     MyBusinessPage(
@@ -57,7 +57,7 @@ struct MyBusinessScreen: View {
     
     var body: some View {
         HeaderView(
-            title: "Afacerea mea",
+            title: String(localized: "myBusiness"),
             onBack: onBack
         )
         
@@ -69,12 +69,12 @@ struct MyBusinessScreen: View {
         ScrollView {
             LazyVGrid(columns: columns, spacing: 8) {
                 ForEach(myBusinessPages) { page in
-                        MyBusinessCardView(
-                            title: page.title,
-                            description: page.description,
-                            icon: page.icon,
-                            onClick: { onNavigate(page.route) }
-                        )
+                    MyBusinessCardView(
+                        title: page.title,
+                        description: page.description,
+                        icon: page.icon,
+                        onClick: { onNavigate(page.route) }
+                    )
                 }
             }
             .padding(.horizontal)

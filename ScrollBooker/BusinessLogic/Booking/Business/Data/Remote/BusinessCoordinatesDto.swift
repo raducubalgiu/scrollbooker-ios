@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BusinessCoordinatesDto: Codable {
+struct BusinessCoordinatesDto: Decodable {
     let lat: Float
     let lng: Float
 }

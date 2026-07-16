@@ -25,7 +25,7 @@ struct UserProfileDTO: Codable {
     let profession: String
     let opening_hours: OpeningHoursDTO
     let is_follow: Bool
-    let business_owner: BusinessOwnerDTO?
+    let business_owner: ProfileBusinessOwnerDTO?
     let is_own_profile: Bool
     let is_business_or_employee: Bool
     let distance_km: Double?
@@ -34,7 +34,7 @@ struct UserProfileDTO: Codable {
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
-struct BusinessOwnerDTO: Codable{
+struct ProfileBusinessOwnerDTO: Codable{
     let id: Int
     let fullname: String
     let username: String

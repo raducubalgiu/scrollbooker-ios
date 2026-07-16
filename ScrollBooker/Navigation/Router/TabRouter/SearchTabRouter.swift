@@ -15,10 +15,11 @@ struct SearchTabRouter: View {
         
         NavigationStack(path: $bindableRouter.searchPath) {
             SearchScreen(
-                onNavigateToBusinessProfile: { id in
-                    router.push(.businessProfile(id: id))
-                }
+//                onNavigateToBusinessProfile: { id in
+//                    router.push(.businessProfile(id: id))
+//                }
             )
+            .toolbar(.hidden, for: .navigationBar)
             .withNavigation { route in
                 switch route {
                     case .businessProfile(_):

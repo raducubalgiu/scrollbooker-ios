@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BusinessDto: Codable {
+struct BusinessDto: Decodable {
     let id: Int
     let business_type_id: Int
     let owner_id: Int

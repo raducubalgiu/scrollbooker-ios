@@ -26,7 +26,7 @@ extension UserProfile {
         self.profession = dto.profession
         self.openingHours = OpeningHours(dto: dto.opening_hours)
         self.isFollow = dto.is_follow
-        self.businessOwner = dto.business_owner.map { BusinessOwner(dto: $0) }
+        self.businessOwner = dto.business_owner.map { ProfileBusinessOwner(dto: $0) }
         self.isOwnProfile = dto.is_own_profile
         self.isBusinessOrEmployee = dto.is_business_or_employee
         self.distanceKm = dto.distance_km
@@ -34,8 +34,8 @@ extension UserProfile {
     }
 }
 
-extension BusinessOwner {
-    init(dto: BusinessOwnerDTO) {
+extension ProfileBusinessOwner {
+    init(dto: ProfileBusinessOwnerDTO) {
         self.id = dto.id
         self.fullName = dto.fullname
         self.username = dto.username

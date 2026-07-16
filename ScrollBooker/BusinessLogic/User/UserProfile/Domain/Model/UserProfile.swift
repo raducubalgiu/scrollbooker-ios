@@ -25,7 +25,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     let profession: String
     let openingHours: OpeningHours
     let isFollow: Bool
-    let businessOwner: BusinessOwner?
+    let businessOwner: ProfileBusinessOwner?
     let isOwnProfile: Bool
     let isBusinessOrEmployee: Bool
     let distanceKm: Double?
@@ -68,7 +68,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     }
 }
 
-struct BusinessOwner: Codable, Hashable, Sendable {
+struct ProfileBusinessOwner: Codable, Hashable, Sendable {
     let id: Int
     let fullName: String
     let username: String

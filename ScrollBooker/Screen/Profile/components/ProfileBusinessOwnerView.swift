@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ProfileBusinessOwnerView: View {
-    var businessOwner: BusinessOwner
+    var businessOwner: ProfileBusinessOwner
     var onNavigateToUserProfile: (Int, String) -> Void
     
     var body: some View {

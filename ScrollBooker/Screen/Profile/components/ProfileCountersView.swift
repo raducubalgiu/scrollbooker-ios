@@ -39,19 +39,3 @@ struct ProfileCountersView: View {
         }
     }
 }
-
-#Preview("Light") {
-    ProfileCountersView(
-        counters: dummyUserProfile.counters,
-        onNavigateToUserSocial: {}
-    )
-}
-
-#Preview("Dark") {
-    ProfileCountersView(
-        counters: dummyUserProfile.counters,
-        onNavigateToUserSocial: {}
-    )
-        .preferredColorScheme(.dark)
-}
-

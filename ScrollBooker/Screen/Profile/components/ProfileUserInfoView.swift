@@ -63,28 +63,3 @@ struct ProfileUserInfoView: View {
     }
 }
 
-#Preview("Light") {
-    ProfileUserInfoView(
-        url: dummyUserProfile.avatarURL,
-        fullName: dummyUserProfile.fullName,
-        profession: dummyUserProfile.profession,
-        isBusinessOrEmployee: dummyUserProfile.isBusinessOrEmployee,
-        ratingsAverage: dummyUserProfile.counters.ratingsAverage,
-        openingHours: dummyUserProfile.openingHours,
-        onShowOpeningHoursSheet: {}
-    )
-}
-
-#Preview("Dark") {
-    ProfileUserInfoView(
-        url: dummyUserProfile.avatarURL,
-        fullName: dummyUserProfile.fullName,
-        profession: dummyUserProfile.profession,
-        isBusinessOrEmployee: dummyUserProfile.isBusinessOrEmployee,
-        ratingsAverage: dummyUserProfile.counters.ratingsAverage,
-        openingHours: dummyUserProfile.openingHours,
-        onShowOpeningHoursSheet: {}
-    )
-        .preferredColorScheme(.dark)
-}
-

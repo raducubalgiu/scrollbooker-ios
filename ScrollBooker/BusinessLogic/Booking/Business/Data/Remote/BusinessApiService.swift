@@ -9,6 +9,7 @@ import Foundation
 
 protocol BusinessApiService: Sendable {
     func getBusinessesSheet(request: SearchBusinessRequest) async throws -> PaginatedResponseDTO<BusinessSheetDto>
+    func getBusinessesMarkers(request: SearchBusinessRequest) async throws -> [BusinessMarkerDto]
 }
 
 final class BusinessAPIImpl: BusinessApiService {
@@ -19,10 +20,24 @@ final class BusinessAPIImpl: BusinessApiService {
     }
     
     func getBusinessesSheet(request: SearchBusinessRequest) async throws -> PaginatedResponseDTO<BusinessSheetDto> {
+        let query: [String: String] = [
+            "page": "\(1)",
+            "limit": "\(20)"
+        ]
+        
         return try await client.request(
             "businesses/locations",
             method: .post,
-            body: request
+            query: query,
+            body: request,
+        )
+    }
+    
+    func getBusinessesMarkers(request: SearchBusinessRequest) async throws -> [BusinessMarkerDto] {
+        return try await client.request(
+            "businesses/markers",
+            method: .post,
+            body: request,
         )
     }
 }

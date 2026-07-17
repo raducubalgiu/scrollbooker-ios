@@ -21,5 +21,9 @@ extension Color {
     static let onErrorSB = Color("OnErrorSBB")
     
     static let ratingSB = Color("RatingSBB")
+    
+    static let beautySB = Color("BeautySBB")
+    static let medicalSB = Color("MedicalSBB")
+    static let autoSB = Color("AutoSBB")
 }
 

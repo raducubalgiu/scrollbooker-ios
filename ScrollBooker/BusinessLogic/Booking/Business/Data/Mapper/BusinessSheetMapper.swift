@@ -12,7 +12,6 @@ extension BusinessSheet {
         self.businessShortDomain = dto.businessShortDomain
         self.address = dto.address
         self.coordinates = dto.coordinates
-        self.hasVideo = dto.hasVideo
         self.mediaFiles = dto.mediaFiles.map { BusinessMediaFile(dto: $0) }
         self.products = dto.products.map { Product(dto: $0) }
         self.distance = dto.distance

@@ -12,7 +12,7 @@ enum NetworkLogger {
     private static let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "com.app.network", category: "Network")
 
     static func request(_ req: URLRequest, body: Data?) {
-        #if DEBUG
+        //#if DEBUG
         let method = req.httpMethod ?? "GET"
         let urlStr = req.url?.absoluteString ?? ""
         
@@ -39,11 +39,11 @@ enum NetworkLogger {
         → Body:
         \(bodyString, privacy: .private)
         """)
-        #endif
+        //#endif
     }
 
     static func response(_ req: URLRequest, resp: HTTPURLResponse, data: Data?) {
-        #if DEBUG
+        //#if DEBUG
         let method = req.httpMethod ?? "GET"
         let urlStr = req.url?.absoluteString ?? ""
         let statusCode = resp.statusCode
@@ -75,6 +75,6 @@ enum NetworkLogger {
             \(bodyString, privacy: .private)
             """)
         }
-        #endif
+        //#endif
     }
 }

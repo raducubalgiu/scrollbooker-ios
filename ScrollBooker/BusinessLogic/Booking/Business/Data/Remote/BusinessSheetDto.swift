@@ -13,8 +13,6 @@ struct BusinessSheetDto: Decodable {
     let businessShortDomain: String
     let address: String
     let coordinates: BusinessCoordinates
-    let isPrimary: Bool
-    let hasVideo: Bool
     let mediaFiles: [BusinessMediaFileDto]
     let products: [ProductDto]
     let distance: Float?
@@ -25,8 +23,6 @@ struct BusinessSheetDto: Decodable {
         case businessShortDomain = "business_short_domain"
         case address
         case coordinates
-        case isPrimary = "is_primary"
-        case hasVideo = "has_video"
         case mediaFiles = "media_files"
         case products
         case distance

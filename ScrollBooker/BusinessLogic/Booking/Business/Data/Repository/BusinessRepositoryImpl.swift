@@ -21,4 +21,12 @@ final class BusinessRepositoryImpl: BusinessRepository {
             BusinessSheet(dto: $0)
         }
     }
+    
+    func getBusinessesMarkers(request: SearchBusinessRequest) async throws -> [BusinessMarker] {
+        let dtoResponse = try await api.getBusinessesMarkers(request: request)
+        
+        return dtoResponse.map { dto in
+            BusinessMarker(dto: dto)
+        }
+    }
 }

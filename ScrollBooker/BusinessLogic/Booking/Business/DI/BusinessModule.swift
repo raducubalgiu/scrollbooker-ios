@@ -26,10 +26,15 @@ final class BusinessModule {
     private lazy var getBusinessesSheetUseCase: GetBusinessesSheetUseCase = {
         GetBusinessesSheetUseCase(repository: repository)
     }()
+    
+    private lazy var getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase = {
+        GetBusinessesMarkersUseCase(repository: repository)
+    }()
 
-//    func makeSearchViewModel() -> AppointmentsViewModel {
-//        AppointmentsViewModel(
-//            getUserAppointments: getUserAppointmentsUseCase
-//        )
-//    }
+    func makeSearchViewModel() -> SearchViewModel {
+        SearchViewModel(
+            getBusinessesSheetUseCase: getBusinessesSheetUseCase,
+            getBusinessesMarkersUseCase: getBusinessesMarkersUseCase
+        )
+    }
 }

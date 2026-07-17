@@ -8,17 +8,24 @@
 import SwiftUI
 
 struct SearchTabRouter: View {
+    @EnvironmentObject private var container: AppContainer
     var router: Router
+    @State private var viewModel: SearchViewModel?
     
     var body: some View {
         @Bindable var bindableRouter = router
         
         NavigationStack(path: $bindableRouter.searchPath) {
-            SearchScreen(
-//                onNavigateToBusinessProfile: { id in
-//                    router.push(.businessProfile(id: id))
-//                }
-            )
+            Group {
+                if let stableViewModel = viewModel {
+                    SearchScreen(
+                        viewModel: stableViewModel,
+                        onNavigateToBusinessProfile: { businessId in }
+                    )
+                } else {
+                    ProgressView()
+                }
+            }
             .toolbar(.hidden, for: .navigationBar)
             .withNavigation { route in
                 switch route {
@@ -31,6 +38,13 @@ struct SearchTabRouter: View {
             }
         }
         .toolbar(router.searchPath.isEmpty ? .visible : .hidden, for: .tabBar)
+        .onAppear {
+            if viewModel == nil {
+                Task { @MainActor in
+                    viewModel = container.businessModule.makeSearchViewModel()
+                }
+            }
+        }
     }
 }
 

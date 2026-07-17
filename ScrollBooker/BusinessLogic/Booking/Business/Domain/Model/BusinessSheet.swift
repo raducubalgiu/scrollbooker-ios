@@ -11,7 +11,6 @@ struct BusinessSheet: Identifiable, Equatable, Hashable, Sendable {
     let businessShortDomain: String
     let address: String
     let coordinates: BusinessCoordinates
-    let hasVideo: Bool
     let mediaFiles: [BusinessMediaFile]
     let products: [Product]
     let distance: Float?

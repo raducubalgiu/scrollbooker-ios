@@ -37,4 +37,10 @@ final class BusinessModule {
             getBusinessesMarkersUseCase: getBusinessesMarkersUseCase
         )
     }
+    
+    func makeBusinessProfileViewModel(username: String) -> BusinessProfileViewModel {
+        BusinessProfileViewModel(
+            username: username
+        )
+    }
 }

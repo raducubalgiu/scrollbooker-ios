@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct UserProfileDTO: Codable {
+struct UserProfileDTO: Decodable {
     let id: Int
     let username: String
     let fullname: String
@@ -34,7 +34,7 @@ struct UserProfileDTO: Codable {
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
-struct ProfileBusinessOwnerDTO: Codable{
+struct ProfileBusinessOwnerDTO: Decodable{
     let id: Int
     let fullname: String
     let username: String
@@ -43,7 +43,7 @@ struct ProfileBusinessOwnerDTO: Codable{
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
-struct UserCountersDTO: Codable {
+struct UserCountersDTO: Decodable {
     let user_id: Int
     let followings_count: Int
     let followers_count: Int
@@ -53,7 +53,7 @@ struct UserCountersDTO: Codable {
     let ratings_average: Float
 }
 
-struct OpeningHoursDTO: Codable {
+struct OpeningHoursDTO: Decodable {
     let open_now: Bool
     let closing_time: String?
     let next_open_day: String?

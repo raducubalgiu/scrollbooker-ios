@@ -63,20 +63,11 @@ struct PostActionsView: View {
                     .font(.system(size: 30))
                     .foregroundColor(.white)
                 
-                Text("\(counters.shareCount)")
-                    .font(.footnote)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.white)
+//                Text("\(counters.shareCount)")
+//                    .font(.footnote)
+//                    .fontWeight(.semibold)
+//                    .foregroundColor(.white)
             }
         }
     }
 }
-
-#Preview("Dark") {
-    PostActionsView(
-        userAvatarURL: dummyBookNowPosts[0].user.avatarURL,
-        counters: dummyBookNowPosts[0].counters
-    )
-        .preferredColorScheme(.dark)
-}
-

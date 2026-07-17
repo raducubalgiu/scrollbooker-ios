@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct PostUserView: View {
-    var user: UserMini
+    var user: PostUser
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -17,15 +17,10 @@ struct PostUserView: View {
                 .fontWeight(.bold)
                 .foregroundColor(.white)
             
-            Text(user.usernameOrProfession)
+            Text(user.profession)
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundColor(.primarySB)
             }
         }
-}
-
-#Preview("Dark") {
-    PostUserView(user: dummyBookNowPosts[0].user)
-        .preferredColorScheme(.dark)
 }

@@ -20,7 +20,6 @@ struct LastCameraState {
 
 struct SearchScreen: View {
     let viewModel: SearchViewModel
-    
     var onNavigateToBusinessProfile: (String) -> Void
     
     @State private var sheetPosition: SheetPosition = .collapsed
@@ -70,8 +69,6 @@ struct SearchScreen: View {
                         .padding(.top, 12)
                         .transition(.opacity.combined(with: .scale(scale: 0.8)))
                 }
-                
-                Spacer()
                 
                 GeometryReader { geometry in
                     let totalHeight = geometry.size.height

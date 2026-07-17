@@ -17,11 +17,11 @@ struct SearchCardProductRowView: View {
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .top, spacing: 0) {
                 Text(product.name)
-                    .font(.system(size: 16))
+                    .font(.subheadline.bold())
                     .foregroundColor(.onBackgroundSB)
                     .lineLimit(2)
                 
-                Spacer(minLength: 16)
+                Spacer()
                 
                 HStack(alignment: .center, spacing: 8) {
                     Text("\(startingOffering.priceWithDiscount.toTwoDecimals()) RON")
@@ -44,22 +44,20 @@ struct SearchCardProductRowView: View {
                 }
             }
             
-            Spacer().frame(height: 4)
-            
             HStack(alignment: .center, spacing: 0) {
                 Text(startingOffering.duration.formatDuration())
-                    .font(.body)
+                    .font(.subheadline)
                     .foregroundColor(.gray)
                 
                 if product.type == .pack, let sessionsCount = product.sessionsCount {
                     Text("  \u{2022}  \(sessionsCount) ședințe")
-                        .font(.body)
+                        .font(.subheadline)
                         .foregroundColor(.gray)
                 }
                 
                 if !product.filters.isEmpty {
                     Text("  \u{2022}  ")
-                        .font(.body)
+                        .font(.subheadline)
                         .foregroundColor(.gray)
                 }
                 
@@ -69,13 +67,13 @@ struct SearchCardProductRowView: View {
                             case .options:
                                 ForEach(Array(filter.subFilters.enumerated()), id: \.element.id) { subIndex, subFilter in
                                     Text(subFilter.name)
-                                        .font(.body)
+                                        .font(.subheadline)
                                         .foregroundColor(.gray)
                                         .lineLimit(1)
                                     
                                     if subIndex < filter.subFilters.count - 1 {
                                         Text(" & ")
-                                            .font(.body)
+                                            .font(.subheadline)
                                             .foregroundColor(.gray)
                                     }
                                 }
@@ -88,7 +86,7 @@ struct SearchCardProductRowView: View {
                                 }()
                                 
                                 Text("\(filterText) \(filter.unit ?? "")")
-                                    .font(.body)
+                                    .font(.subheadline)
                                     .foregroundColor(.gray)
                                     .lineLimit(1)
                         case .none:
@@ -98,7 +96,7 @@ struct SearchCardProductRowView: View {
                     
                     if index < product.filters.count - 1 {
                         Text("  \u{2022}  ")
-                            .font(.body)
+                            .font(.subheadline)
                             .foregroundColor(.gray)
                     }
                 }

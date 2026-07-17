@@ -137,11 +137,6 @@ struct BusinessAboutTabView: View {
                 .padding(.vertical)
             
             Text("Calea Victoriei 10, București")
-            
-            
-            MapView(businessCoordinates: BusinessCoordinates(lat: 45.2345, lng: 25.2345))
-            
-            Spacer(minLength: 12)
         }
         .padding(16)
         .background(Color(.systemBackground))

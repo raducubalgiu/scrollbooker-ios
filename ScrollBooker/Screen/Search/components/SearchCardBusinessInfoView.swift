@@ -16,10 +16,10 @@ struct SearchCardBusinessInfo: View {
     let distance: Float?
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: 2) {
             HStack(alignment: .center) {
                 Text(fullName)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.subheadline.bold())
                 
                 Spacer()
                 
@@ -28,23 +28,24 @@ struct SearchCardBusinessInfo: View {
                         .foregroundColor(.ratingSB)
                     
                     Text(ratingsAverage.formatRating())
+                        .font(.subheadline)
                         .fontWeight(.bold)
                     
                     Text("(\(ratingsCount))")
+                        .font(.subheadline)
                         .foregroundColor(.gray)
                 }
             }
             .frame(maxWidth: .infinity)
             
             Text(profession)
-                .font(.body)
+                .font(.footnote)
                 .foregroundColor(.gray)
-            
-            Spacer().frame(height: 8)
             
             HStack(alignment: .center, spacing: 0) {
                 if let distance = distance {
                     Text("\(String(format: "%.1f", distance)) km")
+                        .font(.footnote)
                         .foregroundColor(.gray)
                         .lineLimit(1)
                     
@@ -53,6 +54,7 @@ struct SearchCardBusinessInfo: View {
                 }
                 
                 Text(address)
+                    .font(.footnote)
                     .foregroundColor(.gray)
                     .lineLimit(1)
                     .frame(maxWidth: UIScreen.main.bounds.width * 0.65, alignment: .leading)

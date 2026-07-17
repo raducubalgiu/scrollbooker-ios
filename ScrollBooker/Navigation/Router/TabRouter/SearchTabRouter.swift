@@ -20,7 +20,9 @@ struct SearchTabRouter: View {
                 if let stableViewModel = viewModel {
                     SearchScreen(
                         viewModel: stableViewModel,
-                        onNavigateToBusinessProfile: { businessId in }
+                        onNavigateToBusinessProfile: { username in
+                            router.push(.businessProfile(username: username))
+                        }
                     )
                 } else {
                     ProgressView()
@@ -29,8 +31,11 @@ struct SearchTabRouter: View {
             .toolbar(.hidden, for: .navigationBar)
             .withNavigation { route in
                 switch route {
-                    case .businessProfile(_):
-                        BusinessProfileScreen()
+                    case .businessProfile(let username):
+                        BusinessProfileScreen(
+                            viewModel: container.businessModule.makeBusinessProfileViewModel(username: username),
+                            onBack: {},
+                        )
                             .toolbar(.hidden, for: .tabBar)
                     default:
                         nil

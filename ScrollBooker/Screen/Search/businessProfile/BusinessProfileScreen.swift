@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-// MARK: - Preference Keys (tracking scroll + secțiuni vizibile)
-
 private struct SectionTopKey: PreferenceKey {
     static var defaultValue: [BusinessProfileSection: CGFloat] = [:]
     static func reduce(value: inout [BusinessProfileSection: CGFloat],
@@ -23,7 +21,9 @@ private struct CoverBottomKey: PreferenceKey {
 }
 
 struct BusinessProfileScreen: View {
-    @Environment(\.dismiss) private var dismiss
+    let viewModel: BusinessProfileViewModel
+    let onBack: () -> Void
+    
     @Namespace private var indicatorNS
 
     // UI constants (le poți muta în Theme)
@@ -39,11 +39,12 @@ struct BusinessProfileScreen: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            TopBar(showTitle: coverBottomY <= headerHeight)
+            TopBar(
+                showTitle: coverBottomY <= headerHeight
+            )
                 .background(Color.backgroundSB
                     .opacity(coverBottomY <= headerHeight + safeTopInset() ? 1 : 0)
                 )
-                
                 .zIndex(10)
             
             ScrollViewReader { proxy in
@@ -170,11 +171,11 @@ private func safeTopInset() -> CGFloat {
         .first ?? 0
 }
 
-#Preview("Light") {
-    BusinessProfileScreen()
-}
-
-#Preview("Dark") {
-    BusinessProfileScreen()
-        .preferredColorScheme(.dark)
-}
+//#Preview("Light") {
+//    BusinessProfileScreen()
+//}
+//
+//#Preview("Dark") {
+//    BusinessProfileScreen()
+//        .preferredColorScheme(.dark)
+//}

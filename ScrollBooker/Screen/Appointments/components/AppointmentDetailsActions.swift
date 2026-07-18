@@ -19,10 +19,10 @@ struct AppointmentDetailsActions: View {
             case .inProgress:
                 MainButton(
                     title: String(localized: "cancel"),
+                    bgColor: .errorSB,
                     onClick: {
                         onOpenCancelSheet(appointmentId)
                     },
-                    bgColor: .errorSB
                 )
             case .finished:
                 if isCustomer {

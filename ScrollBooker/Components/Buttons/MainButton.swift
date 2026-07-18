@@ -9,82 +9,36 @@ import SwiftUI
 
 struct MainButton: View {
     var title: String
-    var onClick: () -> Void
+    var size: AppButtonSize = .large
     var isDisabled: Bool = false
     var isLoading: Bool = false
     var bgColor: Color = .primarySB
     var color: Color = .onPrimarySB
+    var onClick: () -> Void
     
     var body: some View {
         Button(action: onClick) {
             Group {
                 if isLoading {
                     ProgressView()
+                        .scaleEffect(size == .small ? 0.8 : 1.0)
                 } else {
                     Text(title)
-                        .font(.subheadline.bold())
+                        .font(size.font)
                 }
             }
-            .frame(maxWidth: .infinity, minHeight: 48)
+            .frame(maxWidth: .infinity, minHeight: size.minHeight)
             .contentShape(Rectangle())
         }
         .fontWeight(.semibold)
-        .padding(.vertical, 2)
+        .padding(.horizontal, size.horizontalPadding)
         .background(
             RoundedRectangle(cornerRadius: 50)
                 .fill((isDisabled || isLoading) ? Color.surfaceSB : bgColor)
         )
         .foregroundColor(isDisabled ? .gray : color)
-        .padding(.vertical)
         .disabled(isDisabled || isLoading)
         .buttonStyle(.plain)
     }
-}
-
-#Preview("Light") {
-    VStack(spacing: 0) {
-        MainButton(
-            title: "Contained",
-            onClick: { }
-        )
-        
-        MainButton(
-            title: "Disabled",
-            onClick: { },
-            isDisabled: true
-        )
-        
-        MainButton(
-            title: "Loading",
-            onClick: { },
-            //isDisabled: true,
-            isLoading: true
-        )
-    }
-    .padding()
-}
-
-#Preview("Dark") {
-    VStack(spacing: 0) {
-        MainButton(
-            title: "Contained",
-            onClick: { }
-        )
-        
-        MainButton(
-            title: "Disabled",
-            onClick: { },
-            isDisabled: true
-        )
-        
-        MainButton(
-            title: "Loading",
-            onClick: { },
-            //isDisabled: true,
-            isLoading: true
-        )
-    }
-    .padding()
-    .preferredColorScheme(.dark)
 }
 

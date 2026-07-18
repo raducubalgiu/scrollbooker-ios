@@ -121,30 +121,30 @@ struct AppointmentDetailsScreen: View {
             await viewModel.loadAppointment()
         }
         .sheet(item: $activeSheet) { sheetType in
-            if let appointmentData = viewModel.uiState.data {
+            if let appointmentData = viewModel.viewState.appointment {
                 switch sheetType {
-                    case .writeReview(let rating):
-                        WriteReviewSheetView(rating: rating) { selectedRating, message in
-                            guard let userId = appointmentData.user.id else {
-                                viewModel.errorMessage = "User ID is missing"
-                                return
-                            }
-                            
-                            let productId = appointmentData.products.first?.id ?? 0
-                            
-                            await viewModel.createReview(
-                                review: message,
-                                rating: selectedRating,
-                                userId: userId,
-                                productId: productId
-                            )
+                case .writeReview(let rating):
+                    WriteReviewSheetView(rating: rating) { selectedRating, message in
+                        guard let userId = appointmentData.user.id else {
+                            viewModel.errorMessage = "User ID is missing"
+                            return
                         }
                         
-                    case .cancelAppointment:
-                        CancelAppointmentSheetView { finalReason in
-                            await viewModel.cancelCurrentAppointment(reason: finalReason)
-                        }
+                        let productId = appointmentData.products.first?.id ?? 0
+                        
+                        await viewModel.createReview(
+                            review: message,
+                            rating: selectedRating,
+                            userId: userId,
+                            productId: productId
+                        )
                     }
+                    
+                case .cancelAppointment:
+                    CancelAppointmentSheetView { finalReason in
+                        await viewModel.cancelCurrentAppointment(reason: finalReason)
+                    }
+                }
             }
         }
     }

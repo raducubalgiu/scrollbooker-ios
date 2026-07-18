@@ -48,9 +48,9 @@ struct SectionMap: View {
             if displayDirectionsButton {
                 MainButton(
                     title: String(localized: "navigationDirections"),
-                    onClick: { redirectToMaps()},
                     bgColor: .surfaceSB,
-                    color: .primary
+                    color: .primary,
+                    onClick: { redirectToMaps()},
                 )
             }
         }

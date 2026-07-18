@@ -46,9 +46,9 @@ struct RegisterScreen: View {
             
             MainButton(
                 title: String(localized: "register"),
-                onClick: handleRegister,
                 isDisabled: session.isLoading,
-                isLoading: session.isLoading
+                isLoading: session.isLoading,
+                onClick: handleRegister,
             )
             
             HStack {

@@ -27,6 +27,8 @@ struct BusinessProfileScreen: View {
     @State private var isStickyActive = false
     @State private var scrollOffset: CGFloat = 0
     @State private var isProgrammaticScroll = false
+    
+    @State private var currentImagePage: Int = 0
 
     var body: some View {
         GeometryReader { rootGeo in
@@ -45,8 +47,6 @@ struct BusinessProfileScreen: View {
             .ignoresSafeArea(edges: .top)
         }
     }
-
-    // MARK: - Content (loading / error / success)
 
     @ViewBuilder
     private func contentView(topNavigationBarHeight: CGFloat, stickyBarHeight: CGFloat) -> some View {
@@ -120,19 +120,57 @@ struct BusinessProfileScreen: View {
         topNavigationBarHeight: CGFloat
     ) -> some View {
         VStack(spacing: 0) {
-            AsyncImage(url: URL(string: profile.mediaFiles.first?.thumbnailUrl ?? "")) { img in
-                img.resizable().aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Color.gray.opacity(0.2)
+            let totalImages = profile.mediaFiles.count
+            
+            ZStack(alignment: .bottomTrailing) {
+                TabView(selection: $currentImagePage) {
+                    ForEach(Array(profile.mediaFiles.enumerated()), id: \.element.id) { index, media in
+                        AsyncImage(url: URL(string: media.thumbnailUrl)) { img in
+                            img
+                                .resizable()
+                                .aspectRatio(contentMode: .fill)
+                        } placeholder: {
+                            Color.gray.opacity(0.2)
+                        }
+                        .frame(height: imageHeight)
+                        .frame(maxWidth: .infinity)
+                        .clipped()
+                        .tag(index)
+                    }
+                }
+                .tabViewStyle(.page(indexDisplayMode: .never))
+                .frame(height: imageHeight)
+                
+                if totalImages > 0 {
+                    Text("\(currentImagePage + 1) / \(totalImages)")
+                        .font(.system(size: 12, weight: .bold))
+                        .foregroundColor(.white)
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color.black.opacity(0.55))
+                        .clipShape(Capsule())
+                        .padding(.trailing, 16)
+                        .padding(.bottom, 16)
+                }
             }
             .frame(height: imageHeight)
-            .frame(maxWidth: .infinity)
-            .clipped()
             .padding(.top, -topNavigationBarHeight)
             .scaleEffect(scrollOffset < 0 ? 1.0 - (scrollOffset / imageHeight) : 1.0, anchor: .top)
             .offset(y: scrollOffset < 0 ? scrollOffset : 0)
-
-            BusinessInfoView(profile: profile)
+            
+            BusinessSummarySection(
+                owner: profile.owner,
+                distance: profile.distanceKm,
+                address: profile.location.address,
+                formattedAddress: profile.location.formattedAddress,
+                openingHours: profile.openingHours,
+                isFollow: profile.owner.isFollow,
+                isFollowEnabled: true,
+                onFollow: {},
+                onNavigateToOwnerProfile: {_ in},
+                onFlyToReviewsSection: {},
+                onNavigateToBooking: {}
+            )
         }
     }
 
@@ -153,19 +191,38 @@ struct BusinessProfileScreen: View {
 
     @ViewBuilder
     private func sectionsContent(profile: BusinessProfile) -> some View {
-        sectionBlock(.services) { BusinessServicesTabView(products: profile.userProducts) }
-        sectionBlock(.posts) { GenericTabTestView(tabName: "Posts") }
-        sectionBlock(.employees) { GenericTabTestView(tabName: "Echipă") }
-        sectionBlock(.reviews) { GenericTabTestView(tabName: "Recenzii") }
-        sectionBlock(.about) { GenericTabTestView(tabName: "Despre") }
+        sectionBlock(.services) {
+            BusinessServicesTabView(
+                products: profile.userProducts,
+                onNavigateToBookingFromProfile: {},
+                onNavigateToBookingFromProduct: {_ in}
+            )
+        }
+        sectionBlock(.posts) { BusinessPostsTabView(posts: profile.posts) }
+        sectionBlock(.employees) { BusinessEmployeesTabView(employees: profile.employees) }
+        sectionBlock(.reviews) {
+            BusinessReviewsTabView(
+                ratingsCount: profile.owner.counters.ratingsCount,
+                ratingsAverage: profile.owner.counters.ratingsAverage,
+                reviews: profile.reviews
+            )
+        }
+        sectionBlock(.about) {
+            BusinessAboutTabView(
+                description: profile.description,
+                schedules: profile.schedules,
+                location: profile.location,
+                fullName: profile.owner.fullName,
+                nearbyBusinesses: profile.nearbyBusinesses,
+                onNavigateToBusinessProfile: onNavigateToBusinessProfile
+            )
+        }
     }
-
-    // MARK: - Header overlay (always floating)
 
     private func headerOverlay(safeTop: CGFloat) -> some View {
         BusinessProfileHeader(
             showTitle: isStickyActive,
-            title: viewModel.uiState.data?.owner.fullName ?? "",
+            title: viewModel.viewState.profile?.owner.fullName ?? "",
             onBack: onBack
         )
         .frame(height: headerHeight)
@@ -178,8 +235,6 @@ struct BusinessProfileScreen: View {
         .animation(isStickyActive ? .easeInOut(duration: 0.2) : .none, value: isStickyActive)
         .zIndex(10)
     }
-
-    // MARK: - Scroll handlers
 
     private func handleScrollChange(newOffset: CGFloat, topNavigationBarHeight: CGFloat) {
         let adjustedOffset = newOffset + topNavigationBarHeight
@@ -213,11 +268,13 @@ struct BusinessProfileScreen: View {
         _ section: BusinessProfileSection,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: AppSize.base.rawValue) {
             Text(section.title)
                 .font(.title2.weight(.heavy))
-                .padding(.horizontal, 16)
-                .padding(.top, 16)
+                .padding(.horizontal, .base)
+                .padding(.top, .base)
+                .frame(maxWidth: .infinity, alignment: .leading) 
+            
             content()
         }
         .id(section)
@@ -232,26 +289,3 @@ struct BusinessProfileScreen: View {
     }
 }
 
-
-struct GenericTabTestView: View {
-    let tabName: String
-
-    var body: some View {
-        VStack(spacing: 0) {
-            ForEach(0..<15, id: \.self) { index in
-                HStack {
-                    Text("Element \(index + 1) din secțiunea \(tabName)")
-                        .font(.body)
-                        .foregroundColor(.primary)
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 16)
-
-                Divider()
-                    .padding(.horizontal, 16)
-            }
-        }
-        .background(Color(.systemBackground))
-    }
-}

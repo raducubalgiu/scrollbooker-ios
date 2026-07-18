@@ -17,7 +17,7 @@ struct NearbyBusinessItemView: View {
         let location = business.location
         let imageUrl = business.mediaFiles.first?.thumbnailUrl
         
-        VStack(alignment: .leading, spacing: 6) {
+        VStack(alignment: .leading, spacing: AppSize.xs.rawValue) {
             NearbyBusinessImageView(
                 url: imageUrl ?? "placeholder.jpg",
                 username: owner.username
@@ -25,17 +25,19 @@ struct NearbyBusinessItemView: View {
             
             HStack(alignment: .center, spacing: 0) {
                 Text(owner.fullName)
-                    .font(.system(size: 18, weight: .semibold))
+                    .font(.subheadline)
+                    .fontWeight(.bold)
                     .lineLimit(1)
                     .frame(maxWidth: .infinity, alignment: .leading)
                 
                 HStack(spacing: 2) {
                     Image(systemName: "star.fill")
-                        .font(.system(size: 16))
+                        .font(.subheadline)
+                        .fontWeight(.bold)
                         .foregroundColor(.ratingSB)
                     
                     Text(owner.counters.ratingsAverage.formatRating())
-                        .font(.body)
+                        .font(.subheadline)
                         .fontWeight(.bold)
                     
                     Text("(\(owner.counters.ratingsCount))")
@@ -46,7 +48,7 @@ struct NearbyBusinessItemView: View {
             .frame(maxWidth: .infinity)
             
             Text(owner.profession)
-                .font(.subheadline)
+                .font(.footnote)
                 .foregroundColor(.gray)
                 .lineLimit(1)
             

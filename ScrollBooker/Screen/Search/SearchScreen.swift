@@ -38,13 +38,7 @@ struct SearchScreen: View {
     private let collapsedHeight: CGFloat = 160
     
     @State private var lastRequestedState: LastCameraState? = nil
-    
-    // NOU: lățimea reală a viewport-ului hărții, măsurată live prin GeometryReader.
-    // Fără asta, formula de zoom presupunea o lățime fixă, greșită pe majoritatea device-urilor.
     @State private var mapViewportWidth: CGFloat = 0
-    
-    // NOU: task-ul curent de search, ca să putem anula unul vechi dacă vine unul nou
-    // (evită race conditions unde un răspuns vechi suprascrie unul nou cu markeri greșiți).
     @State private var lastSearchTask: Task<Void, Never>? = nil
 
     private let minZoomDelta: Float = 0.5
@@ -55,7 +49,7 @@ struct SearchScreen: View {
         
         ZStack(alignment: .top) {
             if isLoading {
-                Color(.systemGray6).ignoresSafeArea(.all, edges: .top)
+                Color.surfaceSB.ignoresSafeArea(.all, edges: .top)
             } else {
                 mapViewSection(viewModel: viewModel)
             }
@@ -88,13 +82,11 @@ struct SearchScreen: View {
                     AirbnbBottomSheet(
                         maxHeight: sheetMaxHeight,
                         isLoading: viewModel.isLoading,
-                        businesses: viewModel.uiState.data,
+                        businesses: viewModel.businesses,
                         onNavigateToBusinessProfile: { id in
-                            // Trimitem ID-ul în sus către router
                             onNavigateToBusinessProfile(id)
                         },
                         onSelectProduct: { product in
-                            // Gestiune selectare produs (dacă e cazul)
                             print("Produs selectat: \(product)")
                         }
                     )
@@ -104,7 +96,6 @@ struct SearchScreen: View {
                     .gesture(
                         DragGesture(minimumDistance: 5)
                             .onChanged { value in
-                                // Filtrare mișcare orizontală (păstrăm optimizarea anterioară pentru carusel)
                                 let horizontalDistance = abs(value.translation.width)
                                 let verticalDistance = abs(value.translation.height)
                                 guard verticalDistance > horizontalDistance else { return }
@@ -113,15 +104,12 @@ struct SearchScreen: View {
                                 
                                 if sheetPosition == .expanded {
                                     if proposedOffset < 0 {
-                                        // Rezistență când tragi în sus peste limita ecranului
                                         dragOffset = proposedOffset * 0.15
                                     } else {
                                         dragOffset = proposedOffset
                                     }
                                 } else if sheetPosition == .collapsed {
                                     if proposedOffset > 0 {
-                                        // FIXED: Rezistență cauciucată foarte rigidă când încerci să tragi sub Bottom Bar.
-                                        // Dacă vrei să fie blocat TOTAL la pixel, înlocuiește linia de mai jos cu: dragOffset = 0
                                         dragOffset = proposedOffset * 0.1
                                     } else {
                                         dragOffset = proposedOffset
@@ -147,14 +135,13 @@ struct SearchScreen: View {
                                     } else if velocity > 100 {
                                         sheetPosition = .collapsed
                                     } else {
-                                        // Snap bazat pe distanța parcursă
                                         if value.translation.height < -60 {
                                             sheetPosition = .expanded
                                         } else {
                                             sheetPosition = .collapsed
                                         }
                                     }
-                                    dragOffset = 0 // Resetare obligatorie
+                                    dragOffset = 0
                                 }
                             }
                     )
@@ -173,67 +160,37 @@ struct SearchScreen: View {
     @ViewBuilder
     private func mapViewSection(viewModel: SearchViewModel) -> some View {
         let markers = viewModel.markers
-        let selectedId = viewModel.selectedMarkerId
+        let bottomMarkers = markers.filter { !$0.isPrimary }
+        let topMarkers = markers.filter { $0.isPrimary }
         
-        let _ = print("🔍 DEBUG PINI: Total = \(markers.count) | Primary = \(markers.filter({ $0.isPrimary }).count) | Secondary = \(markers.filter({ !$0.isPrimary }).count)")
-        
-        // Filtrele tale matematice 1:1 din Android
-        let bottomMarkers = markers.filter { !$0.isPrimary && $0.id != selectedId }
-        let topMarkers = markers.filter { $0.isPrimary && $0.id != selectedId }
-        let selectedMarker = markers.first { $0.id == selectedId }
-        
-        // NOU: GeometryReader în jurul hărții ca să măsurăm lățimea reală a viewport-ului.
-        // E folosită direct în formula de zoom din handleCameraChange.
         GeometryReader { geo in
             Map(position: $cameraPosition) {
-                // STRATUL 1 (Jos): Punctulețele simple
                 ForEach(bottomMarkers) { m in
                     Annotation(m.owner.fullName, coordinate: m.clCoordinates, anchor: .center) {
                         SearchMarkerSecondary(color: m.businessShortDomain.domainColor)
-                            // REZOLVARE BUG CACHE: Forțăm o identitate unică unind ID-ul cu starea "secondary"
                             .id("\(m.id)_secondary")
-                            .drawingGroup() // Performanță Metal GPU
+                            .drawingGroup()
                             .onTapGesture {
-                                viewModel.selectedMarkerId = m.id
+                                
                             }
                     }
                 }
                 
-                // STRATUL 2 (Mijloc): Avatarele Premium neselectate
                 ForEach(topMarkers) { m in
                     Annotation(m.owner.fullName, coordinate: m.clCoordinates, anchor: .bottom) {
                         SearchMarkerPrimary(
                             imageUrl: m.mediaFiles.first??.thumbnailUrl,
                             domainColor: m.businessShortDomain.domainColor
                         )
-                        // REZOLVARE BUG CACHE: Forțăm o identitate unică unind ID-ul cu starea "primary"
                         .id("\(m.id)_primary")
-                        .drawingGroup() // Performanță Metal GPU
+                        .drawingGroup()
                         .onTapGesture {
-                            viewModel.selectedMarkerId = m.id
+                            
                         }
-                    }
-                }
-                
-                // STRATUL 3 (Sus): Pin-ul selectat curent
-                if let m = selectedMarker {
-                    Annotation(m.owner.fullName, coordinate: m.clCoordinates, anchor: .bottom) {
-                        SearchMarkerPrimary(
-                            imageUrl: m.mediaFiles.first??.thumbnailUrl,
-                            domainColor: m.businessShortDomain.domainColor
-                        )
-                        .id("\(m.id)_selected") // Identitate unică dedicată selecției
-                        .onTapGesture {
-                            onNavigateToBusinessProfile(m.owner.username)
-                        }
-                        .scaleEffect(1.6, anchor: .bottom)
-                        .shadow(color: Color.black.opacity(0.25), radius: 14, x: 0, y: 8)
-                        .transition(.opacity.combined(with: .scale(scale: 0.9, anchor: .bottom)))
                     }
                 }
             }
             .ignoresSafeArea(.all, edges: .top)
-            .animation(.spring(response: 0.35, dampingFraction: 0.85), value: selectedId)
             .onAppear {
                 mapViewportWidth = geo.size.width
             }
@@ -246,14 +203,12 @@ struct SearchScreen: View {
         }
     }
 
-    // ÎN INTERIORUL STRUCTURII SEARCHSCREEN:
     private func handleCameraChange(context: MapCameraUpdateContext) {
         let region = context.region
         let spanLng = region.span.longitudeDelta
         let spanLat = region.span.latitudeDelta
         let center = region.center
         
-        // 1. CALCUL BOUNDING BOX PURE (Matematică standard stabilă)
         let minLat = center.latitude - (spanLat / 2)
         let maxLat = center.latitude + (spanLat / 2)
         let minLng = center.longitude - (spanLng / 2)
@@ -266,10 +221,7 @@ struct SearchScreen: View {
             maxLat: Float(maxLat)
         )
         
-        // 2. CALCUL ZOOM CORECTAT: foloseste latimea REALA a viewport-ului (in puncte,
-        // echivalent cu dp-urile din Android), nu o constanta presupusa.
-        // Formula standard de tile-zoom Web Mercator: zoom = log2(width * 360 / (spanLng * 256))
-        var currentZoom: Float = 10.0 // Valoare de fallback în caz de eroare
+        var currentZoom: Float = 10.0
         
         if spanLng > 0, mapViewportWidth > 0 {
             let rawZoom = log2(Double(mapViewportWidth) * 360.0 / (spanLng * 256.0))
@@ -279,8 +231,6 @@ struct SearchScreen: View {
             }
         }
         
-        // 3. DEBOUNCE: evităm request-uri redundante daca mișcarea/zoom-ul e neglijabil,
-        // și anulăm orice search anterior încă în zbor ca să nu suprascrie un rezultat mai nou.
         guard shouldTriggerNewSearch(center: center, zoom: currentZoom) else { return }
         lastRequestedState = LastCameraState(center: center, zoom: currentZoom)
         
@@ -311,11 +261,9 @@ struct AirbnbBottomSheet: View {
     let isLoading: Bool
     let businesses: [BusinessSheet]
     
-    // Expunem closure-urile primite din ecranul principal pentru navigare
     var onNavigateToBusinessProfile: (String) -> Void
     var onSelectProduct: (String) -> Void
     
-    // O SINGURĂ proprietate de animație centralizată pentru tot panoul, evită epuizarea CPU-ului
     @State private var pulseSkeleton = false
     
     var body: some View {
@@ -327,7 +275,7 @@ struct AirbnbBottomSheet: View {
                     .padding(.top, 12)
                     .padding(.bottom, 10)
                 
-                VStack(alignment: .leading, spacing: 4) {
+                VStack(alignment: .center, spacing: 4) {
                     Text("Explorează în apropiere")
                         .font(.title3)
                         .fontWeight(.bold)
@@ -344,19 +292,16 @@ struct AirbnbBottomSheet: View {
             ScrollView(.vertical, showsIndicators: false) {
                 LazyVStack(spacing: 18) {
                     if isLoading {
-                        // FIXED: Înlocuit LoadingView() cu skeletons dinamice pulsatorii de performanță maximă
                         ForEach(1...3, id: \.self) { _ in
                             SearchCardSkeletonView(isAnimating: pulseSkeleton)
                         }
                         .onAppear {
-                            // Pornim un singur ciclu de animație liniară pe opacitate pentru toate elementele simultan
                             withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
                                 pulseSkeleton = true
                             }
                         }
                     } else {
                         ForEach(businesses, id: \.id) { business in
-                            // Conectăm direct acțiunile native ale cardului tău
                             SearchCardView(
                                 business: business,
                                 onNavigateToBusinessProfile: onNavigateToBusinessProfile,

@@ -87,6 +87,9 @@ struct CancelAppointmentSheetView: View {
                 
                 MainButton(
                     title: String(localized: "cancelAppointment"),
+                    isDisabled: !isButtonEnabled,
+                    isLoading: isSaving,
+                    bgColor: .errorSB,
                     onClick: {
                         Task {
                             isSaving = true
@@ -98,10 +101,7 @@ struct CancelAppointmentSheetView: View {
                             isSaving = false
                             dismiss()
                         }
-                    },
-                    isDisabled: !isButtonEnabled,
-                    isLoading: isSaving,
-                    bgColor: .errorSB
+                    }
                 )
                 .padding(.base)
             }

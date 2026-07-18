@@ -22,31 +22,13 @@ struct BusinessAboutTabView: View {
                 .padding(.bottom, 8)
  
             Text(String(localized: "schedule"))
-                .font(.title2.weight(.heavy))
+                .font(.headline)
                 .padding(.vertical, 8)
             
-            ForEach(schedules) { schedule in
-                HStack {
-                    HStack(spacing: 8) {
-                        Circle()
-                            .fill(Color.green)
-                            .frame(width: 10, height: 10)
-                        Text(schedule.localizedDayOfWeek)
-                            .font(.headline)
-                    }
-                    
-                    Spacer()
-                    
-                    Text("\(schedule.startTime) - \(schedule.endTime)")
-                        .font(.headline)
-                }
-                .frame(maxWidth: .infinity)
-                .padding(.vertical, 4)
-            }
+            SchedulesSection(schedules: schedules)
             
-            // 3. Adresa și Harta
             Text(String(localized: "address"))
-                .font(.title2.weight(.heavy))
+                .font(.headline)
                 .padding(.vertical, 8)
             
             Text(location.address)
@@ -57,18 +39,19 @@ struct BusinessAboutTabView: View {
                 SectionMap(
                     mapUrl: mapUrl,
                     coordinates: location.coordinates,
-                    fullName: fullName
+                    fullName: fullName,
+                    displayDirectionsButton: false
                 )
-                .frame(height: 200)
-                .clipShape(RoundedRectangle(cornerRadius: 12))
-                .padding(.vertical, 8)
             }
+            
+            Divider().padding(.top, .base)
             
             NearbyBusinessesView(
                 businesses: nearbyBusinesses,
                 onNavigateToBusinessProfile: onNavigateToBusinessProfile
             )
-            .padding(.top, 16)
         }
+        .padding(.horizontal, .base)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 }

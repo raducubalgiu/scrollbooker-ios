@@ -39,11 +39,11 @@ struct ReportProblemScreen: View {
                 
                 MainButton(
                     title: String(localized: "send"),
+                    isDisabled: !viewModel.isInputValid || viewModel.isLoading,
+                    isLoading: viewModel.isLoading,
                     onClick: {
                         Task { await viewModel.submitProblem() }
                     },
-                    isDisabled: !viewModel.isInputValid || viewModel.isLoading,
-                    isLoading: viewModel.isLoading
                 )
             }
             .padding(.horizontal)

@@ -14,19 +14,18 @@ struct NearbyBusinessesView: View {
     var body: some View {
         if let businesses = businesses, !businesses.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
-                Divider()
-                
                 Text(String(localized: "nearbyServices"))
-                    .font(.title2.weight(.heavy))
-                    .padding(.vertical)
+                    .font(.headline)
+                    .padding(.vertical, .xl)
                 
                 ScrollView(.horizontal, showsIndicators: false) {
-                    LazyHStack(spacing: 16) {
+                    LazyHStack(spacing: AppSize.base.rawValue) {
                         ForEach(businesses) { business in
                             NearbyBusinessItemView(
                                 business: business,
                                 onNavigateToBusinessProfile: onNavigateToBusinessProfile
                             )
+                            .contentMargins(.horizontal, AppSize.base.rawValue, for: .scrollContent)
                         }
                     }
                 }

@@ -50,9 +50,9 @@ struct AddReviewCaptureInputView: View {
                 
                 MainButton(
                     title: String(localized: "add"),
-                    onClick: onCreateReview,
                     isDisabled: isSaving,
-                    isLoading: isSaving
+                    isLoading: isSaving,
+                    onClick: onCreateReview,
                 )
             }
             .frame(maxWidth: .infinity, alignment: .leading)

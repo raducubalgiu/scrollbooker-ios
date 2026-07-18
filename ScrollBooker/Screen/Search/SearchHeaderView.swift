@@ -11,26 +11,27 @@ struct SearchHeaderView: View {
     var body: some View {
         HStack(spacing: 12) {
             Image(systemName: "magnifyingglass")
-                .font(.system(size: 18, weight: .medium))
+                .font(.system(size: 20, weight: .medium))
                 .foregroundColor(.primary)
                 .padding(.leading, 16)
             
             VStack(alignment: .leading, spacing: 3) {
-                Text("Tuns + Stilizat Barbă")
-                    .font(.subheadline)
+                Text("Toate Serviciile")
+                    .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 
-                Text("Azi, 16:30 · 1 persoană")
-                    .font(.caption)
+                Text("Oricand • Orice ora")
+                    .font(.subheadline)
                     .foregroundColor(.secondary)
             }
+            
             Spacer()
             
             Button(action: {}) {
                 Image(systemName: "slider.horizontal.3")
-                    .font(.system(size: 16, weight: .medium))
+                    .font(.system(size: 20, weight: .medium))
                     .foregroundColor(.primary)
                     .padding(10)
                     .background(Color(UIColor.systemBackground))
@@ -39,9 +40,9 @@ struct SearchHeaderView: View {
             }
             .padding(.trailing, 8)
         }
-        .padding(.vertical, 10)
+        .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
-        .background(Color(UIColor.systemBackground))
+        .background(Color.backgroundSB)
         .cornerRadius(28)
         .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
     }

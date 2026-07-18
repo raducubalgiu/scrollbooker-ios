@@ -19,14 +19,13 @@ enum SearchBusinessesState {
 @Observable
 @MainActor
 final class SearchViewModel: HasLoadingState {
-    var uiState = UiState(data: [BusinessSheet]())
-    
+    private(set) var viewState: SearchBusinessesState = .idle
+    private(set) var businesses: [BusinessSheet] = []
     private(set) var markers: [BusinessMarker] = []
     
-    private(set) var viewState: SearchBusinessesState = .idle
     private(set) var isPaging: Bool = false
     private(set) var isRefreshing: Bool = false
-    var selectedMarkerId: Int? = nil
+    private(set) var operationErrorMessage: String? = nil
 
     private let getBusinessesSheetUseCase: GetBusinessesSheetUseCase
     private let getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase
@@ -48,17 +47,28 @@ final class SearchViewModel: HasLoadingState {
     var currentSort: String? = "recommended"
 
     var hasMore: Bool {
-        uiState.data.count < totalCount
+        businesses.count < totalCount
     }
 
     var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return false }
-        set { if newValue { viewState = .loading } }
+        get { if case .loading = viewState { return true }; return isPaging }
+        set { if newValue && !isPaging { viewState = .loading } }
     }
 
     var errorMessage: String? {
-        get { if case .error(let msg) = viewState { return msg }; return nil }
-        set { if let msg = newValue { viewState = .error(msg) } }
+        get {
+            if case .error(let msg) = viewState { return msg }
+            return operationErrorMessage
+        }
+        set {
+            if let msg = newValue {
+                if businesses.isEmpty {
+                    viewState = .error(msg)
+                } else {
+                    operationErrorMessage = msg
+                }
+            }
+        }
     }
 
     init(
@@ -80,8 +90,10 @@ final class SearchViewModel: HasLoadingState {
     func refresh() async {
         guard !isRefreshing, currentBBox != nil else { return }
         isRefreshing = true
+        
         page = 1
         await load(isFirstPage: true)
+        
         isRefreshing = false
     }
 
@@ -89,7 +101,7 @@ final class SearchViewModel: HasLoadingState {
         guard hasMore, !isPaging, !isRefreshing, !isLoading else { return }
         
         guard let current = currentBusiness,
-              current.id == uiState.data.last?.id
+              current.id == businesses.last?.id
         else { return }
 
         isPaging = true
@@ -103,6 +115,8 @@ final class SearchViewModel: HasLoadingState {
         if isFirstPage && !isRefreshing {
             viewState = .loading
         }
+        
+        operationErrorMessage = nil
 
         let requestDto = SearchBusinessRequest(
             bbox: bbox,
@@ -124,31 +138,31 @@ final class SearchViewModel: HasLoadingState {
         do {
             if isFirstPage {
                 let (sheetResponse, markersResponse) = try await withVisibleLoading {
-                    async let sheetTask = getBusinessesSheetUseCase(request: requestDto)
+                    async let sheetTask = getBusinessesSheetUseCase(page: self.page, limit: self.limit, request: requestDto)
                     async let markersTask = getBusinessesMarkersUseCase(request: requestDto)
                     return try await (sheetTask, markersTask)
                 }
                 
-                uiState.data = sheetResponse.results
+                self.businesses = sheetResponse.results
                 self.markers = markersResponse
                 totalCount = sheetResponse.count
             } else {
                 let response = try await withVisibleLoading {
-                    try await getBusinessesSheetUseCase(request: requestDto)
+                    try await getBusinessesSheetUseCase(page: self.page, limit: self.limit, request: requestDto)
                 }
                 
-                let existingIds = Set(uiState.data.map(\.id))
+                let existingIds = Set(businesses.map(\.id))
                 let unique = response.results.filter { !existingIds.contains($0.id) }
-                uiState.data.append(contentsOf: unique)
+                self.businesses.append(contentsOf: unique)
                 totalCount = response.count
             }
 
             page += 1
             
-            if uiState.data.isEmpty {
+            if businesses.isEmpty {
                 viewState = .empty
             } else {
-                viewState = .success(uiState.data)
+                viewState = .success(businesses)
             }
 
         } catch {
@@ -156,8 +170,11 @@ final class SearchViewModel: HasLoadingState {
 
             if isFirstPage {
                 viewState = .error(message)
+                self.businesses = []
+                self.markers = []
             } else {
-                print("Eroare la încărcarea paginii de business sheets: \(message)")
+                operationErrorMessage = message
+                print("Eroare la încărcarea paginii \(page) de business sheets: \(message)")
             }
         }
     }

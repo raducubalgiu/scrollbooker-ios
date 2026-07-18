@@ -47,6 +47,8 @@ struct BusinessProfileOwner: Identifiable, Equatable, Hashable, Sendable {
     let avatar: String?
     let counters: BusinessProfileCounters
     let isFollow: Bool
+    
+    var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
 struct BusinessLocation: Equatable, Hashable, Sendable {
@@ -99,6 +101,8 @@ struct NearbyBusinessOwner: Identifiable, Equatable, Hashable, Sendable {
     let profession: String
     let avatar: String?
     let counters: BusinessProfileCounters
+    
+    var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
 struct NearbyBusiness: Identifiable, Equatable, Hashable, Sendable {

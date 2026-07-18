@@ -42,9 +42,9 @@ struct LoginScreen: View {
             
             MainButton(
                 title: String(localized: "login"),
-                onClick: handleLogin,
                 isDisabled: session.isLoading,
-                isLoading: session.isLoading
+                isLoading: session.isLoading,
+                onClick: handleLogin,
             )
             
             HStack {

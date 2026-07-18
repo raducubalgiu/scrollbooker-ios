@@ -49,9 +49,9 @@ struct FormLayout<Content: View>: View {
                 if enableBottomButton {
                     MainButton(
                         title: buttonTitle,
-                        onClick: onClick,
                         isDisabled: isDisabled,
-                        isLoading: isLoading
+                        isLoading: isLoading,
+                        onClick: onClick,
                     )
                 }
             }
@@ -63,29 +63,4 @@ struct FormLayout<Content: View>: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.backgroundSB)
     }
-}
-
-#Preview("Light") {
-    FormLayout(
-        headline: "Logare",
-        subHeadline: "Please login to continue",
-        buttonTitle: "Login",
-        onBack: {},
-        onClick: {  }
-    ) {
-        Text("Some View")
-    }
-}
-
-#Preview("Dark") {
-    FormLayout(
-        headline: "Logare",
-        subHeadline: "Please login to continue",
-        buttonTitle: "Login",
-        onBack: {},
-        onClick: {  }
-    ) {
-        Text("Some View")
-    }
-    .preferredColorScheme(.dark)
 }

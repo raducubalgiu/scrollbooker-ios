@@ -67,12 +67,3 @@ struct CollectBusinessValidationScreen: View {
         }
     }
 }
-
-#Preview("Light") {
-    CollectBusinessValidationScreen()
-}
-
-#Preview("Dark") {
-    CollectBusinessValidationScreen()
-        .preferredColorScheme(.dark)
-}

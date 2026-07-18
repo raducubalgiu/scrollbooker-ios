@@ -14,8 +14,12 @@ final class BusinessRepositoryImpl: BusinessRepository {
         self.api = api
     }
     
-    func getBusinessesSheet(request: SearchBusinessRequest) async throws -> PaginatedResponse<BusinessSheet> {
-        let dtoResponse = try await api.getBusinessesSheet(request: request)
+    func getBusinessesSheet(page: Int, limit: Int, request: SearchBusinessRequest) async throws -> PaginatedResponse<BusinessSheet> {
+        let dtoResponse = try await api.getBusinessesSheet(
+            page: page,
+            limit: limit,
+            request: request
+        )
         
         return PaginatedResponse(dtoResponse) {
             BusinessSheet(dto: $0)

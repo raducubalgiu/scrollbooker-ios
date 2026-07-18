@@ -52,9 +52,9 @@ struct EmploymentRespondScreen: View {
         HStack {
             MainButton(
                 title: String(localized: "deny"),
-                onClick: {},
                 bgColor: .surfaceSB,
-                color: .onSurfaceSB
+                color: .onSurfaceSB,
+                onClick: {},
             )
             MainButton(title: String(localized: "accept"), onClick: {})
         }

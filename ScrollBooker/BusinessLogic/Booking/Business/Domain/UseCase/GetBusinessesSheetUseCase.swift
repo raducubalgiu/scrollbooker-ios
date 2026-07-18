@@ -14,7 +14,7 @@ final class GetBusinessesSheetUseCase {
         self.repository = repository
     }
 
-    func callAsFunction(request: SearchBusinessRequest) async throws -> PaginatedResponse<BusinessSheet> {
-        try await repository.getBusinessesSheet(request: request)
+    func callAsFunction(page: Int, limit: Int, request: SearchBusinessRequest) async throws -> PaginatedResponse<BusinessSheet> {
+        try await repository.getBusinessesSheet(page: page, limit: limit, request: request)
     }
 }

@@ -9,18 +9,18 @@ import SwiftUI
 
 struct MainButtonOutlined: View {
     var title: String
+    var size: AppButtonSize = .large
     var fullWidth: Bool = false
-    var paddingV: CGFloat = 12.5
-    var paddingH: CGFloat = 25
     var onClick: () -> Void
     
     var body: some View {
         Button(action: onClick) {
             Text(title)
+                .font(size.font)
                 .frame(maxWidth: fullWidth ? .infinity : nil)
         }
-        .padding(.vertical, paddingV)
-        .padding(.horizontal, paddingH)
+        .padding(.vertical, size.verticalPadding)
+        .padding(.horizontal, size.horizontalPadding)
         .foregroundColor(.onBackgroundSB)
         .fontWeight(.semibold)
         .overlay(
@@ -29,23 +29,4 @@ struct MainButtonOutlined: View {
         )
         .frame(maxWidth: fullWidth ? .infinity : nil)
     }
-}
-
-#Preview("Light") {
-    MainButtonOutlined(
-        title: "Inregistreaza",
-        onClick: {
-            
-        }
-    )
-}
-
-#Preview("Dark") {
-    MainButtonOutlined(
-        title: "Inregistreaza",
-        onClick: {
-            
-        }
-    )
-    .preferredColorScheme(.dark)
 }

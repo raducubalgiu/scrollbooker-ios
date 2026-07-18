@@ -41,22 +41,3 @@ struct MyBusinessCardView: View {
         .buttonStyle(.plain)
     }
 }
-
-#Preview("Light") {
-    MyBusinessCardView(
-        title: "Program",
-        description: "Detalii despre programul meu",
-        icon: "bag",
-        onClick: {}
-    )
-}
-
-#Preview("Dark") {
-    MyBusinessCardView(
-        title: "Program",
-        description: "Detalii despre programul meu",
-        icon: "bag",
-        onClick: {}
-    )
-        .preferredColorScheme(.dark)
-}

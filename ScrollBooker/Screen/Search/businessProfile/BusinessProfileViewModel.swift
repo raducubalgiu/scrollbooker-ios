@@ -13,25 +13,35 @@ enum BusinessProfileState: Equatable {
     case loading
     case success(BusinessProfile)
     case error(String)
+    
+    var profile: BusinessProfile? {
+        if case .success(let profile) = self { return profile }
+        return nil
+    }
 }
 
 @Observable
 @MainActor
 final class BusinessProfileViewModel: HasLoadingState {
-    var uiState = UiState(data: BusinessProfile?.none)
     private(set) var viewState: BusinessProfileState = .idle
+    var isRefreshing: Bool = false
+    private(set) var operationErrorMessage: String? = nil
+    private(set) var isPerformingAction: Bool = false
     
     private let username: String
     private let getBusinessProfileUseCase: GetBusinessProfileUseCase
     
     var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return uiState.isLoading }
-        set { uiState.isLoading = newValue }
+        get { if case .loading = viewState { return true }; return isPerformingAction }
+        set { isPerformingAction = newValue }
     }
     
     var errorMessage: String? {
-        get { if case .error(let msg) = viewState { return msg }; return uiState.errorMessage }
-        set { uiState.errorMessage = newValue }
+        get {
+            if case .error(let msg) = viewState { return msg }
+            return operationErrorMessage
+        }
+        set { operationErrorMessage = newValue }
     }
     
     init(
@@ -43,17 +53,16 @@ final class BusinessProfileViewModel: HasLoadingState {
     }
     
     func loadBusinessProfile() async {
-        guard uiState.data == nil else { return }
+        guard viewState.profile == nil else { return }
         guard viewState != .loading else { return }
         
         viewState = .loading
-        uiState.errorMessage = nil
+        operationErrorMessage = nil
         
         do {
             let result = try await withVisibleLoading {
                 try await getBusinessProfileUseCase(username: username)
             }
-            uiState.data = result
             viewState = .success(result)
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
@@ -62,22 +71,22 @@ final class BusinessProfileViewModel: HasLoadingState {
     }
     
     func refresh() async {
-        guard !uiState.isRefreshing else { return }
-        uiState.isRefreshing = true
-        uiState.errorMessage = nil
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        operationErrorMessage = nil
         
         do {
             let result = try await getBusinessProfileUseCase(username: username)
-            uiState.data = result
             viewState = .success(result)
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            if uiState.data == nil {
+            
+            if viewState.profile == nil {
                 viewState = .error(message)
             } else {
-                uiState.errorMessage = message
+                operationErrorMessage = message
             }
         }
-        uiState.isRefreshing = false
+        isRefreshing = false
     }
 }

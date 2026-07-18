@@ -19,7 +19,7 @@ struct StarRatingView: View {
                 Image(systemName: i <= Int(rating) ? "star.fill" : "star")
                     .imageScale(imageScale)
             }
-            .foregroundColor(.primarySB)
+            .foregroundColor(.ratingSB)
         }
     }
 }

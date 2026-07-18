@@ -7,24 +7,22 @@
 
 import SwiftUI
 
-enum Size {
-    enum Spacing: CGFloat {
-        case base = 16
-        case xxs = 2
-        case xs = 4
-        case s = 8
-        case m = 12
-        case xl = 24
-        case xxl = 32
-    }
+enum AppSize: CGFloat {
+    case xxs = 2
+    case xs = 4
+    case s = 8
+    case m = 12
+    case base = 16
+    case xl = 24
+    case xxl = 32
 }
 
 extension View {
-    func padding(_ spacing: Size.Spacing) -> some View {
-        padding(spacing.rawValue)
+    func padding(_ spacing: AppSize) -> some View {
+        self.padding(spacing.rawValue)
     }
     
-    func padding(_ edges: Edge.Set, _ spacing: Size.Spacing) -> some View {
-        padding(edges, spacing.rawValue)
+    func padding(_ edges: Edge.Set, _ spacing: AppSize) -> some View {
+        self.padding(edges, spacing.rawValue)
     }
 }

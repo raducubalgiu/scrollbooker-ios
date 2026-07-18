@@ -34,7 +34,10 @@ struct SearchTabRouter: View {
                     case .businessProfile(let username):
                         BusinessProfileScreen(
                             viewModel: container.businessModule.makeBusinessProfileViewModel(username: username),
-                            onBack: {},
+                            onBack: { router.pop() },
+                            onNavigateToBusinessProfile: { username in
+                                router.push(.businessProfile(username: username))
+                            }
                         )
                             .toolbar(.hidden, for: .tabBar)
                     default:

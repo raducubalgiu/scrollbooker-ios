@@ -8,63 +8,52 @@
 import SwiftUI
 
 struct PostGridView: View {
+    let postId: Int
+    let mediaFiles: [PostMediaFile]
+    let viewsCount: Int
+    let onNavigateToPost: (Int) -> Void
+    
+    private let itemWidth: CGFloat = 150
+
     var body: some View {
-        ZStack(alignment: .topLeading) {
-            Text("Last Minute")
-                .font(.system(size: 11, weight: .semibold))
-                .padding(.horizontal, 8)
-                .padding(.vertical, 4)
-                .background(
-                    RoundedRectangle(cornerRadius: 3)
-                        .fill(Color.cyan)
-                        .shadow(radius: 1, y: 1)
-                )
-                .padding(.horizontal, 8)
-                .padding(.top, 6)
-                .foregroundColor(.white)
-            
-            VStack {
-                Spacer()
-                LinearGradient(
-                    gradient: Gradient(colors: [Color.black.opacity(0.0), Color.black.opacity(0.45)]),
-                    startPoint: .top,
-                    endPoint: .bottom
-                )
-                .frame(height: 70)
-                .frame(maxWidth: .infinity)
-                .overlay(
-                    HStack(spacing: 6) {
-                        Image(systemName: "play.fill")
-                            .font(.system(size: 11, weight: .bold))
-                        Text("10000")
-                            .font(.system(size: 12, weight: .semibold))
-                    }
-                        .padding(.horizontal, 8)
-                        .padding(.bottom, 6)
-                        .foregroundColor(.white),
-                    alignment: .bottomLeading
-                )
-            }
-        }
-        .frame(maxWidth: .infinity)
-        .aspectRatio(3.0/4.0, contentMode: .fit)
-        .background(
-            AsyncImage(url: URL(string: "https://media.scrollbooker.ro/thumbnail-url-post-6.jpg")) { image in
-                image.resizable().scaledToFill()
+        ZStack(alignment: .bottomLeading) {
+            AsyncImage(url: URL(string: mediaFiles.first?.thumbnailUrl ?? "")) { image in
+                image
+                    .resizable()
+                    .aspectRatio(contentMode: .fill)
             } placeholder: {
-                Color(white: 0.12)
+                Color(.systemGray5)
             }
-        )
-        .clipped()
+            .frame(width: itemWidth, height: itemWidth * (12.0 / 9.0))
+            
+            LinearGradient(
+                colors: [
+                    Color.black.opacity(0.2),
+                    Color.clear,
+                    Color.black.opacity(0.45)
+                ],
+                startPoint: .top,
+                endPoint: .bottom
+            )
+            .disabled(true)
+            
+            HStack(spacing: 4) {
+                Image(systemName: "play.fill")
+                    .font(.system(size: 11, weight: .bold))
+                
+                Text("\(viewsCount)")
+                    .font(.system(size: 12, weight: .semibold))
+            }
+            .foregroundColor(.white)
+            .padding(.leading, 10)
+            .padding(.bottom, 10)
+        }
+        .frame(width: itemWidth)
+        .aspectRatio(9.0 / 12.0, contentMode: .fit)
+        .clipShape(RoundedRectangle(cornerRadius: 12)) 
         .contentShape(Rectangle())
+        .onTapGesture {
+            onNavigateToPost(postId)
+        }
     }
-}
-
-#Preview("Light") {
-    PostGridView()
-}
-
-#Preview("Dark") {
-    PostGridView()
-        .preferredColorScheme(.dark)
 }

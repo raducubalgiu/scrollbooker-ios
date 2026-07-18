@@ -30,6 +30,10 @@ final class BusinessModule {
     private lazy var getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase = {
         GetBusinessesMarkersUseCase(repository: repository)
     }()
+    
+    private lazy var getBusinessProfileUseCase: GetBusinessProfileUseCase = {
+        GetBusinessProfileUseCase(repository: repository)
+    }()
 
     func makeSearchViewModel() -> SearchViewModel {
         SearchViewModel(
@@ -40,7 +44,8 @@ final class BusinessModule {
     
     func makeBusinessProfileViewModel(username: String) -> BusinessProfileViewModel {
         BusinessProfileViewModel(
-            username: username
+            username: username,
+            getBusinessProfileUseCase: getBusinessProfileUseCase
         )
     }
 }

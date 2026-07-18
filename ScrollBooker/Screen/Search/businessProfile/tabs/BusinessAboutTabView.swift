@@ -8,146 +8,63 @@
 import SwiftUI
 
 struct BusinessAboutTabView: View {
+    let description: String?
+    let schedules: [Schedule]
+    let location: BusinessLocation
+    let fullName: String
+    let nearbyBusinesses: [NearbyBusiness]
+    let onNavigateToBusinessProfile: (String) -> Void
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("about")
+            Text(String(localized: "about"))
                 .font(.title2.weight(.heavy))
                 .padding(.bottom)
             
-            Text("Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
+            Text(description ?? "Acest business nu are o descriere")
             
-            Text("schedule")
+            Text(String(localized: "schedule"))
                 .font(.title2.weight(.heavy))
                 .padding(.vertical)
             
-            HStack {
+            ForEach(schedules) { schedule in
                 HStack {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: 10)
-                    Text("Luni")
+                    HStack {
+                        Circle()
+                            .fill(Color.green)
+                            .frame(width: 10, height: 10)
+                        Text(schedule.localizedDayOfWeek)
+                            .font(.headline)
+                    }
+                    
+                    Spacer()
+                    
+                    Text("\(String(describing: schedule.startTime)) - \(String(describing: schedule.endTime))")
                         .font(.headline)
                 }
-                
-                Spacer()
-                
-                Text("09:00 - 18:00")
-                    .font(.headline)
+                .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
             
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: 10)
-                    Text("Marti")
-                        .font(.headline.weight(.heavy))
-                }
-                
-                Spacer()
-                
-                Text("09:00 - 18:00")
-                    .font(.headline.weight(.heavy))
-            }
-            .frame(maxWidth: .infinity)
-            
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: 10)
-                    Text("Miercuri")
-                        .font(.headline)
-                }
-                
-                Spacer()
-                
-                Text("09:00 - 18:00")
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
-            
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: 10)
-                    Text("Joi")
-                        .font(.headline)
-                }
-                
-                Spacer()
-                
-                Text("09:00 - 18:00")
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
-            
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.green)
-                        .frame(width: 10, height: 10)
-                    Text("Vineri")
-                        .font(.headline)
-                }
-                
-                Spacer()
-                
-                Text("09:00 - 18:00")
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
-            
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.gray)
-                        .frame(width: 10, height: 10)
-                    Text("Sambata")
-                        .font(.headline)
-                }
-                
-                Spacer()
-                
-                Text("Inchis")
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
-            
-            HStack {
-                HStack {
-                    Circle()
-                        .fill(Color.gray)
-                        .frame(width: 10, height: 10)
-                    Text("Duminica")
-                        .font(.headline)
-                }
-                
-                Spacer()
-                
-                Text("Inchis")
-                    .font(.headline)
-            }
-            .frame(maxWidth: .infinity)
-            
-            Text("address")
+            Text(String(localized: "address"))
                 .font(.title2.weight(.heavy))
                 .padding(.vertical)
             
-            Text("Calea Victoriei 10, București")
+            Text(location.address)
+            
+            if let mapUrl = location.mapUrl {
+                SectionMap(
+                    mapUrl: mapUrl,
+                    coordinates: location.coordinates,
+                    fullName: fullName
+                )
+            }
+            
+            NearbyBusinessesView(
+                businesses: nearbyBusinesses,
+                onNavigateToBusinessProfile: onNavigateToBusinessProfile
+            )
         }
         .padding(16)
         .background(Color(.systemBackground))
     }
-}
-
-#Preview("Light") {
-    BusinessAboutTabView()
-}
-
-#Preview("Dark") {
-    BusinessAboutTabView()
-        .preferredColorScheme(.dark)
 }

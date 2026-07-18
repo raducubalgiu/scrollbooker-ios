@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct BusinessServicesTabView: View {
+    let products: UserProducts
+    
     var body: some View {
         VStack(spacing: 12) {
             ForEach(0..<5, id: \.self) { i in
@@ -51,13 +53,4 @@ struct BusinessServicesTabView: View {
             .padding()
         }
     }
-}
-
-#Preview("Light") {
-    BusinessServicesTabView()
-}
-
-#Preview("Dark") {
-    BusinessServicesTabView()
-        .preferredColorScheme(.dark)
 }

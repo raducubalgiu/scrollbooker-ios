@@ -10,6 +10,7 @@ import Foundation
 protocol BusinessApiService: Sendable {
     func getBusinessesSheet(request: SearchBusinessRequest) async throws -> PaginatedResponseDTO<BusinessSheetDto>
     func getBusinessesMarkers(request: SearchBusinessRequest) async throws -> [BusinessMarkerDto]
+    func getBusinessProfile(username: String) async throws -> BusinessProfileDto
 }
 
 final class BusinessAPIImpl: BusinessApiService {
@@ -38,6 +39,13 @@ final class BusinessAPIImpl: BusinessApiService {
             "businesses/markers",
             method: .post,
             body: request,
+        )
+    }
+    
+    func getBusinessProfile(username: String) async throws -> BusinessProfileDto {
+        return try await client.request(
+            "businesses/\(username)/profile",
+            method: .get
         )
     }
 }

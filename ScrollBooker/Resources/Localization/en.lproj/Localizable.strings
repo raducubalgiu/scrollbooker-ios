@@ -134,6 +134,8 @@
 "rating_3" = "A fost ok";
 "rating_4" = "Mi-a plăcut";
 "rating_5" = "Mi-a plăcut foarte mult";
+"posts" = "Postări";
+"nearbyServices" = "Servicii în apropiere";
 "notFoundPosts" = "Nu au fost găsite postări";
 "notFoundBookmarks" = "Încă nu ai salvat nici o postare";
 "notFoundReposts" = "Încă nu ai repostat nimic";

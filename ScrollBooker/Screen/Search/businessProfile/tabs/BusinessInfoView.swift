@@ -8,15 +8,19 @@
 import SwiftUI
 
 struct BusinessInfoView: View {
+    let profile: BusinessProfile
+    
     var body: some View {
         VStack(alignment: .leading, spacing: 15) {
             HStack(spacing: 25) {
-                AvatarView(imageURL: URL(string: "https://media.scrollbooker.ro/avatar-male-9.jpeg"), size: .xl)
+                // Mapare din owner.avatar
+                AvatarView(imageURL: URL(string: profile.owner.avatar ?? ""), size: .xl)
                 
                 VStack(spacing: 15) {
                     HStack(spacing: 10) {
+                        // Mapare din counters
                         ProfileCounterView(
-                            counter: 155,
+                            counter: profile.owner.counters.followersCount,
                             label: String(localized: "followers"),
                             onClick: {}
                         )
@@ -25,38 +29,33 @@ struct BusinessInfoView: View {
                             .padding(.horizontal)
                         
                         ProfileCounterView(
-                            counter: 1510,
+                            counter: profile.owner.counters.followingsCount,
                             label: String(localized: "following"),
                             onClick: {}
                         )
                     }
-//                    Button(action: {}) {
-//                        Text("follow")
-//                            .fontWeight(.semibold)
-//                            .foregroundColor(.onBackgroundSB)
-//                            .padding(.vertical, 12.5)
-//                            .frame(maxWidth: .infinity)
-//                    }
-//                    .overlay(
-//                        Capsule()
-//                            .stroke(.divider, lineWidth: 1)
-//                    )
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
             }
             
             VStack(alignment: .leading, spacing: 7) {
-                Text("House Of Barbers")
+                // Mapare din profile.owner.fullName sau numele afacerii tale
+                Text(profile.owner.fullName)
                     .font(.title2.weight(.bold))
-                Text("Strada Randunelelor, nr 45, Sector 2")
+                
+                // Mapare din location.address
+                Text(profile.location.address)
                     .foregroundStyle(.secondary)
                 
-                HStack(spacing: 8) {
-                    Image(systemName: "location");
-                    Text("la 5 km de tine")
+                // Afișare distanță opțională din profile.distanceKm
+                if let distance = profile.distanceKm {
+                    HStack(spacing: 8) {
+                        Image(systemName: "location")
+                        Text("la \(String(format: "%.1f", distance)) km de tine")
+                    }
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
                 }
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
                 
                 HStack(spacing: 8) {
                     Circle()
@@ -71,16 +70,5 @@ struct BusinessInfoView: View {
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(Color(.systemBackground))
-        
-        Spacer()
     }
-}
-
-#Preview("Light") {
-    BusinessInfoView()
-}
-
-#Preview("Dark") {
-    BusinessInfoView()
-        .preferredColorScheme(.dark)
 }

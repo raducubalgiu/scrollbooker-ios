@@ -7,7 +7,9 @@
 
 import SwiftUI
 
-struct BusinessTeamTabView: View {
+struct BusinessEmployeesTabView: View {
+    let employees: [BusinessProfileEmployee]
+    
     var body: some View {
         VStack(spacing: 12) {
             Text("team")
@@ -17,16 +19,19 @@ struct BusinessTeamTabView: View {
             
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 16) {
-                    ForEach(0...20, id: \.self) { index in
-                        VStack(spacing: 12) {
-                            AvatarView(size: .l)
-                            Text("Radu Balgiu")
-                                .font(.headline.bold())
-                            MainButtonOutlined(
-                                title: String(localized: "profile"),
+                    ForEach(employees) { employee in
+                        VStack(spacing: 5) {
+                            AvatarWithRatingView(
+                                rating: Double(employee.ratingsAverage),
                                 onClick: {}
                             )
-                            .padding(.top, .s)
+                            
+                            Text(employee.fullName)
+                                .font(.subheadline.bold())
+                            
+                            Text(employee.profession)
+                                .font(.footnote)
+                                .foregroundColor(.gray)
                         }
                     }
                     .padding(.leading)
@@ -34,15 +39,5 @@ struct BusinessTeamTabView: View {
             }
         }
         .padding(.top, 8)
-        .background(Color(.systemBackground))
     }
-}
-
-#Preview("Light") {
-    BusinessTeamTabView()
-}
-
-#Preview("Dark") {
-    BusinessTeamTabView()
-        .preferredColorScheme(.dark)
 }

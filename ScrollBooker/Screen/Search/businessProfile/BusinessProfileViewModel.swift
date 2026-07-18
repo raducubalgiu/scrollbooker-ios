@@ -8,22 +8,21 @@
 import Foundation
 import Observation
 
-enum BusinessProfileState {
+enum BusinessProfileState: Equatable {
     case idle
     case loading
-    case empty
-    case success([BusinessProfile])
+    case success(BusinessProfile)
     case error(String)
 }
 
 @Observable
 @MainActor
 final class BusinessProfileViewModel: HasLoadingState {
-    var uiState = UiState(data: [BusinessProfile]())
-    
-    let username: String
-    
+    var uiState = UiState(data: BusinessProfile?.none)
     private(set) var viewState: BusinessProfileState = .idle
+    
+    private let username: String
+    private let getBusinessProfileUseCase: GetBusinessProfileUseCase
     
     var isLoading: Bool {
         get { if case .loading = viewState { return true }; return uiState.isLoading }
@@ -35,7 +34,50 @@ final class BusinessProfileViewModel: HasLoadingState {
         set { uiState.errorMessage = newValue }
     }
     
-    init(username: String) {
+    init(
+        username: String,
+        getBusinessProfileUseCase: GetBusinessProfileUseCase
+    ) {
         self.username = username
+        self.getBusinessProfileUseCase = getBusinessProfileUseCase
+    }
+    
+    func loadBusinessProfile() async {
+        guard uiState.data == nil else { return }
+        guard viewState != .loading else { return }
+        
+        viewState = .loading
+        uiState.errorMessage = nil
+        
+        do {
+            let result = try await withVisibleLoading {
+                try await getBusinessProfileUseCase(username: username)
+            }
+            uiState.data = result
+            viewState = .success(result)
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            viewState = .error(message)
+        }
+    }
+    
+    func refresh() async {
+        guard !uiState.isRefreshing else { return }
+        uiState.isRefreshing = true
+        uiState.errorMessage = nil
+        
+        do {
+            let result = try await getBusinessProfileUseCase(username: username)
+            uiState.data = result
+            viewState = .success(result)
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            if uiState.data == nil {
+                viewState = .error(message)
+            } else {
+                uiState.errorMessage = message
+            }
+        }
+        uiState.isRefreshing = false
     }
 }

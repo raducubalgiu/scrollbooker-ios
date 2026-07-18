@@ -29,4 +29,9 @@ final class BusinessRepositoryImpl: BusinessRepository {
             BusinessMarker(dto: dto)
         }
     }
+    
+    func getBusinessProfile(username: String) async throws -> BusinessProfile {
+        let dtoResponse = try await api.getBusinessProfile(username: username)
+        return BusinessProfile(from: dtoResponse)
+    }
 }

@@ -17,19 +17,17 @@ struct BusinessAboutTabView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text(String(localized: "about"))
-                .font(.title2.weight(.heavy))
-                .padding(.bottom)
-            
             Text(description ?? "Acest business nu are o descriere")
-            
+                .font(.body)
+                .padding(.bottom, 8)
+ 
             Text(String(localized: "schedule"))
                 .font(.title2.weight(.heavy))
-                .padding(.vertical)
+                .padding(.vertical, 8)
             
             ForEach(schedules) { schedule in
                 HStack {
-                    HStack {
+                    HStack(spacing: 8) {
                         Circle()
                             .fill(Color.green)
                             .frame(width: 10, height: 10)
@@ -39,17 +37,21 @@ struct BusinessAboutTabView: View {
                     
                     Spacer()
                     
-                    Text("\(String(describing: schedule.startTime)) - \(String(describing: schedule.endTime))")
+                    Text("\(schedule.startTime) - \(schedule.endTime)")
                         .font(.headline)
                 }
                 .frame(maxWidth: .infinity)
+                .padding(.vertical, 4)
             }
             
+            // 3. Adresa și Harta
             Text(String(localized: "address"))
                 .font(.title2.weight(.heavy))
-                .padding(.vertical)
+                .padding(.vertical, 8)
             
             Text(location.address)
+                .font(.body)
+                .foregroundColor(.secondary)
             
             if let mapUrl = location.mapUrl {
                 SectionMap(
@@ -57,14 +59,16 @@ struct BusinessAboutTabView: View {
                     coordinates: location.coordinates,
                     fullName: fullName
                 )
+                .frame(height: 200)
+                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .padding(.vertical, 8)
             }
             
             NearbyBusinessesView(
                 businesses: nearbyBusinesses,
                 onNavigateToBusinessProfile: onNavigateToBusinessProfile
             )
+            .padding(.top, 16)
         }
-        .padding(16)
-        .background(Color(.systemBackground))
     }
 }

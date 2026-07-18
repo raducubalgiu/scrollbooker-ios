@@ -14,53 +14,42 @@ struct BusinessProfileTabRow: View {
     @Namespace private var indicatorNS
     
     var body: some View {
-        ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 20) {
-                ForEach(BusinessProfileSection.allCases) { section in
-                    let isSel = section == selected
-                    VStack(spacing: 10) {
-                        Text(section.title)
-                            .font(.body.weight(.bold))
-                            .opacity(isSel ? 1 : 0.7)
-                        ZStack {
-                            // indicator animat
-                            if isSel {
-                                Capsule()
-                                    .matchedGeometryEffect(id: "IND", in: indicatorNS)
-                                    .frame(height: 3)
-                            } else {
-                                Color.clear.frame(height: 3)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .center)
-                    }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
+        HStack(spacing: 0) {
+            ForEach(BusinessProfileSection.allCases) { section in
+                let isSel = section == selected
+                
+                Button(action: {
+                    withAnimation(.spring(response: 0.35, dampingFraction: 0.75)) {
                         onSelect(section)
                     }
+                }) {
+                    VStack(spacing: 0) {
+                        Spacer()
+                        
+                        Text(section.title)
+                            .font(.system(size: 15, weight: isSel ? .bold : .semibold))
+                            .foregroundColor(isSel ? .primary : .gray)
+                            .padding(.bottom, 12) // Padding curat sub text
+                        
+                        // REZOLVARE ANIMAȚIE: Randăm ierarhia curat fără ZStack sau else structural
+                        if isSel {
+                            Capsule()
+                                .fill(Color.primary) // Sau culoarea brandului tău
+                                .frame(height: 3)
+                                // matchedGeometryEffect are nevoie de un ID unic și de Namespace-ul tău
+                                .matchedGeometryEffect(id: "activeTabIndicator", in: indicatorNS)
+                        } else {
+                            // Această linie transparentă menține înălțimea fixă fără a strica Namespace-ul
+                            Capsule()
+                                .fill(Color.clear)
+                                .frame(height: 3)
+                        }
+                    }
                 }
+                .buttonStyle(.plain) // Elimină efectul nativ de opacitate la click de pe butoane
+                .frame(maxWidth: .infinity) // Împarte ecranul în mod egal pentru cele 5 taburi
             }
-            .padding(.horizontal, 16)
         }
+        .padding(.horizontal, 8)
     }
 }
-
-#Preview("Light") {
-    @Previewable @State var selected: BusinessProfileSection = .services
-    
-    BusinessProfileTabRow(
-        selected: $selected,
-        onSelect: {_ in }
-    )
-}
-
-#Preview("Dark") {
-    @Previewable @State var selected: BusinessProfileSection = .services
-    
-    BusinessProfileTabRow(
-        selected: $selected,
-        onSelect: {_ in }
-    )
-        .preferredColorScheme(.dark)
-}
-

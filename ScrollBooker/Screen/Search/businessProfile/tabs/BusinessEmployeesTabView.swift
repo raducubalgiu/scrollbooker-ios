@@ -11,33 +11,28 @@ struct BusinessEmployeesTabView: View {
     let employees: [BusinessProfileEmployee]
     
     var body: some View {
-        VStack(spacing: 12) {
-            Text("team")
-                .font(.title2.weight(.heavy))
-                .padding()
-                .frame(maxWidth: .infinity, alignment: .leading)
-            
-            ScrollView(.horizontal, showsIndicators: false) {
-                LazyHStack(spacing: 16) {
-                    ForEach(employees) { employee in
-                        VStack(spacing: 5) {
-                            AvatarWithRatingView(
-                                rating: Double(employee.ratingsAverage),
-                                onClick: {}
-                            )
-                            
-                            Text(employee.fullName)
-                                .font(.subheadline.bold())
-                            
-                            Text(employee.profession)
-                                .font(.footnote)
-                                .foregroundColor(.gray)
-                        }
+        ScrollView(.horizontal, showsIndicators: false) {
+            LazyHStack(spacing: 16) {
+                ForEach(employees) { employee in
+                    VStack(spacing: 5) {
+                        AvatarWithRatingView(
+                            rating: Double(employee.ratingsAverage),
+                            onClick: {}
+                        )
+                        
+                        Text(employee.fullName)
+                            .font(.subheadline.bold())
+                            .lineLimit(1)
+                        
+                        Text(employee.profession)
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
                     }
-                    .padding(.leading)
+                    .frame(width: 90)
                 }
             }
+            .padding(.horizontal, 16)
         }
-        .padding(.top, 8)
     }
 }

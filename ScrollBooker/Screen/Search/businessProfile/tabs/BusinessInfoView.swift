@@ -11,7 +11,7 @@ struct BusinessInfoView: View {
     let profile: BusinessProfile
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 15) {
+        VStack(alignment: .leading) {
             HStack(spacing: 25) {
                 // Mapare din owner.avatar
                 AvatarView(imageURL: URL(string: profile.owner.avatar ?? ""), size: .xl)
@@ -67,8 +67,5 @@ struct BusinessInfoView: View {
                 .foregroundStyle(.secondary)
             }
         }
-        .padding(.horizontal, 16)
-        .padding(.vertical, 12)
-        .background(Color(.systemBackground))
     }
 }

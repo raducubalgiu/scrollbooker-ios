@@ -43,7 +43,7 @@ struct SearchHeaderView: View {
         .padding(.vertical, 12)
         .frame(maxWidth: .infinity)
         .background(Color.backgroundSB)
-        .cornerRadius(28)
+        .cornerRadius(50)
         .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 4)
     }
 }

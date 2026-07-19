@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import CoreLocation
 
 enum SearchBusinessesState {
     case idle
@@ -22,21 +23,21 @@ final class SearchViewModel: HasLoadingState {
     private(set) var viewState: SearchBusinessesState = .idle
     private(set) var businesses: [BusinessSheet] = []
     private(set) var markers: [BusinessMarker] = []
-    
+    private(set) var totalCount = 0
+
     private(set) var isPaging: Bool = false
     private(set) var isRefreshing: Bool = false
     private(set) var operationErrorMessage: String? = nil
 
     private let getBusinessesSheetUseCase: GetBusinessesSheetUseCase
     private let getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase
-    
+
     private var page = 1
     private let limit = 20
-    private var totalCount = 0
 
     var currentBBox: BusinessBoundingBox? = nil
     var currentZoom: Float = 10.0
-    
+
     var selectedServiceId: Int? = nil
     var selectedBusinessDomainId: Int? = nil
     var selectedStartDate: String? = nil
@@ -46,13 +47,39 @@ final class SearchViewModel: HasLoadingState {
     var hasDiscount: Bool = false
     var currentSort: String? = "recommended"
 
+    // MARK: - Dedup pentru search-ul declanșat de mișcarea hărții.
+    // Mutat din View: e o decizie de business ("merită să caut din nou aici?"),
+    // nu o stare de UI.
+    private var lastSearchedCenter: CLLocationCoordinate2D?
+    private var lastSearchedZoom: Float?
+    private var searchTask: Task<Void, Never>?
+
+    private let minZoomDelta: Float = 0.5
+    private let minMoveMeters: Double = 10000.0
+
     var hasMore: Bool {
         businesses.count < totalCount
     }
 
     var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return isPaging }
-        set { if newValue && !isPaging { viewState = .loading } }
+        get {
+            if case .loading = viewState { return true }
+            return isPaging
+        }
+        set {
+            if newValue && !isPaging && !isRefreshing {
+                viewState = .loading
+            }
+        }
+    }
+
+    /// Adevărat DOAR la încărcarea inițială a unei căutări (nu și în timpul paginării).
+    /// Folosit de UI ca să știe când să înlocuiască toată lista cu skeleton-uri,
+    /// spre deosebire de `isPaging`, care trebuie tratat separat printr-un loader
+    /// mic la coada listei — nu prin re-randarea întregii liste.
+    var isInitialLoading: Bool {
+        if case .loading = viewState { return true }
+        return false
     }
 
     var errorMessage: String? {
@@ -79,34 +106,68 @@ final class SearchViewModel: HasLoadingState {
         self.getBusinessesMarkersUseCase = getBusinessesMarkersUseCase
     }
 
+    /// Apelat de View de fiecare dată când harta se oprește din mișcare.
+    /// Decide intern dacă mișcarea e suficient de mare încât să merite un search nou.
     func triggerSearch(bbox: BusinessBoundingBox, zoom: Float) async {
+        let center = CLLocationCoordinate2D(
+            latitude: Double(bbox.minLat + bbox.maxLat) / 2,
+            longitude: Double(bbox.minLng + bbox.maxLng) / 2
+        )
+
+        guard shouldSearch(center: center, zoom: zoom) else { return }
+
+        lastSearchedCenter = center
+        lastSearchedZoom = zoom
+
         self.currentBBox = bbox
         self.currentZoom = zoom
-        
-        page = 1
-        await load(isFirstPage: true)
+
+        searchTask?.cancel()
+        let task = Task {
+            self.page = 1
+            await self.load(isFirstPage: true)
+        }
+        searchTask = task
+        await task.value
+    }
+
+    private func shouldSearch(center: CLLocationCoordinate2D, zoom: Float) -> Bool {
+        guard let lastCenter = lastSearchedCenter, let lastZoom = lastSearchedZoom else {
+            return true
+        }
+
+        if abs(lastZoom - zoom) >= minZoomDelta {
+            return true
+        }
+
+        let lastLocation = CLLocation(latitude: lastCenter.latitude, longitude: lastCenter.longitude)
+        let newLocation = CLLocation(latitude: center.latitude, longitude: center.longitude)
+
+        return lastLocation.distance(from: newLocation) >= minMoveMeters
     }
 
     func refresh() async {
         guard !isRefreshing, currentBBox != nil else { return }
         isRefreshing = true
-        
+
         page = 1
         await load(isFirstPage: true)
-        
+
         isRefreshing = false
     }
 
     func loadMoreIfNeeded(currentBusiness: BusinessSheet?) async {
-        guard hasMore, !isPaging, !isRefreshing, !isLoading else { return }
-        
+        guard hasMore, !isPaging, !isRefreshing else { return }
+        if case .loading = viewState { return }
+
         guard let current = currentBusiness,
               current.id == businesses.last?.id
         else { return }
 
         isPaging = true
+        defer { isPaging = false }
+
         await load(isFirstPage: false)
-        isPaging = false
     }
 
     private func load(isFirstPage: Bool) async {
@@ -115,7 +176,7 @@ final class SearchViewModel: HasLoadingState {
         if isFirstPage && !isRefreshing {
             viewState = .loading
         }
-        
+
         operationErrorMessage = nil
 
         let requestDto = SearchBusinessRequest(
@@ -142,15 +203,13 @@ final class SearchViewModel: HasLoadingState {
                     async let markersTask = getBusinessesMarkersUseCase(request: requestDto)
                     return try await (sheetTask, markersTask)
                 }
-                
+
                 self.businesses = sheetResponse.results
                 self.markers = markersResponse
                 totalCount = sheetResponse.count
             } else {
-                let response = try await withVisibleLoading {
-                    try await getBusinessesSheetUseCase(page: self.page, limit: self.limit, request: requestDto)
-                }
-                
+                let response = try await getBusinessesSheetUseCase(page: self.page, limit: self.limit, request: requestDto)
+
                 let existingIds = Set(businesses.map(\.id))
                 let unique = response.results.filter { !existingIds.contains($0.id) }
                 self.businesses.append(contentsOf: unique)
@@ -158,7 +217,7 @@ final class SearchViewModel: HasLoadingState {
             }
 
             page += 1
-            
+
             if businesses.isEmpty {
                 viewState = .empty
             } else {

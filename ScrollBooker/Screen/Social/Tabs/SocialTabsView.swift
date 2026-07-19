@@ -49,7 +49,7 @@ struct SocialTabsView: View {
             .padding(.top, 8)
             
             Rectangle()
-                .fill(Color.divider)
+                .fill(Color.dividerSB)
                 .frame(height: 1)
         }
     }
@@ -72,20 +72,3 @@ struct SocialTabsView: View {
         }
     }
 }
-
-//#Preview("Light") {
-//    @Previewable @State var tab: SocialTab = .reviews
-//    
-//    SocialTabsView(
-//        selectedTab: $tab
-//    )
-//}
-//
-//#Preview("Dark") {
-//    @Previewable @State var tab: SocialTab = .reviews
-//    
-//    SocialTabsView(
-//        selectedTab: $tab
-//    )
-//    .preferredColorScheme(.dark)
-//}

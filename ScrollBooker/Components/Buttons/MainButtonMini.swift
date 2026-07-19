@@ -21,7 +21,7 @@ struct MainButtonMiniStyle {
     static let outlined = MainButtonMiniStyle(
         color: .onBackgroundSB,
         backgroundColor: .clear,
-        borderColor: .divider
+        borderColor: .dividerSB
     )
 }
 

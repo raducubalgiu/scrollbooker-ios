@@ -25,7 +25,7 @@ struct MainButtonOutlined: View {
         .fontWeight(.semibold)
         .overlay(
             Capsule()
-                .stroke(.divider, lineWidth: 1)
+                .stroke(Color.dividerSB, lineWidth: 1)
         )
         .frame(maxWidth: fullWidth ? .infinity : nil)
     }

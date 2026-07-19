@@ -47,7 +47,7 @@ struct UserListItem: View {
                 .background(
                     RoundedRectangle(cornerRadius: 50)
                         .fill(userSocial.isFollow ? Color.backgroundSB : Color.primarySB)
-                        .stroke(userSocial.isFollow ? .divider : Color.primarySB, lineWidth: 1)
+                        .stroke(userSocial.isFollow ? .dividerSB : Color.primarySB, lineWidth: 1)
                 )
                 .buttonStyle(.plain)
             }
@@ -57,17 +57,4 @@ struct UserListItem: View {
         .padding(.vertical, 10)
     }
 }
-
-//#Preview("Light") {
-//    UserListItem(
-//        userMini: userFollowers[0]
-//    )
-//}
-//
-//#Preview("Dark") {
-//    UserListItem(
-//        userMini: userFollowers[0]
-//    )
-//        .preferredColorScheme(.dark)
-//}
 

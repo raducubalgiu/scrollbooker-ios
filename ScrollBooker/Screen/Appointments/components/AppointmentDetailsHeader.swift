@@ -49,7 +49,7 @@ struct AppointmentDetailsHeader: View {
                     AvatarView(
                         imageURL: appointment.user.avatarURL,
                         size: .xl,
-                        border: AvatarView.AvatarBorder(color: .divider, width: 1)
+                        border: AvatarView.AvatarBorder(color: .dividerSB, width: 1)
                     )
                 }
                 

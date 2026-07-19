@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct VerticalDivider: View {
-    var color: Color = .divider
+    var color: Color = .dividerSB
     var width: CGFloat = 1
     var height: CGFloat? = nil
     

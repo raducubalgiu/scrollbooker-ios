@@ -20,6 +20,8 @@ extension Color {
     static let errorSB = Color("ErrorSBB")
     static let onErrorSB = Color("OnErrorSBB")
     
+    static let dividerSB = Color("DividerSBB")
+    
     static let ratingSB = Color("RatingSBB")
     
     static let beautySB = Color("BeautySBB")

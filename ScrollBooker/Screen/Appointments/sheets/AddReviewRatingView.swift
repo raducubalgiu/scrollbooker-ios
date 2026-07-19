@@ -20,7 +20,7 @@ struct AddReviewRatingView: View {
                     
                     Image(systemName: isFilled ? "star.fill" : "star")
                         .font(.system(size: 30))
-                        .foregroundColor(isFilled ? .primarySB : .divider)
+                        .foregroundColor(isFilled ? .primarySB : .dividerSB)
                         .frame(width: 40, height: 40)
                         .contentShape(Rectangle())
                         .onTapGesture {

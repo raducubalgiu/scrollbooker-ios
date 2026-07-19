@@ -94,7 +94,7 @@ struct AppointmentCardView: View {
                     .padding(.horizontal, 12)
                     .overlay(
                         RoundedRectangle(cornerRadius: 12)
-                            .stroke(.divider, lineWidth: 1)
+                            .stroke(Color.dividerSB, lineWidth: 1)
                     )
                 }
             }
@@ -105,23 +105,3 @@ struct AppointmentCardView: View {
         .buttonStyle(.plain)
     }
 }
-
-#Preview("Light") {
-    AppointmentCardView(
-        appointment: appointmentsList[0],
-        onClick: {}
-    )
-    
-    Spacer()
-}
-
-#Preview("Dark") {
-    AppointmentCardView(
-        appointment: appointmentsList[0],
-        onClick: {}
-    )
-        .preferredColorScheme(.dark)
-    
-    Spacer()
-}
-

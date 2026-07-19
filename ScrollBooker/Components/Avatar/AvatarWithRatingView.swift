@@ -21,7 +21,7 @@ struct AvatarWithRatingView: View {
             AvatarView(
                 imageURL: url,
                 size: size,
-                border: AvatarView.AvatarBorder(color: .divider, width: 1)
+                border: AvatarView.AvatarBorder(color: .dividerSB, width: 1)
             )
             .padding(.bottom, dynamicBottomPadding)
             

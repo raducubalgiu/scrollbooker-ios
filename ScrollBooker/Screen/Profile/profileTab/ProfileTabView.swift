@@ -15,7 +15,7 @@ struct ProfileTabView: View {
         VStack(spacing: 0) {
             ZStack(alignment: .bottom) {
                 Rectangle()
-                    .fill(.divider)
+                    .fill(Color.dividerSB)
                     .frame(height: 1)
                     .frame(maxWidth: .infinity)
                     .padding(.top, 0)

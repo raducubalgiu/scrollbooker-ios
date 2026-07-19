@@ -7,14 +7,12 @@
 
 import SwiftUI
 
-enum SheetPosition {
+enum SheetPosition: CaseIterable {
     case collapsed
+    case medium
     case expanded
 }
 
-/// Gestionează poziția (collapsed/expanded) și gestul de drag al bottom sheet-ului.
-/// Are propriul @State, izolat de restul ecranului: dragOffset se schimbă de zeci de ori
-/// pe secundă în timpul gestului, dar asta nu mai invalidează harta sau header-ul.
 struct SearchSheetContainerView: View {
     let isLoading: Bool
     let isPaging: Bool
@@ -24,15 +22,13 @@ struct SearchSheetContainerView: View {
     var onSelectProduct: (String) -> Void
     var onLoadMore: (BusinessSheet) -> Void
 
-    @State private var sheetPosition: SheetPosition = .collapsed
+    @State private var sheetPosition: SheetPosition = .medium
     @State private var dragOffset: CGFloat = 0
-    // Înălțimea reală a header-ului din SearchBottomSheet (capsulă + text), măsurată live.
-    // Nu mai folosim o valoare hardcodată: dacă header-ul se schimbă vizual, collapse-ul
-    // rămâne mereu corect, fără să mai umblăm la vreo constantă.
     @State private var headerHeight: CGFloat = 56
+    @State private var containerHeight: CGFloat = 0
 
-    private let expandThreshold: CGFloat = 60
-    private let velocityThreshold: CGFloat = 100
+    private let mediumVisibleRatio: CGFloat = 0.55
+    private let velocityThreshold: CGFloat = 250
 
     var body: some View {
         GeometryReader { geometry in
@@ -54,6 +50,10 @@ struct SearchSheetContainerView: View {
             .animation(.interactiveSpring(response: 0.35, dampingFraction: 0.85, blendDuration: 0), value: dragOffset)
             .animation(.spring(response: 0.4, dampingFraction: 0.85), value: sheetPosition)
             .gesture(dragGesture)
+            .onAppear { containerHeight = geometry.size.height }
+            .onChange(of: geometry.size.height) { _, newValue in
+                containerHeight = newValue
+            }
         }
     }
 
@@ -61,10 +61,9 @@ struct SearchSheetContainerView: View {
         guard totalHeight > 0 else { return 600 }
         switch position {
         case .collapsed:
-            // Sheet-ul are exact înălțimea totalHeight (maxHeight == geometry.size.height),
-            // deci ca să rămână vizibil DOAR header-ul, îl împingem în jos cu
-            // (totalHeight - headerHeight) — nimic mai mult, nimic mai puțin.
             return max(0, totalHeight - headerHeight)
+        case .medium:
+            return max(0, totalHeight - (totalHeight * mediumVisibleRatio))
         case .expanded:
             return 0
         }
@@ -85,6 +84,8 @@ struct SearchSheetContainerView: View {
             dragOffset = proposed < 0 ? proposed * 0.15 : proposed
         case .collapsed:
             dragOffset = proposed > 0 ? proposed * 0.1 : proposed
+        case .medium:
+            dragOffset = proposed
         }
     }
 
@@ -97,16 +98,28 @@ struct SearchSheetContainerView: View {
         }
 
         let velocity = value.predictedEndTranslation.height
+        let currentOffset = offset(for: sheetPosition, totalHeight: containerHeight) + value.translation.height
 
         withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
-            if velocity < -velocityThreshold {
-                sheetPosition = .expanded
-            } else if velocity > velocityThreshold {
-                sheetPosition = .collapsed
-            } else {
-                sheetPosition = value.translation.height < -expandThreshold ? .expanded : .collapsed
-            }
+            sheetPosition = nextPosition(from: currentOffset, velocity: velocity)
             dragOffset = 0
         }
+    }
+
+    private func nextPosition(from currentOffset: CGFloat, velocity: CGFloat) -> SheetPosition {
+        guard containerHeight > 0 else { return sheetPosition }
+
+        if velocity < -velocityThreshold {
+            return sheetPosition == .collapsed ? .medium : .expanded
+        }
+        if velocity > velocityThreshold {
+            return sheetPosition == .expanded ? .medium : .collapsed
+        }
+
+        return SheetPosition.allCases.min { lhs, rhs in
+            let lhsOffset = offset(for: lhs, totalHeight: containerHeight)
+            let rhsOffset = offset(for: rhs, totalHeight: containerHeight)
+            return abs(lhsOffset - currentOffset) < abs(rhsOffset - currentOffset)
+        } ?? sheetPosition
     }
 }

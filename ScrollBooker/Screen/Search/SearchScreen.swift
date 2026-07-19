@@ -8,6 +8,13 @@
 import SwiftUI
 import MapKit
 
+enum SearchSheetType: Identifiable {
+    case services
+    case filters
+    
+    var id: Self { self }
+}
+
 struct SearchScreen: View {
     let viewModel: SearchViewModel
     var onNavigateToBusinessProfile: (String) -> Void
@@ -19,6 +26,8 @@ struct SearchScreen: View {
             span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
         )
     )
+    
+    @State private var activeSheet: SearchSheetType? = nil
 
     var body: some View {
         ZStack(alignment: .top) {
@@ -35,10 +44,13 @@ struct SearchScreen: View {
             }
 
             VStack(spacing: 12) {
-                SearchHeaderView()
+                SearchHeaderView(
+                    onServicesTap: { activeSheet = .services },
+                    onFiltersTap: { activeSheet = .filters }
+                )
                     .padding(.horizontal, .base)
 
-                if viewModel.isInitialLoading && !isLoading {
+                if viewModel.isInitialLoading && !isLoading  {
                     SearchMapLoading()
                         .padding(.top, 12)
                         .transition(.opacity.combined(with: .scale(scale: 0.8)))
@@ -63,6 +75,41 @@ struct SearchScreen: View {
             withAnimation(.easeInOut(duration: 0.25)) {
                 isLoading = false
             }
+        }
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+                case .services:
+                    SearchServicesSheet()
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                    
+                case .filters:
+                    SearchFiltersSheet(
+                            viewModel: viewModel,
+                            onClose: { activeSheet = nil },
+                            onFilter: { updatedState in
+                                viewModel.maxPrice = updatedState.maxPrice
+                                viewModel.hasDiscount = updatedState.hasDiscount
+                                viewModel.currentSort = updatedState.sort.rawValue
+                                
+                                activeSheet = nil
+                                
+                                if let bbox = viewModel.currentBBox {
+                                    Task {
+                                        await viewModel.triggerSearch(
+                                            bbox: bbox,
+                                            zoom: viewModel.currentZoom,
+                                            force: true
+                                        )
+                                    }
+                                }
+                            }
+                        )
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.visible)
+                        .presentationCornerRadius(25)
+                }
         }
     }
 }

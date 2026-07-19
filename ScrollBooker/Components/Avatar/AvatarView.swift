@@ -24,7 +24,7 @@ struct AvatarView: View {
     }
     
     struct AvatarBorder {
-        var color: Color = .divider
+        var color: Color = .dividerSB
         var width: CGFloat = 1
     }
     
@@ -42,14 +42,14 @@ struct AvatarView: View {
                 .overlay {
                     if let border {
                         Circle()
-                            .stroke(.divider, lineWidth: border.width)
+                            .stroke(Color.dividerSB, lineWidth: border.width)
                     }
                 }
                 .accessibilityLabel(Text("Avatar"))
             
             if let isOpen {
                 Circle()
-                    .fill(isOpen ? .green : .divider)
+                    .fill(isOpen ? .green : .dividerSB)
                     .overlay(Circle().stroke(Color.white, lineWidth: 3))
                     .frame(width: badgeSize, height: badgeSize)
                     .offset(x: badgeOffset, y: badgeOffset)

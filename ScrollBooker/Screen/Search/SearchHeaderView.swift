@@ -8,28 +8,39 @@
 import SwiftUI
 
 struct SearchHeaderView: View {
+    var onServicesTap: () -> Void
+    var onFiltersTap: () -> Void
+    
     var body: some View {
         HStack(spacing: 12) {
-            Image(systemName: "magnifyingglass")
-                .font(.system(size: 20, weight: .medium))
-                .foregroundColor(.primary)
-                .padding(.leading, 16)
-            
-            VStack(alignment: .leading, spacing: 3) {
-                Text("Toate Serviciile")
-                    .font(.headline)
-                    .fontWeight(.semibold)
+            HStack(spacing: 12) {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 20, weight: .medium))
                     .foregroundColor(.primary)
-                    .lineLimit(1)
+                    .padding(.leading, 16)
                 
-                Text("Oricand • Orice ora")
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
+                VStack(alignment: .leading, spacing: 3) {
+                    Text("Toate Serviciile")
+                        .font(.headline)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                        .lineLimit(1)
+                    
+                    Text("Oricand • Orice ora")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                
+                Spacer()
+            }
+            .contentShape(Rectangle())
+            .onTapGesture {
+                onServicesTap()
             }
             
-            Spacer()
-            
-            Button(action: {}) {
+            Button(action: {
+                onFiltersTap()
+            }) {
                 Image(systemName: "slider.horizontal.3")
                     .font(.system(size: 20, weight: .medium))
                     .foregroundColor(.primary)

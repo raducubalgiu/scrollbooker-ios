@@ -106,16 +106,18 @@ final class SearchViewModel: HasLoadingState {
         self.getBusinessesMarkersUseCase = getBusinessesMarkersUseCase
     }
 
-    /// Apelat de View de fiecare dată când harta se oprește din mișcare.
-    /// Decide intern dacă mișcarea e suficient de mare încât să merite un search nou.
-    func triggerSearch(bbox: BusinessBoundingBox, zoom: Float) async {
+    func triggerSearch(bbox: BusinessBoundingBox, zoom: Float, force: Bool = false) async {
         let center = CLLocationCoordinate2D(
             latitude: Double(bbox.minLat + bbox.maxLat) / 2,
             longitude: Double(bbox.minLng + bbox.maxLng) / 2
         )
 
-        guard shouldSearch(center: center, zoom: zoom) else { return }
+        // REPARAT: Dacă force este true, NU mai verificăm dacă harta s-a mișcat
+        if !force {
+            guard shouldSearch(center: center, zoom: zoom) else { return }
+        }
 
+        // Actualizăm coordonatele ultimei căutări
         lastSearchedCenter = center
         lastSearchedZoom = zoom
 

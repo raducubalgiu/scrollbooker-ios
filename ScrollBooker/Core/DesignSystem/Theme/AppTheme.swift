@@ -30,11 +30,6 @@ struct AppTheme<Content: View>: View {
         appearance.configureWithOpaqueBackground()
         appearance.shadowColor = UIColor(named: "Divider")
         
-//        appearance.stackedLayoutAppearance.normal.iconColor = UIColor(named: "OnBackgroundSBB")
-//        appearance.stackedLayoutAppearance.selected.titleTextAttributes = [
-//            .foregroundColor: UIColor(named: "OnBackgroundSBB") ?? <#default value#>
-//        ]
-        
         let tabBar = UITabBar.appearance()
         tabBar.standardAppearance = appearance
         tabBar.scrollEdgeAppearance = appearance

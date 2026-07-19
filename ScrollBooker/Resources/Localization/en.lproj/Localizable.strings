@@ -310,6 +310,16 @@
 "gender_female" = "Feminin";
 "gender_other" = "Altele";
 
+"recommended" = "Recomandat";
+"distance" = "Distanță";
+"rating" = "Rating";
+"price" = "Preț";
+"filters" = "Filtre";
+"options" = "Opțiuni";
+"showResults" = "Arată rezultatele";
+"deleteAll" = "Șterge tot";
+
+
 /* --- NOTIFICATIONS --- */
 "notification_received_new" = "ai primit o notificare nouă";
 

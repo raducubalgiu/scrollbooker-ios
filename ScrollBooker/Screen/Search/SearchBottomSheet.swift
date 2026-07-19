@@ -28,13 +28,13 @@ struct SearchBottomSheet: View {
                     .fill(Color.primary.opacity(0.2))
                     .frame(width: 40, height: 5)
                     .padding(.top, 12)
-
+                
                 if isLoading {
-                    SkeletonBar(width: 160)
+                    SkeletonBar(width: 160, height: 10)
                         .padding(.bottom, 16)
                 } else {
                     Text("\(totalCount) de rezultate găsite")
-                        .font(.footnote)
+                        .font(.subheadline)
                         .foregroundColor(.secondary)
                         .padding(.bottom, 16)
                 }
@@ -64,9 +64,6 @@ struct SearchBottomSheet: View {
                             }
                         }
 
-                        // Loader mic doar pentru pagina următoare — NU înlocuim
-                        // lista existentă cu skeleton-uri, ca să nu sară scroll-ul
-                        // și să nu "clipească" carduri deja afișate.
                         if isPaging {
                             LoadingView()
                                 .padding(.vertical, 12)

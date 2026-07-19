@@ -31,6 +31,7 @@ final class SearchViewModel: HasLoadingState {
 
     private let getBusinessesSheetUseCase: GetBusinessesSheetUseCase
     private let getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase
+    private let getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
 
     private var page = 1
     private let limit = 20
@@ -100,10 +101,12 @@ final class SearchViewModel: HasLoadingState {
 
     init(
         getBusinessesSheetUseCase: GetBusinessesSheetUseCase,
-        getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase
+        getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase,
+        getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
     ) {
         self.getBusinessesSheetUseCase = getBusinessesSheetUseCase
         self.getBusinessesMarkersUseCase = getBusinessesMarkersUseCase
+        self.getAllBusinessDomainsUseCase = getAllBusinessDomainsUseCase
     }
 
     func triggerSearch(bbox: BusinessBoundingBox, zoom: Float, force: Bool = false) async {

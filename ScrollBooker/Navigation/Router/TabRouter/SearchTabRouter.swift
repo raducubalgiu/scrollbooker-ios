@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct SearchTabRouter: View {
-    @EnvironmentObject private var container: AppContainer
     var router: Router
+    
+    @EnvironmentObject private var container: AppContainer
     @State private var viewModel: SearchViewModel?
     
     var body: some View {
@@ -49,7 +50,9 @@ struct SearchTabRouter: View {
         .onAppear {
             if viewModel == nil {
                 Task { @MainActor in
-                    viewModel = container.businessModule.makeSearchViewModel()
+                    viewModel = container.businessModule.makeSearchViewModel(
+                        getAllBusinessDomainsUseCase: container.businessDomainModule.getAllBusinessDomainsUseCase
+                    )
                 }
             }
         }

@@ -35,10 +35,13 @@ final class BusinessModule {
         GetBusinessProfileUseCase(repository: repository)
     }()
 
-    func makeSearchViewModel() -> SearchViewModel {
+    func makeSearchViewModel(
+        getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
+    ) -> SearchViewModel {
         SearchViewModel(
             getBusinessesSheetUseCase: getBusinessesSheetUseCase,
-            getBusinessesMarkersUseCase: getBusinessesMarkersUseCase
+            getBusinessesMarkersUseCase: getBusinessesMarkersUseCase,
+            getAllBusinessDomainsUseCase: getAllBusinessDomainsUseCase
         )
     }
     

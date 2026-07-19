@@ -17,12 +17,30 @@ enum SearchBusinessesState {
     case error(String)
 }
 
+struct SearchFilters: Equatable {
+    var businessDomainId: Int? = nil
+    var serviceDomainId: Int? = nil
+    var serviceId: Int? = nil
+    var subFilterIds: [Int]? = nil
+    var maxPrice: Decimal? = nil
+    var hasDiscount: Bool = false
+    var sort: String? = "recommended"
+    var startDate: String? = nil
+    var startTime: String? = nil
+    var endTime: String? = nil
+    
+    mutating func clear() {
+        self = SearchFilters()
+    }
+}
+
 @Observable
 @MainActor
 final class SearchViewModel: HasLoadingState {
     private(set) var viewState: SearchBusinessesState = .idle
     private(set) var businesses: [BusinessSheet] = []
     private(set) var markers: [BusinessMarker] = []
+    private(set) var businessDomains: [BusinessDomain] = []
     private(set) var totalCount = 0
 
     private(set) var isPaging: Bool = false
@@ -35,22 +53,13 @@ final class SearchViewModel: HasLoadingState {
 
     private var page = 1
     private let limit = 20
+    private var isInitialized = false
 
     var currentBBox: BusinessBoundingBox? = nil
     var currentZoom: Float = 10.0
 
-    var selectedServiceId: Int? = nil
-    var selectedBusinessDomainId: Int? = nil
-    var selectedStartDate: String? = nil
-    var selectedStartTime: String? = nil
-    var selectedEndTime: String? = nil
-    var maxPrice: Decimal? = nil
-    var hasDiscount: Bool = false
-    var currentSort: String? = "recommended"
+    var filters = SearchFilters()
 
-    // MARK: - Dedup pentru search-ul declanșat de mișcarea hărții.
-    // Mutat din View: e o decizie de business ("merită să caut din nou aici?"),
-    // nu o stare de UI.
     private var lastSearchedCenter: CLLocationCoordinate2D?
     private var lastSearchedZoom: Float?
     private var searchTask: Task<Void, Never>?
@@ -75,9 +84,6 @@ final class SearchViewModel: HasLoadingState {
     }
 
     /// Adevărat DOAR la încărcarea inițială a unei căutări (nu și în timpul paginării).
-    /// Folosit de UI ca să știe când să înlocuiască toată lista cu skeleton-uri,
-    /// spre deosebire de `isPaging`, care trebuie tratat separat printr-un loader
-    /// mic la coada listei — nu prin re-randarea întregii liste.
     var isInitialLoading: Bool {
         if case .loading = viewState { return true }
         return false
@@ -109,18 +115,65 @@ final class SearchViewModel: HasLoadingState {
         self.getAllBusinessDomainsUseCase = getAllBusinessDomainsUseCase
     }
 
+    func initializeScreen(bbox: BusinessBoundingBox, zoom: Float) async {
+        guard !isInitialized else { return }
+        isInitialized = true
+        
+        self.currentBBox = bbox
+        self.currentZoom = zoom
+        
+        let center = CLLocationCoordinate2D(
+            latitude: Double(bbox.minLat + bbox.maxLat) / 2,
+            longitude: Double(bbox.minLng + bbox.maxLng) / 2
+        )
+        lastSearchedCenter = center
+        lastSearchedZoom = zoom
+        
+        viewState = .loading
+        operationErrorMessage = nil
+        
+        let requestDto = createRequestDto(bbox: bbox, zoom: zoom)
+        
+        do {
+            let (domainsResponse, sheetResponse, markersResponse) = try await withVisibleLoading {
+                async let domainsTask = getAllBusinessDomainsUseCase()
+                async let sheetTask = getBusinessesSheetUseCase(page: 1, limit: self.limit, request: requestDto)
+                async let markersTask = getBusinessesMarkersUseCase(request: requestDto)
+                return try await (domainsTask, sheetTask, markersTask)
+            }
+            
+            self.businessDomains = domainsResponse
+            self.businesses = sheetResponse.results
+            self.markers = markersResponse
+            totalCount = sheetResponse.count
+            
+            page = 2
+            
+            if businesses.isEmpty {
+                viewState = .empty
+            } else {
+                viewState = .success(businesses)
+            }
+            
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            
+            viewState = .error(message)
+            self.businesses = []
+            self.markers = []
+        }
+    }
+
     func triggerSearch(bbox: BusinessBoundingBox, zoom: Float, force: Bool = false) async {
         let center = CLLocationCoordinate2D(
             latitude: Double(bbox.minLat + bbox.maxLat) / 2,
             longitude: Double(bbox.minLng + bbox.maxLng) / 2
         )
 
-        // REPARAT: Dacă force este true, NU mai verificăm dacă harta s-a mișcat
         if !force {
             guard shouldSearch(center: center, zoom: zoom) else { return }
         }
 
-        // Actualizăm coordonatele ultimei căutări
         lastSearchedCenter = center
         lastSearchedZoom = zoom
 
@@ -183,23 +236,7 @@ final class SearchViewModel: HasLoadingState {
         }
 
         operationErrorMessage = nil
-
-        let requestDto = SearchBusinessRequest(
-            bbox: bbox,
-            zoom: currentZoom,
-            maxMarkers: 100,
-            businessDomainId: selectedBusinessDomainId,
-            serviceDomainId: nil,
-            serviceId: selectedServiceId,
-            subFilterIds: nil,
-            userLocation: nil,
-            maxPrice: maxPrice,
-            sort: currentSort,
-            hasDiscount: hasDiscount,
-            startDate: selectedStartDate,
-            startTime: selectedStartTime,
-            endTime: selectedEndTime
-        )
+        let requestDto = createRequestDto(bbox: bbox, zoom: currentZoom)
 
         do {
             if isFirstPage {
@@ -242,4 +279,25 @@ final class SearchViewModel: HasLoadingState {
             }
         }
     }
+    
+    /// Helper privat menit să unifice și să curețe instanțierea DTO-ului către server.
+    private func createRequestDto(bbox: BusinessBoundingBox, zoom: Float) -> SearchBusinessRequest {
+        SearchBusinessRequest(
+            bbox: bbox,
+            userLocation: nil,
+            zoom: zoom,
+            maxMarkers: 100,
+            businessDomainId: filters.businessDomainId,
+            serviceDomainId: filters.serviceDomainId,
+            serviceId: filters.serviceId,
+            subFilterIds: filters.subFilterIds,
+            maxPrice: filters.maxPrice,
+            sort: filters.sort,
+            hasDiscount: filters.hasDiscount,
+            startDate: filters.startDate,
+            startTime: filters.startTime,
+            endTime: filters.endTime
+        )
+    }
 }
+

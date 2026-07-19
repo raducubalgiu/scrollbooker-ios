@@ -10,7 +10,6 @@ import Foundation
 struct BusinessType: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String
-    let businessDomainId: Int
     let plural: String
     let url: String?
     let thumbnailUrl: String?

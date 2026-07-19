@@ -10,51 +10,42 @@ import SwiftUI
 struct SearchFiltersSheet: View {
     var viewModel: SearchViewModel
     var onClose: () -> Void
-    var onFilter: (SearchFiltersSheetState) -> Void
+    var onFilter: (SearchFilters) -> Void
     
-    @State private var sheetState: SearchFiltersSheetState
+    @State private var localFilters: SearchFilters
     private let defaultMaxPrice: Decimal = 1500
     
     init(
         viewModel: SearchViewModel,
         onClose: @escaping () -> Void,
-        onFilter: @escaping (SearchFiltersSheetState) -> Void
+        onFilter: @escaping (SearchFilters) -> Void
     ) {
         self.viewModel = viewModel
         self.onClose = onClose
         self.onFilter = onFilter
         
-        let initialSort = SearchSortEnum(rawValue: viewModel.currentSort ?? "recommended") ?? .recommended
-        _sheetState = State(initialValue: SearchFiltersSheetState(
-            maxPrice: viewModel.maxPrice ?? defaultMaxPrice,
-            sort: initialSort,
-            hasDiscount: viewModel.hasDiscount
-        ))
+        self._localFilters = State(initialValue: viewModel.filters)
     }
     
     private var isConfirmEnabled: Bool {
-        sheetState.hasChangesComparedTo(
-            maxPrice: viewModel.maxPrice,
-            sort: viewModel.currentSort,
-            hasDiscount: viewModel.hasDiscount
-        )
+        localFilters != viewModel.filters
     }
     
     private var isClearEnabled: Bool {
-        sheetState.hasDiscount ||
-        sheetState.maxPrice != defaultMaxPrice ||
-        sheetState.sort != .recommended
+        localFilters.hasDiscount ||
+        (localFilters.maxPrice ?? defaultMaxPrice) != defaultMaxPrice ||
+        localFilters.sort != "recommended"
     }
     
     private var sliderValueBinding: Binding<Double> {
         Binding(
             get: {
-                if let decimal = sheetState.maxPrice {
+                if let decimal = localFilters.maxPrice {
                     return (decimal as NSDecimalNumber).doubleValue
                 }
                 return 1500.0
             },
-            set: { sheetState.maxPrice = Decimal($0) }
+            set: { localFilters.maxPrice = Decimal($0) }
         )
     }
     
@@ -89,7 +80,7 @@ struct SearchFiltersSheet: View {
                         )
                         
                         Button(action: {
-                            sheetState.hasDiscount.toggle()
+                            localFilters.hasDiscount.toggle()
                         }) {
                             HStack(spacing: 10) {
                                 Image(systemName: "percent")
@@ -101,24 +92,24 @@ struct SearchFiltersSheet: View {
                             .foregroundColor(.primary)
                             .padding(.vertical, 12)
                             .padding(.horizontal, 14)
-                            .background(sheetState.hasDiscount ? Color.secondary.opacity(0.05) : Color.clear)
+                            .background(localFilters.hasDiscount ? Color.secondary.opacity(0.05) : Color.clear)
                             .cornerRadius(50)
                             .overlay(
                                 RoundedRectangle(cornerRadius: 50)
                                     .stroke(
-                                        sheetState.hasDiscount ? Color.primarySB : Color.dividerSB,
-                                        lineWidth: sheetState.hasDiscount ? 2 : 1
+                                        localFilters.hasDiscount ? Color.primarySB : Color.dividerSB,
+                                        lineWidth: localFilters.hasDiscount ? 2 : 1
                                     )
                             )
                         }
                     }
                     
                     VStack(alignment: .leading, spacing: 12) {
-                        let priceDisplay = sheetState.maxPrice != nil ? "\(Int((sheetState.maxPrice! as NSDecimalNumber).doubleValue)) RON" : "1500 RON"
+                        let priceDisplay = localFilters.maxPrice != nil ? "\(Int((localFilters.maxPrice! as NSDecimalNumber).doubleValue)) RON" : "1500 RON"
                         SearchSheetInfoRow(leftText: "Preț maxim", rightText: priceDisplay)
                         
                         Slider(value: sliderValueBinding, in: 0...1500, step: 10)
-                            .accentColor(.accentColor)
+                            .accentColor(.primarySB)
                     }
                     
                     VStack(alignment: .leading, spacing: 14) {
@@ -127,8 +118,8 @@ struct SearchFiltersSheet: View {
                         ForEach(SearchSortEnum.allCases) { option in
                             InputRadio(
                                 title: option.label,
-                                isSelected: sheetState.sort == option,
-                                onClick: { sheetState.sort = option }
+                                isSelected: localFilters.sort == option.rawValue,
+                                onClick: { localFilters.sort = option.rawValue }
                             )
                         }
                     }
@@ -137,13 +128,13 @@ struct SearchFiltersSheet: View {
                 .padding(.bottom, 24)
             }
             
-
             VStack(spacing: 0) {
                 Divider()
                 
                 HStack(spacing: 16) {
                     Button(action: {
-                        sheetState.clear(defaultPrice: defaultMaxPrice)
+                        localFilters.clear()
+                        localFilters.maxPrice = defaultMaxPrice
                     }) {
                         Text(String(localized: "deleteAll"))
                             .font(.body)
@@ -155,7 +146,7 @@ struct SearchFiltersSheet: View {
                     Spacer()
                     
                     Button(action: {
-                        onFilter(sheetState)
+                        onFilter(localFilters)
                     }) {
                         Text(String(localized: "showResults"))
                             .font(.body)

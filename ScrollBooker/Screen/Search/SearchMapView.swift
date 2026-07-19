@@ -8,10 +8,6 @@
 import SwiftUI
 import MapKit
 
-/// Afișează harta și markerii de business.
-/// Izolată ca View propriu (nu ca metodă) pentru ca SwiftUI să poată face diffing
-/// independent de restul ecranului — dragul pe bottom sheet nu mai forțează
-/// re-randarea hărții.
 struct SearchMapView: View {
     let markers: [BusinessMarker]
     @Binding var cameraPosition: MapCameraPosition

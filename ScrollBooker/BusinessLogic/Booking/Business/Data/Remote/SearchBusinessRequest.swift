@@ -9,13 +9,13 @@ import Foundation
 
 struct SearchBusinessRequest: Encodable {
     let bbox: BusinessBoundingBox
+    let userLocation: BusinessCoordinates?
     let zoom: Float
     let maxMarkers: Int?
     let businessDomainId: Int?
     let serviceDomainId: Int?
     let serviceId: Int?
     let subFilterIds: [Int]?
-    let userLocation: BusinessCoordinates?
     let maxPrice: Decimal?
     let sort: String?
     let hasDiscount: Bool
@@ -42,13 +42,13 @@ struct SearchBusinessRequest: Encodable {
 
     init(
         bbox: BusinessBoundingBox,
+        userLocation: BusinessCoordinates? = nil,
         zoom: Float,
         maxMarkers: Int? = nil,
         businessDomainId: Int? = nil,
         serviceDomainId: Int? = nil,
         serviceId: Int? = nil,
         subFilterIds: [Int]? = nil,
-        userLocation: BusinessCoordinates? = nil,
         maxPrice: Decimal? = nil,
         sort: String?,
         hasDiscount: Bool = false,
@@ -57,13 +57,13 @@ struct SearchBusinessRequest: Encodable {
         endTime: String? = nil
     ) {
         self.bbox = bbox
+        self.userLocation = userLocation
         self.zoom = zoom
         self.maxMarkers = maxMarkers
         self.businessDomainId = businessDomainId
         self.serviceDomainId = serviceDomainId
         self.serviceId = serviceId
         self.subFilterIds = subFilterIds
-        self.userLocation = userLocation
         self.maxPrice = maxPrice
         self.sort = sort
         self.hasDiscount = hasDiscount

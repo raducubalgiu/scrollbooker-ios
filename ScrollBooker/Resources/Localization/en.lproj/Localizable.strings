@@ -318,7 +318,7 @@
 "options" = "Opțiuni";
 "showResults" = "Arată rezultatele";
 "deleteAll" = "Șterge tot";
-
+"all" = "Toate";
 
 /* --- NOTIFICATIONS --- */
 "notification_received_new" = "ai primit o notificare nouă";

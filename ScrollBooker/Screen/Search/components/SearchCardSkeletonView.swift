@@ -12,20 +12,17 @@ struct SearchCardSkeletonView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // 1. Clona Caruselului (Dreptunghi mare)
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.primary.opacity(0.06))
                 .frame(height: 230)
             
             Spacer().frame(height: 12)
             
-            // 2. Clona Informațiilor de Business
             businessInfoSection
                 .padding(.horizontal, .base)
             
             Spacer().frame(height: 12)
             
-            // 3. Clona Listei de Produse (Randăm 2 produse ca placeholder general)
             VStack(spacing: 12) {
                 productRowSection
                 productRowSection
@@ -36,16 +33,13 @@ struct SearchCardSkeletonView: View {
             Spacer().frame(height: 16)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-        // Optimizare Metal (GPU): Modificarea opacității are cost zero pe procesor
         .opacity(isAnimating ? 0.45 : 1.0)
+        .padding(.horizontal, .base)
     }
-    
-    // MARK: - Sub-Skeletons private izolate prin @ViewBuilder
     
     @ViewBuilder
     private var businessInfoSection: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // Numele Business-ului + Zona de Rating (Stea)
             HStack(alignment: .center) {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.primary.opacity(0.08))
@@ -53,7 +47,6 @@ struct SearchCardSkeletonView: View {
                 
                 Spacer()
                 
-                // Zona de rating simulat (Stea + Medie + Număr)
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.primary.opacity(0.06))
                     .frame(width: 60, height: 16)
@@ -62,14 +55,12 @@ struct SearchCardSkeletonView: View {
             
             Spacer().frame(height: 6)
             
-            // Profesie / Sub-titlu
             RoundedRectangle(cornerRadius: 4)
                 .fill(Color.primary.opacity(0.05))
                 .frame(width: 120, height: 14)
             
             Spacer().frame(height: 8)
             
-            // Distanță + Adresă
             HStack(alignment: .center, spacing: 8) {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.primary.opacity(0.05))
@@ -89,23 +80,20 @@ struct SearchCardSkeletonView: View {
     @ViewBuilder
     private var productRowSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            // Nume serviciu + Preț (Stânga / Dreapta)
             HStack(alignment: .top, spacing: 0) {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.primary.opacity(0.08))
                     .frame(width: 140, height: 16)
                 
                 Spacer(minLength: 16)
-                
-                // Prețul simulat în dreapta
+
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.primary.opacity(0.08))
                     .frame(width: 75, height: 16)
             }
             
             Spacer().frame(height: 6)
-            
-            // Durată ședință + Filtre asociate dedesubt
+
             HStack(alignment: .center, spacing: 8) {
                 RoundedRectangle(cornerRadius: 4)
                     .fill(Color.primary.opacity(0.05))

@@ -121,10 +121,28 @@ struct SearchScreen: View {
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
             case .services:
-                SearchServicesSheet()
-                    .presentationDetents([.large])
-                    .presentationDragIndicator(.visible)
-                    .presentationCornerRadius(25)
+                SearchServicesSheet(
+                    viewModel: viewModel,
+                    onClose: { activeSheet = nil },
+                    onFilter: { updatedFilters in
+                        viewModel.filters = updatedFilters
+                        activeSheet = nil
+                        
+                        if let bbox = viewModel.currentBBox {
+                            Task {
+                                await viewModel.triggerSearch(
+                                    bbox: bbox,
+                                    zoom: viewModel.currentZoom,
+                                    force: true
+                                )
+                            }
+                        }
+                    }
+                )
+                .presentationDetents([.large])
+                .presentationBackgroundInteraction(.enabled(upThrough: .large))
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
             case .filters:
                 SearchFiltersSheet(
                     viewModel: viewModel,
@@ -145,6 +163,7 @@ struct SearchScreen: View {
                     }
                 )
                 .presentationDetents([.large])
+                .presentationBackgroundInteraction(.enabled(upThrough: .large))
                 .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
             }

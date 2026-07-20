@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct ServiceDto: Codable {
+struct ServiceDto: Decodable {
     let id: Int
     let name: String
     let short_name: String

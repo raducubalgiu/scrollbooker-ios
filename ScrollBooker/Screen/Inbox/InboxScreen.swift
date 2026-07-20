@@ -11,7 +11,7 @@ struct InboxScreen: View {
     let viewModel: InboxViewModel
     
     var onNavigateToAppointmentDetails: (Int) -> Void
-    var onNavigateToUserProfile: (Int, String) -> Void
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
 
     var body: some View {
         VStack(spacing: 0) {

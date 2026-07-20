@@ -13,8 +13,8 @@ struct MyProfileScreen: View {
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
-    var onNavigateToUserProfile: (Int, String) -> Void
-    var onNavigateToUserSocial: () -> Void
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     var onNavigateToMyCalendar: () -> Void
 
     @State private var activeSheet: ProfileSheet?

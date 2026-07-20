@@ -13,8 +13,9 @@ struct UserProfileScreen: View {
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
-    var onNavigateToUserProfile: (Int, String) -> Void
-    var onNavigateToUserSocial: () -> Void
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    var onNavigateToUserSocial: (SocialNavigationParams) -> Void
+    var onNavigateToBooking: (BookingNavigationParams) -> Void
     var onBack: () -> Void
 
     @State private var activeSheet: ProfileSheet?
@@ -54,7 +55,23 @@ struct UserProfileScreen: View {
                                 isFollow: user.isFollow,
                                 isFollowEnabled: true,
                                 onFollow: {},
-                                onNavigateToBooking: {},
+                                onNavigateToBooking: {
+                                    guard let businessId = user.businessId,
+                                          let businessOwnerId = user.businessOwner?.id else {
+                                        print("⚠️ Navigarea la Booking a fost anulată: businessId sau businessOwnerId este NULL.")
+                                        return
+                                    }
+
+                                    onNavigateToBooking(
+                                        BookingNavigationParams(
+                                            businessId: businessId,
+                                            userId: user.id,
+                                            businessOwnerId: businessOwnerId,
+                                            source: .profile,
+                                            selectedProductId: nil
+                                        )
+                                    )
+                                },
                             )
                         }
                     )

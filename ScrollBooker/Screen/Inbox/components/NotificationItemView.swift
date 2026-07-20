@@ -10,7 +10,7 @@ import SwiftUI
 struct NotificationItemView: View {
     var notification: Notification
 
-    var onNavigateToUserProfile: (Int, String) -> Void
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onNavigateToEmploymentRequest: (Int) -> Void
     var onNavigateToAppointmentDetails: (Int) -> Void
 
@@ -171,22 +171,13 @@ struct NotificationItemView: View {
 
         default:
             if !notification.sender.username.isEmpty {
-                onNavigateToUserProfile(notification.sender.id, notification.sender.username)
+                onNavigateToUserProfile(
+                    ProfileNavigationParams(
+                        userId: notification.sender.id,
+                        username: notification.sender.username,
+                    )
+                )
             }
         }
     }
 }
-
-//#Preview("Light") {
-//    NotificationItemView(
-//        notification: dummyNotifications[0],
-//        onNavigateToEmployment: {}
-//    )
-//}
-//
-//#Preview("Dark") {
-//    NotificationItemView(
-//        notification: dummyNotifications[0],
-//        onNavigateToEmployment: {}
-//    )
-//}

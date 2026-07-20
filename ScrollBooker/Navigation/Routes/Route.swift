@@ -5,6 +5,37 @@
 //  Created by Raducu Balgiu on 14.08.2025.
 //
 
+import Foundation
+
+struct BookingNavigationParams: Hashable, Identifiable {
+    let id = UUID()
+    
+    let businessId: Int
+    let userId: Int
+    let businessOwnerId: Int
+    let source: BookingSourceEnum
+    let selectedProductId: Int?
+}
+
+struct SocialNavigationParams: Hashable, Identifiable {
+    let id = UUID()
+    
+    let userId: Int
+    let username: String
+    let initialTab: SocialTab
+    let isBusinessOrEmployee: Bool
+    let followersCount: Int
+    let followingsCount: Int
+}
+
+struct ProfileNavigationParams: Hashable, Identifiable {
+    let id = UUID()
+    
+    let userId: Int
+    let username: String
+}
+
+
 enum Route: Hashable {
     // Feed
     case feed
@@ -25,7 +56,7 @@ enum Route: Hashable {
     
     // Profile
     case myProfile
-    case userProfile(userId: Int, username: String)
+    case userProfile(ProfileNavigationParams)
     case profilePostDetail
     
     case editProfile
@@ -36,14 +67,7 @@ enum Route: Hashable {
     case editBirthdate
     case editProfession
     
-    case userSocial(
-        userId: Int,
-        username: String,
-        initialTab: SocialTab,
-        isBusinessOrEmployee: Bool,
-        followersCount: Int,
-        followingsCount: Int
-    )
+    case userSocial(SocialNavigationParams)
     
     case calendar
     case appointmentConfirmation
@@ -70,4 +94,10 @@ enum Route: Hashable {
     case mySettings
     case display
     case reportProblem
+    
+    // Booking
+    case bookingServices(BookingNavigationParams)
+    case bookingSpecialists
+    case bookingDateTime
+    case bookingConfirmation
 }

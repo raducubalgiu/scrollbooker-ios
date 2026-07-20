@@ -9,11 +9,13 @@ import SwiftUI
 
 struct ProfileBusinessOwnerView: View {
     var businessOwner: ProfileBusinessOwner
-    var onNavigateToUserProfile: (Int, String) -> Void
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     
     var body: some View {
         Button {
-            onNavigateToUserProfile(businessOwner.id, businessOwner.fullName)
+            onNavigateToUserProfile(
+                ProfileNavigationParams(userId: businessOwner.id, username: businessOwner.username)
+            )
         } label: {
             HStack {
                 Image(systemName: "repeat")

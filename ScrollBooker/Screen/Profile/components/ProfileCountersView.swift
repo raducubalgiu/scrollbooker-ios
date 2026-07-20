@@ -9,14 +9,14 @@ import SwiftUI
 
 struct ProfileCountersView: View {
     var counters: UserCounters
-    var onNavigateToUserSocial: () -> Void
+    var onNavigateToUserSocial: (SocialTab) -> Void
     
     var body: some View {
         HStack {
             ProfileCounterView(
                 counter: counters.ratingsCount,
                 label: String(localized: "reviews"),
-                onClick: onNavigateToUserSocial
+                onClick: { onNavigateToUserSocial(SocialTab.reviews) }
             )
             
             VerticalDivider(height: 25)
@@ -25,7 +25,7 @@ struct ProfileCountersView: View {
             ProfileCounterView(
                 counter: counters.followersCount,
                 label: String(localized: "followers"),
-                onClick: onNavigateToUserSocial
+                onClick: { onNavigateToUserSocial(SocialTab.followers) }
             )
             
             VerticalDivider(height: 25)
@@ -34,7 +34,7 @@ struct ProfileCountersView: View {
             ProfileCounterView(
                 counter: counters.followingsCount,
                 label: String(localized: "following"),
-                onClick: onNavigateToUserSocial
+                onClick: { onNavigateToUserSocial(SocialTab.following) }
             )
         }
     }

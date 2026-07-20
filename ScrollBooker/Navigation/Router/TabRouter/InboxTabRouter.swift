@@ -20,8 +20,8 @@ struct InboxTabRouter: View {
                 if let viewModel = inboxViewModel {
                     InboxScreen(
                         viewModel: viewModel,
-                        onNavigateToAppointmentDetails: { id in router.push(.appointmentDetails(id: id)) },
-                        onNavigateToUserProfile: { id, username in router.push(.userProfile(userId: id, username: username)) }
+                        onNavigateToAppointmentDetails: { router.push(.appointmentDetails(id: $0)) },
+                        onNavigateToUserProfile: { router.push(.userProfile($0)) }
                     )
                 } else {
                     ProgressView()

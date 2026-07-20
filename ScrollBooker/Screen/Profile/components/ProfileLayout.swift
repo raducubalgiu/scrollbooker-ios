@@ -9,8 +9,8 @@ import SwiftUI
 
 struct ProfileLayout<Header: View, Actions: View>: View {
     let user: UserProfile
-    let onNavigateToUserSocial: () -> Void
-    let onNavigateToUserProfile: (Int, String) -> Void
+    let onNavigateToUserSocial: (SocialNavigationParams) -> Void
+    let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onShowOpeningHours: () -> Void
     
     @ViewBuilder var header: () -> Header
@@ -24,7 +24,18 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                 VStack(spacing: 15) {
                     ProfileCountersView(
                         counters: user.counters,
-                        onNavigateToUserSocial: onNavigateToUserSocial
+                        onNavigateToUserSocial: { selectedTab in
+                            onNavigateToUserSocial(
+                                SocialNavigationParams(
+                                    userId: user.id,
+                                    username: user.username,
+                                    initialTab: selectedTab,
+                                    isBusinessOrEmployee: user.isBusinessOrEmployee,
+                                    followersCount: user.counters.followersCount,
+                                    followingsCount: user.counters.followingsCount
+                                )
+                            )
+                        }
                     )
                     .padding(.vertical, .xl)
 

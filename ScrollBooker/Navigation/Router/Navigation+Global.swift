@@ -49,36 +49,43 @@ struct GlobalNavigationModifier: ViewModifier {
                 onBack: { router.pop() }
             )
             
-        case .userProfile(let userId, let username):
+        case .userProfile(let params):
             UserProfileScreen(
-                viewModel: container.userProfileModule.makeUserProfileViewModel(userId: userId, username: username),
+                viewModel: container.userProfileModule.makeUserProfileViewModel(
+                    userId: params.userId, username: params.username
+                ),
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
-                onNavigateToUserProfile: { userId, username in
-                    router.push(.userProfile(userId: userId, username: username))
-                },
-                onNavigateToUserSocial: {},
+                onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                onNavigateToUserSocial: { router.push(.userSocial($0)) },
+                onNavigateToBooking: { router.push(.bookingServices($0)) },
                 onBack: { router.pop() }
             )
             
-        case .userSocial(
-            let userId,
-            let username,
-            let initialTab,
-            let isBusinessOrEmployee,
-            let followersCount,
-            let followingsCount
-        ):
+        case .userSocial(let params):
             SocialScreen(
-                viewModel: container.followModule.makeSocialViewModel(userId: userId),
+                viewModel: container.followModule.makeSocialViewModel(userId: params.userId),
                 onBack: { router.pop() },
-                username: username,
-                isBusinessOrEmployee: isBusinessOrEmployee,
-                followersCount: followersCount,
-                followingsCount: followingsCount,
-                selectedTab: initialTab
+                username: params.username,
+                isBusinessOrEmployee: params.isBusinessOrEmployee,
+                followersCount: params.followersCount,
+                followingsCount: params.followingsCount,
+                selectedTab: params.initialTab
             )
+            
+        case .bookingServices(_):
+          BookingServicesScreen()
+            
+        case .bookingSpecialists:
+            BookingSpecialistsScreen()
+            
+        case .bookingDateTime:
+            BookingDateTimeScreen()
+            
+        case .bookingConfirmation:
+            BookingConfirmationScreen()
+            
         default:
             Text("Route \(String(describing: route)) not implemented globally")
         }

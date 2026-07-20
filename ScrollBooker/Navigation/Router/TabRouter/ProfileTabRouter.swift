@@ -24,10 +24,8 @@ struct ProfileTabRouter: View {
                         onNavigateToEditProfile: { router.push(.editProfile) },
                         onNavigateToSettings: { router.push(.mySettings) },
                         onNavigateToMyBusiness: { router.push(.myBusiness) },
-                        onNavigateToUserProfile: { userId, username in
-                            router.push(.userProfile(userId: userId, username: username))
-                        },
-                        onNavigateToUserSocial: {},
+                        onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                        onNavigateToUserSocial: { router.push(.userSocial($0)) },
                         onNavigateToMyCalendar: { router.push(.myCalendar) }
                     )
                 } else {

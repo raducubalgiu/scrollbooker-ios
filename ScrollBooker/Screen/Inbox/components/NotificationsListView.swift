@@ -14,7 +14,7 @@ struct NotificationsListView: View {
     let onItemAppear: (Notification) -> Void
     
     var onNavigateToAppointmentDetails: (Int) -> Void
-    var onNavigateToUserProfile: (Int, String) -> Void
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     
     var body: some View {
         ScrollView {

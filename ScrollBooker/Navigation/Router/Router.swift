@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-
-import SwiftUI
 import Observation
 
 @Observable
@@ -20,6 +18,7 @@ final class Router {
     var profilePath = NavigationPath()
     
     var selectedTab: MainTab = .feed
+    var activeBookingViewModel: BookingViewModel?
     
     func push(_ route: Route) {
         switch selectedTab {
@@ -51,12 +50,17 @@ final class Router {
         }
     }
     
+    func clearBookingSession() {
+        activeBookingViewModel = nil
+    }
+    
     func resetAll() {
         feedPath = .init()
         inboxPath = .init()
         searchPath = .init()
         appointmentsPath = .init()
         profilePath = .init()
+        activeBookingViewModel = nil
     }
 }
 

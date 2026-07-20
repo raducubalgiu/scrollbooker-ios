@@ -32,7 +32,7 @@ struct ProfileActionButton: View {
                     .font(.subheadline.bold())
             }
             .foregroundColor(isOutlined ? foregroundColor : foregroundColor)
-            .padding(.vertical, 16)
+            .padding(.vertical, 14)
             .frame(maxWidth: .infinity)
             .background(
                 Group {

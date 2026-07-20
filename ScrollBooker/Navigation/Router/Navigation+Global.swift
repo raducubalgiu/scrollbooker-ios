@@ -12,8 +12,6 @@ enum DestinationResult<V: View> {
     case unhandled
 }
 
-import SwiftUI
-
 struct GlobalNavigationModifier: ViewModifier {
     @EnvironmentObject private var container: AppContainer
     @EnvironmentObject private var session: SessionManager
@@ -74,17 +72,60 @@ struct GlobalNavigationModifier: ViewModifier {
                 selectedTab: params.initialTab
             )
             
-        case .bookingServices(_):
-          BookingServicesScreen()
+        case .bookingServices(let params):
+            let viewModel: BookingViewModel = {
+                if let existingVM = router.activeBookingViewModel {
+                    return existingVM
+                } else {
+                    let newVM = container.bookingFlowModule.makeBookingFlowViewModel(params: params)
+                    router.activeBookingViewModel = newVM
+                    return newVM
+                }
+            }()
+            
+            BookingServicesScreen(
+                viewModel: viewModel,
+                onBack: {
+                    router.clearBookingSession()
+                    router.pop()
+                },
+                onNavigateToSpecialists: { router.push(.bookingSpecialists) }
+            )
             
         case .bookingSpecialists:
-            BookingSpecialistsScreen()
+            if let viewModel = router.activeBookingViewModel {
+                BookingSpecialistsScreen(
+                    viewModel: viewModel,
+                    onBack: { router.pop() },
+                    onNavigateToDateTime: { router.push(.bookingDateTime) }
+                )
+            } else {
+                fatalError("Sesiunea de booking a fost accesată fără o inițializare prealabilă.")
+            }
             
         case .bookingDateTime:
-            BookingDateTimeScreen()
+            if let viewModel = router.activeBookingViewModel {
+                BookingDateTimeScreen(
+                    viewModel: viewModel,
+                    onBack: { router.pop() },
+                    onNavigateToConfirmation: { router.push(.bookingConfirmation) }
+                )
+            } else {
+                fatalError("Sesiunea de booking a fost accesată fără o inițializare prealabilă.")
+            }
             
         case .bookingConfirmation:
-            BookingConfirmationScreen()
+            if let viewModel = router.activeBookingViewModel {
+                BookingConfirmationScreen(
+                    viewModel: viewModel,
+                    onBack: { router.pop() },
+                    onFinishBooking: {
+                        router.clearBookingSession()
+                    }
+                )
+            } else {
+                fatalError("Sesiunea de booking a fost accesată fără o inițializare prealabilă.")
+            }
             
         default:
             Text("Route \(String(describing: route)) not implemented globally")

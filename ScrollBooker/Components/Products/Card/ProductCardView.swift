@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProductCard: View {
+struct ProductCardView: View {
     let product: Product
     var displayEditableActions: Bool = false
     var displayDescription: Bool = true
@@ -56,24 +56,24 @@ struct ProductCard: View {
                     
                     Spacer().frame(height: 6)
                     
-                    ProductCardRowPrice(
+                    ProductCardRowPriceView(
                         price: product.startingOffering.price,
                         priceWithDiscount: product.startingOffering.priceWithDiscount,
                         discount: product.startingOffering.discount
                     )
                 }
                 
-//                ProductCardActions(
-//                    product: product,
-//                    isSelected: isSelected,
-//                    isSelectable: isSelectable,
-//                    displayEditableActions: displayEditableActions,
-//                    isLoadingDelete: isLoadingDelete,
-//                    onSelect: onSelect,
-//                    onNavigateToEdit: onNavigateToEdit,
-//                    onDeleteProduct: onDeleteProduct,
-//                    onNavigateToBooking: onNavigateToBooking
-//                )
+                ProductCardActionsView(
+                    product: product,
+                    isSelected: isSelected,
+                    isSelectable: isSelectable,
+                    displayEditableActions: displayEditableActions,
+                    isLoadingDelete: isLoadingDelete,
+                    onSelect: onSelect,
+                    onNavigateToEdit: onNavigateToEdit,
+                    onDeleteProduct: onDeleteProduct,
+                    onNavigateToBooking: onNavigateToBooking
+                )
             }
             
             if let description = product.description, !description.isEmpty && displayDescription {

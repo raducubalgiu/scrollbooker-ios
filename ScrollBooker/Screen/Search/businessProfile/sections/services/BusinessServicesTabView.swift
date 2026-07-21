@@ -54,7 +54,7 @@ struct BusinessServicesTabView: View {
                     
                     VStack(alignment: .leading, spacing: 0) {
                         ForEach(currentGroup.products) { product in
-                            ProductCard(
+                            ProductCardView(
                                 product: product,
                                 displayDescription: false,
                                 onOpenProductDetail: { _ in },

@@ -42,6 +42,17 @@ struct ProductVariant: Identifiable, Equatable, Hashable, Sendable {
     let startingOffering: ProductOffering
     let hasDifferentPrices: Bool
     let offerings: [ProductOffering]
+    
+    func toBookingItem(product: Product) -> SelectedBookingItem {
+        SelectedBookingItem(
+            productId: product.id,
+            variantId: self.id,
+            variantDuration: self.duration,
+            offerings: self.offerings,
+            productName: product.name,
+            variantName: self.name
+        )
+    }
 }
 
 struct ProductOffering: Identifiable, Equatable, Hashable, Sendable {

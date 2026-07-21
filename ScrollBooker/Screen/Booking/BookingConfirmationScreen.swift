@@ -17,6 +17,9 @@ public struct BookingConfirmationScreen: View {
             HeaderView(onBack: onBack)
             
             VStack(spacing: 20) {
+                Text("CURRENT SCREEN: CONFIRMATION")
+                    .foregroundColor(.secondary)
+                
                 Text("Business curent ID: \(viewModel.params.businessId)")
                     .foregroundColor(.secondary)
                 

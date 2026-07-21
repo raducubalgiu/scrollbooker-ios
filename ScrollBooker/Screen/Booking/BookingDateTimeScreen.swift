@@ -17,6 +17,9 @@ public struct BookingDateTimeScreen: View {
             HeaderView(onBack: onBack)
             
             VStack(spacing: 20) {
+                Text("CURRENT SCREEN: DATE TIME")
+                    .foregroundColor(.secondary)
+                
                 Text("Business curent ID: \(viewModel.params.businessId)")
                     .foregroundColor(.secondary)
 

@@ -14,9 +14,9 @@ struct FeedScreen: View {
     var onNavigateToFeedSearch: () -> Void
     let posts = dummyBookNowPosts
     @State private var currentIndex: Int? = 0
-    
+
     var body: some View {
-//        GeometryReader { globalGeo in
+        GeometryReader { globalGeo in
 //            let videoHeight = globalGeo.size.height
 //            let videoWidth = globalGeo.size.width
 //
@@ -41,9 +41,9 @@ struct FeedScreen: View {
 //            .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
 //            .scrollIndicators(.never)
 //            .scrollPosition(id: $currentIndex)
-//        }
-//        .ignoresSafeArea(edges: .top)
-//        .background(Color.black)
+        }
+        .ignoresSafeArea(edges: .top)
+        .background(Color.black)
 //        .overlay(alignment: .top) {
 //            FeedHeaderView(onNavigateToFeedSearch: onNavigateToFeedSearch)
 //        }

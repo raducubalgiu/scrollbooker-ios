@@ -90,7 +90,13 @@ struct GlobalNavigationModifier: ViewModifier {
                     router.clearBookingSession()
                     router.pop()
                 },
-                onNavigateToSpecialists: { router.push(.bookingSpecialists) }
+                onNext: {
+                    if viewModel.shouldSelectSpecialist {
+                        router.push(.bookingSpecialists)
+                    } else {
+                        router.push(.bookingDateTime)
+                    }
+                }
             )
             
         case .bookingSpecialists:

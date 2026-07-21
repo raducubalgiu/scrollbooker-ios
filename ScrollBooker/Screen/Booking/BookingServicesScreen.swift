@@ -6,28 +6,75 @@
 //
 
 import SwiftUI
-
 public struct BookingServicesScreen: View {
-    let viewModel: BookingViewModel
+    @State var viewModel: BookingViewModel
     let onBack: () -> Void
-    let onNavigateToSpecialists: () -> Void
+    let onNext: () -> Void
+    
+    @State private var activeSectionId: Int? = nil
+    @State private var selectedProductForVariants: Product? = nil
     
     public var body: some View {
-        VStack {
-            HeaderView(onBack: onBack)
+        VStack(spacing: 0) {
+            HeaderView(title: "Alege Serviciile", onBack: onBack)
             
-            VStack(spacing: 20) {
-                Text("Business curent ID: \(viewModel.params.businessId)")
-                    .foregroundColor(.secondary)
-
-                Button("Mergi la Data & Ora") {
-                    onNavigateToSpecialists()
+            switch viewModel.viewState {
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error(let message):
+                    ErrorView(message: message) {
+                        Task { await viewModel.loadBookingFlow() }
+                    }
+                    
+                case .success(let bookingFlow):
+                    ProductsList(
+                        userProducts: bookingFlow.products,
+                        activeSectionId: $activeSectionId,
+                        isSelectable: true,
+                        selectedBookingItems: viewModel.selectedBookingItems,
+                        onOpenProductDetail: { product in selectedProductForVariants = product },
+                        onSelect: { product in
+                            withAnimation(.easeInOut(duration: 0.25)) {
+                                if let existingSelectedItem = viewModel.selectedBookingItems.first(where: { $0.productId == product.id }) {
+                                    viewModel.selectBookingItem(existingSelectedItem)
+                                } else {
+                                    if product.variants.count > 1 {
+                                        selectedProductForVariants = product
+                                    } else if let firstVariant = product.variants.first {
+                                        let bookingItem = firstVariant.toBookingItem(product: product)
+                                        viewModel.selectBookingItem(bookingItem)
+                                    }
+                                }
+                            }
+                        },
+                        onNavigateEditProduct: nil
+                    )
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        BookingBottomBar(
+                            bookingTotals: viewModel.bookingTotals,
+                            onNext: onNext,
+                            isEnabled: !viewModel.selectedBookingItems.isEmpty,
+                            isVisible: !viewModel.selectedBookingItems.isEmpty
+                        )
+                    }
                 }
-                .buttonStyle(.borderedProminent)
-                
-                Spacer()
+        }
+        .task {
+            await viewModel.loadBookingFlow()
+        }
+        .sheet(item: $selectedProductForVariants) { product in
+            ProductDetailSheetView(product: product) { selectedVariant in
+                withAnimation(.easeInOut(duration: 0.25)) {
+                    let bookingItem = selectedVariant.toBookingItem(product: product)
+                    viewModel.selectBookingItem(bookingItem)
+                }
+                selectedProductForVariants = nil
             }
-            .padding()
+            .presentationDetents([.medium, .large])
+            .presentationDragIndicator(.visible)
         }
     }
 }
+
+

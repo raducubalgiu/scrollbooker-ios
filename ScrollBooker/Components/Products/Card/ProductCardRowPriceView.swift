@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct ProductCardRowPrice: View {
+struct ProductCardRowPriceView: View {
     let price: Decimal
     let priceWithDiscount: Decimal
     let discount: Decimal

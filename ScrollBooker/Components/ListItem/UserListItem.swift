@@ -9,25 +9,35 @@ import SwiftUI
 
 struct UserListItem: View {
     var userSocial: UserSocial
+    let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    var onFollow: (UserSocial) -> Void
     
     var body: some View {
         HStack {
             HStack(spacing: 12) {
-                AvatarView(
-                    imageURL: URL(string: userSocial.avatar ?? ""),
-                    size: .l
-                )
+                if(userSocial.isBusinessOrEmployee) {
+                    AvatarWithRatingView(
+                        url: URL(string: userSocial.avatar ?? ""),
+                        rating: userSocial.ratingsAverage,
+                        size: .l
+                    )
+                } else {
+                    AvatarView(
+                        imageURL: URL(string: userSocial.avatar ?? ""),
+                        size: .l,
+                    )
+                }
                 
                 VStack(alignment: .leading, spacing: 2) {
                     Text(userSocial.fullName)
-                        .font(.headline)
-                        .foregroundColor(.onBackgroundSB)
+                        .font(.subheadline)
+                        .fontWeight(.semibold)
                         .lineLimit(1)
                         .truncationMode(.tail)
                     
                     Text("@\(userSocial.username)")
-                        .font(.subheadline)
-                        .foregroundColor(.onBackgroundSB)
+                        .font(.footnote)
+                        .foregroundColor(.secondary)
                         .lineLimit(1)
                         .truncationMode(.tail)
                 }
@@ -35,7 +45,7 @@ struct UserListItem: View {
                 Spacer()
                 
                 Button {
-                    
+                    onFollow(userSocial)
                 } label: {
                     Text(userSocial.isFollow ? "following" : "follow")
                         .font(.footnote)
@@ -55,6 +65,14 @@ struct UserListItem: View {
         .contentShape(Rectangle())
         .padding(.horizontal, .base)
         .padding(.vertical, 10)
+        .onTapGesture {
+            onNavigateToUserProfile(
+                ProfileNavigationParams(
+                    userId: userSocial.id,
+                    username: userSocial.username
+                )
+            )
+        }
     }
 }
 

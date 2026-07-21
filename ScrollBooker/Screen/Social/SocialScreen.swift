@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SocialScreen: View {
-    let viewModel: SocialViewModel
+    @State var viewModel: SocialViewModel
     var onBack: () -> Void
     
     var username: String
@@ -18,6 +18,8 @@ struct SocialScreen: View {
     var followingsCount: Int
     
     @State var selectedTab: SocialTab
+    
+    let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     
     var body: some View {
         VStack(spacing: 0) {
@@ -36,20 +38,32 @@ struct SocialScreen: View {
                 Text("Recenzii")
                     .tag(SocialTab.reviews)
                 
-                FollowersTabView(
-                    users: viewModel.followersUiState.data,
-                    isLoading: viewModel.followersUiState.isLoading,
+                SocialUsersTabView(
+                    state: viewModel.followersState,
+                    noDataTitle: "Urmăritori",
+                    noDataMessage: "Nu există urmăritori",
+                    onRefresh: { await viewModel.refresh(tab: .followers) },
                     onLoadMore: { currentUser in
                         Task { await viewModel.loadMoreFollowersIfNeeded(currentUser: currentUser) }
+                    },
+                    onNavigateToUserProfile: onNavigateToUserProfile,
+                    onFollow: { user in
+                        Task { await viewModel.toggleFollowStatus(for: user) }
                     }
                 )
                 .tag(SocialTab.followers)
                 
-                FollowingsTabView(
-                    users: viewModel.followingsUiState.data,
-                    isLoading: viewModel.followingsUiState.isLoading,
+                SocialUsersTabView(
+                    state: viewModel.followingsState,
+                    noDataTitle: "Urmărește",
+                    noDataMessage: "Nu urmărești pe nimeni momentan",
+                    onRefresh: { await viewModel.refresh(tab: .following) },
                     onLoadMore: { currentUser in
                         Task { await viewModel.loadMoreFollowingsIfNeeded(currentUser: currentUser) }
+                    },
+                    onNavigateToUserProfile: onNavigateToUserProfile,
+                    onFollow: { user in
+                        Task { await viewModel.toggleFollowStatus(for: user) }
                     }
                 )
                 .tag(SocialTab.following)

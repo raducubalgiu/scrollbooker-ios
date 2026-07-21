@@ -188,41 +188,45 @@ actor APIClient {
         }
     
     private func handleResponse<T: Decodable>(_ http: HTTPURLResponse, data: Data) throws -> T {
-            guard (200...299).contains(http.statusCode) else {
-                throw APIError.server(status: http.statusCode, data: data)
-            }
-            
-            do {
-                return try self.decoder.decode(T.self, from: data)
-            } catch let error as DecodingError {
-                print("------- 🚨 EROARE DE DECODARE DETALIATĂ 🚨 -------")
-                switch error {
-                case .typeMismatch(let type, let context):
-                    let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
-                    print("❌ TIP INCORECT: Se aștepta tipul '\(type)' la cheia: [ \(path) ]")
-                    print("💡 Detalii backend: \(context.debugDescription)")
-                    
-                case .valueNotFound(let type, let context):
-                    let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
-                    print("❌ VALOARE NULL: Câmpul non-opțional '\(type)' a primit null în JSON la cheia: [ \(path) ]")
-                    
-                case .keyNotFound(let key, let context):
-                    let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
-                    print("❌ CHEIE LIPSĂ: Serverul nu a trimis cheia '\(key.stringValue)' în structura: [ \(path) ]")
-                    
-                case .dataCorrupted(let context):
-                    print("❌ JSON INVALID: Datele sunt corupte structural la nivel de text JSON: \(context.debugDescription)")
-                    
-                @unknown default:
-                    print("❌ Eroare de decodare necunoscută: \(error)")
-                }
-                print("-------------------------------------------------")
-                throw error
-            } catch {
-                print("⚠️ Alt tip de eroare apărut la procesarea datelor: \(error.localizedDescription)")
-                throw error
-            }
+        guard (200...299).contains(http.statusCode) else {
+            throw APIError.server(status: http.statusCode, data: data)
         }
+        
+        if T.self == NoContent.self {
+            return NoContent() as! T
+        }
+        
+        do {
+            return try self.decoder.decode(T.self, from: data)
+        } catch let error as DecodingError {
+            print("------- 🚨 EROARE DE DECODARE DETALIATĂ 🚨 -------")
+            switch error {
+            case .typeMismatch(let type, let context):
+                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                print("❌ TIP INCORECT: Se aștepta tipul '\(type)' la cheia: [ \(path) ]")
+                print("💡 Detalii backend: \(context.debugDescription)")
+                
+            case .valueNotFound(let type, let context):
+                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                print("❌ VALOARE NULL: Câmpul non-opțional '\(type)' a primit null în JSON la cheia: [ \(path) ]")
+                
+            case .keyNotFound(let key, let context):
+                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+                print("❌ CHEIE LIPSĂ: Serverul nu a trimis cheia '\(key.stringValue)' în structura: [ \(path) ]")
+                
+            case .dataCorrupted(let context):
+                print("❌ JSON INVALID: Datele sunt corupte structural la nivel de text JSON: \(context.debugDescription)")
+                
+            @unknown default:
+                print("❌ Eroare de decodare necunoscută: \(error)")
+            }
+            print("-------------------------------------------------")
+            throw error
+        } catch {
+            print("⚠️ Alt tip de eroare apărut la procesarea datelor: \(error.localizedDescription)")
+            throw error
+        }
+    }
     
     private func executeWithRetry<T>(attempts: Int, action: @escaping () async throws -> T) async throws -> T {
         do {

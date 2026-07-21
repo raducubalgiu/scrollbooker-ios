@@ -10,6 +10,8 @@ import Foundation
 protocol FollowApiService: Sendable {
     func getUserFollowers(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<UserSocialDto>
     func getUserFollowings(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<UserSocialDto>
+    func followUser(followeeId: Int) async throws -> NoContent
+    func unfollowUser(followeeId: Int) async throws -> NoContent
 }
 
 final class FollowAPIImpl: FollowApiService {
@@ -47,9 +49,23 @@ final class FollowAPIImpl: FollowApiService {
         ]
         
         return try await client.request(
-            "users/\(userId)/followers",
+            "users/\(userId)/followings",
             method: .get,
             query: query
+        )
+    }
+    
+    func followUser(followeeId: Int) async throws -> NoContent {
+        return try await client.request(
+            "follows/\(followeeId)",
+            method: .post
+        )
+    }
+    
+    func unfollowUser(followeeId: Int) async throws -> NoContent {
+        return try await client.request(
+            "follows/\(followeeId)",
+            method: .delete
         )
     }
 }

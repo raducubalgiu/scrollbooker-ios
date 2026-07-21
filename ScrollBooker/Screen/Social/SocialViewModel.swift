@@ -8,194 +8,279 @@
 import Foundation
 import Observation
 
+enum SocialTabState<T: Equatable>: Equatable {
+    case idle
+    case loading
+    case success(data: [T], hasMore: Bool, isPaging: Bool)
+    case error(String)
+    
+    var data: [T] {
+        if case .success(let items, _, _) = self { return items }
+        return []
+    }
+    
+    var isPaging: Bool {
+        if case .success(_, _, let paging) = self { return paging }
+        return false
+    }
+}
+
+import Foundation
+import Observation
+
 @Observable
 @MainActor
 final class SocialViewModel: HasLoadingState {
-    var reviewsUiState = UiState(data: [Review]())
-    var followersUiState = UiState(data: [UserSocial]())
-    var followingsUiState = UiState(data: [UserSocial]())
+    private(set) var followersState: SocialTabState<UserSocial> = .idle
+    private(set) var followingsState: SocialTabState<UserSocial> = .idle
+    private(set) var reviewsState: SocialTabState<String> = .idle
     
-    private let userId: Int
-    private let getUserFollowers: GetUserFollowersUseCase
-    private let getUserFollowings: GetUserFollowingsUseCase
+    var isRefreshing: Bool = false
+    private(set) var operationErrorMessage: String? = nil
+    private(set) var isPerformingAction: Bool = false
+    
+    private(set) var currentTab: SocialTab = .reviews
     
     private var followersPage = 1
-    private var followersTotalCount = 0
-    private var isFollowersPaging = false
-    
     private var followingsPage = 1
-    private var followingsTotalCount = 0
-    private var isFollowingsPaging = false
-    
     private let limit = 20
     
-    var followersCount: Int { followersTotalCount }
-    var followingsCount: Int { followingsTotalCount }
-    
-    var hasMoreFollowers: Bool { followersUiState.data.count < followersTotalCount }
-    var hasMoreFollowings: Bool { followingsUiState.data.count < followingsTotalCount }
-    
-    private var currentTab: SocialTab = .reviews
+    private let userId: Int
+    private let getUserFollowersUseCase: GetUserFollowersUseCase
+    private let getUserFollowingsUseCase: GetUserFollowingsUseCase
+    private let followUserUseCase: FollowUserUseCase
+    private let unfollowUserUseCase: UnfollowUserUseCase
     
     var isLoading: Bool {
         get {
             switch currentTab {
-            case .reviews: return reviewsUiState.isLoading
-            case .followers: return followersUiState.isLoading
-            case .following: return followingsUiState.isLoading
+            case .reviews:
+                if case .loading = reviewsState { return true }
+                return isPerformingAction
+            case .followers:
+                if case .loading = followersState { return true }
+                return isPerformingAction
+            case .following:
+                if case .loading = followingsState { return true }
+                return isPerformingAction
             }
         }
-        set {
-            switch currentTab {
-            case .reviews: reviewsUiState.isLoading = newValue
-            case .followers: followersUiState.isLoading = newValue
-            case .following: followingsUiState.isLoading = newValue
-            }
-        }
+        set { isPerformingAction = newValue }
     }
     
     var errorMessage: String? {
         get {
             switch currentTab {
-            case .reviews: return reviewsUiState.errorMessage
-            case .followers: return followersUiState.errorMessage
-            case .following: return followingsUiState.errorMessage
+            case .reviews:
+                if case .error(let msg) = reviewsState { return msg }
+                return operationErrorMessage
+            case .followers:
+                if case .error(let msg) = followersState { return msg }
+                return operationErrorMessage
+            case .following:
+                if case .error(let msg) = followingsState { return msg }
+                return operationErrorMessage
             }
         }
-        set {
-            switch currentTab {
-            case .reviews: reviewsUiState.errorMessage = newValue
-            case .followers: followersUiState.errorMessage = newValue
-            case .following: followingsUiState.errorMessage = newValue
-            }
-        }
+        set { operationErrorMessage = newValue }
     }
     
     init(
         userId: Int,
-        getUserFollowers: GetUserFollowersUseCase,
-        getUserFollowings: GetUserFollowingsUseCase
+        getUserFollowersUseCase: GetUserFollowersUseCase,
+        getUserFollowingsUseCase: GetUserFollowingsUseCase,
+        followUserUseCase: FollowUserUseCase,
+        unfollowUserUseCase: UnfollowUserUseCase
     ) {
         self.userId = userId
-        self.getUserFollowers = getUserFollowers
-        self.getUserFollowings = getUserFollowings
+        self.getUserFollowersUseCase = getUserFollowersUseCase
+        self.getUserFollowingsUseCase = getUserFollowingsUseCase
+        self.followUserUseCase = followUserUseCase
+        self.unfollowUserUseCase = unfollowUserUseCase
     }
     
     func loadTabIfNeeded(tab: SocialTab) async {
         self.currentTab = tab
+        operationErrorMessage = nil
         
         switch tab {
-        case .reviews:
-            // Logica de încărcare pentru recenzii când va fi disponibilă
-            break
-            
-        case .followers:
-            guard followersUiState.data.isEmpty else { return }
-            await loadFollowers(isFirstPage: true)
-            
-        case .following:
-            guard followingsUiState.data.isEmpty else { return }
-            await loadFollowings(isFirstPage: true)
-        }
+            case .reviews:
+                break
+                
+            case .followers:
+                guard followersState == .idle else { return }
+                followersState = .loading
+                await loadFollowers(isFirstPage: true)
+                
+            case .following:
+                guard followingsState == .idle else { return }
+                followingsState = .loading
+                await loadFollowings(isFirstPage: true)
+            }
     }
     
     func refresh(tab: SocialTab) async {
+        guard !isRefreshing else { return }
+        isRefreshing = true
+        operationErrorMessage = nil
+        
         switch tab {
         case .reviews:
             break
         case .followers:
-            guard !followersUiState.isRefreshing else { return }
-            followersUiState.isRefreshing = true
             followersPage = 1
             await loadFollowers(isFirstPage: true)
-            followersUiState.isRefreshing = false
-            
         case .following:
-            guard !followingsUiState.isRefreshing else { return }
-            followingsUiState.isRefreshing = true
             followingsPage = 1
             await loadFollowings(isFirstPage: true)
-            followingsUiState.isRefreshing = false
         }
+        
+        isRefreshing = false
     }
     
     func loadMoreFollowersIfNeeded(currentUser: UserSocial?) async {
-        guard hasMoreFollowers, !followersUiState.isLoading, !followersUiState.isRefreshing, !isFollowersPaging else { return }
-        guard let current = currentUser, current.id == followersUiState.data.last?.id else { return }
+        guard case .success(let currentData, let hasMore, let isPaging) = followersState,
+              hasMore, !isPaging, !isRefreshing else { return }
+        guard let current = currentUser, current.id == currentData.last?.id else { return }
         
-        isFollowersPaging = true
+        followersState = .success(data: currentData, hasMore: hasMore, isPaging: true)
         await loadFollowers(isFirstPage: false)
-        isFollowersPaging = false
     }
     
     func loadMoreFollowingsIfNeeded(currentUser: UserSocial?) async {
-        guard hasMoreFollowings, !followingsUiState.isLoading, !followingsUiState.isRefreshing, !isFollowingsPaging else { return }
-        guard let current = currentUser, current.id == followingsUiState.data.last?.id else { return }
+        guard case .success(let currentData, let hasMore, let isPaging) = followingsState,
+              hasMore, !isPaging, !isRefreshing else { return }
+        guard let current = currentUser, current.id == currentData.last?.id else { return }
         
-        isFollowingsPaging = true
+        followingsState = .success(data: currentData, hasMore: hasMore, isPaging: true)
         await loadFollowings(isFirstPage: false)
-        isFollowingsPaging = false
     }
     
     private func loadFollowers(isFirstPage: Bool) async {
-        if isFirstPage { followersUiState.errorMessage = nil }
-        
         do {
             let response: PaginatedResponse<UserSocial>
             
-            if isFirstPage {
+            if isFirstPage && !isRefreshing {
                 response = try await withVisibleLoading {
-                    try await getUserFollowers(userId: userId, page: followersPage, limit: limit)
+                    try await getUserFollowersUseCase(
+                        userId: userId, page: followersPage, limit: limit
+                    )
                 }
             } else {
-                response = try await getUserFollowers(userId: userId, page: followersPage, limit: limit)
+                response = try await getUserFollowersUseCase(
+                    userId: userId, page: followersPage, limit: limit
+                )
             }
             
-            if isFirstPage {
-                followersUiState.data = response.results
-            } else {
-                let existingIds = Set(followersUiState.data.map(\.id))
-                let unique = response.results.filter { !existingIds.contains($0.id) }
-                followersUiState.data.append(contentsOf: unique)
-            }
+            var updatedData = isFirstPage ? [] : followersState.data
+            let existingIds = Set(updatedData.map(\.id))
+            let unique = response.results.filter { !existingIds.contains($0.id) }
+            updatedData.append(contentsOf: unique)
             
-            followersTotalCount = response.count
+            let hasMore = updatedData.count < response.count && !response.results.isEmpty
             followersPage += 1
+            
+            followersState = .success(data: updatedData, hasMore: hasMore, isPaging: false)
             
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            if isFirstPage { followersUiState.errorMessage = message }
+            if isFirstPage && followersState.data.isEmpty {
+                followersState = .error(message)
+            } else {
+                operationErrorMessage = message
+                
+                if case .success(let currentData, let hasMore, _) = followersState {
+                    followersState = .success(data: currentData, hasMore: hasMore, isPaging: false)
+                }
+            }
         }
     }
     
     private func loadFollowings(isFirstPage: Bool) async {
-        if isFirstPage { followingsUiState.errorMessage = nil }
-        
         do {
             let response: PaginatedResponse<UserSocial>
             
-            if isFirstPage {
+            if isFirstPage && !isRefreshing {
                 response = try await withVisibleLoading {
-                    try await getUserFollowings(userId: userId, page: followingsPage, limit: limit)
+                    try await getUserFollowingsUseCase(
+                        userId: userId, page: followingsPage, limit: limit
+                    )
                 }
             } else {
-                response = try await getUserFollowings(userId: userId, page: followingsPage, limit: limit)
+                response = try await getUserFollowingsUseCase(
+                    userId: userId, page: followingsPage, limit: limit
+                )
             }
             
-            if isFirstPage {
-                followingsUiState.data = response.results
-            } else {
-                let existingIds = Set(followingsUiState.data.map(\.id))
-                let unique = response.results.filter { !existingIds.contains($0.id) }
-                followingsUiState.data.append(contentsOf: unique)
-            }
+            var updatedData = isFirstPage ? [] : followingsState.data
+            let existingIds = Set(updatedData.map(\.id))
+            let unique = response.results.filter { !existingIds.contains($0.id) }
+            updatedData.append(contentsOf: unique)
             
-            followingsTotalCount = response.count
+            let hasMore = updatedData.count < response.count && !response.results.isEmpty
             followingsPage += 1
+            
+            followingsState = .success(data: updatedData, hasMore: hasMore, isPaging: false)
             
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            if isFirstPage { followingsUiState.errorMessage = message }
+            if isFirstPage && followingsState.data.isEmpty {
+                followingsState = .error(message)
+            } else {
+                operationErrorMessage = message
+                if case .success(let currentData, let hasMore, _) = followingsState {
+                    followingsState = .success(data: currentData, hasMore: hasMore, isPaging: false)
+                }
+            }
+        }
+    }
+    
+    func toggleFollowStatus(for targetUser: UserSocial) async {
+        let previousFollowersState = followersState
+        let previousFollowingsState = followingsState
+        
+        let wasFollowing = targetUser.isFollow
+        let newStatus = !wasFollowing
+        
+        updateUserInLists(
+            userId: targetUser.id,
+            isFollow: newStatus
+        )
+        
+        do {
+            if wasFollowing {
+                _ = try await unfollowUserUseCase(followeeId: targetUser.id)
+            } else {
+                _ = try await followUserUseCase(followeeId: targetUser.id)
+            }
+            
+        } catch {
+            followersState = previousFollowersState
+            followingsState = previousFollowingsState
+            
+            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+    }
+    
+    private func updateUserInLists(userId: Int, isFollow: Bool) {
+        if case .success(let currentData, let hasMore, let isPaging) = followersState {
+            let updatedData = currentData.map { user -> UserSocial in
+                if user.id == userId {
+                    return user.copy(isFollow: isFollow)
+                }
+                return user
+            }
+            followersState = .success(data: updatedData, hasMore: hasMore, isPaging: isPaging)
+        }
+        
+        if case .success(let currentData, let hasMore, let isPaging) = followingsState {
+            let updatedData = currentData.map { user -> UserSocial in
+                if user.id == userId {
+                    return user.copy(isFollow: isFollow)
+                }
+                return user
+            }
+            followingsState = .success(data: updatedData, hasMore: hasMore, isPaging: isPaging)
         }
     }
 }

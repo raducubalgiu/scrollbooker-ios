@@ -63,16 +63,3 @@ struct InboxScreen: View {
         }
     }
 }
-
-//#Preview("Light") {
-//    InboxScreen(
-//        //onNavigateToEmployment: {}
-//    )
-//}
-//
-//#Preview("Dark") {
-//    InboxScreen(
-//        //onNavigateToEmployment: {}
-//    )
-//        .preferredColorScheme(.dark)
-//}

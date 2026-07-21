@@ -12,7 +12,7 @@ struct AvatarWithRatingView: View {
     let rating: Double
     var size: AvatarView.AvatarSize = .l
     var badgeBackgroundColor: Color? = nil
-    var onClick: () -> Void
+    var onClick: (() -> Void)? = nil
     
     @Environment(\.colorScheme) private var colorScheme
     
@@ -43,7 +43,7 @@ struct AvatarWithRatingView: View {
         }
         .contentShape(Rectangle())
         .onTapGesture {
-            onClick()
+            onClick?()
         }
     }
     

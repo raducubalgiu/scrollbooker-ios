@@ -69,7 +69,8 @@ struct GlobalNavigationModifier: ViewModifier {
                 isBusinessOrEmployee: params.isBusinessOrEmployee,
                 followersCount: params.followersCount,
                 followingsCount: params.followingsCount,
-                selectedTab: params.initialTab
+                selectedTab: params.initialTab,
+                onNavigateToUserProfile: { router.push(.userProfile($0)) },
             )
             
         case .bookingServices(let params):

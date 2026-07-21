@@ -8,4 +8,6 @@
 protocol FollowRepository: Sendable {
     func getUserFollowers(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<UserSocial>
     func getUserFollowings(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<UserSocial>
+    func followUser(followeeId: Int) async throws -> NoContent
+    func unfollowUser(followeeId: Int) async throws -> NoContent
 }

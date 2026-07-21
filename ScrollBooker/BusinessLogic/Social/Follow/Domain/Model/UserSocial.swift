@@ -14,4 +14,26 @@ struct UserSocial: Identifiable, Equatable, Hashable, Sendable {
     let ratingsAverage: Double
     let isFollow: Bool
     let isBusinessOrEmployee: Bool
+    
+    func copy(
+        id: Int? = nil,
+        fullName: String? = nil,
+        username: String? = nil,
+        profession: String? = nil,
+        avatar: String? = nil,
+        ratingsAverage: Double? = nil,
+        isFollow: Bool? = nil,
+        isBusinessOrEmployee: Bool? = nil
+    ) -> UserSocial {
+        UserSocial(
+            id: id ?? self.id,
+            fullName: fullName ?? self.fullName,
+            username: username ?? self.username,
+            profession: profession ?? self.profession,
+            avatar: avatar ?? self.avatar,
+            ratingsAverage: ratingsAverage ?? self.ratingsAverage,
+            isFollow: isFollow ?? self.isFollow,
+            isBusinessOrEmployee: isBusinessOrEmployee ?? self.isBusinessOrEmployee
+        )
+    }
 }

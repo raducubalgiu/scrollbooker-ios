@@ -32,11 +32,21 @@ final class FollowModule {
         GetUserFollowingsUseCase(repository: repository)
     }()
     
+    private lazy var followUserUseCase: FollowUserUseCase = {
+        FollowUserUseCase(repository: repository)
+    }()
+    
+    private lazy var unfollowUserUseCase: UnfollowUserUseCase = {
+        UnfollowUserUseCase(repository: repository)
+    }()
+    
     func makeSocialViewModel(userId: Int) -> SocialViewModel {
         SocialViewModel(
             userId: userId,
-            getUserFollowers: getUserFollowersUseCase,
-            getUserFollowings: getUserFollowingsUseCase
+            getUserFollowersUseCase: getUserFollowersUseCase,
+            getUserFollowingsUseCase: getUserFollowingsUseCase,
+            followUserUseCase: followUserUseCase,
+            unfollowUserUseCase: unfollowUserUseCase
         )
     }
 }

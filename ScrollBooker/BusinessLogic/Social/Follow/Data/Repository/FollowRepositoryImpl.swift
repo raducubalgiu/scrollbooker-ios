@@ -29,4 +29,12 @@ final class FollowRepositoryImpl: FollowRepository {
             try UserSocial(dto: $0)
         }
     }
+    
+    func followUser(followeeId: Int) async throws -> NoContent {
+        return try await api.followUser(followeeId: followeeId)
+    }
+    
+    func unfollowUser(followeeId: Int) async throws -> NoContent {
+        return try await api.unfollowUser(followeeId: followeeId)
+    }
 }

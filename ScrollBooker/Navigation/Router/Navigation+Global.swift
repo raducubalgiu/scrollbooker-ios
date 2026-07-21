@@ -126,7 +126,7 @@ struct GlobalNavigationModifier: ViewModifier {
                 BookingConfirmationScreen(
                     viewModel: viewModel,
                     onBack: { router.pop() },
-                    onFinishBooking: {
+                    onAppointmentCreated: {
                         router.clearBookingSession()
                     }
                 )

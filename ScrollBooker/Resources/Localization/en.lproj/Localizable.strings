@@ -320,6 +320,13 @@
 "deleteAll" = "Șterge tot";
 "all" = "Toate";
 
+"checkDetails" = "Verifică detaliile";
+"checkAppointmentDetailsDescriptiom" = "Verifică detaliile programării înainte de a o confirma";
+"selectedServices" = "Servicii selectate";
+"dateAndTime" = "Data și ora";
+"cancellationPolicy" = "Politica de anulare";
+"cancellationPolicyDescription" = "Rezervarea poate fi anulată gratuit cu până la 24 de ore înainte de începerea serviciului. În caz contrar, se pot aplica taxe.";
+
 /* --- NOTIFICATIONS --- */
 "notification_received_new" = "ai primit o notificare nouă";
 

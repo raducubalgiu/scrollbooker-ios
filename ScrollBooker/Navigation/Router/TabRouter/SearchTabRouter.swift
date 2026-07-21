@@ -40,7 +40,7 @@ struct SearchTabRouter: View {
                                 router.push(.businessProfile(username: username))
                             }
                         )
-                            .toolbar(.hidden, for: .tabBar)
+                        .toolbar(.hidden, for: .tabBar)
                     default:
                         nil
                     }

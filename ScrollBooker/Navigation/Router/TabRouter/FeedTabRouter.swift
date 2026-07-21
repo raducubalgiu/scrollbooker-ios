@@ -26,7 +26,8 @@ struct FeedTabRouter: View {
                 case .feedSearch:
                     FeedSearchScreen(
                         viewModel: container.searchModule.makeFeedSearchViewModel(),
-                        onBack: { router.pop() }
+                        onBack: { router.pop() },
+                        onNavigateToUserProfile: { router.push(.userProfile($0)) }
                     )
                 default:
                     nil

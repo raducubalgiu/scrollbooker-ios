@@ -8,20 +8,30 @@
 import Foundation
 import Observation
 
-enum SearchState {
+enum SearchState: Equatable {
     case idle
     case loading
     case empty
     case success([SearchUser])
     case error(String)
+    
+    var users: [SearchUser] {
+        if case .success(let users) = self { return users }
+        return []
+    }
 }
 
 @Observable
 @MainActor
 final class FeedSearchViewModel: HasLoadingState {
-    var uiState = UiState(data: [SearchUser]())
-    
     private(set) var searchState: SearchState = .idle
+    
+    var isRefreshing: Bool = false
+    private(set) var operationErrorMessage: String? = nil
+    private(set) var isPerformingAction: Bool = false
+    
+    private var lastSearchedQuery: String = ""
+    
     var searchText: String = "" {
         didSet {
             triggerDebouncedSearch()
@@ -30,17 +40,23 @@ final class FeedSearchViewModel: HasLoadingState {
     
     private let searchUsersUseCase: SearchUsersUseCase
     private var searchTask: Task<Void, Never>? = nil
-
+    
     var isLoading: Bool {
-        get { uiState.isLoading }
-        set { uiState.isLoading = newValue }
+        get {
+            if case .loading = searchState { return true }
+            return isPerformingAction
+        }
+        set { isPerformingAction = newValue }
     }
 
     var errorMessage: String? {
-        get { uiState.errorMessage }
-        set { uiState.errorMessage = newValue }
+        get {
+            if case .error(let msg) = searchState { return msg }
+            return operationErrorMessage
+        }
+        set { operationErrorMessage = newValue }
     }
-
+    
     init(searchUsersUseCase: SearchUsersUseCase) {
         self.searchUsersUseCase = searchUsersUseCase
     }
@@ -52,27 +68,28 @@ final class FeedSearchViewModel: HasLoadingState {
         
         guard !cleanQuery.isEmpty else {
             self.searchState = .idle
-            self.uiState.data = []
+            self.lastSearchedQuery = ""
             return
         }
+        
+        guard cleanQuery != lastSearchedQuery else { return }
         
         searchTask = Task {
             do {
                 try await Task.sleep(for: .seconds(0.3))
 
                 guard !Task.isCancelled else { return }
-                
+
                 self.searchState = .loading
-                self.isLoading = true
-                self.errorMessage = nil
-                
-                let users = try await searchUsersUseCase(query: cleanQuery, roleClient: nil)
+                self.operationErrorMessage = nil
+
+                let users = try await withVisibleLoading {
+                    try await searchUsersUseCase(query: cleanQuery, roleClient: nil)
+                }
                 
                 guard !Task.isCancelled else { return }
+                self.lastSearchedQuery = cleanQuery
 
-                self.uiState.data = users
-                self.isLoading = false
-                
                 if users.isEmpty {
                     self.searchState = .empty
                 } else {
@@ -80,18 +97,31 @@ final class FeedSearchViewModel: HasLoadingState {
                 }
                 
             } catch is CancellationError {
+
             } catch {
                 guard !Task.isCancelled else { return }
-                self.isLoading = false
-                let friendlyError = error.localizedDescription
-                self.errorMessage = friendlyError
+                
+                let friendlyError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
                 self.searchState = .error(friendlyError)
+                self.lastSearchedQuery = ""
             }
         }
     }
 
     func performInstantSearch() {
         searchTask?.cancel()
+        
+        self.lastSearchedQuery = ""
+        
         triggerDebouncedSearch()
+    }
+    
+    func clearSearchText() {
+        searchTask?.cancel()
+        searchTask = nil
+        
+        searchText = ""
+        lastSearchedQuery = ""
+        searchState = .idle
     }
 }

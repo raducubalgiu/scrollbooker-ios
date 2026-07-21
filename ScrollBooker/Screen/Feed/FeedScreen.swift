@@ -44,9 +44,9 @@ struct FeedScreen: View {
         }
         .ignoresSafeArea(edges: .top)
         .background(Color.black)
-//        .overlay(alignment: .top) {
-//            FeedHeaderView(onNavigateToFeedSearch: onNavigateToFeedSearch)
-//        }
+        .overlay(alignment: .top) {
+            FeedHeaderView(onNavigateToFeedSearch: onNavigateToFeedSearch)
+        }
 //        .onAppear {
 //            viewModel.prepare(posts: posts)
 //            viewModel.play(index: currentIndex ?? 0, in: posts)

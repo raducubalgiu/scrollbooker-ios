@@ -3,6 +3,8 @@
 "feed" = "Acasă";
 "inbox" = "Inbox";
 "search" = "Caută";
+"searchUsers" = "Caută utilizatori";
+"searchUsersInApp" = "Caută utilizatori în aplicație";
 "appointments" = "Comenzi";
 "profile" = "Profil";
 "login" = "Logare";

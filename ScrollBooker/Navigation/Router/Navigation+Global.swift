@@ -78,7 +78,11 @@ struct GlobalNavigationModifier: ViewModifier {
                 if let existingVM = router.activeBookingViewModel {
                     return existingVM
                 } else {
-                    let newVM = container.bookingFlowModule.makeBookingFlowViewModel(params: params)
+                    let newVM = container.bookingFlowModule.makeBookingFlowViewModel(
+                        params: params,
+                        getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
+                        getUserAvailableTimeslotsUseCase: container.availabilityModule.getUserAvailableTimeslotsUseCase,
+                    )
                     router.activeBookingViewModel = newVM
                     return newVM
                 }

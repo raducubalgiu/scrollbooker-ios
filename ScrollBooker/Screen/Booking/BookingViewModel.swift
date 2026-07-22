@@ -20,6 +20,20 @@ enum BookingFlowState: Equatable {
     }
 }
 
+enum CalendarHeaderState: Equatable {
+    case idle
+    case loading
+    case success(availableDays: Set<String>, allCalendarDays: [Date])
+    case error(String)
+}
+
+
+struct TimeslotsCacheKey: Hashable, Sendable {
+    let day: String
+    let duration: Int
+    let employeeId: Int?
+}
+
 @Observable
 @MainActor
 final class BookingViewModel: HasLoadingState {
@@ -27,6 +41,8 @@ final class BookingViewModel: HasLoadingState {
     
     let params: BookingNavigationParams
     private let getBookingFlowUseCase: GetBookingFlowUseCase
+    private let getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase
+    private let getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase
     
     var isRefreshing: Bool = false
     private(set) var operationErrorMessage: String? = nil
@@ -49,7 +65,14 @@ final class BookingViewModel: HasLoadingState {
         set { operationErrorMessage = newValue }
     }
     
+    private(set) var calendarHeaderState: CalendarHeaderState = .idle
+    private(set) var availableSlotsState: SocialTabState<Slot> = .idle
+    
+    var selectedDay: Date = Date()
+    var selectedSlot: Slot? = nil
     var selectedEmployeeId: Int?
+    
+    private var slotsCache: [TimeslotsCacheKey: AvailableDay] = [:]
     
     private var isEmployee: Bool {
         params.userId != params.businessOwnerId
@@ -79,10 +102,14 @@ final class BookingViewModel: HasLoadingState {
     
     init(
         params: BookingNavigationParams,
-        getBookingFlowUseCase: GetBookingFlowUseCase
+        getBookingFlowUseCase: GetBookingFlowUseCase,
+        getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
+        getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase
     ) {
         self.params = params
         self.getBookingFlowUseCase = getBookingFlowUseCase
+        self.getUserAvailableDaysUseCase = getUserAvailableDaysUseCase
+        self.getUserAvailableTimeslotsUseCase = getUserAvailableTimeslotsUseCase
         
         if params.userId != params.businessOwnerId {
             self.selectedEmployeeId = params.userId
@@ -140,6 +167,149 @@ final class BookingViewModel: HasLoadingState {
                 self.selectedEmployeeId = nil
             }
         }
+    }
+    
+    func loadCalendarHeader() async {
+        guard calendarHeaderState == .idle else { return }
+        calendarHeaderState = .loading
+        
+        let calendar = Calendar.current
+        let today = Date()
+
+        guard let currentMonday = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else {
+            calendarHeaderState = .error("Nu s-a putut calcula începutul săptămânii.")
+            return
+        }
+        
+        let totalDays = 26 * 7
+        var allCalendarDays: [Date] = []
+        for i in 0..<totalDays {
+            if let calculatedDate = calendar.date(byAdding: .day, value: i, to: currentMonday) {
+                allCalendarDays.append(calculatedDate)
+            }
+        }
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let startDateStr = formatter.string(from: currentMonday)
+        guard let endDate = calendar.date(byAdding: .day, value: totalDays - 1, to: currentMonday) else { return }
+        let endDateStr = formatter.string(from: endDate)
+        
+        do {
+            let daysStrings = try await withVisibleLoading {
+                try await getUserAvailableDaysUseCase(
+                    businessId: params.businessId,
+                    employeeId: selectedEmployeeId,
+                    startDate: startDateStr,
+                    endDate: endDateStr
+                )
+            }
+            
+            let availableDaysSet = Set(daysStrings)
+            calendarHeaderState = .success(availableDays: availableDaysSet, allCalendarDays: allCalendarDays)
+            
+            await loadAvailableTimeSlots(for: selectedDay)
+            
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            calendarHeaderState = .error(message)
+        }
+    }
+    
+    func loadAvailableTimeSlots(for date: Date) async {
+        self.selectedDay = date
+        
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dayStr = formatter.string(from: date)
+        
+        let cacheKey = TimeslotsCacheKey(
+            day: dayStr,
+            duration: bookingTotals.totalDuration,
+            employeeId: selectedEmployeeId
+        )
+        
+        if let cachedData = slotsCache[cacheKey] {
+            updateSlotsState(with: cachedData)
+            return
+        }
+        
+        if case .success(let availableDays, _) = calendarHeaderState {
+            guard availableDays.contains(dayStr) else {
+                availableSlotsState = .success(data: [], hasMore: false, isPaging: false)
+                return
+            }
+        }
+
+        availableSlotsState = .loading
+        
+        do {
+            let availableDayData = try await withVisibleLoading {
+                try await getUserAvailableTimeslotsUseCase(
+                    businessId: params.businessId,
+                    employeeId: selectedEmployeeId,
+                    slotDuration: bookingTotals.totalDuration,
+                    day: dayStr
+                )
+            }
+
+            slotsCache[cacheKey] = availableDayData
+            updateSlotsState(with: availableDayData)
+            
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            availableSlotsState = .error(message)
+        }
+    }
+    
+    private func updateSlotsState(with availableDay: AvailableDay) {
+        if availableDay.isClosed || availableDay.availableSlots.isEmpty {
+            availableSlotsState = .success(data: [], hasMore: false, isPaging: false)
+        } else {
+            availableSlotsState = .success(data: availableDay.availableSlots, hasMore: false, isPaging: false)
+        }
+    }
+    
+    func onDaySelected(date: Date) async {
+        await loadAvailableTimeSlots(for: date)
+    }
+    
+    func onSlotSelected(slot: Slot) {
+        self.selectedSlot = slot
+    }
+    
+    func refreshTimeSlotsForCurrentDay() async {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let dayStr = formatter.string(from: selectedDay)
+        
+        let cacheKey = TimeslotsCacheKey(
+            day: dayStr,
+            duration: bookingTotals.totalDuration,
+            employeeId: selectedEmployeeId
+        )
+        
+        slotsCache.removeValue(forKey: cacheKey)
+        
+        isRefreshing = true
+        
+        do {
+            let freshDayData = try await getUserAvailableTimeslotsUseCase(
+                businessId: params.businessId,
+                employeeId: selectedEmployeeId,
+                slotDuration: bookingTotals.totalDuration,
+                day: dayStr
+            )
+            
+            slotsCache[cacheKey] = freshDayData
+            updateSlotsState(with: freshDayData)
+            
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            operationErrorMessage = message
+        }
+        
+        isRefreshing = false
     }
 }
 

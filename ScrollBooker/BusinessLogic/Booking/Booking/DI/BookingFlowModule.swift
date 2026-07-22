@@ -27,10 +27,16 @@ final class BookingFlowModule {
         GetBookingFlowUseCase(repository: repository)
     }()
     
-    func makeBookingFlowViewModel(params: BookingNavigationParams) -> BookingViewModel {
+    func makeBookingFlowViewModel(
+        params: BookingNavigationParams,
+        getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
+        getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase
+    ) -> BookingViewModel {
         BookingViewModel(
             params: params,
             getBookingFlowUseCase: getBookingFlowUseCase,
+            getUserAvailableDaysUseCase: getUserAvailableDaysUseCase,
+            getUserAvailableTimeslotsUseCase: getUserAvailableTimeslotsUseCase
         )
     }
 }

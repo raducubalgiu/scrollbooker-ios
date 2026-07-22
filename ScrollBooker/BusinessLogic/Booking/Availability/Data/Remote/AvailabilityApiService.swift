@@ -38,12 +38,12 @@ final class AvailabilityAPIImpl: AvailabilityApiService {
         endDate: String
     ) async throws -> [String] {
         var queryParams: [String: String] = [
-            "startDate": startDate,
-            "endDate": endDate
+            "start_date": startDate,
+            "end_date": endDate
         ]
         
         if let employeeId = employeeId {
-            queryParams["employeeId"] = String(employeeId)
+            queryParams["employee_id"] = String(employeeId)
         }
         
         return try await client.request(
@@ -60,12 +60,12 @@ final class AvailabilityAPIImpl: AvailabilityApiService {
         day: String
     ) async throws -> AvailableDayDto {
         var queryParams: [String: String] = [
-            "slotDuration": String(slotDuration),
+            "slot_duration": String(slotDuration),
             "day": day
         ]
         
         if let employeeId = employeeId {
-            queryParams["employeeId"] = String(employeeId)
+            queryParams["employee_id"] = String(employeeId)
         }
         
         return try await client.request(

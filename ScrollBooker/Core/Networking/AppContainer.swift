@@ -13,6 +13,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
     let session: SessionManager
     let apiClient: APIClient
 
+    let availabilityModule: AvailabilityModule
     let bookingFlowModule: BookingFlowModule
     let businessDomainModule: BusinessDomainModule
     let businessModule: BusinessModule
@@ -36,6 +37,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
         self.apiClient = APIClient(config: .default)
         self.session = SessionManager(client: apiClient)
         
+        self.availabilityModule = AvailabilityModule(apiClient: apiClient)
         self.bookingFlowModule = BookingFlowModule(apiClient: apiClient)
         self.businessDomainModule = BusinessDomainModule(apiClient: apiClient)
         self.businessModule = BusinessModule(apiClient: apiClient)

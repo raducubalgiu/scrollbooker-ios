@@ -9,18 +9,18 @@ import Foundation
 
 extension AvailableDay {
     init(dto: AvailableDayDto) {
-        self.isClosed = dto.is_closed
-        self.availableSlots = dto.available_slots.map { Slot(dto: $0) }
+        self.isClosed = dto.isClosed
+        self.availableSlots = dto.availableSlots.map { Slot(dto: $0) }
     }
 }
 
 extension Slot {
     init(dto: SlotDto) {
-        self.startDateUtc = dto.start_date_utc
-        self.endDateUtc = dto.end_date_utc
-        self.startDateLocale = dto.start_date_locale
-        self.endDateLocale = dto.end_date_locale
-        self.isLastMinute = dto.is_last_minute
-        self.lastMinuteDiscount = dto.last_minute_discount
+        self.startDateUtc = dto.startDateUtc
+        self.endDateUtc = dto.endDateUtc
+        self.startDateLocale = dto.startDateUtc
+        self.endDateLocale = dto.endDateLocale
+        self.isLastMinute = dto.isLastMinute
+        self.lastMinuteDiscount = dto.lastMinuteDiscount
     }
 }

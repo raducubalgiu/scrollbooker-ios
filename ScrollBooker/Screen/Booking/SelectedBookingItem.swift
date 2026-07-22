@@ -21,3 +21,23 @@ struct SelectedBookingItem: Identifiable, Equatable, Hashable, Sendable {
         return offerings.contains { $0.priceWithDiscount != firstPrice }
     }
 }
+
+import Foundation
+
+extension Collection where Element == SelectedBookingItem {
+    func toProductVariantsDto() -> [AppointmentProductVariantCreateDto] {
+        return self.map { item in
+            guard let firstOffering = item.offerings.first else {
+                fatalError("No offering available for variant \(item.variantId)")
+            }
+            
+            return AppointmentProductVariantCreateDto(
+                id: item.variantId,
+                offering: AppointmentProductOfferingCreateDto(
+                    userId: firstOffering.user.id
+                )
+            )
+        }
+    }
+}
+

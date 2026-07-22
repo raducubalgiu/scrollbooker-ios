@@ -30,13 +30,15 @@ final class BookingFlowModule {
     func makeBookingFlowViewModel(
         params: BookingNavigationParams,
         getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
-        getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase
+        getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase,
+        createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase
     ) -> BookingViewModel {
         BookingViewModel(
             params: params,
             getBookingFlowUseCase: getBookingFlowUseCase,
             getUserAvailableDaysUseCase: getUserAvailableDaysUseCase,
-            getUserAvailableTimeslotsUseCase: getUserAvailableTimeslotsUseCase
+            getUserAvailableTimeslotsUseCase: getUserAvailableTimeslotsUseCase,
+            createScrollBookerAppointmentUseCase: createScrollBookerAppointmentUseCase
         )
     }
 }

@@ -34,6 +34,10 @@ final class AppointmentModule {
     private lazy var cancelAppointment: CancelAppointmentUseCase = {
         CancelAppointmentUseCase(repository: repository)
     }()
+    
+    lazy var createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase = {
+        CreateScrollBookerAppointmentUseCase(repository: repository)
+    }()
 
     func makeAppointmentsViewModel() -> AppointmentsViewModel {
         AppointmentsViewModel(

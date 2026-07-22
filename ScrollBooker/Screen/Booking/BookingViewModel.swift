@@ -43,7 +43,9 @@ final class BookingViewModel: HasLoadingState {
     private let getBookingFlowUseCase: GetBookingFlowUseCase
     private let getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase
     private let getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase
+    private let createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase
     
+    var isSaving: Bool = false
     var isRefreshing: Bool = false
     private(set) var operationErrorMessage: String? = nil
     private(set) var isPerformingAction: Bool = false
@@ -104,12 +106,14 @@ final class BookingViewModel: HasLoadingState {
         params: BookingNavigationParams,
         getBookingFlowUseCase: GetBookingFlowUseCase,
         getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
-        getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase
+        getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase,
+        createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase
     ) {
         self.params = params
         self.getBookingFlowUseCase = getBookingFlowUseCase
         self.getUserAvailableDaysUseCase = getUserAvailableDaysUseCase
         self.getUserAvailableTimeslotsUseCase = getUserAvailableTimeslotsUseCase
+        self.createScrollBookerAppointmentUseCase = createScrollBookerAppointmentUseCase
         
         if params.userId != params.businessOwnerId {
             self.selectedEmployeeId = params.userId
@@ -311,5 +315,52 @@ final class BookingViewModel: HasLoadingState {
         
         isRefreshing = false
     }
+    
+    @discardableResult
+        func createAppointment() async -> Result<Void, Error> {
+            isSaving = true
+            operationErrorMessage = nil
+            
+            guard let slot = selectedSlot,
+                  !slot.startDateUtc.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+                  !slot.endDateUtc.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+                
+                let validationError = NSError(
+                    domain: "CreateAppointment",
+                    code: 400,
+                    userInfo: [NSLocalizedDescriptionKey: "Datele furnizate pentru programare sunt invalide."]
+                )
+                print("🚨 ERROR: on Creating ScrollBooker Appointment, the provided data are invalid")
+                
+                isSaving = false
+                self.operationErrorMessage = validationError.localizedDescription
+                return .failure(validationError)
+            }
+            
+            let appointmentRequest = AppointmentScrollBookerCreateRequest(
+                startDate: slot.startDateUtc,
+                endDate: slot.endDateUtc,
+                productVariants: selectedBookingItems.toProductVariantsDto(),
+                paymentCurrencyId: 1
+            )
+            
+            do {
+                _ = try await withVisibleLoading {
+                    try await createScrollBookerAppointmentUseCase(request: appointmentRequest)
+                }
+                
+                isSaving = false
+                return .success(())
+                
+            } catch {
+                isSaving = false
+                print("🚨 ERROR: onCreating ScrollBooker Appointment \(error)")
+                
+                let friendlyError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+                self.operationErrorMessage = friendlyError
+                
+                return .failure(error)
+            }
+        }
 }
 

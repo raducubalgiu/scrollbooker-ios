@@ -75,13 +75,15 @@ struct GlobalNavigationModifier: ViewModifier {
             
         case .bookingServices(let params):
             let viewModel: BookingViewModel = {
-                if let existingVM = router.activeBookingViewModel {
+                if let existingVM = router.activeBookingViewModel,
+                   existingVM.params.businessId == params.businessId {
                     return existingVM
                 } else {
                     let newVM = container.bookingFlowModule.makeBookingFlowViewModel(
                         params: params,
                         getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
                         getUserAvailableTimeslotsUseCase: container.availabilityModule.getUserAvailableTimeslotsUseCase,
+                        createScrollBookerAppointmentUseCase: container.appointmentModule.createScrollBookerAppointmentUseCase
                     )
                     router.activeBookingViewModel = newVM
                     return newVM
@@ -111,7 +113,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     onNavigateToDateTime: { router.push(.bookingDateTime) }
                 )
             } else {
-                fatalError("Sesiunea de booking a fost accesată fără o inițializare prealabilă.")
+                LoadingView()
             }
             
         case .bookingDateTime:
@@ -122,7 +124,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     onNavigateToConfirmation: { router.push(.bookingConfirmation) }
                 )
             } else {
-                fatalError("Sesiunea de booking a fost accesată fără o inițializare prealabilă.")
+                LoadingView()
             }
             
         case .bookingConfirmation:
@@ -131,11 +133,25 @@ struct GlobalNavigationModifier: ViewModifier {
                     viewModel: viewModel,
                     onBack: { router.pop() },
                     onAppointmentCreated: {
-                        router.clearBookingSession()
+                        Task {
+                            let result = await viewModel.createAppointment()
+                            
+                            switch result {
+                                case .success:
+                                    router.popToRoot()
+                                    router.clearBookingSession()
+                                    withAnimation(.easeInOut) {
+                                        router.selectedTab = .appointments
+                                    }
+                                    
+                                case .failure:
+                                    break
+                                }
+                        }
                     }
                 )
             } else {
-                fatalError("Sesiunea de booking a fost accesată fără o inițializare prealabilă.")
+                LoadingView()
             }
             
         default:

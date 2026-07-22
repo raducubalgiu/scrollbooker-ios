@@ -94,7 +94,9 @@ struct BookingConfirmationSuccessView: View {
                 
                 MainButton(
                     title: String(localized: "confirmReservation"),
-                    onClick: onAppointmentCreated
+                    isDisabled: viewModel.isSaving,
+                    isLoading: viewModel.isSaving,
+                    onClick: onAppointmentCreated,
                 )
                 .padding(.top, .s)
                 .padding(.horizontal, .base)

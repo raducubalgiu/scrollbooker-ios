@@ -12,399 +12,145 @@ struct ProfileLayout<Header: View, Actions: View>: View {
     let onNavigateToUserSocial: (SocialNavigationParams) -> Void
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onShowOpeningHours: () -> Void
-    
+
     @ViewBuilder var header: () -> Header
     @ViewBuilder var actions: () -> Actions
-    
+
+    @State private var selectedTab: ProfileTab = .posts
+    @Namespace private var indicatorNS
+
+    private var isEmployee: Bool {
+        user.isBusinessOrEmployee && user.id != user.businessOwner?.id
+    }
+
+    private var availableTabs: [ProfileTab] {
+        ProfileTab.getTabs(
+            isBusinessOrEmployee: user.isBusinessOrEmployee,
+            isEmployee: isEmployee,
+            isOwnProfile: user.isOwnProfile
+        )
+    }
+
     var body: some View {
         VStack(spacing: 0) {
             header()
-            
-            ScrollView {
-                VStack(spacing: 15) {
-                    ProfileCountersView(
-                        counters: user.counters,
-                        onNavigateToUserSocial: { selectedTab in
-                            onNavigateToUserSocial(
-                                SocialNavigationParams(
-                                    userId: user.id,
-                                    username: user.username,
-                                    initialTab: selectedTab,
-                                    isBusinessOrEmployee: user.isBusinessOrEmployee,
-                                    followersCount: user.counters.followersCount,
-                                    followingsCount: user.counters.followingsCount
+
+            ScrollView(.vertical, showsIndicators: false) {
+                LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
+                    VStack(spacing: 15) {
+                        ProfileCountersView(
+                            counters: user.counters,
+                            onNavigateToUserSocial: { selectedTab in
+                                onNavigateToUserSocial(
+                                    SocialNavigationParams(
+                                        userId: user.id,
+                                        username: user.username,
+                                        initialTab: selectedTab,
+                                        isBusinessOrEmployee: user.isBusinessOrEmployee,
+                                        followersCount: user.counters.followersCount,
+                                        followingsCount: user.counters.followingsCount
+                                    )
                                 )
+                            }
+                        )
+                        .padding(.vertical, .xl)
+
+                        ProfileUserInfoView(
+                            url: user.avatarURL,
+                            fullName: user.fullName,
+                            profession: user.profession,
+                            isBusinessOrEmployee: user.isBusinessOrEmployee,
+                            ratingsAverage: user.counters.ratingsAverage,
+                            openingHours: user.openingHours,
+                            onShowOpeningHoursSheet: onShowOpeningHours
+                        )
+
+                        actions()
+
+                        if let owner = user.businessOwner {
+                            ProfileBusinessOwnerView(
+                                businessOwner: owner,
+                                onNavigateToUserProfile: onNavigateToUserProfile
                             )
                         }
-                    )
-                    .padding(.vertical, .xl)
 
-                    ProfileUserInfoView(
-                        url: user.avatarURL,
-                        fullName: user.fullName,
-                        profession: user.profession,
-                        isBusinessOrEmployee: user.isBusinessOrEmployee,
-                        ratingsAverage: user.counters.ratingsAverage,
-                        openingHours: user.openingHours,
-                        onShowOpeningHoursSheet: onShowOpeningHours
-                    )
-
-                    actions()
-
-                    if let owner = user.businessOwner {
-                        ProfileBusinessOwnerView(
-                            businessOwner: owner,
-                            onNavigateToUserProfile: onNavigateToUserProfile
-                        )
+                        if let description = user.bio {
+                            Text(description)
+                                .font(.subheadline)
+                                .multilineTextAlignment(.center)
+                                .padding(.horizontal, .xxl)
+                        }
                     }
+                    .padding(.bottom, 15)
 
-                    if let description = user.bio {
-                        Text(description)
-                            .font(.subheadline)
-                            .multilineTextAlignment(.center)
-                            .padding(.horizontal, .xxl)
+                    Section(header: customTabBar) {
+                        getTabContent(for: selectedTab)
+                            .id(selectedTab)
+                            .transition(.opacity)
                     }
-                    
-                    // ProfileTabView() -> Va folosi datele din noul tău ProfileController
                 }
             }
-            .scrollIndicators(.hidden)
+        }
+        .onAppear {
+            if let firstTab = availableTabs.first {
+                selectedTab = firstTab
+            }
+        }
+    }
+
+    private var customTabBar: some View {
+        ZStack(alignment: .bottom) {
+            Rectangle()
+                .fill(Color.dividerSB)
+                .frame(height: 1)
+                .frame(maxWidth: .infinity)
+
+            HStack(spacing: 20) {
+                ForEach(availableTabs) { tab in
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.15)) {
+                            selectedTab = tab
+                        }
+                    } label: {
+                        VStack(spacing: 6) {
+                            Image(systemName: tab.iconName)
+                                .foregroundStyle(selectedTab == tab ? .primary : .secondary)
+
+                            ZStack {
+                                if selectedTab == tab {
+                                    Capsule()
+                                        .matchedGeometryEffect(id: "underline", in: indicatorNS)
+                                        .frame(height: 3)
+                                        .offset(y: 8)
+                                        .foregroundColor(.primary)
+                                } else {
+                                    Color.clear.frame(height: 3)
+                                }
+                            }
+                        }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 8)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
+        }
+        .background(Color(uiColor: .systemBackground))
+    }
+
+    @ViewBuilder
+    private func getTabContent(for tab: ProfileTab) -> some View {
+        switch tab {
+        case .posts:
+            ProfilePostsTabView()
+        case .products:
+            ProfileProductsTabView()
+        case .employees:
+            ProfileEmployeesTabView()
+        case .bookmarks:
+            ProfileBookmarksTabView()
+        case .info:
+            ProfileInfoTabView()
         }
     }
 }
-            
-            
-                        
-//                        ZStack(alignment: .bottom) {
-//                            Rectangle()
-//                                .fill(.divider)
-//                                .frame(height: 1)
-//                                .frame(maxWidth: .infinity)
-//                                .padding(.top, 0)
-//                            
-//                            HStack(spacing: 20) {
-//                                ForEach(ProfileTab.allCases) { tab in
-//                                    Button { withAnimation(.spring(response: 0.3, dampingFraction: 0.9) ) {
-//                                        selected = tab
-//                                        }
-//                                    } label: {
-//                                        VStack(spacing: 6) {
-//                                            Image(systemName: tab.systemImage)
-//                                                .foregroundStyle(selected == tab ? .primary : .secondary)
-//                                            
-//                                            ZStack {
-//                                                // indicator activ
-//                                                if selected == tab {
-//                                                    Capsule()
-//                                                        .matchedGeometryEffect(id: "underline", in: indicatorNS)
-//                                                        .frame(height: 3)
-//                                                        .offset(y: 8)
-//                                                } else {
-//                                                    Color.clear.frame(height: 3)
-//                                                }
-//                                            }
-//                                        }
-//                                        .frame(maxWidth: .infinity)
-//                                        .padding(.vertical, 8)
-//                                    }
-//                                    .buttonStyle(.plain)
-//                                }
-//                            }
-//                        }
-            
-//            GeometryReader { geo in
-//                ScrollView(.vertical, showsIndicators: false) {
-//                    LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-//                        VStack(spacing: 15) {
-//                            ProfileCountersView(
-//                                counters: user.counters,
-//                                onNavigateToUserSocial: {}
-//                            )
-//                            .padding(.vertical, .xl)
-//                            
-//                            ProfileUserInfoView(
-//                                url: user.avatarURL,
-//                                fullName: user.fullName,
-//                                profession: user.profession,
-//                                isBusinessOrEmployee: user.isBusinessOrEmployee,
-//                                ratingsAverage: user.counters.ratingsAverage,
-//                                openingHours: user.openingHours,
-//                                onShowOpeningHoursSheet: { //showOpeningHoursSheet = true
-//                                }
-//                            )
-//                            
-//                            MyProfileActionsView(onNavigateToEditProfile: {})
-//                            
-//                            if let owner = user.businessOwner {
-//                                ProfileBusinessOwnerView(
-//                                    businessOwner: owner,
-//                                    onNavigateToUserProfile: {}
-//                                )
-//                            }
-//                            
-//                            ProfileContactView()
-//                            
-//                            if let description = user.bio {
-//                                ProfileDescriptionView(description: description)
-//                            }
-//                        }
-//                        
-//                        Section {
-//                            TabView(selection: $selected) {
-//                                ProfilePostsTabView()
-//                                    .tag(ProfileTab.posts)
-//                                ProfileProductsTabView()
-//                                    .tag(ProfileTab.products)
-//                            }
-//                            .tabViewStyle(.page(indexDisplayMode: .never))
-//                        } header: {
-//                            ProfileTabView()
-//                        }
-//                    }
-//                }
-//            }
-        
-        
-        
-//        header()
-//        
-//        ScrollView(.vertical) {
-//            LazyVStack(spacing: 0, pinnedViews: [.sectionHeaders]) {
-//                
-//                VStack(spacing: 15) {
-//                    ProfileCountersView(
-//                        counters: user.counters,
-//                        onNavigateToUserSocial: {}
-//                    )
-//                    .padding(.vertical, .xl)
-//                    
-//                    ProfileUserInfoView(
-//                        url: user.avatarURL,
-//                        fullName: user.fullName,
-//                        profession: user.profession,
-//                        isBusinessOrEmployee: user.isBusinessOrEmployee,
-//                        ratingsAverage: user.counters.ratingsAverage,
-//                        openingHours: user.openingHours,
-//                        onShowOpeningHoursSheet: { showOpeningHoursSheet = true }
-//                    )
-//                    
-//                    actions()
-//                    
-//                    if let owner = user.businessOwner {
-//                        ProfileBusinessOwnerView(
-//                            businessOwner: owner,
-//                            onNavigateToUserProfile: onNavigateToUserProfile
-//                        )
-//                    }
-//                    
-//                    ProfileContactView()
-//                    
-//                    if let description = user.bio {
-//                        ProfileDescriptionView(description: description)
-//                    }
-//                    
-//                    Section {
-//                        VStack {
-//                            Text("fwefef")
-//                            Text("fewfwefwef")
-//                            Text("")
-//                            Text("fewff")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("fewfef")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("wefwe")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("dwqdw")
-//                            Text("")
-//                            Text("dqwdqwdwq")
-//                            Text("")
-//                            Text("wqdwq")
-//                            Text("")
-//                            Text("dwdqwd")
-//                            Text("wqdwdqw")
-//                            Text("wqdwdqwd")
-//                            Text("wdqdw")
-//                            Text("fwefef")
-//                            Text("fewfwefwef")
-//                            Text("")
-//                            Text("fewff")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("fewfef")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("wefwe")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("")
-//                            Text("dwqdw")
-//                            Text("")
-//                            Text("dqwdqwdwq")
-//                            Text("")
-//                            Text("wqdwq")
-//                            Text("")
-//                            Text("dwdqwd")
-//                            Text("wqdwdqw")
-//                            Text("wqdwdqwd")
-//                            Text("wdqdw")
-//                        }
-//                    } header: {
-//                        ProfileTabView()
-//                    }
-//                }
-//                .sheet(isPresented: $showOpeningHoursSheet) {
-//                    VStack {
-//                        Text("Opening Hours Sheet")
-//                    }
-//                    .padding(.top, .s)
-//                    .padding(.bottom)
-//                    .background(
-//                        GeometryReader { geo in
-//                            Color.clear
-//                                .onAppear { measuredHeight = geo.size.height }
-//                                .onChange(of: geo.size.height) { _, new in
-//                                    measuredHeight = new
-//                                }
-//                        }
-//                    )
-//                    .presentationDetents([.height(max(100, measuredHeight + 16))])
-//                    .presentationContentInteraction(.resizes)
-//                    .presentationDragIndicator(.hidden)
-//                    .presentationCornerRadius(25)
-//                }
-//                .sheet(isPresented: $showBottomSheet) {
-//                    VStack {
-//                        ListItemView(
-//                            title: "Creaza o postare",
-//                            leadingIcon: "camera",
-//                            onClick: {},
-//                            showTrailingIcon: false
-//                        )
-//                        .padding(.horizontal)
-//                        
-//                        ListItemView(
-//                            title: "Afacerea mea",
-//                            leadingIcon: "bag",
-//                            onClick: {
-//                                showBottomSheet = false
-//                                
-//                            },
-//                            showTrailingIcon: false
-//                        )
-//                        .padding(.horizontal)
-//                        
-//                        ListItemView(
-//                            title: "Setari",
-//                            leadingIcon: "gearshape",
-//                            onClick: {
-//                                showBottomSheet = false
-//                                
-//                            },
-//                            showTrailingIcon: false
-//                        )
-//                        .padding(.horizontal)
-//                    }
-//                    .padding(.top, .s)
-//                    .padding(.bottom)
-//                    .background(
-//                        GeometryReader { geo in
-//                            Color.clear
-//                                .onAppear { measuredHeight = geo.size.height }
-//                                .onChange(of: geo.size.height) { _, new in
-//                                    measuredHeight = new
-//                                }
-//                        }
-//                    )
-//                    .presentationDetents([.height(max(100, measuredHeight + 16))])
-//                    .presentationContentInteraction(.resizes)
-//                    .presentationDragIndicator(.hidden)
-//                    .presentationCornerRadius(25)
-//                }
-//            }
-//        }
-
-//#Preview("Light - My Profile") {
-//    ProfileLayout(
-//        user: dummyUserProfile,
-//        header: {
-//            MyProfileHeaderView(username: "radu_balgiu")
-//        },
-//        actions: {
-//            MyProfileActionsView(onNavigateToEditProfile: {})
-//        },
-//        onNavigateToUserProfile: {}
-//    )
-//}
-//
-//#Preview("Dark - My Profile") {
-//    ProfileLayout(
-//        user: dummyUserProfile,
-//        header: {
-//            MyProfileHeaderView(username: "radu_balgiu"),
-//            
-//        },
-//        actions: {
-//            MyProfileActionsView(onNavigateToEditProfile: {})
-//        },
-//        onNavigateToUserProfile: {},
-//        onNavigateToUserSocial: {}
-//    )
-//    .preferredColorScheme(.dark)
-//}
-//
-//#Preview("Light - UserProfile") {
-//    ProfileLayout(
-//        user: dummyUserProfile,
-//        header: {
-//            UserProfileHeader(username: "radu_balgiu")
-//        },
-//        actions: {
-//            UserProfileActions()
-//        },
-//        onNavigateToUserProfile: {},
-//        onNavigateToUserSocial: {}
-//    )
-//}
-//
-//#Preview("Dark - UserProfile") {
-//    ProfileLayout(
-//        user: dummyUserProfile,
-//        header: {
-//            UserProfileHeader(username: "radu_balgiu")
-//        },
-//        actions: {
-//            UserProfileActions()
-//        },
-//        onNavigateToUserProfile: {},
-//        onNavigateToUserSocial: {}
-//    )
-//    .preferredColorScheme(.dark)
-//}

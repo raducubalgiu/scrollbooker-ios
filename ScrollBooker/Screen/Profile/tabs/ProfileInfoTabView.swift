@@ -12,7 +12,3 @@ struct ProfileInfoTabView: View {
         Text("Profile Info Tab View")
     }
 }
-
-#Preview {
-    ProfileInfoTabView()
-}

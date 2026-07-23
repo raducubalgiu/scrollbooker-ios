@@ -15,8 +15,8 @@ struct AvatarView: View {
             switch self {
             case .xs: 24
             case .s: 32
-            case .m: 40
-            case .l: 48
+            case .m: 48
+            case .l: 54
             case .xl: 64
             case .xxl: 90
             }

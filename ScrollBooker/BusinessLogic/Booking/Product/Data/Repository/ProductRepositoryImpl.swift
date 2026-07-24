@@ -29,4 +29,11 @@ final class ProductRepositoryImpl: ProductRepository {
         
         return UserProducts(dto: dtoResponse)
     }
+    
+    func getLinkedProductsByPostId(postId: Int) async throws -> [Product] {
+        let responseDto = try await api.getLinkedProductsByPostId(postId: postId)
+        
+        return responseDto.map { Product(dto: $0) }
+    }
+    
 }

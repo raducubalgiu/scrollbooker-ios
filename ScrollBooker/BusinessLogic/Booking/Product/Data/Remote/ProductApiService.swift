@@ -14,6 +14,8 @@ protocol ProductApiService: Sendable {
         onlyServicesWithProducts: Bool,
         productsLimitPerService: Int?
     ) async throws -> UserProductsDto
+    
+    func getLinkedProductsByPostId(postId: Int) async throws -> [ProductDto]
 }
 
 final class ProductAPIImpl: ProductApiService {
@@ -45,6 +47,13 @@ final class ProductAPIImpl: ProductApiService {
             "businesses/\(businessId)/products",
             method: .get,
             query: queryParameters
+        )
+    }
+    
+    func getLinkedProductsByPostId(postId: Int) async throws -> [ProductDto] {
+        return try await client.request(
+            "posts/\(postId)/products",
+            method: .get
         )
     }
 }

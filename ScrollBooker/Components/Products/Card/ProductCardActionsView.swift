@@ -45,14 +45,14 @@ struct ProductCardActionsView: View {
                 }
             } else if showAddSingleButtonNotSelectable {
                 Button(action: { onNavigateToBooking?(product) }) {
-                    Text("Programează")
+                    Text(String(localized: "book"))
                         .font(.body)
                         .fontWeight(.semibold)
                         .padding(.vertical, 8)
                         .padding(.horizontal, 16)
                         .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.accentColor, lineWidth: 1)
+                            RoundedRectangle(cornerRadius: 50)
+                                .stroke(Color.dividerSB, lineWidth: 1)
                         )
                 }
             } else if showBuyPackButton {

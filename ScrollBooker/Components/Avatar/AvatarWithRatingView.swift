@@ -17,6 +17,19 @@ struct AvatarWithRatingView: View {
     @Environment(\.colorScheme) private var colorScheme
     
     var body: some View {
+        Group {
+            if let onClick {
+                Button(action: onClick) {
+                    badgeContent
+                }
+                .buttonStyle(.plain)
+            } else {
+                badgeContent
+            }
+        }
+    }
+    
+    private var badgeContent: some View {
         ZStack(alignment: .bottom) {
             AvatarView(
                 imageURL: url,
@@ -42,19 +55,14 @@ struct AvatarWithRatingView: View {
             .offset(y: dynamicOffset)
         }
         .contentShape(Rectangle())
-        .onTapGesture {
-            onClick?()
-        }
     }
-    
-    // MARK: - Configurații fixe per dimensiune (Calibrare exactă de Design)
     
     private var starFontSize: CGFloat {
         switch size {
         case .xs: 10
         case .s:  11
         case .m:  12
-        case .l:  13  
+        case .l:  13
         case .xl, .xxl: 15
         }
     }
@@ -106,8 +114,6 @@ struct AvatarWithRatingView: View {
         }
     }
     
-    // MARK: - Resolvers
-    
     private var resolvedBadgeColor: Color {
         if let customColor = badgeBackgroundColor {
             return customColor
@@ -122,3 +128,4 @@ struct AvatarWithRatingView: View {
         return colorScheme == .dark ? .white : .black
     }
 }
+

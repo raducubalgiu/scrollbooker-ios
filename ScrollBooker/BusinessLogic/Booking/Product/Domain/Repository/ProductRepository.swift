@@ -12,4 +12,6 @@ protocol ProductRepository: Sendable {
         onlyServicesWithProducts: Bool,
         productsLimitPerService: Int?
     ) async throws -> UserProducts
+    
+    func getLinkedProductsByPostId(postId: Int) async throws -> [Product]
 }

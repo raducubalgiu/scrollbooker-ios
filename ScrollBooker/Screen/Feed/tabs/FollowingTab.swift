@@ -9,6 +9,11 @@ import SwiftUI
 
 struct FollowingTab: View {
     var viewModel: FollowingTabViewModel
+    let makeCommentsVM: (Int) -> CommentsViewModel
+    let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    let onNavigateToBooking: (BookingNavigationParams) -> Void
+    
     @State private var currentIndex: Int? = 0
     @State private var activeSheet: FeedSheetType? = nil
     
@@ -44,6 +49,7 @@ struct FollowingTab: View {
 
                                     PostOverlayView(
                                         post: post,
+                                        onNavigateToUserProfile: onNavigateToUserProfile,
                                         onOpenReviewsSheet: { activeSheet = .reviews(userId: $0) },
                                         onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(postId: $0) },
                                         onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
@@ -68,7 +74,10 @@ struct FollowingTab: View {
         .sheet(item: $activeSheet) { sheetType in
             switch sheetType {
                 case .comments(let postId):
-                    CommentsSheetView(postId: postId)
+                    CommentsSheetView(
+                        viewModel: makeCommentsVM(postId),
+                        onNavigateToUserProfile: onNavigateToUserProfile
+                    )
                         .presentationDetents([.fraction(0.7)])
                         .presentationDragIndicator(.visible)
                     
@@ -77,9 +86,12 @@ struct FollowingTab: View {
                         .presentationDetents([.fraction(0.7)])
                         .presentationDragIndicator(.visible)
                     
-                case .linkedProducts(let postId):
-                    LinkedProductsSheetView(postId: postId)
-                        .presentationDetents([.fraction(0.7)])
+            case .linkedProducts(let postId):
+                    LinkedProductsSheetView(
+                        viewModel: makeLinkedProductsVM(postId),
+                        onNavigateToBooking: onNavigateToBooking
+                    )
+                    .presentationDetents([.fraction(0.7), .large])
                         .presentationDragIndicator(.visible)
                     
                 case .moreOptions(let postId):

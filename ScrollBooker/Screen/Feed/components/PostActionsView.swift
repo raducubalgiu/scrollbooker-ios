@@ -13,6 +13,7 @@ struct PostActionsView: View {
     var ratingsCount: Int
     var isVideoReview: Bool
     
+    var onAvatarClick: () -> Void
     var onLikeClick: () -> Void
     var onReviewsClick: () -> Void
     var onCommentsClick: () -> Void
@@ -31,7 +32,7 @@ struct PostActionsView: View {
                     rating: 5,
                     size: .l,
                     badgeBackgroundColor: .white,
-                    onClick: {}
+                    onClick: onAvatarClick
                 )
             }
             

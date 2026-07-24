@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PostOverlayView: View {
     var post: Post
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onOpenReviewsSheet: (Int) -> Void
     var onOpenLinkedProductsSheet: (Int) -> Void
     var onOpenCommentsSheet: (Int) -> Void
@@ -46,6 +47,11 @@ struct PostOverlayView: View {
                     counters: post.counters,
                     ratingsCount: post.user.ratingsCount,
                     isVideoReview: post.isVideoReview,
+                    onAvatarClick: { onNavigateToUserProfile(
+                        ProfileNavigationParams(
+                            userId: post.user.id,
+                            username: post.user.username)
+                    )},
                     onLikeClick: {},
                     onReviewsClick: { onOpenReviewsSheet(post.businessOwner.id) },
                     onCommentsClick: { onOpenCommentsSheet(post.id) },

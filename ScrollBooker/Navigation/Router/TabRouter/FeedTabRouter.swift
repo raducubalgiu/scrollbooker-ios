@@ -17,7 +17,11 @@ struct FeedTabRouter: View {
         NavigationStack(path: $bindableRouter.feedPath) {
             FeedScreen(
                 viewModel: container.postModule.makeFeedViewModel(),
-                onNavigateToFeedSearch: { router.push(.feedSearch) }
+                onNavigateToFeedSearch: { router.push(.feedSearch) },
+                onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                onNavigateToBooking: { router.push(.bookingServices($0)) },
+                makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
+                makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black)

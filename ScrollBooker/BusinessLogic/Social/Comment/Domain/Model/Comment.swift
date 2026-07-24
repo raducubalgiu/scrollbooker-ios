@@ -12,18 +12,19 @@ struct Comment: Identifiable, Equatable, Hashable, Sendable {
     let text: String
     let user: CommentUser
     let postId: Int
-    let repliesCount: Int
     let likeCount: Int
     let isLiked: Bool
-    let likedByPostAuthor: Bool
+    let likedbyPostAuthor: Bool
+    let repliesCount: Int
     let parentId: Int?
+    let replyToCommentId: Int?
     let createdAt: Date
 }
 
 struct CommentUser: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
+    let fullName: String
     let username: String
-    let fullname: String
     let avatar: String?
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }

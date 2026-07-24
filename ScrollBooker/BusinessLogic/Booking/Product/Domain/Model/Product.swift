@@ -83,6 +83,22 @@ struct ProductFilter: Identifiable, Equatable, Hashable, Sendable {
 }
 
 extension Product {
+    var targetUserId: Int {
+        let allUserIds = variants.flatMap { variant in
+            variant.offerings.map { offering in
+                offering.user.id
+            }
+        }
+        
+        let uniqueUserIds = Array(Set(allUserIds))
+        
+        if uniqueUserIds.count == 1, let firstUserId = uniqueUserIds.first {
+            return firstUserId
+        } else {
+            return businessOwnerId
+        }
+    }
+    
     func getDurationText(minutes: Int) -> String {
         if minutes == 0 { return "0min" }
 

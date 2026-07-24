@@ -27,10 +27,21 @@ final class ProductModule {
         GetProductsbyBusinessAndEmployeeUseCase(repository: repository)
     }()
     
+    lazy var getPostLinkedProductsUseCase: GetPostLinkedProductsUseCase = {
+        GetPostLinkedProductsUseCase(repository: repository)
+    }()
+    
     func makeMyProductsViewModel(session: SessionManager) -> MyProductsViewModel {
         MyProductsViewModel(
             session: session,
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase
+        )
+    }
+    
+    func makeLinkedProductsViewModel(postId: Int) -> LinkedProductsViewModel {
+        LinkedProductsViewModel(
+            postId: postId,
+            getPostLinkedProductsUseCase: getPostLinkedProductsUseCase
         )
     }
 }

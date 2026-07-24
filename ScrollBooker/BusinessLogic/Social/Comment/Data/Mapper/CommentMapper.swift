@@ -9,19 +9,20 @@ import Foundation
 
 extension Comment {
     init(dto: CommentDto) throws {
-        guard let parsedDate = DateParser.parseISO8601UTC(dto.created_at) else {
-            throw MappingError.invalidDate(dto.created_at)
+        guard let parsedDate = DateParser.parseISO8601UTC(dto.createdAt) else {
+            throw MappingError.invalidDate(dto.createdAt)
         }
         
         self.id = dto.id
         self.text = dto.text
         self.user = CommentUser(dto: dto.user)
-        self.postId = dto.post_id
-        self.repliesCount = dto.replies_count
-        self.likeCount = dto.like_count
-        self.isLiked = dto.is_liked
-        self.likedByPostAuthor = dto.liked_by_post_author
-        self.parentId = dto.parent_id
+        self.postId = dto.postId
+        self.likeCount = dto.likeCount
+        self.isLiked = dto.isLiked
+        self.likedbyPostAuthor = dto.likedbyPostAuthor
+        self.repliesCount = dto.repliesCount
+        self.parentId = dto.parentId
+        self.replyToCommentId = dto.replyToCommentId
         self.createdAt = parsedDate
     }
 }
@@ -30,7 +31,7 @@ extension CommentUser {
     init(dto: CommentUserDto) {
         self.id = dto.id
         self.username = dto.username
-        self.fullname = dto.fullname
+        self.fullName = dto.fullName
         self.avatar = dto.avatar
     }
 }

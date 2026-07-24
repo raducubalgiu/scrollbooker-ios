@@ -34,7 +34,22 @@ struct AvatarView: View {
     var isOpen: Bool? = nil
     var placeholderImage: String = "person.fill"
     
+    var onClick: (() -> Void)? = nil
+    
     var body: some View {
+        Group {
+            if let onClick {
+                Button(action: onClick) {
+                    avatarContent
+                }
+                .buttonStyle(.plain)
+            } else {
+                avatarContent
+            }
+        }
+    }
+    
+    private var avatarContent: some View {
         ZStack(alignment: .bottomTrailing) {
             avatarImage
                 .frame(width: size.diameter, height: size.diameter)
@@ -88,87 +103,4 @@ struct AvatarView: View {
     
     private var badgeSize: CGFloat { max(10, size.diameter * 0.28) }
     private var badgeOffset: CGFloat { size.diameter * 0.02}
-}
-
-#Preview("Light") {
-    HStack(spacing: 5) {
-        AvatarView(
-            size: .xs
-        )
-        AvatarView(
-            size: .s
-        )
-        AvatarView(
-            size: .m
-        )
-        AvatarView(
-            size: .l
-        )
-        AvatarView(
-            size: .xl
-        )
-        AvatarView(
-            size: .xxl
-        )
-    }
-    HStack(spacing: 5) {
-        AvatarView(
-            size: .xs,
-            isOpen: true
-        )
-        AvatarView(
-            size: .s,
-            isOpen: true
-        )
-        AvatarView(
-            size: .m,
-            isOpen: true
-        )
-        AvatarView(
-            size: .l,
-            isOpen: true
-        )
-        AvatarView(
-            size: .xl,
-            isOpen: true
-        )
-        AvatarView(
-            size: .xxl,
-            isOpen: true
-        )
-    }
-}
-
-#Preview("Dark") {
-    HStack(spacing: 5) {
-        AvatarView(size: .l).preferredColorScheme(.dark)
-        AvatarView(size: .xl)
-        AvatarView(size: .xxl)
-    }
-    HStack(spacing: 5) {
-        AvatarView(
-            size: .xs,
-            isOpen: true
-        )
-        AvatarView(
-            size: .s,
-            isOpen: true
-        )
-        AvatarView(
-            size: .m,
-            isOpen: true
-        )
-        AvatarView(
-            size: .l,
-            isOpen: true
-        )
-        AvatarView(
-            size: .xl,
-            isOpen: true
-        )
-        AvatarView(
-            size: .xxl,
-            isOpen: true
-        )
-    }
 }

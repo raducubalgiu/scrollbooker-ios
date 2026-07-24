@@ -8,57 +8,39 @@
 import SwiftUI
 
 struct FeedScreen: View {
-    @StateObject private var viewModel = FeedViewModel()
+    @State private var viewModel: FeedViewModel
     @Environment(\.scenePhase) private var scenePhase
-
     var onNavigateToFeedSearch: () -> Void
-    let posts = dummyBookNowPosts
-    @State private var currentIndex: Int? = 0
+    
+    init(viewModel: FeedViewModel, onNavigateToFeedSearch: @escaping () -> Void) {
+        _viewModel = State(initialValue: viewModel)
+        self.onNavigateToFeedSearch = onNavigateToFeedSearch
+    }
 
     var body: some View {
-        GeometryReader { globalGeo in
-//            let videoHeight = globalGeo.size.height
-//            let videoWidth = globalGeo.size.width
-//
-//            ScrollView(.vertical) {
-//                LazyVStack(spacing: 0) {
-//                    ForEach(Array(posts.enumerated()), id: \.element.id) { index, post in
-//                        ZStack {
-//                            if let player = viewModel.players[post.id] {
-//                                PlayerView(player: player)
-//                            } else {
-//                                Color.black
-//                            }
-//
-//                            PostOverlayView(post: post)
-//                        }
-//                        .frame(width: videoWidth, height: videoHeight)
-//                        .id(index)
-//                    }
-//                }
-//                .scrollTargetLayout()
-//            }
-//            .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-//            .scrollIndicators(.never)
-//            .scrollPosition(id: $currentIndex)
+        ZStack {
+            TabView(selection: $viewModel.selectedTab) {
+                ExploreTab(viewModel: viewModel.exploreViewModel)
+                    .tag(FeedTab.explore)
+                
+                FollowingTab(viewModel: viewModel.followingViewModel)
+                    .tag(FeedTab.following)
+            }
+            .tabViewStyle(.page(indexDisplayMode: .never))
         }
         .ignoresSafeArea(edges: .top)
-        .background(Color.black)
         .overlay(alignment: .top) {
-            FeedHeaderView(onNavigateToFeedSearch: onNavigateToFeedSearch)
+            FeedHeaderView(
+                selectedTab: Bindable(viewModel).selectedTab,
+                onNavigateToFeedSearch: onNavigateToFeedSearch
+            )
         }
-//        .onAppear {
-//            viewModel.prepare(posts: posts)
-//            viewModel.play(index: currentIndex ?? 0, in: posts)
-//        }
-//        .onChange(of: currentIndex) { _, newIndex in
-//           viewModel.play(index: newIndex ?? 0, in: posts)
-//        }
-//        .onChange(of: scenePhase) { _, phase in
-//            if phase != .active { viewModel.pauseAll() }
-//            else { viewModel.play(index: currentIndex ?? 0, in: posts) }
-//        }
-//        .onDisappear { viewModel.pauseAll() }
+        .onChange(of: viewModel.selectedTab) { _, newTab in
+            viewModel.handleTabChange(to: newTab)
+        }
+        .onChange(of: scenePhase) { _, phase in
+            viewModel.handleScenePhase(phase)
+        }
     }
 }
 

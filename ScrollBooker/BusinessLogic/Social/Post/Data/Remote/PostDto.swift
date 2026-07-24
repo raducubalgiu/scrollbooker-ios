@@ -178,7 +178,7 @@ struct PostCountersDto: Decodable {
         case commentCount = "comment_count"
         case likeCount = "like_count"
         case bookmarkCount = "bookmark_count"
-        case repostCount = "share_count"
+        case repostCount = "repost_count"
         case bookingsCount = "bookings_count"
         case viewsCount = "views_count"
     }

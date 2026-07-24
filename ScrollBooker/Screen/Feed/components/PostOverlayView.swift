@@ -9,6 +9,9 @@ import SwiftUI
 
 struct PostOverlayView: View {
     var post: Post
+    var onOpenReviewsSheet: (Int) -> Void
+    var onOpenLinkedProductsSheet: (Int) -> Void
+    var onOpenCommentsSheet: (Int) -> Void
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -31,14 +34,23 @@ struct PostOverlayView: View {
                         PostDescriptionView(description: description)
                     }
                     
-                    PostMainActionView(onClick: {})
+                    PostMainActionView(
+                        onClick: { onOpenLinkedProductsSheet(post.id) }
+                    )
                 }
                 .frame(maxWidth: .infinity)
                 .padding(.trailing, .xxl)
                 
                 PostActionsView(
                     userAvatarURL: post.user.avatarURL,
-                    counters: post.counters
+                    counters: post.counters,
+                    ratingsCount: post.user.ratingsCount,
+                    isVideoReview: post.isVideoReview,
+                    onLikeClick: {},
+                    onReviewsClick: { onOpenReviewsSheet(post.businessOwner.id) },
+                    onCommentsClick: { onOpenCommentsSheet(post.id) },
+                    onBookmarksClick: {},
+                    onShareClick: {}
                 )
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
@@ -47,11 +59,4 @@ struct PostOverlayView: View {
             .padding(.trailing, .s)
         }
     }
-}
-
-#Preview("Post Overlay") {
-    PostOverlayView(
-        post: dummyBookNowPosts[1]
-    )
-        .preferredColorScheme(.dark)
 }

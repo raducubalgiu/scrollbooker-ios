@@ -15,7 +15,10 @@ struct FeedTabRouter: View {
         @Bindable var bindableRouter = router
         
         NavigationStack(path: $bindableRouter.feedPath) {
-            FeedScreen(onNavigateToFeedSearch: { router.push(.feedSearch) })
+            FeedScreen(
+                viewModel: container.postModule.makeFeedViewModel(),
+                onNavigateToFeedSearch: { router.push(.feedSearch) }
+            )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black)
             .toolbarBackground(Color.black, for: .tabBar)
@@ -23,15 +26,15 @@ struct FeedTabRouter: View {
             .toolbarColorScheme(.dark, for: .tabBar)
             .withNavigation { route in
                 switch route {
-                case .feedSearch:
-                    FeedSearchScreen(
-                        viewModel: container.searchModule.makeFeedSearchViewModel(),
-                        onBack: { router.pop() },
-                        onNavigateToUserProfile: { router.push(.userProfile($0)) }
-                    )
-                default:
-                    nil
-                }
+                    case .feedSearch:
+                        FeedSearchScreen(
+                            viewModel: container.searchModule.makeFeedSearchViewModel(),
+                            onBack: { router.pop() },
+                            onNavigateToUserProfile: { router.push(.userProfile($0)) }
+                        )
+                    default:
+                        nil
+                    }
             }
         }
         .toolbar(router.feedPath.isEmpty ? .visible : .hidden, for: .tabBar)

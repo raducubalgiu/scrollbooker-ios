@@ -8,14 +8,27 @@
 import SwiftUI
 
 struct FeedHeaderView: View {
+    @Binding var selectedTab: FeedTab
     var onNavigateToFeedSearch: () -> Void
     
     var body: some View {
         HStack {
-            HStack {
-                Image(systemName: "line.horizontal.3")
-                    .font(.system(size: 25, weight: .semibold))
-                    .foregroundColor(.white)
+            HStack(spacing: 12) {
+                Button {
+                } label: {
+                    Image(systemName: "line.horizontal.3")
+                        .font(.system(size: 25, weight: .semibold))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
+                }
+                
+                HStack(spacing: 8) {
+                    FeedTabButton(title: "Explore", tab: .explore, selectedTab: $selectedTab)
+                    FeedTabButton(title: "Following", tab: .following, selectedTab: $selectedTab)
+                }
+                .padding(4)
+                .background(Color.white.opacity(0.05))
+                .clipShape(Capsule())
             }
             
             Spacer()
@@ -30,13 +43,4 @@ struct FeedHeaderView: View {
         }
         .padding()
     }
-}
-
-#Preview("Light") {
-    FeedHeaderView(onNavigateToFeedSearch: {})
-}
-
-#Preview("Dark") {
-    FeedHeaderView(onNavigateToFeedSearch: {})
-        .preferredColorScheme(.dark)
 }

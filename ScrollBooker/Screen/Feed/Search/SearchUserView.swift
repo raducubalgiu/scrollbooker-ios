@@ -9,7 +9,7 @@ import SwiftUI
 
 struct SearchUserView: View {
     var user: SearchUser
-    let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    let onUserClick: (SearchUser) -> Void
     
     private var avatarURL: URL? {
         guard let avatarString = user.avatar, !avatarString.isEmpty else { return nil }
@@ -51,12 +51,7 @@ struct SearchUserView: View {
         .padding(.horizontal, .base)
         .padding(.vertical, 10)
         .onTapGesture {
-            onNavigateToUserProfile(
-                ProfileNavigationParams(
-                    userId: user.id,
-                    username: user.username
-                )
-            )
+            onUserClick(user)
         }
     }
 }

@@ -59,7 +59,11 @@ struct FeedSearchScreen: View {
                 case .success(let users):
                     FeedSearchSuccessView(
                         users: users,
-                        onNavigateToUserProfile: onNavigateToUserProfile
+                        onUserClick: {
+                            onNavigateToUserProfile(
+                                ProfileNavigationParams(userId: $0.id, username: $0.username)
+                            )
+                        }
                     )
                     
                 case .error(let message):

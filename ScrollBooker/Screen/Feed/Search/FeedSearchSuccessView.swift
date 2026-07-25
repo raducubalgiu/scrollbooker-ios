@@ -9,7 +9,7 @@ import SwiftUI
 
 struct FeedSearchSuccessView: View {
     var users: [SearchUser]
-    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    var onUserClick: (SearchUser) -> Void
     
     var body: some View {
         ScrollView {
@@ -17,7 +17,7 @@ struct FeedSearchSuccessView: View {
                 ForEach(users) { user in
                     SearchUserView(
                         user: user,
-                        onNavigateToUserProfile: onNavigateToUserProfile
+                        onUserClick: onUserClick
                     )
                 }
             }

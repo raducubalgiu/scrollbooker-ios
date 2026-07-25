@@ -28,7 +28,6 @@ struct FeedScreen: View {
         makeLinkedProductsVM: @escaping (Int) -> LinkedProductsViewModel,
         makeReviewsVM: @escaping (Int) -> ReviewsViewModel
     ) {
-        // Corecție: Eliminăm State(initialValue:) deoarece clasa este deja administrată global prin @Observable
         self.viewModel = viewModel
         self.onNavigateToFeedSearch = onNavigateToFeedSearch
         self.onNavigateToUserProfile = onNavigateToUserProfile
@@ -39,11 +38,9 @@ struct FeedScreen: View {
     }
 
     var body: some View {
-        // Declarăm local contextul Bindable pentru macro-ul @Observable
         @Bindable var bindableViewModel = viewModel
         
         ZStack {
-            // Sincronizare perfectă bidirecțională prin $bindableViewModel
             TabView(selection: $bindableViewModel.selectedTab) {
                 ExploreTab(
                     viewModel: viewModel.exploreViewModel,
@@ -72,17 +69,14 @@ struct FeedScreen: View {
             FeedHeaderView(
                 selectedTab: viewModel.selectedTab,
                 onChangeTab: { newTab in
-                    // Când se apasă pe butoanele din header, mutăm direct starea (declanșând automat logica de pauză)
                     viewModel.handleTabChange(to: newTab)
                 },
                 onNavigateToFeedSearch: onNavigateToFeedSearch
             )
         }
-        // Prinde swipe-ul fizic de pe ecran și execută logica de mutare a ferestrelor audio
         .onChange(of: viewModel.selectedTab) { _, newTab in
             viewModel.handleTabChange(to: newTab)
         }
-        // Gestiunea background / foreground pe telefon
         .onChange(of: scenePhase) { _, phase in
             viewModel.handleScenePhase(phase)
         }

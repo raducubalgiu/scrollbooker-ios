@@ -10,9 +10,13 @@ import SwiftUI
 struct PostOverlayView: View {
     var post: Post
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    
     var onOpenReviewsSheet: (Int) -> Void
     var onOpenLinkedProductsSheet: (Int) -> Void
     var onOpenCommentsSheet: (Int) -> Void
+    
+    var onLike: (Int) -> Void
+    var onBookmark: (Int) -> Void
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -45,6 +49,7 @@ struct PostOverlayView: View {
                 PostActionsView(
                     userAvatarURL: post.user.avatarURL,
                     counters: post.counters,
+                    userActions: post.userActions,
                     ratingsCount: post.user.ratingsCount,
                     isVideoReview: post.isVideoReview,
                     onAvatarClick: { onNavigateToUserProfile(
@@ -52,10 +57,10 @@ struct PostOverlayView: View {
                             userId: post.user.id,
                             username: post.user.username)
                     )},
-                    onLikeClick: {},
+                    onLikeClick: { onLike(post.id) },
                     onReviewsClick: { onOpenReviewsSheet(post.user.id) },
                     onCommentsClick: { onOpenCommentsSheet(post.id) },
-                    onBookmarksClick: {},
+                    onBookmarksClick: { onBookmark(post.id) },
                     onShareClick: {}
                 )
             }

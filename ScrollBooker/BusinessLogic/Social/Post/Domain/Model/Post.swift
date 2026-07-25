@@ -114,3 +114,77 @@ struct LastMinute: Equatable, Hashable, Sendable {
     let hasFixedSlots: Bool
     let fixedSlots: [FixedSlots]?
 }
+
+extension Post {
+    func copy(
+        id: Int? = nil,
+        description: String?? = nil,
+        user: PostUser? = nil,
+        businessOwner: PostBusinessOwner? = nil,
+        employee: PostEmployee?? = nil,
+        counters: PostCounters? = nil,
+        userActions: UserPostActions? = nil,
+        mediaFiles: [PostMediaFile]? = nil,
+        hashtags: [Hashtag]?? = nil,
+        isVideoReview: Bool? = nil,
+        isOwnPost: Bool? = nil,
+        rating: Int?? = nil,
+        bookable: Bool? = nil,
+        businessId: Int? = nil,
+        lastMinute: LastMinute? = nil,
+        createdAt: String? = nil
+    ) -> Post {
+        Post(
+            id: id ?? self.id,
+            description: description ?? self.description,
+            user: user ?? self.user,
+            businessOwner: businessOwner ?? self.businessOwner,
+            employee: employee ?? self.employee,
+            counters: counters ?? self.counters,
+            userActions: userActions ?? self.userActions,
+            mediaFiles: mediaFiles ?? self.mediaFiles,
+            hashtags: hashtags ?? self.hashtags,
+            isVideoReview: isVideoReview ?? self.isVideoReview,
+            isOwnPost: isOwnPost ?? self.isOwnPost,
+            rating: rating ?? self.rating,
+            bookable: bookable ?? self.bookable,
+            businessId: businessId ?? self.businessId,
+            lastMinute: lastMinute ?? self.lastMinute,
+            createdAt: createdAt ?? self.createdAt
+        )
+    }
+}
+
+extension UserPostActions {
+    func copy(
+        isLiked: Bool? = nil,
+        isBookmarked: Bool? = nil,
+        isReposted: Bool? = nil
+    ) -> UserPostActions {
+        UserPostActions(
+            isLiked: isLiked ?? self.isLiked,
+            isBookmarked: isBookmarked ?? self.isBookmarked,
+            isReposted: isReposted ?? self.isReposted
+        )
+    }
+}
+
+extension PostCounters {
+    func copy(
+        commentCount: Int? = nil,
+        likeCount: Int? = nil,
+        bookmarkCount: Int? = nil,
+        repostCount: Int? = nil,
+        bookingsCount: Int? = nil,
+        viewsCount: Int? = nil
+    ) -> PostCounters {
+        PostCounters(
+            commentCount: commentCount ?? self.commentCount,
+            likeCount: likeCount ?? self.likeCount,
+            bookmarkCount: bookmarkCount ?? self.bookmarkCount,
+            repostCount: repostCount ?? self.repostCount,
+            bookingsCount: bookingsCount ?? self.bookingsCount,
+            viewsCount: viewsCount ?? self.viewsCount
+        )
+    }
+}

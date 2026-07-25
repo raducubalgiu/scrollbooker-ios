@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ExploreTab: View {
     var viewModel: ExploreTabViewModel
+    
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
     let makeReviewsVM: (Int) -> ReviewsViewModel
@@ -27,87 +28,68 @@ struct ExploreTab: View {
             Color.black.ignoresSafeArea()
 
             switch viewModel.viewState {
-            case .idle, .loading:
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black)
+                case .idle, .loading:
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black)
 
-            case .empty:
-                NoDataView(
-                    title: "Postari",
-                    message: "Nu există postări",
-                    systemImage: "video.splash"
-                )
+                case .empty:
+                    NoDataView(
+                        title: "Postari",
+                        message: "Nu există postări",
+                        systemImage: "video.splash"
+                    )
 
-            case .error(let message):
-                ErrorView(message: message) {
-                    Task { await viewModel.refreshPosts() }
-                }
-
-            case .success(let posts):
-                ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
-                        ForEach(Array(posts.enumerated()), id: \.element.id) { index, post in
-                            ZStack {
-                                Color.black
-
-                                PostOverlayView(
-                                    post: post,
-                                    onNavigateToUserProfile: onNavigateToUserProfile,
-                                    onOpenReviewsSheet: { activeSheet = .reviews(userId: $0) },
-                                    onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(postId: $0) },
-                                    onOpenCommentsSheet: { activeSheet = .comments(postId: $0) }
-                                )
-                            }
-                            .containerRelativeFrame(.horizontal)
-                            .containerRelativeFrame(.vertical)
-                            .id(index)
-                        }
+                case .error(let message):
+                    ErrorView(message: message) {
+                        Task { await viewModel.refreshPosts() }
                     }
-                    .scrollTargetLayout()
+
+                case .success(let posts):
+                    PostsSuccessView(
+                        viewModel: viewModel,
+                        onNavigateToUserProfile: onNavigateToUserProfile,
+                        currentIndex: $currentIndex,
+                        activeSheet: $activeSheet,
+                        onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
+                        onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
+                    )
                 }
-                .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-                .scrollIndicators(.never)
-                .scrollPosition(id: $currentIndex)
-                .refreshable {
-                    await viewModel.refreshPosts()
-                }
-            }
         }
         .ignoresSafeArea(.all)
         .sheet(item: $activeSheet) { sheetType in
             switch sheetType {
-            case .comments(let postId):
-                CommentsSheetView(
-                    viewModel: commentsCache.viewModel(for: postId, make: makeCommentsVM),
-                    onNavigateToUserProfile: onNavigateToUserProfile
-                )
-                .presentationDetents([.fraction(0.7), .fraction(0.999)])
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
-
-            case .reviews(let userId):
-                ReviewsSheetView(
-                    viewModel: reviewsCache.viewModel(for: userId, make: makeReviewsVM)
-                )
-                .presentationDetents([.fraction(0.7), .fraction(0.999)])
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
-
-            case .linkedProducts(let postId):
-                LinkedProductsSheetView(
-                    viewModel: linkedProductsCache.viewModel(for: postId, make: makeLinkedProductsVM),
-                    onNavigateToBooking: onNavigateToBooking
-                )
-                .presentationDetents([.fraction(0.7), .fraction(0.999)])
-                .presentationDragIndicator(.visible)
-                .presentationCornerRadius(25)
-
-            case .moreOptions(let postId):
-                MoreOptionsSheetView(postId: postId)
-                    .presentationDetents([.fraction(0.7)])
+                case .comments(let postId):
+                    CommentsSheetView(
+                        viewModel: commentsCache.viewModel(for: postId, make: makeCommentsVM),
+                        onNavigateToUserProfile: onNavigateToUserProfile
+                    )
+                    .presentationDetents([.fraction(0.7), .fraction(0.999)])
                     .presentationDragIndicator(.visible)
-            }
+                    .presentationCornerRadius(25)
+
+                case .reviews(let userId):
+                    ReviewsSheetView(
+                        viewModel: reviewsCache.viewModel(for: userId, make: makeReviewsVM)
+                    )
+                    .presentationDetents([.fraction(0.7), .fraction(0.999)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+
+                case .linkedProducts(let postId):
+                    LinkedProductsSheetView(
+                        viewModel: linkedProductsCache.viewModel(for: postId, make: makeLinkedProductsVM),
+                        onNavigateToBooking: onNavigateToBooking
+                    )
+                    .presentationDetents([.fraction(0.7), .fraction(0.999)])
+                    .presentationDragIndicator(.visible)
+                    .presentationCornerRadius(25)
+
+                case .moreOptions(let postId):
+                    MoreOptionsSheetView(postId: postId)
+                        .presentationDetents([.fraction(0.7)])
+                        .presentationDragIndicator(.visible)
+                }
         }
         .task {
             await viewModel.initialLoad()

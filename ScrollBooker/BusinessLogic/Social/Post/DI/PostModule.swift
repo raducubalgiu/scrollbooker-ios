@@ -31,16 +31,44 @@ final class PostModule {
         GetFollowingPostsUseCase(repository: repository)
     }()
     
+    private lazy var likePostUseCase: LikePostUseCase = {
+        LikePostUseCase(repository: repository)
+    }()
+    
+    private lazy var unlikePostUseCase: UnlikePostUseCase = {
+        UnlikePostUseCase(repository: repository)
+    }()
+    
+    private lazy var bookmarkPostUseCase: BookmarkPostUseCase = {
+        BookmarkPostUseCase(repository: repository)
+    }()
+    
+    private lazy var unbookmarkPostUseCase: UnbookmarkPostUseCase = {
+        UnbookmarkPostUseCase(repository: repository)
+    }()
+    
     lazy var getVideoReviewsUseCase: GetVideoReviewsUseCase = {
         GetVideoReviewsUseCase(repository: repository)
     }()
 
     func makeExploreTabViewModel() -> ExploreTabViewModel {
-        ExploreTabViewModel(getExplorePostsUseCase: getExplorePostsUseCase)
+        ExploreTabViewModel(
+            getExplorePostsUseCase: getExplorePostsUseCase,
+            likePostUseCase: likePostUseCase,
+            unlikePostUseCase: unlikePostUseCase,
+            bookmarkPostUseCase: bookmarkPostUseCase,
+            unbookmarkPostUseCase: unbookmarkPostUseCase
+        )
     }
     
     func makeFollowingTabViewModel() -> FollowingTabViewModel {
-        FollowingTabViewModel(getFollowingPostsUseCase: getFollowingPostsUseCase)
+        FollowingTabViewModel(
+            getFollowingPostsUseCase: getFollowingPostsUseCase,
+            likePostUseCase: likePostUseCase,
+            unlikePostUseCase: unlikePostUseCase,
+            bookmarkPostUseCase: bookmarkPostUseCase,
+            unbookmarkPostUseCase: unbookmarkPostUseCase
+        )
     }
     
     func makeFeedViewModel() -> FeedViewModel {

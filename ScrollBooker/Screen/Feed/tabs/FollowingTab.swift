@@ -44,34 +44,15 @@ struct FollowingTab: View {
                     Task { await viewModel.refreshPosts() }
                 }
                 
-            case .success(let posts):
-                ScrollView(.vertical) {
-                    LazyVStack(spacing: 0) {
-                        ForEach(Array(posts.enumerated()), id: \.element.id) { index, post in
-                            ZStack {
-                                Color.black
-
-                                PostOverlayView(
-                                    post: post,
-                                    onNavigateToUserProfile: onNavigateToUserProfile,
-                                    onOpenReviewsSheet: { activeSheet = .reviews(userId: $0) },
-                                    onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(postId: $0) },
-                                    onOpenCommentsSheet: { activeSheet = .comments(postId: $0) }
-                                )
-                            }
-                            .containerRelativeFrame(.horizontal)
-                            .containerRelativeFrame(.vertical)
-                            .id(index)
-                        }
-                    }
-                    .scrollTargetLayout()
-                }
-                .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
-                .scrollIndicators(.never)
-                .scrollPosition(id: $currentIndex)
-                .refreshable {
-                    await viewModel.refreshPosts()
-                }
+            case .success(_):
+                PostsSuccessView(
+                    viewModel: viewModel,
+                    onNavigateToUserProfile: onNavigateToUserProfile,
+                    currentIndex: $currentIndex,
+                    activeSheet: $activeSheet,
+                    onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
+                    onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
+                )
             }
         }
         .ignoresSafeArea(.all)

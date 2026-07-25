@@ -10,6 +10,7 @@ import SwiftUI
 struct PostActionsView: View {
     var userAvatarURL: URL?
     var counters: PostCounters
+    var userActions: UserPostActions
     var ratingsCount: Int
     var isVideoReview: Bool
     
@@ -44,7 +45,7 @@ struct PostActionsView: View {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 28))
-                        .foregroundColor(.white)
+                        .foregroundColor(userActions.isLiked ? .errorSB : .white)
                     
                     Text("\(counters.likeCount)")
                         .font(.footnote)
@@ -94,7 +95,7 @@ struct PostActionsView: View {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "bookmark.fill")
                         .font(.system(size: 28))
-                        .foregroundColor(.white)
+                        .foregroundColor(userActions.isBookmarked ? .ratingSB : .white)
                     
                     Text("\(counters.bookmarkCount)")
                         .font(.footnote)

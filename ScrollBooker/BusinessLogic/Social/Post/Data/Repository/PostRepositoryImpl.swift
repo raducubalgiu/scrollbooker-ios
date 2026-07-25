@@ -37,4 +37,20 @@ final class PostRepositoryImpl: PostRepository {
             Post(from: $0)
         }
     }
+    
+    func likePost(id: Int) async throws -> NoContent {
+        return try await api.likePost(id: id)
+    }
+    
+    func unlikePost(id: Int) async throws -> NoContent {
+        return try await api.unlikePost(id: id)
+    }
+    
+    func bookmarkPost(id: Int) async throws -> NoContent {
+        return try await api.bookmarkPost(id: id)
+    }
+    
+    func unbookmarkPost(id: Int) async throws -> NoContent {
+        return try await api.unbookmarkPost(id: id)
+    }
 }

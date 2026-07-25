@@ -11,6 +11,10 @@ protocol PostApiService: Sendable {
     func getExplorePosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
+    func likePost(id: Int) async throws -> NoContent
+    func unlikePost(id: Int) async throws -> NoContent
+    func bookmarkPost(id: Int) async throws -> NoContent
+    func unbookmarkPost(id: Int) async throws -> NoContent
 }
 
 final class PostAPIImpl: PostApiService {
@@ -56,6 +60,34 @@ final class PostAPIImpl: PostApiService {
             "users/\(userId)/posts/video-reviews",
             method: .get,
             query: query
+        )
+    }
+    
+    func likePost(id: Int) async throws -> NoContent {
+        return try await client.request(
+            "posts/\(id)/likes",
+            method: .post
+        )
+    }
+    
+    func unlikePost(id: Int) async throws -> NoContent {
+        return try await client.request(
+            "posts/\(id)/likes",
+            method: .delete
+        )
+    }
+    
+    func bookmarkPost(id: Int) async throws -> NoContent {
+        return try await client.request(
+            "posts/\(id)/bookmark-posts",
+            method: .post
+        )
+    }
+    
+    func unbookmarkPost(id: Int) async throws -> NoContent {
+        return try await client.request(
+            "posts/\(id)/bookmark-posts",
+            method: .delete
         )
     }
 }

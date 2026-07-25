@@ -44,25 +44,13 @@ struct FeedHeaderView: View {
             
             Spacer()
             
-            HStack(spacing: 12) {
-                Button {
-                    onNavigateToFeedSearch()
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                        .font(.system(size: 25, weight: .semibold))
-                        .foregroundColor(.white)
-                        .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
-                }
-                
-                Button {
-                    
-                } label: {
-                    Image(systemName: "ellipsis")
-                        .font(.system(size: 25, weight: .semibold))
-                        .foregroundColor(.white)
-                        .rotationEffect(.degrees(90))
-                        .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
-                }
+            Button {
+                onNavigateToFeedSearch()
+            } label: {
+                Image(systemName: "magnifyingglass")
+                    .font(.system(size: 25, weight: .semibold))
+                    .foregroundColor(.white)
+                    .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
             }
         }
         .padding()

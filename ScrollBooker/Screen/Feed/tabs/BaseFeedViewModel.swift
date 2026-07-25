@@ -29,6 +29,8 @@ class BaseFeedViewModel {
     private var page = 1
     private let limit = 10
     private var totalCount = 0
+    
+    var operationErrorMessage: String? = nil
 
     var hasMore: Bool {
         posts.count < totalCount
@@ -98,6 +100,74 @@ class BaseFeedViewModel {
             } else {
                 print("Eroare la încărcarea paginii următoare: \(message)")
             }
+        }
+    }
+    
+    @MainActor
+    func toggleLike(
+        postId: Int,
+        likeAction: (Int) async throws -> NoContent,
+        unlikeAction: (Int) async throws -> NoContent
+    ) async {
+        guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
+        
+        let originalPost = posts[index]
+        let currentlyLiked = originalPost.userActions.isLiked
+        
+        let newIsLiked = !currentlyLiked
+        let newLikeCount = currentlyLiked ? max(0, originalPost.counters.likeCount - 1) : originalPost.counters.likeCount + 1
+        
+        posts[index] = originalPost.copy(
+            counters: originalPost.counters.copy(likeCount: newLikeCount),
+            userActions: originalPost.userActions.copy(isLiked: newIsLiked)
+        )
+        
+        operationErrorMessage = nil
+        
+        do {
+            if currentlyLiked {
+                _ = try await unlikeAction(postId)
+            } else {
+                _ = try await likeAction(postId)
+            }
+        } catch {
+            if let currentIndex = posts.firstIndex(where: { $0.id == postId }) {
+                posts[currentIndex] = originalPost
+            }
+            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
+    }
+    
+    @MainActor
+    func toggleBookmark(
+        postId: Int,
+        bookmarkAction: (Int) async throws -> NoContent,
+        unbookmarkAction: (Int) async throws -> NoContent
+    ) async {
+        guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
+        
+        let originalPost = posts[index]
+        let currentlyBookmarked = originalPost.userActions.isBookmarked
+        
+        let newIsBookmarked = !currentlyBookmarked
+        
+        posts[index] = originalPost.copy(
+            userActions: originalPost.userActions.copy(isBookmarked: newIsBookmarked)
+        )
+        
+        operationErrorMessage = nil
+        
+        do {
+            if currentlyBookmarked {
+                _ = try await unbookmarkAction(postId)
+            } else {
+                _ = try await bookmarkAction(postId)
+            }
+        } catch {
+            if let currentIndex = posts.firstIndex(where: { $0.id == postId }) {
+                posts[currentIndex] = originalPost
+            }
+            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
     }
 }

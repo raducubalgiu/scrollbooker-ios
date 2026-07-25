@@ -17,18 +17,15 @@ struct PostMainActionView: View {
             Text("Rezervă acum")
                 .font(.subheadline.bold())
                 .foregroundColor(.white)
+                .padding(.vertical, 11)
+                .frame(maxWidth: .infinity)
+                .background(
+                    RoundedRectangle(cornerRadius: 50)
+                        .fill(Color.primarySB)
+                )
+                .contentShape(Rectangle())
         }
-        .padding(.vertical, 11)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 50)
-                .fill(Color.primarySB)
-        )
         .buttonStyle(.plain)
     }
 }
 
-#Preview("Dark") {
-    PostMainActionView(onClick: {})
-        .preferredColorScheme(.dark)
-}

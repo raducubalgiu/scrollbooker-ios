@@ -40,7 +40,7 @@ struct PostOverlayView: View {
                     )
                 }
                 .frame(maxWidth: .infinity)
-                .padding(.trailing, .xxl)
+                .padding(.trailing, .base)
                 
                 PostActionsView(
                     userAvatarURL: post.user.avatarURL,

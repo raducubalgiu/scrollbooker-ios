@@ -2,7 +2,7 @@
 //  PostGridView.swift
 //  ScrollBooker
 //
-//  Created by Raducu Balgiu on 01.09.2025.
+//  Created by Raducu Balgiu on 25.07.2026.
 //
 
 import SwiftUI
@@ -12,45 +12,50 @@ struct PostGridView: View {
     let mediaFiles: [PostMediaFile]
     let viewsCount: Int
     let onNavigateToPost: (Int) -> Void
-    
-    private let itemWidth: CGFloat = 150
 
     var body: some View {
         ZStack(alignment: .bottomLeading) {
-            AsyncImage(url: URL(string: mediaFiles.first?.thumbnailUrl ?? "")) { image in
-                image
-                    .resizable()
-                    .aspectRatio(contentMode: .fill)
-            } placeholder: {
-                Color(.systemGray5)
+            GeometryReader { geometry in
+                AsyncImage(url: URL(string: mediaFiles.first?.thumbnailUrl ?? "")) { phase in
+                    switch phase {
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .clipped()
+                    case .failure, .empty:
+                        Color(.systemGray5)
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                    @unknown default:
+                        EmptyView()
+                    }
+                }
             }
-            .frame(width: itemWidth, height: itemWidth * (12.0 / 9.0))
+            .aspectRatio(9.0 / 12.0, contentMode: .fill)
             
             LinearGradient(
                 colors: [
-                    Color.black.opacity(0.2),
+                    Color.black.opacity(0.15),
                     Color.clear,
-                    Color.black.opacity(0.45)
+                    Color.black.opacity(0.5)
                 ],
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .disabled(true)
-            
-            HStack(spacing: 4) {
+            .allowsHitTesting(false)
+
+            HStack(spacing: 3) {
                 Image(systemName: "play.fill")
-                    .font(.system(size: 11, weight: .bold))
+                    .font(.system(size: 10, weight: .bold))
                 
                 Text("\(viewsCount)")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.system(size: 11, weight: .semibold))
             }
             .foregroundColor(.white)
-            .padding(.leading, 10)
-            .padding(.bottom, 10)
+            .padding(.horizontal, 6)
+            .padding(.vertical, 4)
         }
-        .frame(width: itemWidth)
-        .aspectRatio(9.0 / 12.0, contentMode: .fit)
-        .clipShape(RoundedRectangle(cornerRadius: 12)) 
         .contentShape(Rectangle())
         .onTapGesture {
             onNavigateToPost(postId)

@@ -54,6 +54,6 @@ struct ReviewsTabBarView<Tab: CaseIterable & Hashable & RawRepresentable>: View 
                 .frame(height: 1)
                 .frame(maxWidth: .infinity)
         }
-        .background(Color(uiColor: .systemBackground))
+        .background(Color.backgroundSB)
     }
 }

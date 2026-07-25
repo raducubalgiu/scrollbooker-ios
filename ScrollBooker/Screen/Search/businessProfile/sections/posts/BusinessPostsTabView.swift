@@ -19,7 +19,7 @@ struct BusinessPostsTabView: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 16) {
                     ForEach(posts) { post in
-                        PostGridView(
+                        BusinessPostView(
                             postId: post.id,
                             mediaFiles: post.mediaFiles,
                             viewsCount: post.viewsCount,

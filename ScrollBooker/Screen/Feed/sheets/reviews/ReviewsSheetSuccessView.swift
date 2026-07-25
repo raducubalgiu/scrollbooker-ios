@@ -44,7 +44,6 @@ struct ReviewsSheetSuccessView: View {
                         getTabContent(for: selectedTab)
                             .id(selectedTab)
                             .transition(.opacity)
-                            .padding(.top, 10)
                     }
                 }
             }

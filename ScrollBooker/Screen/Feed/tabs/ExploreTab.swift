@@ -45,7 +45,7 @@ struct ExploreTab: View {
                         Task { await viewModel.refreshPosts() }
                     }
 
-                case .success(let posts):
+                case .success(_):
                     PostsSuccessView(
                         viewModel: viewModel,
                         onNavigateToUserProfile: onNavigateToUserProfile,
@@ -96,8 +96,10 @@ struct ExploreTab: View {
         }
         .onChange(of: currentIndex) { _, newIndex in
             guard let index = newIndex, index < viewModel.posts.count else { return }
-            let currentPost = viewModel.posts[index]
 
+            viewModel.currentIndex = index
+            let currentPost = viewModel.posts[index]
+            
             Task {
                 await viewModel.loadMore(currentPost: currentPost)
             }

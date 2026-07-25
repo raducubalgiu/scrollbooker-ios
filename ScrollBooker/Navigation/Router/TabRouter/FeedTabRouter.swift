@@ -11,24 +11,34 @@ struct FeedTabRouter: View {
     @EnvironmentObject private var container: AppContainer
     var router: Router
     
+    @State private var feedViewModel: FeedViewModel?
+
     var body: some View {
         @Bindable var bindableRouter = router
         
         NavigationStack(path: $bindableRouter.feedPath) {
-            FeedScreen(
-                viewModel: container.postModule.makeFeedViewModel(),
-                onNavigateToFeedSearch: { router.push(.feedSearch) },
-                onNavigateToUserProfile: { router.push(.userProfile($0)) },
-                onNavigateToBooking: { router.push(.bookingServices($0)) },
-                makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
-                makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
-                makeReviewsVM: {
-                    container.reviewModule.makeReviewsViewModel(
-                        userId: $0,
-                        getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+            Group {
+                if let viewModel = feedViewModel {
+                    FeedScreen(
+                        viewModel: viewModel,
+                        onNavigateToFeedSearch: { router.push(.feedSearch) },
+                        onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                        onNavigateToBooking: { router.push(.bookingServices($0)) },
+                        makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
+                        makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
+                        makeReviewsVM: {
+                            container.reviewModule.makeReviewsViewModel(
+                                userId: $0,
+                                getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+                            )
+                        }
                     )
-                },
-            )
+                } else {
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black)
+                }
+            }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black)
             .toolbarBackground(Color.black, for: .tabBar)
@@ -36,19 +46,38 @@ struct FeedTabRouter: View {
             .toolbarColorScheme(.dark, for: .tabBar)
             .withNavigation { route in
                 switch route {
-                    case .feedSearch:
-                        FeedSearchScreen(
-                            viewModel: container.searchModule.makeFeedSearchViewModel(),
-                            onBack: { router.pop() },
-                            onNavigateToUserProfile: { router.push(.userProfile($0)) }
-                        )
-                    default:
-                        nil
-                    }
+                case .feedSearch:
+                    FeedSearchScreen(
+                        viewModel: container.searchModule.makeFeedSearchViewModel(),
+                        onBack: { router.pop() },
+                        onNavigateToUserProfile: { router.push(.userProfile($0)) }
+                    )
+                default:
+                    nil
+                }
+            }
+            .onAppear {
+                if feedViewModel == nil {
+                    feedViewModel = container.postModule.makeFeedViewModel()
+                }
+                
+                switch feedViewModel?.selectedTab {
+                    case .explore:
+                        feedViewModel?.exploreViewModel.playCurrent()
+                    case .following:
+                        feedViewModel?.followingViewModel.playCurrent()
+                    case .none:
+                    break
+                }
+            }
+            .onDisappear {
+                feedViewModel?.exploreViewModel.pauseAll()
+                feedViewModel?.followingViewModel.pauseAll()
             }
         }
         .toolbar(router.feedPath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }
+
 
 

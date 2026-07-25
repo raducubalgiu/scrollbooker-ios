@@ -92,6 +92,8 @@ struct FollowingTab: View {
         }
         .onChange(of: currentIndex) { _, newIndex in
             guard let index = newIndex, index < viewModel.posts.count else { return }
+            
+            viewModel.currentIndex = index
             let currentPost = viewModel.posts[index]
             
             Task {

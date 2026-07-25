@@ -31,7 +31,7 @@ struct PostOverlayView: View {
             .frame(height: 200)
             .ignoresSafeArea(edges: .bottom)
             
-            HStack(alignment: .bottom) {
+            HStack(alignment: .bottom, spacing: 0) {
                 VStack(alignment: .leading, spacing: 15) {
                     PostUserView(user: post.user)
                     
@@ -43,7 +43,7 @@ struct PostOverlayView: View {
                         onClick: { onOpenLinkedProductsSheet(post.id) }
                     )
                 }
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.trailing, .base)
                 
                 PostActionsView(
@@ -64,10 +64,12 @@ struct PostOverlayView: View {
                     onShareClick: {}
                 )
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
+            .frame(maxWidth: .infinity, alignment: .bottom)
             .padding(.leading, .m)
             .padding(.bottom, .m)
             .padding(.trailing, .s)
         }
+        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottom)
     }
 }
+

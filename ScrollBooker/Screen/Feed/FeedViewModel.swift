@@ -64,26 +64,26 @@ final class FeedViewModel {
     
     func handleTabChange(to newTab: FeedTab) {
         selectedTab = newTab
-//        switch newTab {
-//        case .explore:
-//            followingViewModel.pauseAll()
-//            exploreViewModel.playCurrent()
-//        case .following:
-//            exploreViewModel.pauseAll()
-//            followingViewModel.playCurrent()
-//        }
+        switch newTab {
+            case .explore:
+                followingViewModel.pauseAll()
+                exploreViewModel.playCurrent()
+            case .following:
+                exploreViewModel.pauseAll()
+                followingViewModel.playCurrent()
+            }
     }
-    
+
     func handleScenePhase(_ phase: ScenePhase) {
-//        if phase != .active {
-//            exploreViewModel.pauseAll()
-//            followingViewModel.pauseAll()
-//        } else {
-//            switch selectedTab {
-//                case .explore: exploreViewModel.playCurrent()
-//                case .following: followingViewModel.playCurrent()
-//            }
-//        }
+        if phase != .active {
+            exploreViewModel.pauseAll()
+            followingViewModel.pauseAll()
+        } else {
+            switch selectedTab {
+                case .explore: exploreViewModel.playCurrent()
+                case .following: followingViewModel.playCurrent()
+            }
+        }
     }
 }
 

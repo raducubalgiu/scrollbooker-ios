@@ -7,6 +7,13 @@
 
 import Observation
 import AVKit
+import Foundation
+
+extension Collection {
+    subscript(safe index: Index) -> Element? {
+        return indices.contains(index) ? self[index] : nil
+    }
+}
 
 enum FeedPostsState {
     case idle
@@ -19,8 +26,13 @@ enum FeedPostsState {
 @Observable
 class BaseFeedViewModel {
     private(set) var posts: [Post] = []
-    var players: [String: AVPlayer] = [:]
-    var currentIndex: Int = 0
+    
+    var players: [Int: AVPlayer] = [:]
+    var currentIndex: Int = 0 {
+        didSet {
+            updateWindow(at: currentIndex)
+        }
+    }
     
     private(set) var viewState: FeedPostsState = .idle
     private(set) var isPaging: Bool = false
@@ -169,5 +181,92 @@ class BaseFeedViewModel {
             }
             operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
+    }
+    
+    func updateWindow(at index: Int) {
+        guard !posts.isEmpty else { return }
+        
+        let currentPostId = posts[safe: index]?.id
+        let prevPostId = posts[safe: index - 1]?.id
+        let nextPostId = posts[safe: index + 1]?.id
+        
+        let activeIds = Set([prevPostId, currentPostId, nextPostId].compactMap { $0 })
+        
+        for (postId, player) in players {
+            if !activeIds.contains(postId) {
+                player.pause()
+                player.replaceCurrentItem(with: nil)
+                players.removeValue(forKey: postId)
+            }
+        }
+        
+        if let currentId = currentPostId {
+            let currentPlayer = getOrCreatePlayer(for: index)
+            currentPlayer.isMuted = false
+            currentPlayer.play()
+        }
+        
+        if let prevId = prevPostId, index - 1 >= 0 {
+            let prevPlayer = getOrCreatePlayer(for: index - 1)
+            prevPlayer.isMuted = true
+        }
+        
+        if let nextId = nextPostId, index + 1 < posts.count {
+            let nextPlayer = getOrCreatePlayer(for: index + 1)
+            nextPlayer.isMuted = true
+        }
+    }
+        
+    func playCurrent() {
+        guard let currentPostId = posts[safe: currentIndex]?.id,
+              let player = players[currentPostId] else { return }
+        player.isMuted = false
+        player.play()
+    }
+        
+    func pauseAll() {
+        for player in players.values {
+            player.pause()
+        }
+    }
+        
+    private func getOrCreatePlayer(for index: Int) -> AVPlayer {
+        let post = posts[index]
+        
+        // Dacă playerul există deja în fereastră, îl returnăm intact
+        if let existingPlayer = players[post.id] {
+            return existingPlayer
+        }
+        
+        // Extragere URL valid din structura ta PostMediaFile
+        guard let videoUrlString = post.mediaFiles.first?.url,
+              let url = URL(string: videoUrlString) else {
+            return AVPlayer()
+        }
+        
+        // Configurăm un AVPlayerItem optimizat pentru streaming rapid
+        let asset = AVURLAsset(url: url)
+        let playerItem = AVPlayerItem(asset: asset)
+        
+        // Îi spunem sistemului să încarce buffer-ul agresiv în avans
+        playerItem.automaticallyPreservesTimeOffsetFromLive = true
+        playerItem.preferredForwardBufferDuration = 5
+        
+        let newPlayer = AVPlayer(playerItem: playerItem)
+        newPlayer.actionAtItemEnd = .none // Permite loop-ul infinit nativ ulterior
+        
+        // Înregistrăm observatorul de loop (când clipul ajunge la final, revine la secunda 0)
+        NotificationCenter.default.addObserver(
+            forName: .AVPlayerItemDidPlayToEndTime,
+            object: playerItem,
+            queue: .main
+        ) { _ in
+            newPlayer.seek(to: .zero)
+            newPlayer.play()
+        }
+        
+        // Salvăm în dicționarul ferestrei active
+        players[post.id] = newPlayer
+        return newPlayer
     }
 }

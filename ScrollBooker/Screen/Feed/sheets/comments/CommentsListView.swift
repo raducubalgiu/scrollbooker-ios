@@ -8,26 +8,27 @@
 import SwiftUI
 
 struct CommentsListView: View {
-    let comments: [Comment]
+    let items: [CommentUIItem]
     let viewModel: CommentsViewModel
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onDismiss: () -> Void
     let onPrepareReply: (Int, Int?, String) -> Void
-    
+
     var body: some View {
         ScrollView(.vertical) {
             LazyVStack(spacing: 16) {
-                ForEach(comments, id: \.id) { comment in
+                ForEach(items, id: \.id) { item in
                     CommentGroupRow(
-                        comment: comment,
+                        item: item,
                         viewModel: viewModel,
                         onNavigateToUserProfile: onNavigateToUserProfile,
                         onDismiss: onDismiss,
                         onPrepareReply: onPrepareReply
                     )
+                    .equatable()
                     .onAppear {
                         Task {
-                            await viewModel.loadMoreIfNeeded(currentComment: comment)
+                            await viewModel.loadMoreIfNeeded(currentItem: item)
                         }
                     }
                 }

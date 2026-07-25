@@ -11,11 +11,11 @@ import Observation
 enum CommentsState: Equatable {
     case idle
     case loading
-    case success([Comment])
+    case success([CommentUIItem])
     case error(String)
-    
-    var comments: [Comment]? {
-        if case .success(let comments) = self { return comments }
+
+    var items: [CommentUIItem]? {
+        if case .success(let items) = self { return items }
         return nil
     }
 }
@@ -27,46 +27,39 @@ final class CommentsViewModel: HasLoadingState {
     private(set) var isPaging: Bool = false
     private(set) var operationErrorMessage: String? = nil
     private(set) var isPerformingAction: Bool = false
-    
-    private(set) var isLikeActionPending: [Int: Bool] = [:]
-    
+
     private let postId: Int
     private let createCommentUseCase: CreateCommentUseCase
     private let getPostCommentsUseCase: GetPostCommentsUseCase
     private let likeCommentUseCase: LikeCommentUseCase
     private let unlikeCommentUseCase: UnlikeCommentUseCase
     private let getCommentRepliesUseCase: GetCommentRepliesUseCase
-    
+
     private var page = 1
     private let limit = 20
     private var totalCount = 0
-    
-    private(set) var commentReplies: [Int: [Comment]] = [:]
-    private(set) var repliesPage: [Int: Int] = [:]
-    private(set) var repliesTotalCount: [Int: Int] = [:]
-    private(set) var isRepliesLoading: [Int: Bool] = [:]
-    
+
     private let repliesLimit = 10
-    
+
     var replyingToUsername: String? = nil
-        
+
     var inputPlaceholder: String {
         if let username = replyingToUsername {
             return "Răspunde-i lui @\(username)..."
         }
         return "Adaugă un comentariu..."
     }
-    
+
     var hasMore: Bool {
-        guard let currentCount = viewState.comments?.count else { return false }
+        guard let currentCount = viewState.items?.count else { return false }
         return currentCount < totalCount
     }
-    
+
     var isLoading: Bool {
         get { if case .loading = viewState { return true }; return isPerformingAction }
         set { isPerformingAction = newValue }
     }
-    
+
     var errorMessage: String? {
         get {
             if case .error(let msg) = viewState { return msg }
@@ -74,7 +67,7 @@ final class CommentsViewModel: HasLoadingState {
         }
         set { operationErrorMessage = newValue }
     }
-    
+
     init(
         postId: Int,
         getPostCommentsUseCase: GetPostCommentsUseCase,
@@ -90,38 +83,38 @@ final class CommentsViewModel: HasLoadingState {
         self.unlikeCommentUseCase = unlikeCommentUseCase
         self.getCommentRepliesUseCase = getCommentRepliesUseCase
     }
-    
+
     func loadComments() async {
-        guard viewState.comments == nil else { return }
+        guard viewState.items == nil else { return }
         guard viewState != .loading else { return }
-        
+
         page = 1
         await fetch(isFirstPage: true)
     }
-    
-    func loadMoreIfNeeded(currentComment: Comment?) async {
-        guard let comments = viewState.comments, !comments.isEmpty else { return }
+
+    func loadMoreIfNeeded(currentItem: CommentUIItem?) async {
+        guard let items = viewState.items, !items.isEmpty else { return }
         guard hasMore, !isPaging, !isLoading else { return }
-        
-        guard let current = currentComment,
-              current.id == comments.last?.id
+
+        guard let current = currentItem,
+              current.id == items.last?.id
         else { return }
-        
+
         isPaging = true
         await fetch(isFirstPage: false)
         isPaging = false
     }
-    
+
     private func fetch(isFirstPage: Bool) async {
-        if isFirstPage && viewState.comments != nil {
+        if isFirstPage && viewState.items != nil {
             return
         }
-        
+
         if isFirstPage {
             viewState = .loading
             operationErrorMessage = nil
         }
-        
+
         do {
             let response: PaginatedResponse<Comment>
             if isFirstPage {
@@ -139,28 +132,24 @@ final class CommentsViewModel: HasLoadingState {
                     limit: limit
                 )
             }
-            
+
+            let newItems = response.results.map { CommentUIItem(comment: $0) }
+
             if isFirstPage {
-                if response.results.isEmpty {
-                    viewState = .success([])
-                } else {
-                    viewState = .success(response.results)
-                }
+                viewState = .success(newItems)
             } else {
-                let currentComments = viewState.comments ?? []
-                let existingIds = Set(currentComments.map(\.id))
-                
-                let uniqueNewComments = response.results.filter { !existingIds.contains($0.id) }
-                
-                viewState = .success(currentComments + uniqueNewComments)
+                let currentItems = viewState.items ?? []
+                let existingIds = Set(currentItems.map(\.id))
+                let uniqueNewItems = newItems.filter { !existingIds.contains($0.id) }
+                viewState = .success(currentItems + uniqueNewItems)
             }
-            
+
             totalCount = response.count
             page += 1
-            
+
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            
+
             if isFirstPage {
                 viewState = .error(message)
             } else {
@@ -169,14 +158,14 @@ final class CommentsViewModel: HasLoadingState {
             }
         }
     }
-    
+
     func sendComment(text: String, parentId: Int?, replyToCommentId: Int?) async {
         let cleanedText = text.trimmingCharacters(in: .whitespacesAndNewlines)
         guard !cleanedText.isEmpty else { return }
-        
+
         operationErrorMessage = nil
         isPerformingAction = true
-        
+
         do {
             let realComment = try await createCommentUseCase(
                 postId: postId,
@@ -184,14 +173,12 @@ final class CommentsViewModel: HasLoadingState {
                 parentId: parentId,
                 replyToCommentId: replyToCommentId
             )
-            
+
             if let rootId = parentId {
-                let currentReplies = commentReplies[rootId] ?? []
-                commentReplies[rootId] = currentReplies + [realComment]
-                repliesTotalCount[rootId] = (repliesTotalCount[rootId] ?? 0) + 1
+                appendReply(realComment, toParent: rootId)
             } else {
-                let currentComments = viewState.comments ?? []
-                viewState = .success([realComment] + currentComments)
+                let currentItems = viewState.items ?? []
+                viewState = .success([CommentUIItem(comment: realComment)] + currentItems)
                 totalCount += 1
             }
 
@@ -202,79 +189,67 @@ final class CommentsViewModel: HasLoadingState {
             isPerformingAction = false
         }
     }
-    
-    private func insertNewCommentIntoState(_ newComment: Comment) {
-        let currentComments = viewState.comments ?? []
-        let updatedComments = [newComment] + currentComments
-        
-        viewState = .success(updatedComments)
-        totalCount += 1
+
+    private func appendReply(_ reply: Comment, toParent parentId: Int) {
+        let replyItem = CommentUIItem(comment: reply)
+
+        mutateItem(id: parentId) { parent in
+            switch parent.repliesState {
+            case .loaded(let replies, let nextPage, let total):
+                parent.repliesState = .loaded(replies: replies + [replyItem], nextPage: nextPage, totalCount: total + 1)
+            case .notLoaded, .loading:
+                parent.repliesState = .loaded(replies: [replyItem], nextPage: 1, totalCount: parent.repliesCount + 1)
+            }
+            parent.comment = parent.comment.copy(repliesCount: parent.repliesCount + 1)
+        }
     }
-    
+
     func toggleLikeComment(for commentId: Int) async {
-        guard isLikeActionPending[commentId] != true else { return }
-        guard let currentComments = viewState.comments else { return }
-        
-        guard let index = currentComments.firstIndex(where: { $0.id == commentId }) else { return }
-        let targetComment = currentComments[index]
-        
-        let originalComment = targetComment
-        let isCurrentlyLiked = targetComment.isLiked
-        
-        let nextIsLiked = !isCurrentlyLiked
-        let nextLikeCount = nextIsLiked ? targetComment.likeCount + 1 : max(0, targetComment.likeCount - 1)
-        
-        let updatedComment = targetComment.copy(
-            likeCount: nextLikeCount,
-            isLiked: nextIsLiked,
-        )
-        
-        var updatedList = currentComments
-        updatedList[index] = updatedComment
-        viewState = .success(updatedList)
-        
-        isLikeActionPending[commentId] = true
-        
+        guard let items = viewState.items,
+              let target = findItem(id: commentId, in: items) else { return }
+
+        guard !target.isLikeActionPending else { return }
+
+        let originalIsLiked = target.isLiked
+        let originalLikeCount = target.likeCount
+        let nextIsLiked = !originalIsLiked
+        let nextLikeCount = nextIsLiked ? target.likeCount + 1 : max(0, target.likeCount - 1)
+
+        mutateItem(id: commentId) { item in
+            item.comment = item.comment.copy(likeCount: nextLikeCount, isLiked: nextIsLiked)
+            item.isLikeActionPending = true
+        }
+
         do {
-            if isCurrentlyLiked {
+            if originalIsLiked {
                 _ = try await unlikeCommentUseCase(commentId: commentId)
             } else {
                 _ = try await likeCommentUseCase(commentId: commentId)
             }
-            
-            isLikeActionPending[commentId] = false
-            
+
+            mutateItem(id: commentId) { $0.isLikeActionPending = false }
+
         } catch {
-            if let currentListNow = viewState.comments,
-               let indexNow = currentListNow.firstIndex(where: { $0.id == commentId }) {
-                var rollbackList = currentListNow
-                rollbackList[indexNow] = originalComment
-                viewState = .success(rollbackList)
+            mutateItem(id: commentId) { item in
+                item.comment = item.comment.copy(likeCount: originalLikeCount, isLiked: originalIsLiked)
+                item.isLikeActionPending = false
             }
-            
-            isLikeActionPending[commentId] = false
             operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             print("Eroare la toggle like pentru comentariul \(commentId): \(error.localizedDescription)")
         }
     }
-    
-    func remainingRepliesCount(for parentComment: Comment) -> Int {
-        guard let loadedReplies = commentReplies[parentComment.id] else {
-            return parentComment.repliesCount
-        }
-        
-        let serverTotal = repliesTotalCount[parentComment.id] ?? parentComment.repliesCount
-        return max(0, serverTotal - loadedReplies.count)
-    }
-    
+
     func loadReplies(for parentId: Int) async {
-        guard isRepliesLoading[parentId] != true else { return }
-        
-        let currentPage = repliesPage[parentId] ?? 1
+        guard let items = viewState.items,
+              let parent = items.first(where: { $0.id == parentId }),
+              !parent.repliesState.isLoading else { return }
+
+        let currentPage = parent.repliesState.currentPage
         let isFirstPage = currentPage == 1
-        
-        isRepliesLoading[parentId] = true
-        
+        let existingReplies = parent.repliesState.loadedReplies
+
+        mutateItem(id: parentId) { $0.repliesState = .loading }
+
         do {
             let response = try await getCommentRepliesUseCase(
                 postId: postId,
@@ -282,25 +257,58 @@ final class CommentsViewModel: HasLoadingState {
                 page: currentPage,
                 limit: repliesLimit
             )
-            
-            let fetchedReplies = response.results
-            let currentLoaded = commentReplies[parentId] ?? []
-            
+
+            let fetchedReplies = response.results.map { CommentUIItem(comment: $0) }
+            let mergedReplies: [CommentUIItem]
             if isFirstPage {
-                commentReplies[parentId] = fetchedReplies
+                mergedReplies = fetchedReplies
             } else {
-                let existingIds = Set(currentLoaded.map(\.id))
-                let uniqueReplies = fetchedReplies.filter { !existingIds.contains($0.id) }
-                commentReplies[parentId] = currentLoaded + uniqueReplies
+                let existingIds = Set(existingReplies.map(\.id))
+                mergedReplies = existingReplies + fetchedReplies.filter { !existingIds.contains($0.id) }
             }
-            
-            repliesTotalCount[parentId] = response.count
-            repliesPage[parentId] = currentPage + 1
-            isRepliesLoading[parentId] = false
-            
+
+            mutateItem(id: parentId) { item in
+                item.repliesState = .loaded(replies: mergedReplies, nextPage: currentPage + 1, totalCount: response.count)
+                item.comment = item.comment.copy(repliesCount: response.count)
+            }
+
         } catch {
-            isRepliesLoading[parentId] = false
+            mutateItem(id: parentId) { item in
+                item.repliesState = isFirstPage
+                    ? .notLoaded
+                    : .loaded(replies: existingReplies, nextPage: currentPage, totalCount: item.repliesCount)
+            }
             print("Eroare la încărcarea răspunsurilor pentru \(parentId): \(error.localizedDescription)")
         }
+    }
+
+    private func mutateItem(id: Int, _ transform: (inout CommentUIItem) -> Void) {
+        guard var items = viewState.items else { return }
+
+        if let index = items.firstIndex(where: { $0.id == id }) {
+            transform(&items[index])
+            viewState = .success(items)
+            return
+        }
+
+        for parentIndex in items.indices {
+            guard case .loaded(var replies, let nextPage, let total) = items[parentIndex].repliesState,
+                  let replyIndex = replies.firstIndex(where: { $0.id == id }) else { continue }
+
+            transform(&replies[replyIndex])
+            items[parentIndex].repliesState = .loaded(replies: replies, nextPage: nextPage, totalCount: total)
+            viewState = .success(items)
+            return
+        }
+    }
+
+    private func findItem(id: Int, in items: [CommentUIItem]) -> CommentUIItem? {
+        if let found = items.first(where: { $0.id == id }) { return found }
+        for item in items {
+            if let found = item.repliesState.loadedReplies.first(where: { $0.id == id }) {
+                return found
+            }
+        }
+        return nil
     }
 }

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CommentGroupRow: View {
-    let comment: Comment
+    let item: CommentUIItem
     let viewModel: CommentsViewModel
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onDismiss: () -> Void
@@ -17,70 +17,69 @@ struct CommentGroupRow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             CommentRowView(
-                comment: comment,
-                isLikeActionPending: viewModel.isLikeActionPending[comment.id] ?? false,
+                item: item,
                 onLikeClick: {
-                    Task { await viewModel.toggleLikeComment(for: comment.id) }
+                    Task { await viewModel.toggleLikeComment(for: item.id) }
                 },
                 onReplyClick: {
-                    onPrepareReply(comment.id, nil, comment.user.username)
+                    onPrepareReply(item.id, nil, item.user.username)
                 },
-                onNavigateToUserProfile: { clickedComment in
+                onNavigateToUserProfile: { clicked in
                     onDismiss()
                     onNavigateToUserProfile(
                         ProfileNavigationParams(
-                            userId: clickedComment.userId,
-                            username: clickedComment.username
+                            userId: clicked.userId,
+                            username: clicked.username
                         )
                     )
                 }
             )
-            
-            if let replies = viewModel.commentReplies[comment.id] {
-                ForEach(replies, id: \.id) { reply in
-                    CommentRowView(
-                        comment: reply,
-                        isLikeActionPending: viewModel.isLikeActionPending[reply.id] ?? false,
-                        onLikeClick: {
-                            Task { await viewModel.toggleLikeComment(for: reply.id) }
-                        },
-                        onReplyClick: {
-                            onPrepareReply(comment.id, reply.id, reply.user.username)
-                        },
-                        onNavigateToUserProfile: { clickedReply in
-                            onDismiss()
-                            onNavigateToUserProfile(
-                                ProfileNavigationParams(
-                                    userId: clickedReply.userId,
-                                    username: clickedReply.username
-                                )
+            .equatable()
+
+            ForEach(item.repliesState.loadedReplies, id: \.id) { reply in
+                CommentRowView(
+                    item: reply,
+                    onLikeClick: {
+                        Task { await viewModel.toggleLikeComment(for: reply.id) }
+                    },
+                    onReplyClick: {
+                        onPrepareReply(item.id, reply.id, reply.user.username)
+                    },
+                    onNavigateToUserProfile: { clicked in
+                        onDismiss()
+                        onNavigateToUserProfile(
+                            ProfileNavigationParams(
+                                userId: clicked.userId,
+                                username: clicked.username
                             )
-                        }
-                    )
-                    .padding(.leading, 44)
-                }
-            }
-            
-            let remaining = viewModel.remainingRepliesCount(for: comment)
-            
-            if remaining > 0 {
-                Button {
-                    Task {
-                        await viewModel.loadReplies(for: comment.id)
+                        )
                     }
+                )
+                .equatable()
+                .padding(.leading, 44)
+                .padding(.top)
+            }
+
+            if item.remainingRepliesCount > 0 {
+                Button {
+                    Task { await viewModel.loadReplies(for: item.id) }
                 } label: {
                     HStack(spacing: 8) {
                         Rectangle()
                             .fill(Color.gray.opacity(0.4))
                             .frame(width: 24, height: 1)
-                        
-                        if viewModel.isRepliesLoading[comment.id] == true {
+
+                        if item.repliesState.isLoading {
                             ProgressView()
                                 .scaleEffect(0.8)
                         } else {
-                            Text(viewModel.commentReplies[comment.id] == nil ? "Vezi toate cele \(remaining) răspunsuri" : "Vezi încă \(remaining) răspunsuri")
-                                .font(.system(size: 12, weight: .bold))
-                                .foregroundColor(.gray)
+                            Text(
+                                item.repliesState.loadedReplies.isEmpty
+                                    ? "Vezi toate cele \(item.remainingRepliesCount) răspunsuri"
+                                    : "Vezi încă \(item.remainingRepliesCount) răspunsuri"
+                            )
+                            .font(.system(size: 12, weight: .bold))
+                            .foregroundColor(.gray)
                         }
                     }
                     .padding(.leading, 44)
@@ -89,5 +88,11 @@ struct CommentGroupRow: View {
                 .padding(.top, 4)
             }
         }
+    }
+}
+
+extension CommentGroupRow: Equatable {
+    static func == (lhs: CommentGroupRow, rhs: CommentGroupRow) -> Bool {
+        lhs.item == rhs.item
     }
 }

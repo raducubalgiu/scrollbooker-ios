@@ -13,20 +13,23 @@ struct ExploreTab: View {
     let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
-    
+
     @State private var currentIndex: Int? = 0
     @State private var activeSheet: FeedSheetType? = nil
-    
+
+    @State private var commentsCache = ViewModelCache<Int, CommentsViewModel>()
+    @State private var linkedProductsCache = ViewModelCache<Int, LinkedProductsViewModel>()
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            
+
             switch viewModel.viewState {
             case .idle, .loading:
                 ProgressView()
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.black)
-                
+
             case .empty:
                 NoDataView(
                     title: "Postari",
@@ -38,7 +41,7 @@ struct ExploreTab: View {
                 ErrorView(message: message) {
                     Task { await viewModel.refreshPosts() }
                 }
-                
+
             case .success(let posts):
                 ScrollView(.vertical) {
                     LazyVStack(spacing: 0) {
@@ -74,25 +77,25 @@ struct ExploreTab: View {
             switch sheetType {
             case .comments(let postId):
                 CommentsSheetView(
-                    viewModel: makeCommentsVM(postId),
+                    viewModel: commentsCache.viewModel(for: postId, make: makeCommentsVM),
                     onNavigateToUserProfile: onNavigateToUserProfile
                 )
                 .presentationDetents([.fraction(0.7), .large])
                 .presentationDragIndicator(.visible)
-                
+
             case .reviews(let userId):
                 ReviewsSheetView(userId: userId)
                     .presentationDetents([.fraction(0.7)])
                     .presentationDragIndicator(.visible)
-                
+
             case .linkedProducts(let postId):
                 LinkedProductsSheetView(
-                    viewModel: makeLinkedProductsVM(postId),
+                    viewModel: linkedProductsCache.viewModel(for: postId, make: makeLinkedProductsVM),
                     onNavigateToBooking: onNavigateToBooking
                 )
                 .presentationDetents([.fraction(0.7), .large])
                 .presentationDragIndicator(.visible)
-                
+
             case .moreOptions(let postId):
                 MoreOptionsSheetView(postId: postId)
                     .presentationDetents([.fraction(0.7)])
@@ -105,7 +108,7 @@ struct ExploreTab: View {
         .onChange(of: currentIndex) { _, newIndex in
             guard let index = newIndex, index < viewModel.posts.count else { return }
             let currentPost = viewModel.posts[index]
-            
+
             Task {
                 await viewModel.loadMore(currentPost: currentPost)
             }

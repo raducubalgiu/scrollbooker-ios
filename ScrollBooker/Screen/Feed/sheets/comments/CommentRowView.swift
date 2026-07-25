@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct CommentRowView: View {
-    let comment: Comment
-    let isLikeActionPending: Bool
+    let item: CommentUIItem
     var onLikeClick: () -> Void
     var onReplyClick: () -> Void
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
@@ -17,36 +16,36 @@ struct CommentRowView: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             AvatarView(
-                imageURL: comment.user.avatarURL,
-                size: .s,
+                imageURL: item.user.avatarURL,
+                size: .m,
                 onClick: {
                     onNavigateToUserProfile(
                         ProfileNavigationParams(
-                            userId: comment.user.id,
-                            username: comment.user.username
+                            userId: item.user.id,
+                            username: item.user.username
                         )
                     )
                 }
             )
-            
+
             VStack(alignment: .leading, spacing: 4) {
-                Text(comment.user.username)
+                Text(item.user.username)
                     .font(.system(size: 14, weight: .semibold))
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                
-                Text(comment.text)
+
+                Text(item.text)
                     .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
-                
+
                 HStack(alignment: .center) {
                     HStack(spacing: 16) {
                         Text("2d")
                             .font(.system(size: 14, weight: .regular))
                             .foregroundColor(.gray)
-                        
+
                         Button {
                             onReplyClick()
                         } label: {
@@ -56,33 +55,26 @@ struct CommentRowView: View {
                         }
                         .buttonStyle(.plain)
                     }
-                    
+
                     Spacer()
-                    
+
                     HStack(spacing: 12) {
-//                        if comment.likedbyPostAuthor {
-//                            AvatarView(
-//                                imageURL: "",
-//                                size: .xs
-//                            )
-//                        }
-                        
                         Button {
-                            guard !isLikeActionPending else { return }
+                            guard !item.isLikeActionPending else { return }
                             onLikeClick()
                         } label: {
                             HStack(spacing: 6) {
-                                if comment.likeCount > 0 {
-                                    Text("\(comment.likeCount)")
+                                if item.likeCount > 0 {
+                                    Text("\(item.likeCount)")
                                         .font(.system(size: 14, weight: .semibold))
                                         .fontWeight(.semibold)
-                                        .foregroundColor(comment.isLiked ? .red : .gray)
+                                        .foregroundColor(item.isLiked ? .red : .gray)
                                         .transition(.scale.combined(with: .opacity))
                                 }
-                                
-                                Image(systemName: comment.isLiked ? "heart.fill" : "heart")
+
+                                Image(systemName: item.isLiked ? "heart.fill" : "heart")
                                     .font(.system(size: 18))
-                                    .foregroundColor(comment.isLiked ? .red : .gray)
+                                    .foregroundColor(item.isLiked ? .red : .gray)
                             }
                         }
                         .buttonStyle(.plain)
@@ -92,7 +84,12 @@ struct CommentRowView: View {
             }
         }
         .padding(.horizontal)
-        .opacity(isLikeActionPending ? 0.7 : 1.0)
+        .opacity(item.isLikeActionPending ? 0.7 : 1.0)
     }
 }
 
+extension CommentRowView: Equatable {
+    static func == (lhs: CommentRowView, rhs: CommentRowView) -> Bool {
+        lhs.item == rhs.item
+    }
+}

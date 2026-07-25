@@ -17,6 +17,9 @@ struct FollowingTab: View {
     @State private var currentIndex: Int? = 0
     @State private var activeSheet: FeedSheetType? = nil
     
+    @State private var commentsCache = ViewModelCache<Int, CommentsViewModel>()
+    @State private var linkedProductsCache = ViewModelCache<Int, LinkedProductsViewModel>()
+    
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
@@ -74,25 +77,25 @@ struct FollowingTab: View {
             switch sheetType {
             case .comments(let postId):
                 CommentsSheetView(
-                    viewModel: makeCommentsVM(postId),
+                    viewModel: commentsCache.viewModel(for: postId, make: makeCommentsVM),
                     onNavigateToUserProfile: onNavigateToUserProfile
                 )
                 .presentationDetents([.fraction(0.7), .large])
                 .presentationDragIndicator(.visible)
-                
+
             case .reviews(let userId):
                 ReviewsSheetView(userId: userId)
                     .presentationDetents([.fraction(0.7)])
                     .presentationDragIndicator(.visible)
-                
+
             case .linkedProducts(let postId):
                 LinkedProductsSheetView(
-                    viewModel: makeLinkedProductsVM(postId),
+                    viewModel: linkedProductsCache.viewModel(for: postId, make: makeLinkedProductsVM),
                     onNavigateToBooking: onNavigateToBooking
                 )
                 .presentationDetents([.fraction(0.7), .large])
                 .presentationDragIndicator(.visible)
-                
+
             case .moreOptions(let postId):
                 MoreOptionsSheetView(postId: postId)
                     .presentationDetents([.fraction(0.7)])

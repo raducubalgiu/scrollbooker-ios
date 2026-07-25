@@ -30,7 +30,7 @@ struct ReviewsSheetSuccessView: View {
                         selectedRatings: viewModel.selectedRatings,
                         onRatingClick: { rating in
                             Task {
-                                await viewModel.toggleRatingFilter(rating, activeTab: selectedTab)
+                                await viewModel.toggleRatingFilter(rating)
                             }
                         }
                     )
@@ -53,10 +53,10 @@ struct ReviewsSheetSuccessView: View {
     @ViewBuilder
     private func getTabContent(for tab: ReviewTab) -> some View {
         switch tab {
-        case .written:
-            WrittenReviewsTabView(viewModel: viewModel)
-        case .video:
-            VideoReviewsTabView(viewModel: viewModel)
+            case .written:
+                WrittenReviewsTabView(viewModel: viewModel)
+            case .video:
+                VideoReviewsTabView(viewModel: viewModel)
         }
     }
 }

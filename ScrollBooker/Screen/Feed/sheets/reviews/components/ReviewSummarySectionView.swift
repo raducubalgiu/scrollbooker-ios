@@ -23,12 +23,12 @@ struct ReviewsSummarySectionView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 24) {
             VStack(spacing: 6) {
-                Text(String(format: "%.1f", summary.ratingsAverage))
+                Text(String(summary.ratingsAverage.formatRating()))
                     .font(.system(size: 32, weight: .bold))
                 
                 StarRatingView(rating: Double(summary.ratingsAverage))
                 
-                Text("100 recenzii")
+                Text("\(summary.ratingsCount) recenzii")
                     .font(.subheadline)
                     .foregroundColor(.gray)
             }
@@ -56,74 +56,5 @@ struct ReviewsSummarySectionView: View {
         .padding(.trailing, 8)
         .background(Color.backgroundSB)
         .cornerRadius(8)
-    }
-}
-
-struct ReviewSummaryCheckbox: View {
-    let rating: Int
-    let progress: CGFloat
-    let count: Int
-    let isEnabled: BooleanLiteralType
-    let isChecked: Bool
-    let onTap: () -> Void
-    
-    var body: some View {
-        HStack(spacing: 10) {
-            ZStack {
-                if isChecked {
-                    Image(systemName: "checkmark")
-                        .font(.system(size: 10, weight: .bold))
-                        .foregroundColor(.white)
-                }
-            }
-            .frame(width: 18, height: 18)
-            .background(
-                Group {
-                    if !isEnabled {
-                        Color.dividerSB
-                    } else if isChecked {
-                        Color.primarySB
-                    } else {
-                        Color.clear
-                    }
-                }
-            )
-            .cornerRadius(4)
-            .overlay(
-                RoundedRectangle(cornerRadius: 4)
-                    .stroke(
-                        !isEnabled ? Color.dividerSB : (isChecked ? Color.accentColor : Color.dividerSB),
-                        lineWidth: 1
-                    )
-            )
-            .contentShape(Rectangle())
-            .onTapGesture {
-                if isEnabled { onTap() }
-            }
-            
-            Text("\(rating)")
-                .font(.body)
-                .bold()
-                .frame(width: 16, alignment: .trailing)
-            
-            GeometryReader { geometry in
-                ZStack(alignment: .leading) {
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.gray.opacity(0.4))
-                        .frame(height: 5)
-                    
-                    RoundedRectangle(cornerRadius: 2)
-                        .fill(Color.primarySB)
-                        .frame(width: geometry.size.width * progress, height: 5)
-                }
-                .frame(maxHeight: .infinity, alignment: .center)
-            }
-            .frame(height: 5)
-            
-            Text("\(count)")
-                .font(.body)
-                .bold()
-                .frame(width: 35, alignment: .trailing)
-        }
     }
 }

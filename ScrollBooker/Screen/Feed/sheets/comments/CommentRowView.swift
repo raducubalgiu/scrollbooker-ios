@@ -17,7 +17,7 @@ struct CommentRowView: View {
         HStack(alignment: .top, spacing: 12) {
             AvatarView(
                 imageURL: item.user.avatarURL,
-                size: .m,
+                size: .s,
                 onClick: {
                     onNavigateToUserProfile(
                         ProfileNavigationParams(

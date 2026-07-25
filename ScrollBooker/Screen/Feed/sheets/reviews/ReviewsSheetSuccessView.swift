@@ -48,9 +48,6 @@ struct ReviewsSheetSuccessView: View {
                     }
                 }
             }
-            .refreshable {
-                await viewModel.refresh(activeTab: selectedTab)
-            }
         }
     }
     

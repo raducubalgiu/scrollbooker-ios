@@ -82,23 +82,26 @@ struct ExploreTab: View {
                     viewModel: commentsCache.viewModel(for: postId, make: makeCommentsVM),
                     onNavigateToUserProfile: onNavigateToUserProfile
                 )
-                .presentationDetents([.fraction(0.7), .large])
+                .presentationDetents([.fraction(0.7), .fraction(0.999)])
                 .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
 
             case .reviews(let userId):
                 ReviewsSheetView(
                     viewModel: reviewsCache.viewModel(for: userId, make: makeReviewsVM)
                 )
-                .presentationDetents([.fraction(0.7), .large])
-                    .presentationDragIndicator(.visible)
+                .presentationDetents([.fraction(0.7), .fraction(0.999)])
+                .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
 
             case .linkedProducts(let postId):
                 LinkedProductsSheetView(
                     viewModel: linkedProductsCache.viewModel(for: postId, make: makeLinkedProductsVM),
                     onNavigateToBooking: onNavigateToBooking
                 )
-                .presentationDetents([.fraction(0.7), .large])
+                .presentationDetents([.fraction(0.7), .fraction(0.999)])
                 .presentationDragIndicator(.visible)
+                .presentationCornerRadius(25)
 
             case .moreOptions(let postId):
                 MoreOptionsSheetView(postId: postId)

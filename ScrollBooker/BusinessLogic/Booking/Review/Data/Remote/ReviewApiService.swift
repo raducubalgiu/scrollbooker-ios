@@ -12,6 +12,8 @@ protocol ReviewApiService: Sendable {
     func getReviewSummary(userId: Int) async throws -> ReviewSummaryDto
     func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewDto
     func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewDto
+    func likeReview(id: Int) async throws -> NoContent
+    func unlikeReview(id: Int) async throws -> NoContent
 }
 
 final class ReviewAPIImpl: ReviewApiService {
@@ -70,6 +72,20 @@ final class ReviewAPIImpl: ReviewApiService {
             "reviews/\(id)",
             method: .put,
             body: request
+        )
+    }
+    
+    func likeReview(id: Int) async throws -> NoContent {
+        return try await client.request(
+            "reviews/\(id)/likes",
+            method: .post
+        )
+    }
+    
+    func unlikeReview(id: Int) async throws -> NoContent {
+        return try await client.request(
+            "reviews/\(id)/likes",
+            method: .delete
         )
     }
 }

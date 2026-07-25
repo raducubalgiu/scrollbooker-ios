@@ -33,12 +33,13 @@ struct WrittenReviewsTabView: View {
                             reviewUi: uiState,
                             onNavigateToReviewDetail: {},
                             onLike: {
-                               
+                                Task {
+                                    await viewModel.toggleLikeWrittenReview(id: review.id)
+                                }
                             }
                         )
                         
-                        Divider()
-                            .padding(.horizontal, 16)
+                        Divider().padding(.horizontal, 16)
                     }
                     
                     if viewModel.canLoadMoreWritten {

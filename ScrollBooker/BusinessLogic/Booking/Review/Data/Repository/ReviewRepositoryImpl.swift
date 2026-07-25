@@ -14,7 +14,12 @@ final class ReviewRepositoryImpl: ReviewRepository {
         self.api = api
     }
     
-    func getWrittenReviews(userId: Int, page: Int, limit: Int, ratings: [Int]?) async throws -> PaginatedResponse<Review> {
+    func getWrittenReviews(
+        userId: Int,
+        page: Int,
+        limit: Int,
+        ratings: [Int]?
+    ) async throws -> PaginatedResponse<Review> {
         let dtoResponse = try await api.getWrittenReviews(userId: userId, page: page, limit: limit, ratings: ratings)
         
         return PaginatedResponse(dtoResponse) {
@@ -36,5 +41,13 @@ final class ReviewRepositoryImpl: ReviewRepository {
     func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> Review {
         let dto = try await api.updateReview(id: id, request: request)
         return Review(dto: dto)
+    }
+    
+    func likeReview(id: Int) async throws -> NoContent {
+        return try await api.likeReview(id: id)
+    }
+    
+    func unlikeReview(id: Int) async throws -> NoContent {
+        return try await api.unlikeReview(id: id)
     }
 }

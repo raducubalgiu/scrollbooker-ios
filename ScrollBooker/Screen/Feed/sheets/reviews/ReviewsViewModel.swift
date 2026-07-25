@@ -58,17 +58,23 @@ final class ReviewsViewModel: HasLoadingState {
     private let getWrittenReviewsUseCase: GetWrittenReviewsUseCase
     private let getReviewSummaryUseCase: GetReviewSummaryUseCase
     private let getVideoReviewsUseCase: GetVideoReviewsUseCase
+    private let likeReviewUseCase: LikeReviewUseCase
+    private let unlikeReviewUseCase: UnlikeReviewUseCase
     
     init(
         userId: Int,
         getWrittenReviewsUseCase: GetWrittenReviewsUseCase,
         getReviewSummaryUseCase: GetReviewSummaryUseCase,
-        getVideoReviewsUseCase: GetVideoReviewsUseCase
+        getVideoReviewsUseCase: GetVideoReviewsUseCase,
+        likeReviewUseCase: LikeReviewUseCase,
+        unlikeReviewUseCase: UnlikeReviewUseCase
     ) {
         self.userId = userId
         self.getWrittenReviewsUseCase = getWrittenReviewsUseCase
         self.getReviewSummaryUseCase = getReviewSummaryUseCase
         self.getVideoReviewsUseCase = getVideoReviewsUseCase
+        self.likeReviewUseCase = likeReviewUseCase
+        self.unlikeReviewUseCase = unlikeReviewUseCase
     }
     
     func loadInitialData(for tab: ReviewTab) async {
@@ -207,5 +213,35 @@ final class ReviewsViewModel: HasLoadingState {
         }
         
         isPerformingAction = false
+    }
+    
+    func toggleLikeWrittenReview(id: Int) async {
+        guard let index = writtenReviews.firstIndex(where: { $0.id == id }) else { return }
+        
+        let originalReview = writtenReviews[index]
+        let currentlyLiked = originalReview.isLiked
+        
+        let newIsLiked = !currentlyLiked
+        let newLikeCount = currentlyLiked ? max(0, originalReview.likeCount - 1) : originalReview.likeCount + 1
+        
+        writtenReviews[index] = originalReview.copy(
+            likeCount: newLikeCount,
+            isLiked: newIsLiked
+        )
+        
+        operationErrorMessage = nil
+        
+        do {
+            if currentlyLiked {
+                _ = try await unlikeReviewUseCase(id: id)
+            } else {
+                _ = try await likeReviewUseCase(id: id)
+            }
+        } catch {
+            if let currentIndex = writtenReviews.firstIndex(where: { $0.id == id }) {
+                writtenReviews[currentIndex] = originalReview
+            }
+            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+        }
     }
 }

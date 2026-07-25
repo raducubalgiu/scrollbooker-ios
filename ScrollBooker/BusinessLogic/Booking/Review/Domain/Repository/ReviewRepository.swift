@@ -10,4 +10,6 @@ protocol ReviewRepository: Sendable {
     func getReviewSummary(userId: Int) async throws -> ReviewSummary
     func createReview(id: Int, request: ReviewCreateRequest) async throws -> Review
     func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> Review
+    func likeReview(id: Int) async throws -> NoContent
+    func unlikeReview(id: Int) async throws -> NoContent
 }

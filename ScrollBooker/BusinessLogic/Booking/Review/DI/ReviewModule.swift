@@ -39,6 +39,14 @@ final class ReviewModule {
         UpdateReviewUseCase(repository: repository)
     }()
     
+    lazy var likeReviewUseCase: LikeReviewUseCase = {
+        LikeReviewUseCase(repository: repository)
+    }()
+    
+    lazy var unlikeReviewUseCase: UnlikeReviewUseCase = {
+        UnlikeReviewUseCase(repository: repository)
+    }()
+    
     func makeReviewsViewModel(
         userId: Int,
         getVideoReviewsUseCase: GetVideoReviewsUseCase
@@ -47,7 +55,9 @@ final class ReviewModule {
             userId: userId,
             getWrittenReviewsUseCase: getWrittenReviewsUseCase,
             getReviewSummaryUseCase: getReviewSummaryUseCase,
-            getVideoReviewsUseCase: getVideoReviewsUseCase
+            getVideoReviewsUseCase: getVideoReviewsUseCase,
+            likeReviewUseCase: likeReviewUseCase,
+            unlikeReviewUseCase: unlikeReviewUseCase
         )
     }
 }

@@ -7,8 +7,6 @@
 
 import Foundation
 
-import Foundation
-
 struct Review: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let rating: Int
@@ -51,3 +49,32 @@ struct ReviewProduct: Identifiable, Equatable, Hashable, Sendable {
     let name: String
 }
 
+extension Review {
+    func copy(
+        id: Int? = nil,
+        rating: Int? = nil,
+        review: String? = nil,
+        productBusinessOwner: ReviewProductBusinessOwner? = nil,
+        customer: ReviewCustomer? = nil,
+        service: ReviewService? = nil,
+        product: ReviewProduct?? = nil,
+        likeCount: Int? = nil,
+        isLiked: Bool? = nil,
+        isLikedByProductOwner: Bool? = nil,
+        createdAt: String? = nil
+    ) -> Review {
+        Review(
+            id: id ?? self.id,
+            rating: rating ?? self.rating,
+            review: review ?? self.review,
+            productBusinessOwner: productBusinessOwner ?? self.productBusinessOwner,
+            customer: customer ?? self.customer,
+            service: service ?? self.service,
+            product: product ?? self.product,
+            likeCount: likeCount ?? self.likeCount,
+            isLiked: isLiked ?? self.isLiked,
+            isLikedByProductOwner: isLikedByProductOwner ?? self.isLikedByProductOwner,
+            createdAt: createdAt ?? self.createdAt
+        )
+    }
+}

@@ -8,24 +8,22 @@
 import SwiftUI
 
 struct PostActionsView: View {
-    var userAvatarURL: URL?
-    var counters: PostCounters
-    var userActions: UserPostActions
-    var ratingsCount: Int
-    var isVideoReview: Bool
+    var post: Post
+
+    @Environment(\.feedActions) private var actions
     
-    var onAvatarClick: () -> Void
-    var onLikeClick: () -> Void
-    var onReviewsClick: () -> Void
-    var onCommentsClick: () -> Void
-    var onBookmarksClick: () -> Void
-    var onShareClick: () -> Void
+    private func makeProfileNavigationParams() -> ProfileNavigationParams {
+        ProfileNavigationParams(
+            userId: post.user.id,
+            username: post.user.username
+        )
+    }
     
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-            if isVideoReview {
+            if post.isVideoReview {
                 AvatarView(
-                    imageURL: userAvatarURL,
+                    imageURL: post.user.avatarURL,
                     size: .l
                 )
                 .padding(.bottom, .s)
@@ -34,20 +32,20 @@ struct PostActionsView: View {
                     rating: 5,
                     size: .l,
                     badgeBackgroundColor: .white,
-                    onClick: onAvatarClick
+                    onClick: { actions.onNavigateToUserProfile(makeProfileNavigationParams()) }
                 )
                 .padding(.bottom, .m)
             }
             
             Button {
-                onLikeClick()
+                actions.onLike(post.id)
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "heart.fill")
                         .font(.system(size: 28))
-                        .foregroundColor(userActions.isLiked ? .errorSB : .white)
+                        .foregroundColor(post.userActions.isLiked ? .errorSB : .white)
                     
-                    Text("\(counters.likeCount)")
+                    Text("\(post.counters.likeCount)")
                         .font(.footnote)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -55,16 +53,16 @@ struct PostActionsView: View {
             }
             .buttonStyle(.plain)
             
-            if !isVideoReview {
+            if !post.isVideoReview {
                 Button {
-                    onReviewsClick()
+                    actions.onOpenReviewsSheet(post.user.id)
                 } label: {
                     VStack(alignment: .center, spacing: 2) {
                         Image(systemName: "clipboard.fill")
                             .font(.system(size: 28))
                             .foregroundColor(.white)
                         
-                        Text("\(ratingsCount)")
+                        Text("\(post.user.ratingsCount)")
                             .font(.footnote)
                             .fontWeight(.semibold)
                             .foregroundColor(.white)
@@ -74,14 +72,14 @@ struct PostActionsView: View {
             }
             
             Button {
-                onCommentsClick()
+                actions.onOpenCommentsSheet(post.id)
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "ellipsis.message.fill")
                         .font(.system(size: 28))
                         .foregroundColor(.white)
                     
-                    Text("\(counters.commentCount)")
+                    Text("\(post.counters.commentCount)")
                         .font(.footnote)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
@@ -90,14 +88,14 @@ struct PostActionsView: View {
             .buttonStyle(.plain)
             
             Button {
-                onBookmarksClick()
+                actions.onBookmark(post.id)
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "bookmark.fill")
                         .font(.system(size: 28))
-                        .foregroundColor(userActions.isBookmarked ? .ratingSB : .white)
+                        .foregroundColor(post.userActions.isBookmarked ? .ratingSB : .white)
                     
-                    Text("\(counters.bookmarkCount)")
+                    Text("\(post.counters.bookmarkCount)")
                         .font(.footnote)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)

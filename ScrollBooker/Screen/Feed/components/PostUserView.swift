@@ -9,6 +9,7 @@ import SwiftUI
 
 struct PostUserView: View {
     var user: PostUser
+    var onClick: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 5) {
@@ -21,6 +22,11 @@ struct PostUserView: View {
                 .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundColor(.primarySB)
-            }
         }
+        .contentShape(Rectangle())
+        .onTapGesture {
+            onClick()
+        }
+    }
 }
+

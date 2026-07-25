@@ -27,35 +27,37 @@ struct FollowingTab: View {
             Color.black.ignoresSafeArea()
             
             switch viewModel.viewState {
-            case .idle, .loading:
-                ProgressView()
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black)
-                
-            case .empty:
-                NoDataView(
-                    title: "Postari",
-                    message: "Nu există postări",
-                    systemImage: "video.splash"
-                )
-                
-            case .error(let message):
-                ErrorView(message: message) {
-                    Task { await viewModel.refreshPosts() }
+                case .idle, .loading:
+                    ProgressView()
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black)
+                    
+                case .empty:
+                    NoDataView(
+                        title: "Postari",
+                        message: "Nu există postări",
+                        systemImage: "video.splash"
+                    )
+                    
+                case .error(let message):
+                    ErrorView(message: message) {
+                        Task { await viewModel.refreshPosts() }
+                    }
+                    
+                case .success(_):
+                    PostsSuccessView(viewModel: viewModel, currentIndex: $currentIndex)
                 }
-                
-            case .success(_):
-                PostsSuccessView(
-                    viewModel: viewModel,
-                    onNavigateToUserProfile: onNavigateToUserProfile,
-                    currentIndex: $currentIndex,
-                    activeSheet: $activeSheet,
-                    onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
-                    onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
-                )
-            }
         }
         .ignoresSafeArea(.all)
+        .environment(\.feedActions, FeedActions(
+            onNavigateToUserProfile: onNavigateToUserProfile,
+            onNavigateToBooking: onNavigateToBooking,
+            onOpenReviewsSheet: { activeSheet = .reviews(userId: $0) },
+            onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(postId: $0) },
+            onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
+            onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
+            onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
+        ))
         .sheet(item: $activeSheet) { sheetType in
             switch sheetType {
             case .comments(let postId):

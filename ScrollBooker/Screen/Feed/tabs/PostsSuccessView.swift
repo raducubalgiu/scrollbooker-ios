@@ -9,13 +9,9 @@ import SwiftUI
 
 struct PostsSuccessView: View {
     var viewModel: BaseFeedViewModel
-    
-    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     @Binding var currentIndex: Int?
-    @Binding var activeSheet: FeedSheetType?
     
-    var onLike: (Int) -> Void
-    var onBookmark: (Int) -> Void
+    @Environment(\.feedActions) private var actions
 
     var body: some View {
         ScrollView(.vertical) {
@@ -44,31 +40,20 @@ struct PostsSuccessView: View {
                             .ignoresSafeArea()
                         }
 
-                        // 2. Stratul Video: Randăm PlayerView doar dacă există o instanță activă în Sliding Window
+                        // 2. Stratul Video
                         if let player = viewModel.players[post.id] {
                             PlayerView(player: player)
                                 .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                // Oprim interacțiunea tactilă directă cu playerul nativ Apple (previne Play/Pause accidental)
                                 .allowsHitTesting(false)
                         }
                         
-                        // 3. Stratul de Interfață: Textele, acțiunile și butoanele peste videoclip
-                        PostOverlayView(
-                            post: post,
-                            onNavigateToUserProfile: onNavigateToUserProfile,
-                            onOpenReviewsSheet: { activeSheet = .reviews(userId: $0) },
-                            onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(postId: $0) },
-                            onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
-                            onLike: onLike,
-                            onBookmark: onBookmark
-                        )
+                        // 3. Stratul de Interfață: Acum curățat complet de parametri redundanți!
+                        PostOverlayView(post: post)
                     }
                     .containerRelativeFrame(.horizontal)
                     .containerRelativeFrame(.vertical)
                     .id(index)
                     .onAppear {
-                        // Edge-case pentru prima pornire: dacă este prima celulă (index 0) și fereastra nu s-a activat încă,
-                        // forțăm recalcularea ferestrei glisante pentru a porni primul video instant.
                         if index == 0 && viewModel.currentIndex == 0 && viewModel.players[post.id] == nil {
                             viewModel.updateWindow(at: 0)
                         }

@@ -9,14 +9,15 @@ import SwiftUI
 
 struct PostOverlayView: View {
     var post: Post
-    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     
-    var onOpenReviewsSheet: (Int) -> Void
-    var onOpenLinkedProductsSheet: (Int) -> Void
-    var onOpenCommentsSheet: (Int) -> Void
+    @Environment(\.feedActions) private var actions
     
-    var onLike: (Int) -> Void
-    var onBookmark: (Int) -> Void
+    private func makeProfileNavigationParams() -> ProfileNavigationParams {
+        ProfileNavigationParams(
+            userId: post.user.id,
+            username: post.user.username
+        )
+    }
     
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -33,36 +34,23 @@ struct PostOverlayView: View {
             
             HStack(alignment: .bottom, spacing: 0) {
                 VStack(alignment: .leading, spacing: 15) {
-                    PostUserView(user: post.user)
+                    PostUserView(
+                        user: post.user,
+                        onClick: { actions.onNavigateToUserProfile(makeProfileNavigationParams()) }
+                    )
                     
                     if let description = post.description {
                         PostDescriptionView(description: description)
                     }
                     
                     PostMainActionView(
-                        onClick: { onOpenLinkedProductsSheet(post.id) }
+                        onClick: { actions.onOpenLinkedProductsSheet(post.id) }
                     )
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.trailing, .base)
                 
-                PostActionsView(
-                    userAvatarURL: post.user.avatarURL,
-                    counters: post.counters,
-                    userActions: post.userActions,
-                    ratingsCount: post.user.ratingsCount,
-                    isVideoReview: post.isVideoReview,
-                    onAvatarClick: { onNavigateToUserProfile(
-                        ProfileNavigationParams(
-                            userId: post.user.id,
-                            username: post.user.username)
-                    )},
-                    onLikeClick: { onLike(post.id) },
-                    onReviewsClick: { onOpenReviewsSheet(post.user.id) },
-                    onCommentsClick: { onOpenCommentsSheet(post.id) },
-                    onBookmarksClick: { onBookmark(post.id) },
-                    onShareClick: {}
-                )
+                PostActionsView(post: post)
             }
             .frame(maxWidth: .infinity, alignment: .bottom)
             .padding(.leading, .m)

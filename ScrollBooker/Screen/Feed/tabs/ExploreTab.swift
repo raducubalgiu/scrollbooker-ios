@@ -46,17 +46,19 @@ struct ExploreTab: View {
                     }
 
                 case .success(_):
-                    PostsSuccessView(
-                        viewModel: viewModel,
-                        onNavigateToUserProfile: onNavigateToUserProfile,
-                        currentIndex: $currentIndex,
-                        activeSheet: $activeSheet,
-                        onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
-                        onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
-                    )
+                    PostsSuccessView(viewModel: viewModel, currentIndex: $currentIndex)
                 }
         }
         .ignoresSafeArea(.all)
+        .environment(\.feedActions, FeedActions(
+            onNavigateToUserProfile: onNavigateToUserProfile,
+            onNavigateToBooking: onNavigateToBooking,
+            onOpenReviewsSheet: { userId in activeSheet = .reviews(userId: userId) },
+            onOpenLinkedProductsSheet: { postId in activeSheet = .linkedProducts(postId: postId) },
+            onOpenCommentsSheet: { postId in activeSheet = .comments(postId: postId) },
+            onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
+            onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
+        ))
         .sheet(item: $activeSheet) { sheetType in
             switch sheetType {
                 case .comments(let postId):

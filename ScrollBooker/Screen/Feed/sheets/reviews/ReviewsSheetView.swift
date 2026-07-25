@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ReviewsSheetView: View {
-    let userId: Int
+    let viewModel: ReviewsViewModel
     
     var body: some View {
         Text("Reviews Sheet View")

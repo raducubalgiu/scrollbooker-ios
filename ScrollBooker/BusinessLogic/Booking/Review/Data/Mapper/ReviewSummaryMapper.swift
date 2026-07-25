@@ -7,10 +7,10 @@
 
 import Foundation
 
-extension ReviewsSummary {
-    init(dto: ReviewsSummaryDto) {
-        self.ratingsAverage = Double(dto.ratings_average)
-        self.ratingsCount = dto.ratings_count
+extension ReviewSummary {
+    init(dto: ReviewSummaryDto) {
+        self.ratingsAverage = dto.ratingsAverage
+        self.ratingsCount = dto.ratingsCount
         self.breakdown = dto.breakdown.map { RatingBreakdown(dto: $0) }
     }
 }

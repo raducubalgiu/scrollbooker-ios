@@ -22,6 +22,12 @@ struct FeedTabRouter: View {
                 onNavigateToBooking: { router.push(.bookingServices($0)) },
                 makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
                 makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
+                makeReviewsVM: {
+                    container.reviewModule.makeReviewsViewModel(
+                        userId: $0,
+                        getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+                    )
+                },
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black)

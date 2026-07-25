@@ -8,4 +8,5 @@
 protocol PostRepository: Sendable {
     func getExplorePosts(page: Int, limit: Int) async throws -> PaginatedResponse<Post>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponse<Post>
+    func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<Post>
 }

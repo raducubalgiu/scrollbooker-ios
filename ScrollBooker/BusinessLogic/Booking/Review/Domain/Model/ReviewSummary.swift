@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct ReviewsSummary: Equatable, Hashable, Sendable {
-    let ratingsAverage: Double
+struct ReviewSummary: Equatable, Hashable, Sendable {
+    let ratingsAverage: Float
     let ratingsCount: Int
     let breakdown: [RatingBreakdown]
 }

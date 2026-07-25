@@ -7,13 +7,24 @@
 
 import Foundation
 
-struct ReviewsSummaryDto: Codable {
-    let ratings_average: Float
-    let ratings_count: Int    
+struct ReviewSummaryDto: Decodable {
+    let ratingsAverage: Float
+    let ratingsCount: Int
     let breakdown: [RatingBreakdownDto]
+    
+    enum CodingKeys: String, CodingKey {
+        case ratingsAverage = "ratings_average"
+        case ratingsCount = "ratings_count"
+        case breakdown
+    }
 }
 
-struct RatingBreakdownDto: Codable {
+struct RatingBreakdownDto: Decodable {
     let rating: Int
     let count: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case rating
+        case count
+    }
 }

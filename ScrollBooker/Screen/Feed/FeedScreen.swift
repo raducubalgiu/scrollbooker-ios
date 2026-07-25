@@ -17,6 +17,7 @@ struct FeedScreen: View {
     
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
+    let makeReviewsVM: (Int) -> ReviewsViewModel
     
     init(
         viewModel: FeedViewModel,
@@ -25,6 +26,7 @@ struct FeedScreen: View {
         onNavigateToBooking: @escaping (BookingNavigationParams) -> Void,
         makeCommentsVM: @escaping (Int) -> CommentsViewModel,
         makeLinkedProductsVM: @escaping (Int) -> LinkedProductsViewModel,
+        makeReviewsVM: @escaping (Int) -> ReviewsViewModel,
     ) {
         _viewModel = State(initialValue: viewModel)
         self.onNavigateToFeedSearch = onNavigateToFeedSearch
@@ -32,6 +34,7 @@ struct FeedScreen: View {
         self.onNavigateToBooking = onNavigateToBooking
         self.makeCommentsVM = makeCommentsVM
         self.makeLinkedProductsVM = makeLinkedProductsVM
+        self.makeReviewsVM = makeReviewsVM
     }
 
     var body: some View {
@@ -41,6 +44,7 @@ struct FeedScreen: View {
                     viewModel: viewModel.exploreViewModel,
                     makeCommentsVM: makeCommentsVM,
                     makeLinkedProductsVM: makeLinkedProductsVM,
+                    makeReviewsVM: makeReviewsVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onNavigateToBooking: onNavigateToBooking
                 )
@@ -50,6 +54,7 @@ struct FeedScreen: View {
                     viewModel: viewModel.followingViewModel,
                     makeCommentsVM: makeCommentsVM,
                     makeLinkedProductsVM: makeLinkedProductsVM,
+                    makeReviewsVM: makeReviewsVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onNavigateToBooking: onNavigateToBooking
                 )

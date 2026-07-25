@@ -10,6 +10,7 @@ import Foundation
 protocol PostApiService: Sendable {
     func getExplorePosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
+    func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
 }
 
 final class PostAPIImpl: PostApiService {
@@ -40,6 +41,19 @@ final class PostAPIImpl: PostApiService {
         
         return try await client.request(
             "posts/following",
+            method: .get,
+            query: query
+        )
+    }
+    
+    func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto> {
+        let query: [String: String] = [
+            "page": "\(page)",
+            "limit": "\(limit)"
+        ]
+        
+        return try await client.request(
+            "users/\(userId)/posts/video-reviews",
             method: .get,
             query: query
         )

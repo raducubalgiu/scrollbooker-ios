@@ -11,6 +11,7 @@ struct ExploreTab: View {
     var viewModel: ExploreTabViewModel
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
+    let makeReviewsVM: (Int) -> ReviewsViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
 
@@ -19,6 +20,7 @@ struct ExploreTab: View {
 
     @State private var commentsCache = ViewModelCache<Int, CommentsViewModel>()
     @State private var linkedProductsCache = ViewModelCache<Int, LinkedProductsViewModel>()
+    @State private var reviewsCache = ViewModelCache<Int, ReviewsViewModel>()
 
     var body: some View {
         ZStack {
@@ -84,7 +86,9 @@ struct ExploreTab: View {
                 .presentationDragIndicator(.visible)
 
             case .reviews(let userId):
-                ReviewsSheetView(userId: userId)
+                ReviewsSheetView(
+                    viewModel: reviewsCache.viewModel(for: userId, make: makeReviewsVM)
+                )
                     .presentationDetents([.fraction(0.7)])
                     .presentationDragIndicator(.visible)
 

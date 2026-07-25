@@ -23,6 +23,14 @@ final class ReviewModule {
         ReviewRepositoryImpl(api: apiService)
     }()
     
+    lazy var getWrittenReviewsUseCase: GetWrittenReviewsUseCase = {
+        GetWrittenReviewsUseCase(repository: repository)
+    }()
+    
+    lazy var getReviewSummaryUseCase: GetReviewSummaryUseCase = {
+        GetReviewSummaryUseCase(repository: repository)
+    }()
+    
     lazy var createReviewUseCase: CreateReviewUseCase = {
         CreateReviewUseCase(repository: repository)
     }()
@@ -30,4 +38,16 @@ final class ReviewModule {
     lazy var updateReviewUseCase: UpdateReviewUseCase = {
         UpdateReviewUseCase(repository: repository)
     }()
+    
+    func makeReviewsViewModel(
+        userId: Int,
+        getVideoReviewsUseCase: GetVideoReviewsUseCase
+    ) -> ReviewsViewModel {
+        ReviewsViewModel(
+            userId: userId,
+            getWrittenReviewsUseCase: getWrittenReviewsUseCase,
+            getReviewSummaryUseCase: getReviewSummaryUseCase,
+            getVideoReviewsUseCase: getVideoReviewsUseCase
+        )
+    }
 }

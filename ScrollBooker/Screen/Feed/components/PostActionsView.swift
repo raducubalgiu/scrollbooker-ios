@@ -21,12 +21,13 @@ struct PostActionsView: View {
     var onShareClick: () -> Void
     
     var body: some View {
-        VStack(alignment: .center, spacing: 20) {
+        VStack(alignment: .center, spacing: 12) {
             if isVideoReview {
                 AvatarView(
                     imageURL: userAvatarURL,
                     size: .l
                 )
+                .padding(.bottom, .s)
             } else {
                 AvatarWithRatingView(
                     rating: 5,
@@ -34,6 +35,7 @@ struct PostActionsView: View {
                     badgeBackgroundColor: .white,
                     onClick: onAvatarClick
                 )
+                .padding(.bottom, .m)
             }
             
             Button {
@@ -54,7 +56,7 @@ struct PostActionsView: View {
             
             if !isVideoReview {
                 Button {
-                    
+                    onReviewsClick()
                 } label: {
                     VStack(alignment: .center, spacing: 2) {
                         Image(systemName: "clipboard.fill")
@@ -103,7 +105,7 @@ struct PostActionsView: View {
             .buttonStyle(.plain)
             
             Button {
-                onBookmarksClick()
+                
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "paperplane.fill")

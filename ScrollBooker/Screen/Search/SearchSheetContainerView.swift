@@ -19,7 +19,7 @@ struct SearchSheetContainerView: View {
     let businesses: [BusinessSheet]
     let totalCount: Int
     var onNavigateToBusinessProfile: (String) -> Void
-    var onSelectProduct: (String) -> Void
+    var onNavigateToBooking: (BookingNavigationParams) -> Void
     var onLoadMore: (BusinessSheet) -> Void
 
     @State private var sheetPosition: SheetPosition = .medium
@@ -42,7 +42,7 @@ struct SearchSheetContainerView: View {
                 businesses: businesses,
                 totalCount: totalCount,
                 onNavigateToBusinessProfile: onNavigateToBusinessProfile,
-                onSelectProduct: onSelectProduct,
+                onNavigateToBooking: onNavigateToBooking,
                 onLoadMore: onLoadMore,
                 onHeaderHeightChange: { headerHeight = $0 }
             )

@@ -21,9 +21,8 @@ struct SearchTabRouter: View {
                 if let stableViewModel = viewModel {
                     SearchScreen(
                         viewModel: stableViewModel,
-                        onNavigateToBusinessProfile: { username in
-                            router.push(.businessProfile(username: username))
-                        }
+                        onNavigateToBusinessProfile: { router.push(.businessProfile(username: $0)) },
+                        onNavigateToBooking: { router.push(.bookingServices($0)) }
                     )
                 } else {
                     ProgressView()

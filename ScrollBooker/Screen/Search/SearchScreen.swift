@@ -18,6 +18,7 @@ enum SearchSheetType: Identifiable {
 struct SearchScreen: View {
     var viewModel: SearchViewModel
     var onNavigateToBusinessProfile: (String) -> Void
+    var onNavigateToBooking: (BookingNavigationParams) -> Void
 
     @State private var isLoading: Bool = true
     @State private var activeSheet: SearchSheetType? = nil
@@ -95,7 +96,7 @@ struct SearchScreen: View {
                         businesses: viewModel.businesses,
                         totalCount: viewModel.totalCount,
                         onNavigateToBusinessProfile: onNavigateToBusinessProfile,
-                        onSelectProduct: { productId in print("Produs selectat: \(productId)") },
+                        onNavigateToBooking: onNavigateToBooking,
                         onLoadMore: { business in
                             Task { await viewModel.loadMoreIfNeeded(currentBusiness: business) }
                         }

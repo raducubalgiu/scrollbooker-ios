@@ -15,7 +15,7 @@ struct SearchBottomSheet: View {
     let totalCount: Int
 
     var onNavigateToBusinessProfile: (String) -> Void
-    var onSelectProduct: (String) -> Void
+    var onNavigateToBooking: (BookingNavigationParams) -> Void
     var onLoadMore: (BusinessSheet) -> Void
     var onHeaderHeightChange: (CGFloat) -> Void
 
@@ -57,7 +57,7 @@ struct SearchBottomSheet: View {
                             SearchCardView(
                                 business: business,
                                 onNavigateToBusinessProfile: onNavigateToBusinessProfile,
-                                onSelectProduct: { productId in }
+                                onNavigateToBooking: onNavigateToBooking
                             )
                             .onAppear {
                                 onLoadMore(business)

@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchCardView: View {
     let business: BusinessSheet
     let onNavigateToBusinessProfile: (String) -> Void
-    let onSelectProduct: (Product) -> Void
+    let onNavigateToBooking: (BookingNavigationParams) -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -33,7 +33,17 @@ struct SearchCardView: View {
                 ForEach(Array(business.products.enumerated()), id: \.element.id) { index, product in
                     SearchCardProductRowView(
                         product: product,
-                        onSelectProduct: onSelectProduct
+                        onSelectProduct: {
+                            onNavigateToBooking(
+                                BookingNavigationParams(
+                                    businessId: $0.businessId,
+                                    userId: $0.targetUserId,
+                                    businessOwnerId: $0.businessOwnerId,
+                                    source: BookingSourceEnum.search,
+                                    selectedProductId: $0.id
+                                )
+                            )
+                        }
                     )
                 }
             }

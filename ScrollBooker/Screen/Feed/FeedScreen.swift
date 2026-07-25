@@ -60,7 +60,10 @@ struct FeedScreen: View {
         .ignoresSafeArea(edges: .top)
         .overlay(alignment: .top) {
             FeedHeaderView(
-                selectedTab: Bindable(viewModel).selectedTab,
+                selectedTab: viewModel.selectedTab,
+                onChangeTab: { newTab in
+                    viewModel.handleTabChange(to: newTab)
+                },
                 onNavigateToFeedSearch: onNavigateToFeedSearch
             )
         }

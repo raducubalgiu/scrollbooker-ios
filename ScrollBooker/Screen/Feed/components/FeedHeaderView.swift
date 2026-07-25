@@ -8,7 +8,8 @@
 import SwiftUI
 
 struct FeedHeaderView: View {
-    @Binding var selectedTab: FeedTab
+    let selectedTab: FeedTab
+    var onChangeTab: (FeedTab) -> Void
     var onNavigateToFeedSearch: () -> Void
     
     var body: some View {
@@ -23,8 +24,18 @@ struct FeedHeaderView: View {
                 }
                 
                 HStack(spacing: 8) {
-                    FeedTabButton(title: "Explore", tab: .explore, selectedTab: $selectedTab)
-                    FeedTabButton(title: "Following", tab: .following, selectedTab: $selectedTab)
+                    FeedTabButton(
+                        title: "Explore",
+                        tab: .explore,
+                        selectedTab: selectedTab,
+                        onClick: onChangeTab
+                    )
+                    FeedTabButton(
+                        title: "Following",
+                        tab: .following,
+                        selectedTab: selectedTab,
+                        onClick: onChangeTab
+                    )
                 }
                 .padding(4)
                 .background(Color.white.opacity(0.05))

@@ -9,13 +9,16 @@ import SwiftUI
 
 struct CommentRowView: View {
     let comment: Comment
+    let isLikeActionPending: Bool
+    var onLikeClick: () -> Void
+    var onReplyClick: () -> Void
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
             AvatarView(
                 imageURL: comment.user.avatarURL,
-                size: .xs,
+                size: .s,
                 onClick: {
                     onNavigateToUserProfile(
                         ProfileNavigationParams(
@@ -28,27 +31,27 @@ struct CommentRowView: View {
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(comment.user.username)
-                    .font(.body)
+                    .font(.system(size: 14, weight: .semibold))
                     .fontWeight(.semibold)
                     .foregroundColor(.primary)
                     .lineLimit(1)
                 
                 Text(comment.text)
-                    .font(.body)
+                    .font(.system(size: 14, weight: .regular))
                     .foregroundColor(.primary)
                     .fixedSize(horizontal: false, vertical: true)
                 
                 HStack(alignment: .center) {
                     HStack(spacing: 16) {
                         Text("2d")
-                            .font(.body)
+                            .font(.system(size: 14, weight: .regular))
                             .foregroundColor(.gray)
                         
                         Button {
-
+                            onReplyClick()
                         } label: {
                             Text("Reply")
-                                .font(.subheadline)
+                                .font(.system(size: 14, weight: .semibold))
                                 .foregroundColor(.gray)
                         }
                         .buttonStyle(.plain)
@@ -65,12 +68,13 @@ struct CommentRowView: View {
 //                        }
                         
                         Button {
-                            
+                            guard !isLikeActionPending else { return }
+                            onLikeClick()
                         } label: {
                             HStack(spacing: 6) {
                                 if comment.likeCount > 0 {
                                     Text("\(comment.likeCount)")
-                                        .font(.body)
+                                        .font(.system(size: 14, weight: .semibold))
                                         .fontWeight(.semibold)
                                         .foregroundColor(comment.isLiked ? .red : .gray)
                                         .transition(.scale.combined(with: .opacity))
@@ -88,5 +92,7 @@ struct CommentRowView: View {
             }
         }
         .padding(.horizontal)
+        .opacity(isLikeActionPending ? 0.7 : 1.0)
     }
 }
+

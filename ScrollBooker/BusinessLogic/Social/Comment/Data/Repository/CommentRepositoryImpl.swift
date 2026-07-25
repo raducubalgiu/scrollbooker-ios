@@ -21,4 +21,30 @@ final class CommentRepositoryImpl: CommentRepository {
             try Comment(dto: $0)
         }
     }
+    
+    func getRepliesByCommentId(postId: Int, parentId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<Comment> {
+        let dtoResponse = try await api.getRepliesByCommentId(
+            postId: postId,
+            parentId: parentId,
+            page: page,
+            limit: limit
+        )
+        
+        return try PaginatedResponse(dtoResponse) {
+            try Comment(dto: $0)
+        }
+    }
+    
+    func createComment(postId: Int, request: CreateCommentRequest) async throws -> Comment {
+        let dtoResponse = try await api.createComment(postId: postId, request: request)
+        return try Comment(dto: dtoResponse)
+    }
+    
+    func likeComment(commentId: Int) async throws -> NoContent {
+        return try await api.likeComment(commentId: commentId)
+    }
+    
+    func unlikeComment(commentId: Int) async throws -> NoContent {
+        return try await api.likeComment(commentId: commentId)
+    }
 }

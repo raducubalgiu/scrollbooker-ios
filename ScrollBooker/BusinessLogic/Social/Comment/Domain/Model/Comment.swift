@@ -29,3 +29,33 @@ struct CommentUser: Identifiable, Equatable, Hashable, Sendable {
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
+
+extension Comment {
+    func copy(
+        id: Int? = nil,
+        text: String? = nil,
+        user: CommentUser? = nil,
+        postId: Int? = nil,
+        likeCount: Int? = nil,
+        isLiked: Bool? = nil,
+        likedbyPostAuthor: Bool? = nil,
+        repliesCount: Int? = nil,
+        parentId: Int?? = nil,
+        replyToCommentId: Int?? = nil,    
+        createdAt: Date? = nil
+    ) -> Comment {
+        Comment(
+            id: id ?? self.id,
+            text: text ?? self.text,
+            user: user ?? self.user,
+            postId: postId ?? self.postId,
+            likeCount: likeCount ?? self.likeCount,
+            isLiked: isLiked ?? self.isLiked,
+            likedbyPostAuthor: likedbyPostAuthor ?? self.likedbyPostAuthor,
+            repliesCount: repliesCount ?? self.repliesCount,
+            parentId: parentId ?? self.parentId,
+            replyToCommentId: replyToCommentId ?? self.replyToCommentId,
+            createdAt: createdAt ?? self.createdAt
+        )
+    }
+}

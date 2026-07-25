@@ -24,11 +24,31 @@ final class CommentModule {
     private lazy var getPostCommentsUseCase: GetPostCommentsUseCase = {
         GetPostCommentsUseCase(repository: repository)
     }()
+    
+    private lazy var getCommentRepliesUseCase: GetCommentRepliesUseCase = {
+        GetCommentRepliesUseCase(repository: repository)
+    }()
+    
+    private lazy var createCommentUseCase: CreateCommentUseCase = {
+        CreateCommentUseCase(repository: repository)
+    }()
+    
+    private lazy var likeCommentUseCase: LikeCommentUseCase = {
+        LikeCommentUseCase(repository: repository)
+    }()
+    
+    private lazy var unlikeCommentUseCase: UnlikeCommentUseCase = {
+        UnlikeCommentUseCase(repository: repository)
+    }()
 
     func makeCommentsViewModel(postId: Int) -> CommentsViewModel {
         CommentsViewModel(
             postId: postId,
-            getPostCommentsUseCase: getPostCommentsUseCase
+            getPostCommentsUseCase: getPostCommentsUseCase,
+            createCommentUseCase: createCommentUseCase,
+            likeCommentUseCase: likeCommentUseCase,
+            unlikeCommentUseCase: unlikeCommentUseCase,
+            getCommentRepliesUseCase: getCommentRepliesUseCase
         )
     }
 }

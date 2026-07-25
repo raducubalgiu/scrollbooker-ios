@@ -10,14 +10,15 @@ import SwiftUI
 struct FeedTabButton: View {
     let title: String
     let tab: FeedTab
-    @Binding var selectedTab: FeedTab
+    let selectedTab: FeedTab
+    var onClick: (FeedTab) -> Void
 
     var body: some View {
         let isSelected = selectedTab == tab
         
         Button {
             withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
-                selectedTab = tab
+                onClick(tab)
             }
         } label: {
             Text(title)

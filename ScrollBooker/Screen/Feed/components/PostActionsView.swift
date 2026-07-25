@@ -41,7 +41,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "heart.fill")
-                        .font(.system(size: 30))
+                        .font(.system(size: 28))
                         .foregroundColor(.white)
                     
                     Text("\(counters.likeCount)")
@@ -58,7 +58,7 @@ struct PostActionsView: View {
                 } label: {
                     VStack(alignment: .center, spacing: 2) {
                         Image(systemName: "clipboard.fill")
-                            .font(.system(size: 30))
+                            .font(.system(size: 28))
                             .foregroundColor(.white)
                         
                         Text("\(ratingsCount)")
@@ -75,7 +75,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "ellipsis.message.fill")
-                        .font(.system(size: 30))
+                        .font(.system(size: 28))
                         .foregroundColor(.white)
                     
                     Text("\(counters.commentCount)")
@@ -91,7 +91,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "bookmark.fill")
-                        .font(.system(size: 30))
+                        .font(.system(size: 28))
                         .foregroundColor(.white)
                     
                     Text("\(counters.bookmarkCount)")
@@ -107,7 +107,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "paperplane.fill")
-                        .font(.system(size: 30))
+                        .font(.system(size: 28))
                         .foregroundColor(.white)
                     
                     Text("\(10)")

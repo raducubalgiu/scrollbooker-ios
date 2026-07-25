@@ -199,33 +199,57 @@ actor APIClient {
         do {
             return try self.decoder.decode(T.self, from: data)
         } catch let error as DecodingError {
-            print("------- 🚨 EROARE DE DECODARE DETALIATĂ 🚨 -------")
-            switch error {
-            case .typeMismatch(let type, let context):
-                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
-                print("❌ TIP INCORECT: Se aștepta tipul '\(type)' la cheia: [ \(path) ]")
-                print("💡 Detalii backend: \(context.debugDescription)")
-                
-            case .valueNotFound(let type, let context):
-                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
-                print("❌ VALOARE NULL: Câmpul non-opțional '\(type)' a primit null în JSON la cheia: [ \(path) ]")
-                
-            case .keyNotFound(let key, let context):
-                let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
-                print("❌ CHEIE LIPSĂ: Serverul nu a trimis cheia '\(key.stringValue)' în structura: [ \(path) ]")
-                
-            case .dataCorrupted(let context):
-                print("❌ JSON INVALID: Datele sunt corupte structural la nivel de text JSON: \(context.debugDescription)")
-                
-            @unknown default:
-                print("❌ Eroare de decodare necunoscută: \(error)")
+            if case .typeMismatch(let type, _) = error, (type is Float.Type || type is Double.Type) {
+                if let jsonString = String(data: data, encoding: .utf8) {
+                    
+                    // Regex caută chei cu valori text care reprezintă numere zecimale sau întregi: ex: "ratings_average": "4.5"
+                    // și le transformă în format numeric curat: "ratings_average": 4.5
+                    let pattern = "(\"\\w+\")\\s*:\\s*\"(-?\\d+\\.?\\d*)\""
+                    if let regex = try? NSRegularExpression(pattern: pattern, options: []) {
+                        let mutableString = NSMutableString(string: jsonString)
+                        let range = NSRange(location: 0, length: mutableString.length)
+                        regex.replaceMatches(in: mutableString, options: [], range: range, withTemplate: "$1: $2")
+                        
+                        if let cleanedData = String(mutableString).data(using: .utf8),
+                           let recoveredValue = try? self.decoder.decode(T.self, from: cleanedData) {
+                            // Dacă decodarea a reușit după curățarea string-ului în număr, returnăm valoarea recuperată în siguranță
+                            return recoveredValue
+                        }
+                    }
+                }
             }
-            print("-------------------------------------------------")
+            
+            logDetailedDecodingError(error)
             throw error
         } catch {
             print("⚠️ Alt tip de eroare apărut la procesarea datelor: \(error.localizedDescription)")
             throw error
         }
+    }
+
+    private func logDetailedDecodingError(_ error: DecodingError) {
+        print("------- 🚨 EROARE DE DECODARE DETALIATĂ 🚨 -------")
+        switch error {
+        case .typeMismatch(let type, let context):
+            let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            print("❌ TIP INCORECT: Se aștepta tipul '\(type)' la cheia: [ \(path) ]")
+            print("💡 Detalii backend: \(context.debugDescription)")
+            
+        case .valueNotFound(let type, let context):
+            let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            print("❌ VALOARE NULL: Câmpul non-opțional '\(type)' a primit null în JSON la cheia: [ \(path) ]")
+            
+        case .keyNotFound(let key, let context):
+            let path = context.codingPath.map { $0.stringValue }.joined(separator: " -> ")
+            print("❌ CHEIE LIPSĂ: Serverul nu a trimis cheia '\(key.stringValue)' în structura: [ \(path) ]")
+            
+        case .dataCorrupted(let context):
+            print("❌ JSON INVALID: Datele sunt corupte structural la nivel de text JSON: \(context.debugDescription)")
+            
+        @unknown default:
+            print("❌ Eroare de decodare necunoscută: \(error)")
+        }
+        print("-------------------------------------------------")
     }
     
     private func executeWithRetry<T>(attempts: Int, action: @escaping () async throws -> T) async throws -> T {

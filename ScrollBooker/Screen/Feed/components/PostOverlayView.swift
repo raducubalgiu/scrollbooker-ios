@@ -53,7 +53,7 @@ struct PostOverlayView: View {
                             username: post.user.username)
                     )},
                     onLikeClick: {},
-                    onReviewsClick: { onOpenReviewsSheet(post.businessOwner.id) },
+                    onReviewsClick: { onOpenReviewsSheet(post.user.id) },
                     onCommentsClick: { onOpenCommentsSheet(post.id) },
                     onBookmarksClick: {},
                     onShareClick: {}

@@ -7,12 +7,12 @@
 
 import SwiftUI
 
-enum ReviewTab: String, CaseIterable, Identifiable {
-    case written = "Scrise"
-    case video = "Video"
-
-    var id: String { rawValue }
-}
+//enum ReviewTab: String, CaseIterable, Identifiable {
+//    case written = "Scrise"
+//    case video = "Video"
+//
+//    var id: String { rawValue }
+//}
 
 struct ReviewsTabView: View {
 //    @State private var selection: ReviewTab = .written

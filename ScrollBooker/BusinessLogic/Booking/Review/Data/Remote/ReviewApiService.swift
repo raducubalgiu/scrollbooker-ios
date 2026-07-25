@@ -51,7 +51,7 @@ final class ReviewAPIImpl: ReviewApiService {
     
     func getReviewSummary(userId: Int) async throws -> ReviewSummaryDto {
         return try await client.request(
-            "users/\(userId)/reviews/summary",
+            "users/\(userId)/reviews-summary",
             method: .get
         )
     }

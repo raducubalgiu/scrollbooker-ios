@@ -46,7 +46,6 @@ struct BookingServicesTabs: View {
     }
 }
 
-// MARK: - Sub-componentă: ServiceTabItemView
 struct ServiceTabItemView: View {
     let group: BusinessServicesWithProducts
     let isSelected: Bool
@@ -54,9 +53,9 @@ struct ServiceTabItemView: View {
     let onTap: () -> Void
     
     var body: some View {
-        Text(group.service.name) // Schimbă cu shortName dacă îl ai disponibil
+        Text(group.service.name)
             .font(.system(size: 16, weight: isSelected ? .bold : .medium))
-            .foregroundColor(isSelected ? .onSurfaceSB : .onBackgroundSB) // Înlocuiește cu culorile tale (.onSurfaceBGSB / .onBackgroundSB)
+            .foregroundColor(isSelected ? .onSurfaceSB : .onBackgroundSB)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .frame(height: 42)
@@ -68,12 +67,11 @@ struct ServiceTabItemView: View {
             .onTapGesture(perform: onTap)
     }
     
-    // MARK: - Fundalul animat izolat
     @ViewBuilder
     private var tabBackgroundView: some View {
         if isSelected {
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.surfaceSB) // Înlocuiește cu culoarea ta (.surfaceBGSB)
+                .fill(Color.surfaceSB)
                 .matchedGeometryEffect(id: "activeTabBackground", in: animationNamespace)
         } else {
             RoundedRectangle(cornerRadius: 8)

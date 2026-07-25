@@ -89,7 +89,7 @@ struct FollowingTab: View {
                 ReviewsSheetView(
                     viewModel: reviewsCache.viewModel(for: userId, make: makeReviewsVM)
                 )
-                    .presentationDetents([.fraction(0.7)])
+                .presentationDetents([.fraction(0.7), .large])
                     .presentationDragIndicator(.visible)
 
             case .linkedProducts(let postId):

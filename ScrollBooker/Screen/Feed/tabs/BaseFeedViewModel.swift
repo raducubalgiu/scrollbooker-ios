@@ -186,12 +186,15 @@ class BaseFeedViewModel {
     func updateWindow(at index: Int) {
         guard !posts.isEmpty else { return }
         
-        let currentPostId = posts[safe: index]?.id
-        let prevPostId = posts[safe: index - 1]?.id
-        let nextPostId = posts[safe: index + 1]?.id
+        // 1. Extragem direct obiectele Post folosind subscript-ul safe
+        let currentPost = posts[safe: index]
+        let prevPost = posts[safe: index - 1]
+        let nextPost = posts[safe: index + 1]
         
-        let activeIds = Set([prevPostId, currentPostId, nextPostId].compactMap { $0 })
+        // 2. Colectăm ID-urile ferestrei active (exact ca înainte)
+        let activeIds = Set([prevPost?.id, currentPost?.id, nextPost?.id].compactMap { $0 })
         
+        // 3. Eliberăm playerele care nu mai sunt în fereastră
         for (postId, player) in players {
             if !activeIds.contains(postId) {
                 player.pause()
@@ -200,19 +203,22 @@ class BaseFeedViewModel {
             }
         }
         
-        if let currentId = currentPostId {
-            let currentPlayer = getOrCreatePlayer(for: index)
+        // 4. Pornim playerul curent folosind obiectul Post direct
+        if let current = currentPost {
+            let currentPlayer = getOrCreatePlayer(for: current) // <-- Schimbat în obiect Post
             currentPlayer.isMuted = false
             currentPlayer.play()
         }
         
-        if let prevId = prevPostId, index - 1 >= 0 {
-            let prevPlayer = getOrCreatePlayer(for: index - 1)
+        // 5. Pregătim (buffer) postarea anterioară în mod silențios
+        if let prev = prevPost {
+            let prevPlayer = getOrCreatePlayer(for: prev)
             prevPlayer.isMuted = true
         }
         
-        if let nextId = nextPostId, index + 1 < posts.count {
-            let nextPlayer = getOrCreatePlayer(for: index + 1)
+        // 6. Pregătim (buffer) postarea următoare în mod silențios
+        if let next = nextPost {
+            let nextPlayer = getOrCreatePlayer(for: next)
             nextPlayer.isMuted = true
         }
     }
@@ -230,32 +236,27 @@ class BaseFeedViewModel {
         }
     }
         
-    private func getOrCreatePlayer(for index: Int) -> AVPlayer {
-        let post = posts[index]
-        
-        // Dacă playerul există deja în fereastră, îl returnăm intact
+    private func getOrCreatePlayer(for post: Post) -> AVPlayer { // <-- Acum primește Post
+        // Dacă playerul există deja, îl returnăm intact
         if let existingPlayer = players[post.id] {
             return existingPlayer
         }
         
-        // Extragere URL valid din structura ta PostMediaFile
+        // Extragere URL din structura ta
         guard let videoUrlString = post.mediaFiles.first?.url,
               let url = URL(string: videoUrlString) else {
             return AVPlayer()
         }
         
-        // Configurăm un AVPlayerItem optimizat pentru streaming rapid
         let asset = AVURLAsset(url: url)
         let playerItem = AVPlayerItem(asset: asset)
         
-        // Îi spunem sistemului să încarce buffer-ul agresiv în avans
         playerItem.automaticallyPreservesTimeOffsetFromLive = true
         playerItem.preferredForwardBufferDuration = 5
         
         let newPlayer = AVPlayer(playerItem: playerItem)
-        newPlayer.actionAtItemEnd = .none // Permite loop-ul infinit nativ ulterior
+        newPlayer.actionAtItemEnd = .none
         
-        // Înregistrăm observatorul de loop (când clipul ajunge la final, revine la secunda 0)
         NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: playerItem,
@@ -265,7 +266,6 @@ class BaseFeedViewModel {
             newPlayer.play()
         }
         
-        // Salvăm în dicționarul ferestrei active
         players[post.id] = newPlayer
         return newPlayer
     }

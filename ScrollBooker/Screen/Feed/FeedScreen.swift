@@ -10,6 +10,7 @@ import SwiftUI
 struct FeedScreen: View {
     var viewModel: FeedViewModel
     @Environment(\.scenePhase) private var scenePhase
+    @Environment(Router.self) private var router
     
     var onNavigateToFeedSearch: () -> Void
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
@@ -79,6 +80,19 @@ struct FeedScreen: View {
         }
         .onChange(of: scenePhase) { _, phase in
             viewModel.handleScenePhase(phase)
+        }
+        .onChange(of: router.selectedTab) { oldValue, newValue in
+            if newValue == .feed {
+                switch viewModel.selectedTab {
+                    case .explore:
+                        viewModel.exploreViewModel.playCurrent()
+                    case .following:
+                        viewModel.followingViewModel.playCurrent()
+                    }
+            } else if oldValue == .feed {
+                viewModel.exploreViewModel.pauseAll()
+                viewModel.followingViewModel.pauseAll()
+            }
         }
     }
 }

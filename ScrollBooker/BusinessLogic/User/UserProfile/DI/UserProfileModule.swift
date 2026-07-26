@@ -27,6 +27,10 @@ final class UserProfileModule {
         GetUserProfileUseCase(repository: repository)
     }()
     
+    private lazy var getUserProfileAboutUseCase: GetUserProfileAboutUseCase = {
+        GetUserProfileAboutUseCase(repository: repository)
+    }()
+    
     private lazy var updateUserFullNameUseCase: UpdateUserFullNameUseCase = {
         UpdateUserFullNameUseCase(repository: repository)
     }()
@@ -50,6 +54,7 @@ final class UserProfileModule {
     ) -> MyProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
+            getUserProfileAboutUseCase: getUserProfileAboutUseCase,
             getUserPostsUseCase: getUserPostsUseCase,
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase
         )
@@ -72,6 +77,7 @@ final class UserProfileModule {
     ) -> UserProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
+            getUserProfileAboutUseCase: getUserProfileAboutUseCase,
             getUserPostsUseCase: getUserPostsUseCase,
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase
         )

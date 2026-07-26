@@ -19,6 +19,11 @@ final class UserProfileRepositoryImpl: UserProfileRepository {
         return UserProfile(dto: dto)
     }
     
+    func getUserProfileAbout(userId: Int) async throws -> UserProfileAbout {
+        let dto = try await api.getUserProfileAbout(userId: userId)
+        return UserProfileAbout(dto: dto)
+    }
+    
     func updateFullName(request: UpdateFullNameRequest) async throws -> UserProfileUpdate {
         let dtoResponse = try await api.updateFullName(request: request)
         return UserProfileUpdate(dto: dtoResponse)

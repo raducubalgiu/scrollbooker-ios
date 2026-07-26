@@ -9,6 +9,7 @@ import Foundation
 
 protocol UserProfileApiService: Sendable {
     func getUserProfile(username: String) async throws -> UserProfileDTO
+    func getUserProfileAbout(userId: Int) async throws -> UserProfileAboutDto
     func updateFullName(request: UpdateFullNameRequest) async throws -> UserProfileUpdateDto
     func updateUsername(request: UpdateUsernameRequest) async throws -> UserProfileUpdateDto
     func updateBirthdate(request: UpdateBirthDateRequest) async throws -> UserProfileUpdateDto
@@ -28,6 +29,13 @@ final class UserProfileApiImpl: UserProfileApiService {
     func getUserProfile(username: String) async throws -> UserProfileDTO {
         try await client.request(
             "users/\(username)/user-profile",
+            method: .get
+        )
+    }
+    
+    func getUserProfileAbout(userId: Int) async throws -> UserProfileAboutDto {
+        try await client.request(
+            "users/\(userId)/about",
             method: .get
         )
     }

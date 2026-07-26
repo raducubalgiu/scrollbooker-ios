@@ -59,13 +59,16 @@ final class ProfileController: HasLoadingState {
     
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let getUserPostsUseCase: GetUserPostsUseCase
+    private let getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
     
     init(
         getUserProfileUseCase: GetUserProfileUseCase,
-        getUserPostsUseCase: GetUserPostsUseCase
+        getUserPostsUseCase: GetUserPostsUseCase,
+        getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.getUserPostsUseCase = getUserPostsUseCase
+        self.getUserBookmarkedPostsUseCase = getUserBookmarkedPostsUseCase
     }
     
     // Fetch Profile

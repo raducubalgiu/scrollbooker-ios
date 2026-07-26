@@ -13,23 +13,48 @@ struct UserProfileDTO: Decodable {
     let fullname: String
     let avatar: String?
     let gender: String
-    let date_of_birth: String?
+    let dateOfBirth: String?
     let bio: String?
     let website: String?
-    let public_email: String?
+    let publicEmail: String?
     let instagram: String?
     let tiktok: String?
-    let business_id: Int?
-    let business_type_id: Int?
+    let businessId: Int?
+    let businessTypeId: Int?
     let counters: UserCountersDTO
     let profession: String
-    let opening_hours: OpeningHoursDTO
-    let is_follow: Bool
-    let business_owner: ProfileBusinessOwnerDTO?
-    let is_own_profile: Bool
-    let is_business_or_employee: Bool
-    let distance_km: Double?
+    let openingHours: OpeningHoursDTO
+    let isFollow: Bool
+    let businessOwner: ProfileBusinessOwnerDTO?
+    let isOwnProfile: Bool
+    let isBusinessOrEmployee: Bool
+    let distanceKm: Double?
     let address: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case username
+        case fullname
+        case avatar
+        case gender
+        case dateOfBirth = "date_of_birth"
+        case bio
+        case website
+        case publicEmail = "public_email"
+        case instagram
+        case tiktok
+        case businessId = "business_id"
+        case businessTypeId = "business_type_id"
+        case counters
+        case profession
+        case openingHours = "opening_hours"
+        case isFollow = "is_follow"
+        case businessOwner = "business_owner"
+        case isOwnProfile = "is_own_profile"
+        case isBusinessOrEmployee = "is_business_or_employee"
+        case distanceKm
+        case address
+    }
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
@@ -44,19 +69,36 @@ struct ProfileBusinessOwnerDTO: Decodable{
 }
 
 struct UserCountersDTO: Decodable {
-    let user_id: Int
-    let followings_count: Int
-    let followers_count: Int
-    let products_count: Int
-    let posts_count: Int
-    let ratings_count: Int
-    let ratings_average: Float
+    let userId: Int
+    let followingsCount: Int
+    let followersCount: Int
+    let productsCount: Int
+    let postsCount: Int
+    let ratingsCount: Int
+    let ratingsAverage: Float
+    
+    enum CodingKeys: String, CodingKey {
+        case userId = "user_id"
+        case followingsCount = "followings_count"
+        case followersCount = "followers_count"
+        case productsCount = "products_count"
+        case postsCount = "posts_count"
+        case ratingsCount = "ratings_count"
+        case ratingsAverage = "ratings_average"
+    }
 }
 
 struct OpeningHoursDTO: Decodable {
-    let open_now: Bool
-    let closing_time: String?
-    let next_open_day: String?
-    let next_open_time: String?
+    let openNow: Bool
+    let closingTime: String?
+    let nextOpenDay: String?
+    let nextOpenTime: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case openNow = "open_now"
+        case closingTime = "closing_time"
+        case nextOpenDay = "next_open_day"
+        case nextOpenTime = "next_open_time"
+    }
 }
 

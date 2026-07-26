@@ -36,11 +36,7 @@ struct FeedHeaderView: View {
                         selectedTab: selectedTab,
                         onClick: onChangeTab
                     )
-                }
-                .padding(4)
-                .background(Color.white.opacity(0.05))
-                .clipShape(Capsule())
-            }
+                }         }
             
             Spacer()
             
@@ -53,6 +49,6 @@ struct FeedHeaderView: View {
                     .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
             }
         }
-        .padding()
+        .padding(.horizontal)
     }
 }

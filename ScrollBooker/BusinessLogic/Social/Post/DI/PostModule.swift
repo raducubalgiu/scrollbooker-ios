@@ -54,6 +54,10 @@ final class PostModule {
     lazy var getUserPostsUseCase: GetUserPostsUseCase = {
         GetUserPostsUseCase(repository: repository)
     }()
+    
+    lazy var getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase = {
+        GetUserBookmarkedPostsUseCase(repository: repository)
+    }()
 
     func makeExploreTabViewModel() -> ExploreTabViewModel {
         ExploreTabViewModel(

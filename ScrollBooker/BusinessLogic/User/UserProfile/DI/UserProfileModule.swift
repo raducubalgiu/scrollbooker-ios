@@ -46,10 +46,12 @@ final class UserProfileModule {
     func makeMyProfileViewModel(
         session: SessionManager,
         getUserPostsUseCase: GetUserPostsUseCase,
+        getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
     ) -> MyProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
-            getUserPostsUseCase: getUserPostsUseCase
+            getUserPostsUseCase: getUserPostsUseCase,
+            getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase
         )
         
         return MyProfileViewModel(
@@ -65,11 +67,13 @@ final class UserProfileModule {
     func makeUserProfileViewModel(
         userId: Int,
         username: String,
-        getUserPostsUseCase: GetUserPostsUseCase
+        getUserPostsUseCase: GetUserPostsUseCase,
+        getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
     ) -> UserProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
-            getUserPostsUseCase: getUserPostsUseCase
+            getUserPostsUseCase: getUserPostsUseCase,
+            getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase
         )
         
         return UserProfileViewModel(

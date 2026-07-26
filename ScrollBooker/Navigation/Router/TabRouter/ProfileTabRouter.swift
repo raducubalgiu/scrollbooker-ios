@@ -66,7 +66,8 @@ struct ProfileTabRouter: View {
                                 .onAppear {
                                     viewModel = container.userProfileModule.makeMyProfileViewModel(
                                         session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                                     )
                                 }
                         }
@@ -82,7 +83,8 @@ struct ProfileTabRouter: View {
                                 .onAppear {
                                     viewModel = container.userProfileModule.makeMyProfileViewModel(
                                         session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                                     )
                                 }
                         }
@@ -98,7 +100,8 @@ struct ProfileTabRouter: View {
                                 .onAppear {
                                     viewModel = container.userProfileModule.makeMyProfileViewModel(
                                         session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                                     )
                                 }
                         }
@@ -114,7 +117,8 @@ struct ProfileTabRouter: View {
                                 .onAppear {
                                     viewModel = container.userProfileModule.makeMyProfileViewModel(
                                         session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                                     )
                                 }
                         }
@@ -130,7 +134,8 @@ struct ProfileTabRouter: View {
                                 .onAppear {
                                     viewModel = container.userProfileModule.makeMyProfileViewModel(
                                         session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                                     )
                                 }
                         }
@@ -146,7 +151,8 @@ struct ProfileTabRouter: View {
                                 .onAppear {
                                     viewModel = container.userProfileModule.makeMyProfileViewModel(
                                         session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                                     )
                                 }
                         }
@@ -200,7 +206,8 @@ struct ProfileTabRouter: View {
             if viewModel == nil {
                 viewModel = container.userProfileModule.makeMyProfileViewModel(
                     session: session,
-                    getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                    getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                    getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                 )
             }
         }

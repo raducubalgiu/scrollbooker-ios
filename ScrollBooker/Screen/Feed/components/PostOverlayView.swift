@@ -39,7 +39,7 @@ struct PostOverlayView: View {
                         onClick: { actions.onNavigateToUserProfile(makeProfileNavigationParams()) }
                     )
                     
-                    if let description = post.description {
+                    if let description = post.description?.isEmpty == false ? post.description : nil {
                         PostDescriptionView(description: description)
                     }
                     

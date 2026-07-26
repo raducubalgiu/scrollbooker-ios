@@ -52,7 +52,8 @@ struct GlobalNavigationModifier: ViewModifier {
                 viewModel: container.userProfileModule.makeUserProfileViewModel(
                     userId: params.userId,
                     username: params.username,
-                    getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                    getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                    getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase
                 ),
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },

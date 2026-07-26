@@ -46,6 +46,14 @@ final class PostRepositoryImpl: PostRepository {
         }
     }
     
+    func getUserBookmarkedPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<Post> {
+        let dtoResponse = try await api.getUserBookmarkedPosts(userId: userId, page: page, limit: limit)
+        
+        return PaginatedResponse(dtoResponse) {
+            Post(from: $0)
+        }
+    }
+    
     func likePost(id: Int) async throws -> NoContent {
         return try await api.likePost(id: id)
     }

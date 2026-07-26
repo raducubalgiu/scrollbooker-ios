@@ -29,6 +29,7 @@ struct PostActionsView: View {
                 .padding(.bottom, .s)
             } else {
                 AvatarWithRatingView(
+                    url: post.user.avatarURL,
                     rating: 5,
                     size: .l,
                     badgeBackgroundColor: .white,
@@ -42,7 +43,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "heart.fill")
-                        .font(.system(size: 28))
+                        .font(.system(size: 29))
                         .foregroundColor(post.userActions.isLiked ? .errorSB : .white)
                     
                     Text("\(post.counters.likeCount)")
@@ -59,7 +60,7 @@ struct PostActionsView: View {
                 } label: {
                     VStack(alignment: .center, spacing: 2) {
                         Image(systemName: "clipboard.fill")
-                            .font(.system(size: 28))
+                            .font(.system(size: 29))
                             .foregroundColor(.white)
                         
                         Text("\(post.user.ratingsCount)")
@@ -76,7 +77,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "ellipsis.message.fill")
-                        .font(.system(size: 28))
+                        .font(.system(size: 29))
                         .foregroundColor(.white)
                     
                     Text("\(post.counters.commentCount)")
@@ -92,7 +93,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "bookmark.fill")
-                        .font(.system(size: 28))
+                        .font(.system(size: 29))
                         .foregroundColor(post.userActions.isBookmarked ? .ratingSB : .white)
                     
                     Text("\(post.counters.bookmarkCount)")
@@ -108,7 +109,7 @@ struct PostActionsView: View {
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "arrowshape.turn.up.right.fill")
-                        .font(.system(size: 28))
+                        .font(.system(size: 29))
                         .foregroundColor(.white)
                     
                     Text("\(10)")

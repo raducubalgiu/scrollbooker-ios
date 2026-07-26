@@ -23,11 +23,11 @@ struct CustomTabBar: View {
     
     var body: some View {
         HStack {
-            tabItem(title: "home", icon: "house", tab: .feed)
-            tabItem(title: "inbox", icon: "bell", tab: .inbox, badge: 10)
-            tabItem(title: "search", icon: "magnifyingglass", tab: .search)
-            tabItem(title: "bookings", icon: "calendar", tab: .appointments, badge: 5)
-            tabItem(title: "profile", icon: "person", tab: .profile)
+            tabItem(title: String(localized: "home"), icon: "house", tab: .feed)
+            tabItem(title: String(localized: "inbox"), icon: "bell", tab: .inbox, badge: 10)
+            tabItem(title: String(localized: "search"), icon: "magnifyingglass", tab: .search)
+            tabItem(title: String(localized: "bookings"), icon: "calendar", tab: .appointments, badge: 5)
+            tabItem(title: String(localized: "profile"), icon: "person", tab: .profile)
         }
         .padding(.top, 6)
         .frame(height: 49)

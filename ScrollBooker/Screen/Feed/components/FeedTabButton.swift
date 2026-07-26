@@ -22,12 +22,12 @@ struct FeedTabButton: View {
             }
         } label: {
             Text(title)
-                .font(.system(size: 16, weight: isSelected ? .bold : .semibold))
+                .font(.system(size: 14, weight: isSelected ? .bold : .semibold))
                 .foregroundColor(isSelected ? .white : .white.opacity(0.7))
                 .lineLimit(1)
                 .shadow(color: .black.opacity(0.8), radius: 4, x: 2, y: 2)
                 .padding(.vertical, 8)
-                .padding(.horizontal, 16)
+                .padding(.horizontal, 14)
                 .background(isSelected ? Color.primarySB.opacity(0.6) : Color.clear)
                 .clipShape(Capsule())
                 .scaleEffect(isSelected ? 1.05 : 1.0)

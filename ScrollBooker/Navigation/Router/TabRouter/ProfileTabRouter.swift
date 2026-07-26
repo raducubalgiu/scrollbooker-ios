@@ -28,11 +28,13 @@ struct ProfileTabRouter: View {
                         onNavigateToUserSocial: { router.push(.userSocial($0)) },
                         onNavigateToMyCalendar: { router.push(.myCalendar) }
                     )
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        CustomTabBar(backgroundColor: .backgroundSB)
+                    }
                 } else {
                     ProgressView()
                 }
             }
-            .toolbar(router.profilePath.isEmpty ? .visible : .hidden, for: .tabBar)
             .withNavigation { route in
                 switch route {
                     case .mySettings:

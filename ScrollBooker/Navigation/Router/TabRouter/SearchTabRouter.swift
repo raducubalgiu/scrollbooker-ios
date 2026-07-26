@@ -24,6 +24,9 @@ struct SearchTabRouter: View {
                         onNavigateToBusinessProfile: { router.push(.businessProfile(username: $0)) },
                         onNavigateToBooking: { router.push(.bookingServices($0)) }
                     )
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        CustomTabBar(backgroundColor: .backgroundSB)
+                    }
                 } else {
                     ProgressView()
                 }
@@ -45,7 +48,6 @@ struct SearchTabRouter: View {
                     }
             }
         }
-        .toolbar(router.searchPath.isEmpty ? .visible : .hidden, for: .tabBar)
         .onAppear {
             if viewModel == nil {
                 Task { @MainActor in

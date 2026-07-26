@@ -12,35 +12,27 @@ struct MainRouter: View {
     @EnvironmentObject private var session: SessionManager
     
     var body: some View {
-        TabView(selection: $router.selectedTab) {
+        ZStack {
             FeedTabRouter(router: router)
-                .tabItem { Label("home", systemImage: "house") }
-                .tag(MainTab.feed)
+                .opacity(router.selectedTab == .feed ? 1 : 0)
+                .zIndex(router.selectedTab == .feed ? 1 : 0)
             
             InboxTabRouter(router: router)
-                 .tabItem { Label("inbox", systemImage: "bell") }
-                 .tag(MainTab.inbox)
-                 .badge(10)
+                .opacity(router.selectedTab == .inbox ? 1 : 0)
+                .zIndex(router.selectedTab == .inbox ? 1 : 0)
             
             SearchTabRouter(router: router)
-                 .tabItem { Label("search", systemImage: "magnifyingglass") }
-                 .tag(MainTab.search)
+                .opacity(router.selectedTab == .search ? 1 : 0)
+                .zIndex(router.selectedTab == .search ? 1 : 0)
             
             AppointmentsTabRouter(router: router)
-                 .tabItem { Label("bookings", systemImage: "calendar") }
-                 .tag(MainTab.appointments)
-                 .badge(5)
+                .opacity(router.selectedTab == .appointments ? 1 : 0)
+                .zIndex(router.selectedTab == .appointments ? 1 : 0)
             
             ProfileTabRouter(router: router)
-                 .tabItem { Label("profile", systemImage: "person") }
-                 .tag(MainTab.profile)
+                .opacity(router.selectedTab == .profile ? 1 : 0)
+                .zIndex(router.selectedTab == .profile ? 1 : 0)
         }
         .environment(router)
-        .onChange(of: router.selectedTab) { oldValue, newValue in
-            if oldValue == newValue {
-                router.popToRoot()
-            }
-        }
     }
 }
-

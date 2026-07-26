@@ -107,7 +107,7 @@ struct PostActionsView: View {
                 
             } label: {
                 VStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "paperplane.fill")
+                    Image(systemName: "arrowshape.turn.up.right.fill")
                         .font(.system(size: 28))
                         .foregroundColor(.white)
                     

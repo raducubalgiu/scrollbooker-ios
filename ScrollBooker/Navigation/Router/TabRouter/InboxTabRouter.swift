@@ -10,6 +10,7 @@ import SwiftUI
 struct InboxTabRouter: View {
     @EnvironmentObject private var container: AppContainer
     var router: Router
+    
     @State private var inboxViewModel: InboxViewModel?
     
     var body: some View {
@@ -23,6 +24,9 @@ struct InboxTabRouter: View {
                         onNavigateToAppointmentDetails: { router.push(.appointmentDetails(id: $0)) },
                         onNavigateToUserProfile: { router.push(.userProfile($0)) }
                     )
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        CustomTabBar(backgroundColor: .backgroundSB)
+                    }
                 } else {
                     ProgressView()
                 }
@@ -42,7 +46,6 @@ struct InboxTabRouter: View {
                     }
             }
         }
-        .toolbar(router.inboxPath.isEmpty ? .visible : .hidden, for: .tabBar)
         .onAppear {
             if inboxViewModel == nil {
                 Task { @MainActor in

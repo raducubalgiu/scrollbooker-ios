@@ -24,13 +24,15 @@ struct AppointmentsTabRouter: View {
                             router.push(.appointmentDetails(id: id))
                         }
                     )
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        CustomTabBar(backgroundColor: .backgroundSB)
+                    }
                 } else {
                     ProgressView()
                 }
             }
             .withGlobalNavigation()
         }
-        .toolbar(router.appointmentsPath.isEmpty ? .visible : .hidden, for: .tabBar)
         .onAppear {
             if viewModel == nil {
                 Task { @MainActor in

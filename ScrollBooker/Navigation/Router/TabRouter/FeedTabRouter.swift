@@ -33,6 +33,9 @@ struct FeedTabRouter: View {
                             )
                         }
                     )
+                    .safeAreaInset(edge: .bottom, spacing: 0) {
+                        CustomTabBar(backgroundColor: Color.black)
+                    }
                 } else {
                     ProgressView()
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -41,9 +44,6 @@ struct FeedTabRouter: View {
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(Color.black)
-            .toolbarBackground(Color.black, for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
-            .toolbarColorScheme(.dark, for: .tabBar)
             .withNavigation { route in
                 switch route {
                 case .feedSearch:
@@ -75,7 +75,6 @@ struct FeedTabRouter: View {
                 feedViewModel?.followingViewModel.pauseAll()
             }
         }
-        .toolbar(router.feedPath.isEmpty ? .visible : .hidden, for: .tabBar)
     }
 }
 

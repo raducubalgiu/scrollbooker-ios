@@ -11,6 +11,7 @@ protocol PostApiService: Sendable {
     func getExplorePosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
+    func getUserPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func likePost(id: Int) async throws -> NoContent
     func unlikePost(id: Int) async throws -> NoContent
     func bookmarkPost(id: Int) async throws -> NoContent
@@ -58,6 +59,19 @@ final class PostAPIImpl: PostApiService {
         
         return try await client.request(
             "users/\(userId)/posts/video-reviews",
+            method: .get,
+            query: query
+        )
+    }
+    
+    func getUserPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto> {
+        let query: [String: String] = [
+            "page": "\(page)",
+            "limit": "\(limit)"
+        ]
+        
+        return try await client.request(
+            "users/\(userId)/posts",
             method: .get,
             query: query
         )

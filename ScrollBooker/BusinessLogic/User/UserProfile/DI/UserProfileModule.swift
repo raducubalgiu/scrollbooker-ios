@@ -43,10 +43,18 @@ final class UserProfileModule {
         UpdateUserBioUseCase(repository: repository)
     }()
     
-    func makeMyProfileViewModel(session: SessionManager) -> MyProfileViewModel {
-        MyProfileViewModel(
+    func makeMyProfileViewModel(
+        session: SessionManager,
+        getUserPostsUseCase: GetUserPostsUseCase,
+    ) -> MyProfileViewModel {
+        let combinedController = ProfileController(
+            getUserProfileUseCase: getUserProfileUseCase,
+            getUserPostsUseCase: getUserPostsUseCase
+        )
+        
+        return MyProfileViewModel(
             session: session,
-            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase),
+            profileController: combinedController,
             updateUserFullNameUseCase: updateUserFullNameUseCase,
             updateUserGenderUseCase: updateUserGenderUseCase,
             updateUserBirthdateUseCase: updateUserBirthdateUseCase,
@@ -54,11 +62,20 @@ final class UserProfileModule {
         )
     }
 
-    func makeUserProfileViewModel(userId: Int, username: String) -> UserProfileViewModel {
-        UserProfileViewModel(
+    func makeUserProfileViewModel(
+        userId: Int,
+        username: String,
+        getUserPostsUseCase: GetUserPostsUseCase
+    ) -> UserProfileViewModel {
+        let combinedController = ProfileController(
+            getUserProfileUseCase: getUserProfileUseCase,
+            getUserPostsUseCase: getUserPostsUseCase
+        )
+        
+        return UserProfileViewModel(
             userId: userId,
             username: username,
-            profileController: ProfileController(getUserProfileUseCase: getUserProfileUseCase),
+            profileController: combinedController
         )
     }
 }

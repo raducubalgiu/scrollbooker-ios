@@ -8,15 +8,37 @@
 import Foundation
 import Observation
 
+enum UserPostsState {
+    case idle
+    case loading
+    case empty
+    case success([Post])
+    case error(String)
+}
+
 @Observable
 @MainActor
 final class ProfileController: HasLoadingState {
     var uiState = UiState(data: UserProfile?.none)
     private(set) var viewState: ProfileState = .idle
     
+    // --- STARE POSTĂRI (Adăugată aici) ---
+    private(set) var posts: [Post] = []
+    private(set) var postsViewState: FeedPostsState = .idle
+    private(set) var isPaging: Bool = false
+    
+    private var page = 1
+    private let limit = 10
+    private var totalCount = 0
+    
+    var hasMore: Bool {
+        posts.count < totalCount
+    }
+    
     var isLoading: Bool {
         get {
             if case .loading = viewState { return true }
+            if case .loading = postsViewState { return true }
             return uiState.isLoading
         }
         set {
@@ -27,6 +49,7 @@ final class ProfileController: HasLoadingState {
     var errorMessage: String? {
         get {
             if case .error(let msg) = viewState { return msg }
+            if case .error(let msg) = postsViewState { return msg }
             return uiState.errorMessage
         }
         set {
@@ -35,11 +58,17 @@ final class ProfileController: HasLoadingState {
     }
     
     private let getUserProfileUseCase: GetUserProfileUseCase
+    private let getUserPostsUseCase: GetUserPostsUseCase
     
-    init(getUserProfileUseCase: GetUserProfileUseCase) {
+    init(
+        getUserProfileUseCase: GetUserProfileUseCase,
+        getUserPostsUseCase: GetUserPostsUseCase
+    ) {
         self.getUserProfileUseCase = getUserProfileUseCase
+        self.getUserPostsUseCase = getUserPostsUseCase
     }
     
+    // Fetch Profile
     func fetchProfile(username: String, hasMinLoading: Bool = false) async {
         guard uiState.data == nil else { return }
         guard viewState != .loading else { return }
@@ -87,5 +116,60 @@ final class ProfileController: HasLoadingState {
         }
         
         uiState.isRefreshing = false
+    }
+    
+    // Fetch Posts
+    func loadInitialPosts(userId: Int) async {
+        guard posts.isEmpty else { return }
+        await loadPostsData(userId: userId, isFirstPage: true)
+    }
+    
+    func refreshPosts(userId: Int) async {
+        page = 1
+        await loadPostsData(userId: userId, isFirstPage: true)
+    }
+    
+    func loadMorePostsIfNeeded(userId: Int, currentPost: Post?) async {
+        guard hasMore, !isPaging, !isLoading else { return }
+        guard let current = currentPost, current.id == posts.last?.id else { return }
+        
+        isPaging = true
+        await loadPostsData(userId: userId, isFirstPage: false)
+        isPaging = false
+    }
+    
+    private func loadPostsData(userId: Int, isFirstPage: Bool) async {
+        if isFirstPage && !uiState.isRefreshing {
+            postsViewState = .loading
+        }
+        
+        do {
+            let response = try await getUserPostsUseCase(userId: userId, page: page, limit: limit)
+            
+            if isFirstPage {
+                posts = response.results
+            } else {
+                let existingIds = Set(posts.map(\.id))
+                let unique = response.results.filter { !existingIds.contains($0.id) }
+                posts.append(contentsOf: unique)
+            }
+            
+            totalCount = response.count
+            page += 1
+            
+            if posts.isEmpty {
+                postsViewState = .empty
+            } else {
+                postsViewState = .success(posts)
+            }
+        } catch {
+            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            
+            if isFirstPage {
+                postsViewState = .error(message)
+            } else {
+                print("Eroare paginare profil: \(message)")
+            }
+        }
     }
 }

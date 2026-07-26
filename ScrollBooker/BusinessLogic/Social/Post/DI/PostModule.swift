@@ -50,6 +50,10 @@ final class PostModule {
     lazy var getVideoReviewsUseCase: GetVideoReviewsUseCase = {
         GetVideoReviewsUseCase(repository: repository)
     }()
+    
+    lazy var getUserPostsUseCase: GetUserPostsUseCase = {
+        GetUserPostsUseCase(repository: repository)
+    }()
 
     func makeExploreTabViewModel() -> ExploreTabViewModel {
         ExploreTabViewModel(

@@ -50,7 +50,9 @@ struct GlobalNavigationModifier: ViewModifier {
         case .userProfile(let params):
             UserProfileScreen(
                 viewModel: container.userProfileModule.makeUserProfileViewModel(
-                    userId: params.userId, username: params.username
+                    userId: params.userId,
+                    username: params.username,
+                    getUserPostsUseCase: container.postModule.getUserPostsUseCase
                 ),
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },

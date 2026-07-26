@@ -62,7 +62,10 @@ struct ProfileTabRouter: View {
                         } else {
                             LoadingView()
                                 .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
+                                        session: session,
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                    )
                                 }
                         }
                         
@@ -75,7 +78,10 @@ struct ProfileTabRouter: View {
                         } else {
                             LoadingView()
                                 .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
+                                        session: session,
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                    )
                                 }
                         }
                         
@@ -88,7 +94,10 @@ struct ProfileTabRouter: View {
                         } else {
                             LoadingView()
                                 .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
+                                        session: session,
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                    )
                                 }
                         }
                         
@@ -101,7 +110,10 @@ struct ProfileTabRouter: View {
                         } else {
                             LoadingView()
                                 .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
+                                        session: session,
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                    )
                                 }
                         }
                         
@@ -114,7 +126,10 @@ struct ProfileTabRouter: View {
                         } else {
                             LoadingView()
                                 .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
+                                        session: session,
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                    )
                                 }
                         }
                         
@@ -127,7 +142,10 @@ struct ProfileTabRouter: View {
                         } else {
                             LoadingView()
                                 .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
+                                        session: session,
+                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                                    )
                                 }
                         }
                         
@@ -178,7 +196,10 @@ struct ProfileTabRouter: View {
         }
         .onAppear {
             if viewModel == nil {
-                viewModel = container.userProfileModule.makeMyProfileViewModel(session: session)
+                viewModel = container.userProfileModule.makeMyProfileViewModel(
+                    session: session,
+                    getUserPostsUseCase: container.postModule.getUserPostsUseCase
+                )
             }
         }
     }

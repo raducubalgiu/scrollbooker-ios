@@ -38,149 +38,78 @@ struct ProfileTabRouter: View {
             .withNavigation { route in
                 switch route {
                     case .mySettings:
-                        SettingsScreen(
+                        return SettingsScreen(
                             onNavigate: { r in router.push(r) },
                             onBack: { router.pop() }
                         )
                         
                     case .display:
-                        DisplayScreen(
-                            onBack: { router.pop() }
-                        )
+                        return DisplayScreen(onBack: { router.pop() })
                         
                     case .reportProblem:
-                        ReportProblemScreen(
+                        return ReportProblemScreen(
                             viewModel: container.problemModule.makeProblemViewModel(userId: session.userInfo?.id ?? 0),
                             onBack: { router.pop() }
                         )
                         
                     case .editProfile:
-                        if let stableViewModel = viewModel {
-                            EditProfileScreen(
-                                viewModel: stableViewModel,
+                        if let viewModel = viewModel {
+                            return EditProfileScreen(
+                                viewModel: viewModel,
                                 onNavigate: { r in router.push(r) },
                                 onBack: { router.pop() }
                             )
-                        } else {
-                            LoadingView()
-                                .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
-                                        session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                                        getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                                    )
-                                }
                         }
-                        
+                        return nil
+                    
                     case .editFullName:
-                        if let stableViewModel = viewModel {
-                            EditNameScreen(
-                                viewModel: stableViewModel,
-                                onBack: { router.pop() }
-                            )
-                        } else {
-                            LoadingView()
-                                .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
-                                        session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                                        getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                                    )
-                                }
+                        if let viewModel = viewModel {
+                            return EditNameScreen(viewModel: viewModel, onBack: { router.pop() })
                         }
+                        return nil
                         
                     case .editUsername:
-                        if let stableViewModel = viewModel {
-                            EditUsernameScreen(
-                                viewModel: stableViewModel,
-                                onBack: { router.pop() }
-                            )
-                        } else {
-                            LoadingView()
-                                .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
-                                        session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                                        getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                                    )
-                                }
+                        if let viewModel = viewModel {
+                            return EditUsernameScreen(viewModel: viewModel, onBack: { router.pop() })
                         }
+                        return nil
                         
                     case .editBio:
-                        if let stableViewModel = viewModel {
-                            EditBioScreen(
-                                viewModel: stableViewModel,
-                                onBack: { router.pop() }
-                            )
-                        } else {
-                            LoadingView()
-                                .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
-                                        session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                                        getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                                    )
-                                }
+                        if let viewModel = viewModel {
+                            return EditBioScreen(viewModel: viewModel, onBack: { router.pop() })
                         }
+                        return nil
                         
                     case .editGender:
-                        if let stableViewModel = viewModel {
-                            EditGenderScreen(
-                                viewModel: stableViewModel,
-                                onBack: { router.pop() }
-                            )
-                        } else {
-                            LoadingView()
-                                .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
-                                        session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                                        getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                                    )
-                                }
+                        if let viewModel = viewModel {
+                            return EditGenderScreen(viewModel: viewModel, onBack: { router.pop() })
                         }
+                        return nil
                         
                     case .editBirthdate:
-                        if let stableViewModel = viewModel {
-                            EditBirthdateScreen(
-                                viewModel: stableViewModel,
-                                onBack: { router.pop() }
-                            )
-                        } else {
-                            LoadingView()
-                                .onAppear {
-                                    viewModel = container.userProfileModule.makeMyProfileViewModel(
-                                        session: session,
-                                        getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                                        getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                                        getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                                    )
-                                }
+                        if let viewModel = viewModel {
+                            return EditBirthdateScreen(viewModel: viewModel, onBack: { router.pop() })
                         }
+                        return nil
                         
                     // MARK: - My Business Flow
                     case .myBusiness:
-                        MyBusinessScreen (
+                        return MyBusinessScreen(
                             onNavigate: { r in router.push(r) },
                             onBack: { router.pop() }
                         )
                         
                     case .myBusinessDetails:
-                        MyBusinessDetailsScreen()
+                        return MyBusinessDetailsScreen()
                     
                     case .mySchedules:
-                        MySchedulesScreen(
+                        return MySchedulesScreen(
                             viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session),
                             onBack: { router.pop() }
                         )
                     
                     case .myProducts:
-                        MyProductsScreen(
+                        return MyProductsScreen(
                             viewModel: container.productModule.makeMyProductsViewModel(session: session),
                             onBack: { router.pop() },
                             onNavigateAddProduct: {},
@@ -188,35 +117,39 @@ struct ProfileTabRouter: View {
                         )
                     
                     case .myServices:
-                        MyServicesScreen(
+                        return MyServicesScreen(
                             viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session),
                             onBack: { router.pop() }
                         )
                         
                     case .myCalendar:
-                        MyCalendarScreen(onBack: { router.pop() })
+                        return MyCalendarScreen(onBack: { router.pop() })
                         
                     case .myEmployees:
-                        EmployeesFlowContainer(
+                        return EmployeesFlowContainer(
                             container: container,
                             onBack: { router.pop() },
-                            session: session,
+                            session: session
                         )
             
                     default:
-                        nil
+                        return nil
                     }
             }
         }
-        .onAppear {
-            if viewModel == nil {
-                viewModel = container.userProfileModule.makeMyProfileViewModel(
-                    session: session,
-                    getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                    getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                    getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                )
+        .onChange(of: router.selectedTab, initial: true) { _, newTab in
+            if newTab == .profile && viewModel == nil {
+                setupViewModel()
             }
         }
+    }
+    
+    private func setupViewModel() {
+        viewModel = container.userProfileModule.makeMyProfileViewModel(
+            session: session,
+            getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+            getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
+            getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
+        )
     }
 }

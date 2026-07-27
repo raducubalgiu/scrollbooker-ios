@@ -48,9 +48,10 @@ struct SearchTabRouter: View {
                     }
             }
         }
-        .onAppear {
-            if viewModel == nil {
-                Task { @MainActor in
+        .onChange(of: router.selectedTab, initial: true) { _, newTab in
+            if newTab == .search && viewModel == nil {
+                Task {
+                    @MainActor in
                     viewModel = container.businessModule.makeSearchViewModel(
                         getAllBusinessDomainsUseCase: container.businessDomainModule.getAllBusinessDomainsUseCase
                     )

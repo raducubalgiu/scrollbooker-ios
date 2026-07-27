@@ -46,10 +46,10 @@ struct InboxTabRouter: View {
                     }
             }
         }
-        .onAppear {
-            if inboxViewModel == nil {
-                Task { @MainActor in
-                    inboxViewModel = container.notificationModule.makeNotificationsViewModel()
+        .onChange(of: router.selectedTab, initial: true) { _, newTab in
+            if newTab == .inbox && inboxViewModel == nil {
+                Task {
+                    @MainActor in inboxViewModel = container.notificationModule.makeNotificationsViewModel()
                 }
             }
         }

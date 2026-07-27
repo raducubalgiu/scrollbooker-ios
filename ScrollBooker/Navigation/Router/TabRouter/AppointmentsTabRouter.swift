@@ -33,10 +33,11 @@ struct AppointmentsTabRouter: View {
             }
             .withGlobalNavigation()
         }
-        .onAppear {
-            if viewModel == nil {
-                Task { @MainActor in
-                    viewModel = container.appointmentModule.makeAppointmentsViewModel()
+        .onChange(of: router.selectedTab, initial: true) { _, newTab in
+            if newTab == .appointments && viewModel == nil {
+                Task {
+                    @MainActor in
+                        viewModel = container.appointmentModule.makeAppointmentsViewModel()
                 }
             }
         }

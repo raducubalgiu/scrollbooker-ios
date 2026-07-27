@@ -19,7 +19,6 @@ struct BusinessServicesTabView: View {
         let totalCount = products.totalCount
         
         VStack(alignment: .leading, spacing: 0) {
-            
             if !serviceGroups.isEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: AppSize.s.rawValue) {

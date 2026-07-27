@@ -9,18 +9,24 @@ import SwiftUI
 
 struct ProfileLayout<Header: View, Actions: View>: View {
     let user: UserProfile
+    let profileController: ProfileController
+    @Binding var selectedTab: ProfileTab
     let onNavigateToUserSocial: (SocialNavigationParams) -> Void
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onShowOpeningHours: () -> Void
+    let onRefresh: () async -> Void
 
     @ViewBuilder var header: () -> Header
     @ViewBuilder var actions: () -> Actions
 
-    @State private var selectedTab: ProfileTab = .posts
     @Namespace private var indicatorNS
 
     private var isEmployee: Bool {
         user.isBusinessOrEmployee && user.id != user.businessOwner?.id
+    }
+
+    private var employeeId: Int? {
+        isEmployee ? user.id : nil
     }
 
     private var availableTabs: [ProfileTab] {
@@ -90,9 +96,12 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                     }
                 }
             }
+            .refreshable {
+                await onRefresh()
+            }
         }
         .onAppear {
-            if let firstTab = availableTabs.first {
+            if let firstTab = availableTabs.first, !availableTabs.contains(selectedTab) {
                 selectedTab = firstTab
             }
         }
@@ -142,15 +151,29 @@ struct ProfileLayout<Header: View, Actions: View>: View {
     private func getTabContent(for tab: ProfileTab) -> some View {
         switch tab {
         case .posts:
-            ProfilePostsTabView()
+            ProfilePostsTabView(
+                controller: profileController,
+                userId: user.id
+            )
         case .products:
-            ProfileProductsTabView()
+            ProfileProductsTabView(
+                controller: profileController,
+                businessId: user.businessId,
+                employeeId: employeeId
+            )
         case .employees:
             ProfileEmployeesTabView()
+            
         case .bookmarks:
-            ProfileBookmarksTabView()
+            ProfileBookmarksTabView(
+                controller: profileController,
+                userId: user.id
+            )
         case .info:
-            ProfileInfoTabView()
+            ProfileInfoTabView(
+                controller: profileController,
+                userId: user.id
+            )
         }
     }
 }

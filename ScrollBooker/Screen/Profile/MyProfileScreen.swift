@@ -36,9 +36,14 @@ struct MyProfileScreen: View {
                 if let user = viewModel.profileController.uiState.data {
                     ProfileLayout(
                         user: user,
+                        profileController: viewModel.profileController,
+                        selectedTab: $viewModel.selectedTab,
                         onNavigateToUserSocial: onNavigateToUserSocial,
                         onNavigateToUserProfile: onNavigateToUserProfile,
                         onShowOpeningHours: { activeSheet = .openingHours },
+                        onRefresh: {
+                            await viewModel.refresh()
+                        },
                         header: {
                             MyProfileHeaderView(
                                 username: "@\(user.username)",
@@ -63,19 +68,19 @@ struct MyProfileScreen: View {
         }
         .sheet(item: $activeSheet) { sheet in
             switch sheet {
-            case .menu:
-                ProfileMenuSheetView(
-                    showMenuSheet: Binding(
-                        get: { activeSheet == .menu },
-                        set: { if !$0 { activeSheet = nil } }
-                    ),
-                    onCreatePost: {},
-                    onNavigateToMyBusiness: onNavigateToMyBusiness,
-                    onNavigateToSettings: onNavigateToSettings
-                )
-            case .openingHours:
-                OpeningHoursSheetView()
-            }
+                case .menu:
+                    ProfileMenuSheetView(
+                        showMenuSheet: Binding(
+                            get: { activeSheet == .menu },
+                            set: { if !$0 { activeSheet = nil } }
+                        ),
+                        onCreatePost: {},
+                        onNavigateToMyBusiness: onNavigateToMyBusiness,
+                        onNavigateToSettings: onNavigateToSettings
+                    )
+                case .openingHours:
+                    OpeningHoursSheetView()
+                }
         }
     }
 }

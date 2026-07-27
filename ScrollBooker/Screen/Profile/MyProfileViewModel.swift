@@ -27,6 +27,17 @@ final class MyProfileViewModel: HasLoadingState {
         set { profileController.errorMessage = newValue }
     }
     
+    var selectedTab: ProfileTab = .posts {
+        didSet {
+            guard oldValue != selectedTab else { return }
+            guard let userId = session.userInfo?.id else { return }
+            
+            Task {
+                await profileController.loadTabContentIfNeeded(selectedTab, userId: userId)
+            }
+        }
+    }
+    
     var selectedBirthdate: Date = Date()
     
     let updateUserFullNameUseCase: UpdateUserFullNameUseCase
@@ -51,16 +62,22 @@ final class MyProfileViewModel: HasLoadingState {
     }
     
     func loadProfile() async {
-        guard let username = session.userInfo?.username else {
-            profileController.uiState.errorMessage = "Username not found"
-            return
-        }
+        guard let userId = session.userInfo?.id else { return }
+        guard let username = session.userInfo?.username else { return }
+        
         await profileController.fetchProfile(username: username)
+        await profileController.loadTabContentIfNeeded(selectedTab, userId: userId)
     }
     
     func refresh() async {
+        guard let userId = session.userInfo?.id else { return }
         guard let username = session.userInfo?.username else { return }
-        await profileController.refreshProfile(username: username)
+        
+        await profileController.refresh(
+            username: username,
+            userId: userId,
+            activeTab: selectedTab
+        )
     }
     
     func updateFullName(fullname: String) async {

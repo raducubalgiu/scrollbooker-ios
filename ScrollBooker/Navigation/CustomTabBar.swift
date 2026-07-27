@@ -23,11 +23,11 @@ struct CustomTabBar: View {
     
     var body: some View {
         HStack {
-            tabItem(title: String(localized: "home"), icon: "house", tab: .feed)
-            tabItem(title: String(localized: "inbox"), icon: "bell", tab: .inbox, badge: 10)
-            tabItem(title: String(localized: "search"), icon: "magnifyingglass", tab: .search)
-            tabItem(title: String(localized: "bookings"), icon: "calendar", tab: .appointments, badge: 5)
-            tabItem(title: String(localized: "profile"), icon: "person", tab: .profile)
+            CustomTabBarItem(title: String(localized: "home"), icon: "house", tab: .feed, badge: nil, activeColor: activeColor)
+            CustomTabBarItem(title: String(localized: "inbox"), icon: "bell", tab: .inbox, badge: 10, activeColor: activeColor)
+            CustomTabBarItem(title: String(localized: "search"), icon: "magnifyingglass", tab: .search, badge: nil, activeColor: activeColor)
+            CustomTabBarItem(title: String(localized: "bookings"), icon: "calendar", tab: .appointments, badge: 5, activeColor: activeColor)
+            CustomTabBarItem(title: String(localized: "profile"), icon: "person", tab: .profile, badge: nil, activeColor: activeColor)
         }
         .padding(.top, 6)
         .frame(height: 49)
@@ -39,58 +39,6 @@ struct CustomTabBar: View {
             alignment: .top
         )
     }
-    
-    @ViewBuilder
-    private func tabItem(
-        title: String,
-        icon: String,
-        tab: MainTab,
-        badge: Int? = nil
-    ) -> some View {
-        let isSelected = router.selectedTab == tab
-
-        let iconName: String = {
-            if isSelected {
-                if icon == "magnifyingglass" || icon == "calendar" {
-                    return icon
-                }
-                if icon == "calendar" {
-                    return icon
-                }
-                return "\(icon).fill"
-            }
-            return icon
-        }()
-        
-        Button {
-            if isSelected {
-                router.popToRoot()
-            } else {
-                router.selectedTab = tab
-            }
-        } label: {
-            VStack(spacing: 4) {
-                Image(systemName: iconName)
-                    .font(.system(size: 20, weight: isSelected ? .bold : .regular))
-                    .overlay(
-                        Group {
-                            if let badge = badge, badge > 0 {
-                                Text("\(badge)")
-                                    .font(.system(size: 10, weight: .bold))
-                                    .foregroundColor(.white)
-                                    .padding(4)
-                                    .background(Color.red)
-                                    .clipShape(Circle())
-                                    .offset(x: 12, y: -10)
-                            }
-                        }
-                    )
-                
-                Text(title).font(.system(size: 10))
-            }
-            .foregroundColor(isSelected ? activeColor : .gray)
-            .frame(maxWidth: .infinity)
-        }
-    }
 }
+
 

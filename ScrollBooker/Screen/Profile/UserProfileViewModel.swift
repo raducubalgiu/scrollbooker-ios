@@ -10,19 +10,16 @@ import Observation
 
 @Observable
 @MainActor
-final class UserProfileViewModel: HasLoadingState {
+final class UserProfileViewModel {
     let profileController: ProfileController
     let userId: Int
     let username: String
-    
-    var isLoading: Bool {
-        get { profileController.isLoading }
-        set { profileController.isLoading = newValue }
-    }
 
-    var errorMessage: String? {
-        get { profileController.errorMessage }
-        set { profileController.errorMessage = newValue }
+    var selectedTab: ProfileTab = .posts {
+        didSet {
+            guard oldValue != selectedTab else { return }
+            Task { await profileController.loadTabContentIfNeeded(selectedTab, userId: userId) }
+        }
     }
     
     init(
@@ -34,15 +31,16 @@ final class UserProfileViewModel: HasLoadingState {
         self.username = username
         self.profileController = profileController
     }
-    
+
     func loadProfile() async {
         await profileController.fetchProfile(username: username)
+        await profileController.loadTabContentIfNeeded(selectedTab, userId: userId)
     }
-    
+
     func refresh() async {
-        await profileController.refreshProfile(username: username)
+        await profileController.refresh(username: username, userId: userId, activeTab: selectedTab)
     }
-    
+
     // --- ACTIUNI SPECIFICE DOAR PENTRU ALTII ---
     func toggleFollow() async {
         // Logica de follow/unfollow...

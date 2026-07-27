@@ -50,13 +50,15 @@ final class UserProfileModule {
     func makeMyProfileViewModel(
         session: SessionManager,
         getUserPostsUseCase: GetUserPostsUseCase,
-        getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
+        getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
+        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
     ) -> MyProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
             getUserProfileAboutUseCase: getUserProfileAboutUseCase,
             getUserPostsUseCase: getUserPostsUseCase,
-            getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase
+            getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
+            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase
         )
         
         return MyProfileViewModel(
@@ -73,13 +75,15 @@ final class UserProfileModule {
         userId: Int,
         username: String,
         getUserPostsUseCase: GetUserPostsUseCase,
-        getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
+        getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
+        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
     ) -> UserProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
             getUserProfileAboutUseCase: getUserProfileAboutUseCase,
             getUserPostsUseCase: getUserPostsUseCase,
-            getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase
+            getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
+            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase
         )
         
         return UserProfileViewModel(

@@ -39,7 +39,7 @@ final class PostRepositoryImpl: PostRepository {
     }
     
     func getUserPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<Post> {
-        let dtoResponse = try await api.getVideoReviews(userId: userId, page: page, limit: limit)
+        let dtoResponse = try await api.getUserPosts(userId: userId, page: page, limit: limit)
         
         return PaginatedResponse(dtoResponse) {
             Post(from: $0)

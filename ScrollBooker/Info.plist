@@ -6,5 +6,7 @@
 	<string>$(API_HOST)</string>
 	<key>API_SCHEME</key>
 	<string>$(API_SCHEME)</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Aplicația are nevoie de acces la galerie pentru a selecta clipuri video pentru postări.</string>
 </dict>
 </plist>

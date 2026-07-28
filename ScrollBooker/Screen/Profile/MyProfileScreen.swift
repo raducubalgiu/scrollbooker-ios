@@ -16,6 +16,7 @@ struct MyProfileScreen: View {
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     var onNavigateToMyCalendar: () -> Void
+    var onNavigateToCamera: () -> Void
 
     @State private var activeSheet: ProfileSheet?
     
@@ -47,7 +48,8 @@ struct MyProfileScreen: View {
                         header: {
                             MyProfileHeaderView(
                                 username: "@\(user.username)",
-                                onOpenMenuSheet: { activeSheet = .menu }
+                                onOpenMenuSheet: { activeSheet = .menu },
+                                onNavigateToCamera: onNavigateToCamera
                             )
                             .padding(.vertical).padding(.horizontal)
                         },

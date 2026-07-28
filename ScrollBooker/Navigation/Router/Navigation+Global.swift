@@ -158,6 +158,48 @@ struct GlobalNavigationModifier: ViewModifier {
                 LoadingView()
             }
             
+            case .camera:
+                let viewModel: CameraViewModel = {
+                    if let existingVM = router.activeCameraViewModel {
+                        return existingVM
+                    } else {
+                        let newVM = container.postModule.makeCameraViewModel()
+                        router.activeCameraViewModel = newVM
+                        return newVM
+                    }
+                }()
+                
+                CameraScreen(
+                    viewModel: viewModel,
+                    onBack: {
+                        router.clearCameraSession()
+                        router.pop()
+                    },
+                    onNext: {}
+                )
+            
+            case .cameraPreview:
+                if let viewModel = router.activeCameraViewModel {
+                    CameraPreviewScreen(
+                        viewModel: viewModel,
+                        onBack: { router.pop() },
+                        onNext: { router.push(.addProduct) }
+                    )
+                } else {
+                    LoadingView()
+                }
+            
+            case .createPost:
+                if let viewModel = router.activeCameraViewModel {
+                    CreatePostScreen(
+                        viewModel: viewModel,
+                        onBack: { router.pop()},
+                        onPostCreated: {}
+                    )
+                } else {
+                    LoadingView()
+                }
+            
         default:
             Text("Route \(String(describing: route)) not implemented globally")
         }

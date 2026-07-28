@@ -19,6 +19,7 @@ final class Router {
     
     var selectedTab: MainTab = .feed
     var activeBookingViewModel: BookingViewModel?
+    var activeCameraViewModel: CameraViewModel?
     
     func push(_ route: Route) {
         switch selectedTab {
@@ -54,6 +55,10 @@ final class Router {
         activeBookingViewModel = nil
     }
     
+    func clearCameraSession() {
+        activeCameraViewModel = nil
+    }
+    
     func resetAll() {
         feedPath = .init()
         inboxPath = .init()
@@ -61,6 +66,7 @@ final class Router {
         appointmentsPath = .init()
         profilePath = .init()
         activeBookingViewModel = nil
+        activeCameraViewModel = nil
     }
 }
 

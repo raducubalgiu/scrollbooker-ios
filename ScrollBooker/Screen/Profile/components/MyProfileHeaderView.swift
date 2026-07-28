@@ -10,12 +10,10 @@ import SwiftUI
 struct MyProfileHeaderView: View {
     var username: String
     var onOpenMenuSheet: () -> Void
+    var onNavigateToCamera: () -> Void
     
     var body: some View {
         HStack {
-            Image(systemName: "line.3.horizontal")
-                .foregroundColor(.backgroundSB)
-            
             Spacer()
             
             Text(username)
@@ -23,35 +21,26 @@ struct MyProfileHeaderView: View {
             
             Spacer()
             
-            Button {
-                onOpenMenuSheet()
-            } label: {
-                Image(systemName: "line.3.horizontal")
-                    .foregroundColor(.onBackgroundSB)
-                    .font(.system(size: 24))
+            HStack(spacing: 16) {
+                Button {
+                    onNavigateToCamera()
+                } label: {
+                    Image(systemName: "plus.circle")
+                        .foregroundColor(.onBackgroundSB)
+                        .font(.system(size: 24))
+                }
+                .buttonStyle(.plain)
+                
+                Button {
+                    onOpenMenuSheet()
+                } label: {
+                    Image(systemName: "line.3.horizontal")
+                        .foregroundColor(.onBackgroundSB)
+                        .font(.system(size: 24))
+                }
+                .buttonStyle(.plain)
             }
-            .buttonStyle(.plain)
-
         }
         .frame(maxWidth: .infinity)
     }
-}
-
-#Preview("Light") {
-    MyProfileHeaderView(
-        username: "@radu_balgiu",
-        onOpenMenuSheet: {}
-    )
-    
-    Spacer()
-}
-
-#Preview("Dark") {
-    MyProfileHeaderView(
-        username: "@radu_balgiu",
-        onOpenMenuSheet: {}
-    )
-        .preferredColorScheme(.dark)
-    
-    Spacer()
 }

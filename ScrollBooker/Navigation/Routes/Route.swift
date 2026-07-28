@@ -69,15 +69,11 @@ enum Route: Hashable {
     
     case userSocial(SocialNavigationParams)
     
-    case calendar
-    case appointmentConfirmation
-    case camera
-    
     // My Business
     case myBusiness
     case myBusinessDetails
-    case myEmployees
     
+    case myEmployees
     case employmentSelectEmployee
     case employmentAssignJob
     case employmentAcceptTerms
@@ -94,6 +90,11 @@ enum Route: Hashable {
     case mySettings
     case display
     case reportProblem
+    
+    // Camera
+    case camera
+    case cameraPreview
+    case createPost
     
     // Booking
     case bookingServices(BookingNavigationParams)

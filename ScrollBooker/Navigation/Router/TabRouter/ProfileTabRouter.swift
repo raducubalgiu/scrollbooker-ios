@@ -26,7 +26,8 @@ struct ProfileTabRouter: View {
                         onNavigateToMyBusiness: { router.push(.myBusiness) },
                         onNavigateToUserProfile: { router.push(.userProfile($0)) },
                         onNavigateToUserSocial: { router.push(.userSocial($0)) },
-                        onNavigateToMyCalendar: { router.push(.myCalendar) }
+                        onNavigateToMyCalendar: { router.push(.myCalendar) },
+                        onNavigateToCamera: { router.push(.camera) },
                     )
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         CustomTabBar(backgroundColor: .backgroundSB)

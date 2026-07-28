@@ -85,4 +85,8 @@ final class PostModule {
             followingViewModel: makeFollowingTabViewModel()
         )
     }
+    
+    func makeCameraViewModel() -> CameraViewModel {
+        CameraViewModel()
+    }
 }

@@ -7,25 +7,14 @@
 
 import Foundation
 import Observation
-
-enum MyServicesState: Equatable {
-    case idle
-    case loading
-    case success([SelectedServiceDomainsWithServices])
-    case error(String)
-}
+import OSLog
 
 @Observable
 @MainActor
-final class MyServicesViewModel: HasLoadingState {
-    var uiState = UiState(data: [SelectedServiceDomainsWithServices]())
+final class MyServicesViewModel {
+    private(set) var viewState: FeatureState<[SelectedServiceDomainsWithServices]> = .idle
     
-    private(set) var viewState: MyServicesState = .idle
-    
-    private let session: SessionManager
-    private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
-    private let updateBusinessServicesUseCase: UpdateBusinessServicesUseCase
-    
+    var isSaving: Bool = false
     var defaultSelectedServiceIds: Set<Int> = []
     var selectedServiceIds: Set<Int> = []
     
@@ -33,15 +22,11 @@ final class MyServicesViewModel: HasLoadingState {
         selectedServiceIds != defaultSelectedServiceIds
     }
     
-    var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return uiState.isLoading }
-        set { uiState.isLoading = newValue }
-    }
-
-    var errorMessage: String? {
-        get { if case .error(let msg) = viewState { return msg }; return uiState.errorMessage }
-        set { uiState.errorMessage = newValue }
-    }
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Services")
+    
+    private let session: SessionManager
+    private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
+    private let updateBusinessServicesUseCase: UpdateBusinessServicesUseCase
     
     init(
         session: SessionManager,
@@ -54,21 +39,21 @@ final class MyServicesViewModel: HasLoadingState {
     }
     
     func loadServices() async {
+        guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
         
+        viewState = .loading
+        
         guard let businessId = session.userInfo?.businessId else {
-            viewState = .error("Business ID not found in session")
+            logger.error("ERROR: Business ID not found in session")
+            viewState = .error("Something went wrong")
             return
         }
         
-        viewState = .loading
-        uiState.errorMessage = nil
-        
         do {
-            let data = try await withVisibleLoading {
+            let data = try await withLoading {
                 try await getSelectedDomainsByBusinessUseCase(businessId: businessId)
             }
-            uiState.data = data
             
             let initialSelectedIds = Set(
                 data.flatMap { domain in
@@ -84,8 +69,8 @@ final class MyServicesViewModel: HasLoadingState {
             viewState = .success(data)
             
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            viewState = .error(message)
+            logger.error("ERROR: on Fetching Services: \(error.localizedDescription)")
+            viewState = .error("Something went wrong")
         }
     }
     
@@ -99,19 +84,16 @@ final class MyServicesViewModel: HasLoadingState {
     
     func updateBusinessServices() async {
         guard let businessId = session.userInfo?.businessId else { return }
-
-        uiState.isLoading = true
-        uiState.errorMessage = nil
+        guard !isSaving else { return }
         
+        isSaving = true
         let serviceIdsArray = Array(selectedServiceIds)
         
         do {
-            let updatedData = try await withVisibleLoading {
+            let updatedData = try await withLoading {
                 try await updateBusinessServicesUseCase(businessId: businessId, serviceIds: serviceIdsArray)
             }
             
-            uiState.data = updatedData
-
             let freshSelectedIds = Set(
                 updatedData.flatMap { domain in
                     domain.services
@@ -124,12 +106,11 @@ final class MyServicesViewModel: HasLoadingState {
             self.selectedServiceIds = freshSelectedIds
             
             viewState = .success(updatedData)
-            uiState.isLoading = false
-            
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            uiState.errorMessage = message
-            uiState.isLoading = false
+            logger.error("ERROR: on Updating Business Services: \(error.localizedDescription)")
         }
+        
+        isSaving = false
     }
 }
+

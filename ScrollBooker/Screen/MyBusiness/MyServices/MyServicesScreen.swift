@@ -12,7 +12,7 @@ struct MyServicesScreen: View {
     var onBack: () -> Void
     
     private var isButtonDisabled: Bool {
-        viewModel.isLoading || viewModel.selectedServiceIds.isEmpty || !viewModel.hasChanges
+        viewModel.isSaving || viewModel.selectedServiceIds.isEmpty || !viewModel.hasChanges
     }
     
     var body: some View {
@@ -23,7 +23,7 @@ struct MyServicesScreen: View {
             enableBack: true,
             buttonTitle: String(localized: "save"),
             isDisabled: isButtonDisabled,
-            isLoading: viewModel.isLoading,
+            isLoading: viewModel.isSaving,
             onBack: onBack,
             onClick: {
                 Task {
@@ -31,25 +31,25 @@ struct MyServicesScreen: View {
                 }
             }
         ) {
-            VStack {
+            Group {
                 switch viewModel.viewState {
-                    case .idle, .loading:
-                        LoadingView()
-                        
-                    case .error(let message):
-                        ErrorView(message: message) {
-                            Task { await viewModel.loadServices() }
-                        }
-                        
-                    case .success(let domains):
-                        MyServicesListView(
-                            data: domains,
-                            selectedServiceIds: viewModel.selectedServiceIds,
-                            onToggleService: { serviceId in
-                                viewModel.toggleService(serviceId: serviceId)
-                            }
-                        )
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                        Task { await viewModel.loadServices() }
                     }
+                    
+                case .success(let domains):
+                    MyServicesListView(
+                        data: domains,
+                        selectedServiceIds: viewModel.selectedServiceIds,
+                        onToggleService: { serviceId in
+                            viewModel.toggleService(serviceId: serviceId)
+                        }
+                    )
+                }
             }
         }
         .task {

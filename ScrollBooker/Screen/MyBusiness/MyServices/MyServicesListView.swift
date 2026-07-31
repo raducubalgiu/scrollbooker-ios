@@ -59,6 +59,7 @@ struct MyServicesListView: View {
                 }
             }
             .padding(.vertical, .s)
+            .padding(.horizontal, .xl)
         }
     }
 }

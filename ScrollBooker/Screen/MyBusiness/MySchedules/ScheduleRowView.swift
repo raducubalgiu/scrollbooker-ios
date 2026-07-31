@@ -13,8 +13,8 @@ struct ScheduleRow: View {
     let isNotValid: Bool
     let showErrors: Bool
     
-    private var slots: [TimeOption] {
-        var list = [TimeOption(value: "null", name: String(localized: "closed"))]
+    private var slots: [SelectOption] {
+        var list = [SelectOption(value: "null", name: String(localized: "closed"))]
         
         var current = Calendar.current.startOfDay(for: Date())
         let endDate = Calendar.current.date(bySettingHour: 23, minute: 59, second: 59, of: current) ?? current
@@ -24,7 +24,7 @@ struct ScheduleRow: View {
         
         while current <= endDate {
             let timeString = formatter.string(from: current)
-            list.append(TimeOption(value: timeString, name: timeString))
+            list.append(SelectOption(value: timeString, name: timeString))
             
             guard let next = Calendar.current.date(byAdding: .minute, value: 30, to: current) else { break }
             current = next

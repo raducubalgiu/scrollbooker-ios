@@ -113,8 +113,18 @@ struct ProfileTabRouter: View {
                         return MyProductsScreen(
                             viewModel: container.productModule.makeMyProductsViewModel(session: session),
                             onBack: { router.pop() },
-                            onNavigateAddProduct: {},
+                            onNavigateAddProduct: { router.push(.addProduct) },
                             onNavigateEditProduct: { _, _ in }
+                        )
+                    
+                    case .addProduct:
+                        return AddProductScreen(
+                            viewModel: container.productModule.makeAddProductViewModel(
+                                session: session,
+                                getSelectedDomainsByBusinessUseCase: container.servieDomainModule.getSelectedDomainsByBusinessUseCase,
+                                getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner
+                            ),
+                            onBack: { router.pop() }
                         )
                     
                     case .myServices:

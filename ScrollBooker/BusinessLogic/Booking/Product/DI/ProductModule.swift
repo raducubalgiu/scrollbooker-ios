@@ -44,4 +44,16 @@ final class ProductModule {
             getPostLinkedProductsUseCase: getPostLinkedProductsUseCase
         )
     }
+    
+    func makeAddProductViewModel(
+        session: SessionManager,
+        getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase,
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
+    ) -> AddProductViewModel {
+        AddProductViewModel(
+            session: session,
+            getSelectedDomainsByBusinessUseCase: getSelectedDomainsByBusinessUseCase,
+            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase
+        )
+    }
 }

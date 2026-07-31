@@ -9,10 +9,6 @@ import SwiftUI
 import Observation
 import Photos
 
-import SwiftUI
-import Observation
-import Photos
-
 struct LocalVideoAsset: Identifiable, Hashable {
     let id: String
     let asset: PHAsset

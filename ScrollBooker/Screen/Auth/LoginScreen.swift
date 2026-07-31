@@ -37,7 +37,7 @@ struct LoginScreen: View {
             Input(
                 label: String(localized: "password"),
                 text: $password,
-                placeholder: String(localized: "password"),
+                placeholder: String(localized: "password")
             )
             
             MainButton(

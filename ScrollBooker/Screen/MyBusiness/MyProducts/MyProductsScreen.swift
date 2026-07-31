@@ -22,6 +22,7 @@ struct MyProductsScreen: View {
                     Image(systemName: "plus")
                         .font(.title2)
                 }
+                .padding(.trailing, .base)
             }
             
             switch viewModel.viewState {

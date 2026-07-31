@@ -4,30 +4,18 @@
 //
 //  Created by Raducu Balgiu on 09.07.2026.
 //
-
-import Foundation
 import Observation
-
-enum AppointmentDetailsState: Equatable {
-    case idle
-    case loading
-    case success(Appointment)
-    case error(String)
-    
-    var appointment: Appointment? {
-        if case .success(let appointment) = self { return appointment }
-        return nil
-    }
-}
+import Foundation
+import OSLog
 
 @Observable
 @MainActor
-final class AppointmentDetailsViewModel: HasLoadingState {
-    private(set) var viewState: AppointmentDetailsState = .idle
+final class AppointmentDetailsViewModel {
+    private(set) var viewState: FeatureState<Appointment> = .idle
     
+    var isSaving: Bool = false
     var isRefreshing: Bool = false
-    private(set) var operationErrorMessage: String? = nil
-    private(set) var isPerformingAction: Bool = false
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Appointments")
     
     private let session: SessionManager
     private let appointmentId: Int
@@ -37,20 +25,7 @@ final class AppointmentDetailsViewModel: HasLoadingState {
     private let updateReviewUseCase: UpdateReviewUseCase
     
     var isFinished: Bool {
-        viewState.appointment?.status == .finished
-    }
-    
-    var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return isPerformingAction }
-        set { isPerformingAction = newValue }
-    }
-    
-    var errorMessage: String? {
-        get {
-            if case .error(let msg) = viewState { return msg }
-            return operationErrorMessage
-        }
-        set { operationErrorMessage = newValue }
+        viewState.data?.status == .finished
     }
     
     init(
@@ -70,54 +45,52 @@ final class AppointmentDetailsViewModel: HasLoadingState {
     }
     
     func loadAppointment() async {
-        guard viewState.appointment == nil else { return }
+        guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
         
         viewState = .loading
-        operationErrorMessage = nil
         
         do {
-            let result = try await withVisibleLoading {
+            let result = try await withLoading {
                 try await getAppointmentById(id: appointmentId)
             }
             viewState = .success(result)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            viewState = .error(message)
+            logger.error("ERROR: on Fetching Appointment: \(error.localizedDescription)")
+            viewState = .error("Something went wrong") // Mesaj generic direct în starea ecranului
         }
     }
     
     func refresh() async {
         guard !isRefreshing else { return }
         isRefreshing = true
-        operationErrorMessage = nil
         
         do {
             let result = try await getAppointmentById(id: appointmentId)
             viewState = .success(result)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            if viewState.appointment == nil {
-                viewState = .error(message)
-            } else {
-                operationErrorMessage = message
+            logger.error("ERROR: on Refreshing Appointment: \(error.localizedDescription)")
+            if viewState.data == nil {
+                viewState = .error("Something went wrong")
             }
         }
         isRefreshing = false
     }
     
     func cancelCurrentAppointment(reason: String) async {
-        operationErrorMessage = nil
-        isPerformingAction = true
+        guard let currentAppointment = viewState.data else { return }
+        
+        isSaving = true
+        
+        guard let userId = session.userInfo?.id else {
+            logger.error("ERROR: User session / ID not found")
+            isSaving = false
+            // Aici în UI poți declanșa o alertă generică locală dacă dorești
+            return
+        }
         
         do {
-            guard let userId = session.userInfo?.id else {
-                operationErrorMessage = "User session not found"
-                isPerformingAction = false
-                return
-            }
-            
-            let updatedAppointment = try await withVisibleLoading {
+            let updatedAppointment = try await withLoading {
                 try await cancelAppointment(
                     id: appointmentId,
                     canceledReason: reason,
@@ -125,19 +98,20 @@ final class AppointmentDetailsViewModel: HasLoadingState {
                 )
             }
             
-            viewState = .success(updatedAppointment)
-            isPerformingAction = false
+            if updatedAppointment.id == currentAppointment.id {
+                viewState = .success(updatedAppointment)
+            }
             
         } catch {
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            isPerformingAction = false
+            logger.error("ERROR: on Cancelling Appointment: \(error.localizedDescription)")
         }
+        
+        isSaving = false
     }
     
     func createReview(review: String, rating: Int, userId: Int, productId: Int) async {
-        guard let currentAppointment = viewState.appointment else { return }
-        operationErrorMessage = nil
-        isPerformingAction = true
+        guard let currentAppointment = viewState.data else { return }
+        isSaving = true
         
         let request = ReviewCreateRequest(
             review: review,
@@ -148,17 +122,15 @@ final class AppointmentDetailsViewModel: HasLoadingState {
         )
         
         do {
-            let newReview = try await withVisibleLoading {
+            let newReview = try await withLoading {
                 try await createReviewUseCase(id: appointmentId, request: request)
             }
-            
-            isPerformingAction = false
             updateStateWithNewReview(newReview, from: currentAppointment)
-            
         } catch {
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            isPerformingAction = false
+            logger.error("ERROR: on Creating Review: \(error.localizedDescription)")
         }
+        
+        isSaving = false
     }
 
     private func updateStateWithNewReview(_ review: Review, from current: Appointment) {

@@ -23,7 +23,7 @@ final class ServiceDomainModule {
         ServiceDomainRepositoryImpl(api: apiService)
     }()
 
-    private lazy var getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase = {
+    lazy var getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase = {
         GetSelectedDomainsByBusinesssUseCase(repository: repository)
     }()
     

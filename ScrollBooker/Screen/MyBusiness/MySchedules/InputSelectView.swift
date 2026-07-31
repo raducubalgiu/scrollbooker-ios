@@ -7,14 +7,14 @@
 
 import SwiftUI
 
-struct TimeOption: Hashable {
+struct SelectOption: Hashable {
     let value: String
     let name: String
 }
 
 struct InputSelectView: View {
     let placeholder: String
-    let options: [TimeOption]
+    let options: [SelectOption]
     let selectedOption: String
     let onValueChange: (String) -> Void
     

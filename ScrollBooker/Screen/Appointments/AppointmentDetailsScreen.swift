@@ -21,106 +21,30 @@ struct AppointmentDetailsScreen: View {
             
             VStack {
                 switch viewModel.viewState {
-                    case .idle, .loading:
-                        LoadingView()
-                        
-                    case .error:
-                        ErrorView(message: String(localized: "somethingWentWrong")) {
-                            Task { await viewModel.refresh() }
-                        }
-                        
-                    case .success(let appointment):
-                        ScrollView {
-                            VStack(alignment: .leading, spacing: 0) {
-                                AppointmentDetailsHeader(appointment: appointment)
-                                
-                                Text("\(String(localized: "bookedServices")):")
-                                    .font(.headline)
-                                    .fontWeight(.semibold)
-                                    .padding(.vertical, .base)
-                                
-                                ForEach(Array(appointment.products.enumerated()), id: \.offset) { index, prod in
-                                    AppointmentProductPrice(
-                                        name: prod.name,
-                                        price: prod.price,
-                                        priceWithDiscount: prod.priceWithDiscount,
-                                        discount: prod.discount,
-                                        currencyName: prod.currency.name
-                                    )
-                                    
-                                    if index < appointment.products.count - 1 {
-                                        Divider()
-                                            .padding(.vertical, .base)
-                                    }
-                                }
-                                
-                                Divider()
-                                    .padding(.vertical, .base)
-                                
-                                AppointmentProductPrice(
-                                    name: String(localized: "total"),
-                                    price: appointment.totalPrice,
-                                    priceWithDiscount: appointment.totalPriceWithDiscount,
-                                    discount: appointment.totalDiscount,
-                                    currencyName: appointment.paymentCurrency.name
-                                )
-                                .padding(.bottom, .base)
-                                
-                                Group {
-                                    if viewModel.isSaving {
-                                        ProgressView()
-                                            .frame(maxWidth: .infinity)
-                                            .padding(.vertical, .base)
-                                    } else {
-                                        AppointmentDetailsActions(
-                                            appointmentId: appointment.id,
-                                            status: appointment.status,
-                                            isCustomer: appointment.isCustomer,
-                                            onOpenCancelSheet: { _ in
-                                                self.activeSheet = .cancelAppointment
-                                            }
-                                        )
-                                        .padding(.bottom, .base)
-                                    }
-                                }
-                                
-                                if !appointment.hasWrittenReview && viewModel.isFinished && appointment.isCustomer {
-                                    ReviewCTA { rating in
-                                        self.activeSheet = .writeReview(rating: rating)
-                                    }
-                                    .padding(.bottom, .base)
-                                }
-                                
-                                if let rev = appointment.writtenReview {
-                                    AppointmentDetailsWrittenReview(
-                                        customerAvatar: appointment.customer.avatar ?? "",
-                                        isCustomer: appointment.isCustomer,
-                                        review: rev.review,
-                                        rating: rev.rating,
-                                        onOpenCancelSheet: {}
-                                    )
-                                    .padding(.bottom, .base)
-                                }
-                                
-                                if let message = appointment.message {
-                                    Text(message)
-                                        .font(.body)
-                                        .padding(.top, 8)
-                                }
-                                
-                                SectionMap(
-                                    mapUrl: appointment.business.mapUrl ?? "",
-                                    coordinates: appointment.business.coordinates,
-                                    fullName: appointment.user.fullName
-                                )
-                            }
-                            .padding(.horizontal, .xl)
-                        }
-                        .refreshable {
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                        Task { await viewModel.refresh() }
+                    }
+                    
+                case .success(let appointment):
+                    AppointmentDetailsSuccessView(
+                        appointment: appointment,
+                        isSaving: viewModel.isSaving,
+                        isFinished: viewModel.isFinished,
+                        onOpenCancelSheet: {
+                            self.activeSheet = .cancelAppointment
+                        },
+                        onOpenReviewSheet: { rating in
+                            self.activeSheet = .writeReview(rating: rating)
+                        },
+                        onRefresh: {
                             await viewModel.refresh()
                         }
-                        .disabled(viewModel.isSaving)
-                    }
+                    )
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
@@ -138,7 +62,6 @@ struct AppointmentDetailsScreen: View {
                         let productId = appointmentData.products.first?.id ?? 0
                         
                         self.activeSheet = nil
-                        
                         await viewModel.createReview(
                             review: message,
                             rating: selectedRating,
@@ -157,3 +80,4 @@ struct AppointmentDetailsScreen: View {
         }
     }
 }
+

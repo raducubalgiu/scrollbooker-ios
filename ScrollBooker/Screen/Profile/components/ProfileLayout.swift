@@ -73,7 +73,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
 
                         actions()
 
-                        if let owner = user.businessOwner {
+                        if let owner = user.businessOwner, user.id != owner.id {
                             ProfileBusinessOwnerView(
                                 businessOwner: owner,
                                 onNavigateToUserProfile: onNavigateToUserProfile

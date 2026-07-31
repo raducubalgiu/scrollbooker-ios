@@ -23,11 +23,12 @@ struct ProfileBusinessOwnerView: View {
                 
                 AvatarView(
                     imageURL: businessOwner.avatarURL,
-                    size: .s
+                    size: .xs
                 )
                 
                 Text(businessOwner.fullName)
-                    .font(.headline)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
                     .foregroundColor(.onBackgroundSB)
             }
         }

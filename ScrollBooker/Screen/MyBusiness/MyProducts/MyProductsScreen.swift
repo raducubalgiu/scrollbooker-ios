@@ -26,21 +26,30 @@ struct MyProductsScreen: View {
             }
             
             switch viewModel.viewState {
-                case .idle, .loading:
-                    LoadingView()
-                    
-                case .error(let message):
-                    ErrorView(message: message) {
-                        Task { await viewModel.loadProducts() }
-                    }
+            case .idle, .loading:
+                LoadingView()
                 
-                case .success(let userProducts):
+            case .error:
+                ErrorView(message: String(localized: "somethingWentWrong")) {
+                    Task { await viewModel.loadProducts() }
+                }
+            
+            case .success(let userProducts):
+                if userProducts.data.isEmpty {
+                    NoDataView(
+                        title: "Servicii",
+                        message: "Nu ai adăugat încă niciun serviciu sau produs.",
+                        systemImage: "bag.badge.plus"
+                    )
+                } else {
                     ProductsList(
                         userProducts: userProducts,
                         activeSectionId: $activeSectionId,
-                        onOpenProductDetail: { _ in }
+                        onOpenProductDetail: { _ in },
+                        onNavigateEditProduct: onNavigateEditProduct
                     )
                 }
+            }
         }
         .task {
             await viewModel.loadProducts()

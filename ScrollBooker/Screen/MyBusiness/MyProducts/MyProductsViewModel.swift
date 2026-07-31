@@ -7,55 +7,39 @@
 
 import Foundation
 import Observation
-
-enum MyProductsState: Equatable {
-    case idle
-    case loading
-    case success(UserProducts)
-    case error(String)
-}
+import OSLog
 
 @Observable
 @MainActor
-final class MyProductsViewModel: HasLoadingState {
-    var uiState = UiState(data: [UserProducts]())
-    
-    private(set) var viewState: MyProductsState = .idle
+final class MyProductsViewModel {
+    private(set) var viewState: FeatureState<UserProducts> = .idle
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Products")
     
     private let session: SessionManager
     private let getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
     
-    var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return uiState.isLoading }
-        set { uiState.isLoading = newValue }
-    }
-
-    var errorMessage: String? {
-        get { if case .error(let msg) = viewState { return msg }; return uiState.errorMessage }
-        set { uiState.errorMessage = newValue }
-    }
-    
     init(
         session: SessionManager,
-        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
+        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
     ) {
         self.session = session
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
     }
     
     func loadProducts() async {
+        guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
         
+        viewState = .loading
+        
         guard let businessId = session.userInfo?.businessId else {
-            viewState = .error("Business ID not found in session")
+            logger.error("ERROR: Business ID not found in session")
+            viewState = .error("Something went wrong")
             return
         }
         
-        viewState = .loading
-        uiState.errorMessage = nil
-        
         do {
-            let productsData = try await withVisibleLoading {
+            let productsData = try await withLoading {
                 try await getProductsByBusinessAndEmployeeUseCase(
                     businessId: businessId,
                     employeeId: nil,
@@ -66,7 +50,9 @@ final class MyProductsViewModel: HasLoadingState {
             
             viewState = .success(productsData)
         } catch {
-            viewState = .error(error.localizedDescription)
+            logger.error("ERROR: on Fetching Products: \(error.localizedDescription)")
+            viewState = .error("Something went wrong")
         }
     }
 }
+

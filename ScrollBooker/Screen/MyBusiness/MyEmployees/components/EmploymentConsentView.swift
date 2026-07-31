@@ -47,5 +47,6 @@ struct EmploymentConsentView: View {
             }
             .buttonStyle(.plain)
         }
+        .padding(.horizontal, .xl)
     }
 }

@@ -21,27 +21,28 @@ struct EmploymentRequestsTab: View {
                 case .idle, .loading:
                     LoadingView()
                     
-                case .error(let message):
-                    ErrorView(message: message) {
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
                         Task { await viewModel.getUserEmploymentRequests() }
                     }
                     
-                case .empty:
-                    NoDataView(
-                        title: String(localized: "employmentRequests"),
-                        message: String(localized: "notFoundEmploymentRequests"),
-                        systemImage: "briefcase"
-                    )
-                    
-                case .success:
-                    EmploymentRequestsListView(
-                        requests: viewModel.employmentRequestUiState.data,
-                        onRequestClick: { id in
-                            employmentRequestId = id
-                            openModal = true
-                        }
-                    )
-                    .animation(.default, value: viewModel.employmentRequestUiState.data)
+                case .success(let requests):
+                    if requests.isEmpty {
+                        NoDataView(
+                            title: String(localized: "employmentRequests"),
+                            message: String(localized: "notFoundEmploymentRequests"),
+                            systemImage: "briefcase"
+                        )
+                    } else {
+                        EmploymentRequestsListView(
+                            requests: requests,
+                            onRequestClick: { id in
+                                employmentRequestId = id
+                                openModal = true
+                            }
+                        )
+                        .animation(.default, value: requests)
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -51,9 +52,11 @@ struct EmploymentRequestsTab: View {
                 
                 MainButton(
                     title: String(localized: "sendAnEmploymentRequest"),
+                    isDisabled: viewModel.isSaving,
                     onClick: onNavigateToSearchUser
                 )
                 .padding(.horizontal, .xl)
+                .padding(.vertical, 8)
             }
         }
         .task {
@@ -85,3 +88,4 @@ struct EmploymentRequestsTab: View {
         }
     }
 }
+

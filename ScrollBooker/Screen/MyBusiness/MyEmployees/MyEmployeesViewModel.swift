@@ -7,73 +7,44 @@
 
 import Foundation
 import Observation
+import OSLog
 
-enum EmployeesTabState: Equatable {
-    case idle
-    case loading
-    case success([Employee])
-    case empty
-    case error(String)
+enum EmploymentFlowError: LocalizedError {
+    case employeeNotSelected
+    case professionNotSelected
+    case consentNotLoaded
+    case requestInProgress
+    
+    var errorDescription: String? {
+        switch self {
+        case .employeeNotSelected: return "Employee not selected"
+        case .professionNotSelected: return "Profession not selected"
+        case .consentNotLoaded: return "Consent terms not loaded"
+        case .requestInProgress: return "Request already in progress"
+        }
+    }
 }
-
-enum RequestsTabState: Equatable {
-    case idle
-    case loading
-    case success([EmploymentRequest])
-    case empty
-    case error(String)
-}
-
-enum EmployeeSearchState: Equatable {
-    case idle
-    case loading
-    case empty
-    case success([SearchUser])
-    case error(String)
-}
-
-enum ProfessionsState: Equatable {
-    case idle
-    case loading
-    case empty
-    case success([Profession])
-    case error(String)
-}
-
-enum ConsentState: Equatable {
-    case idle
-    case loading
-    case empty
-    case success(Consent)
-    case error(String)
-}
-
 
 @Observable
 @MainActor
-final class MyEmployeesViewModel: HasLoadingState {
-    private(set) var employeesState: EmployeesTabState = .idle
-    private(set) var requestsState: RequestsTabState = .idle
-    private(set) var searchState: EmployeeSearchState = .idle
-    private(set) var professionsState: ProfessionsState = .idle
-    private(set) var consentState: ConsentState = .idle
+final class MyEmployeesViewModel {
+    private(set) var employeesState: FeatureState<[Employee]> = .idle
+    private(set) var requestsState: FeatureState<[EmploymentRequest]> = .idle
+    private(set) var searchState: FeatureState<[SearchUser]> = .idle
+    private(set) var professionsState: FeatureState<[Profession]> = .idle
+    private(set) var consentState: FeatureState<Consent> = .idle
     
-    var searchUserResults: [SearchUser] = []
     var searchTextEmployee: String = "" {
         didSet {
             triggerDebouncedEmployeeSearch()
         }
     }
-    
     var selectedUserForEmployment: SearchUser? = nil
     var selectedProfessionForEmployment: Profession? = nil
-    
-    var employeesUiState = UiState(data: [Employee]())
-    var employmentRequestUiState = UiState(data: [EmploymentRequest]())
-    var professionsUiState = UiState(data: [Profession]())
-    var consentUiState = UiState<Consent?>(data: nil)
     var isSaving: Bool = false
-        
+    
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Employees")
+    
     let session: SessionManager
     private let getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
@@ -81,33 +52,10 @@ final class MyEmployeesViewModel: HasLoadingState {
     private let getProfessionsByBusinessTypeUseCase: GetProfessionsByBusinessTypeUseCase
     private let getConsentByNameUseCase: GetConsentByNameUseCase
     private let createEmploymentRequestUseCase: CreateEmploymentRequestUseCase
-    
     private let searchUsersUseCase: SearchUsersUseCase
+    
     private var searchTask: Task<Void, Never>? = nil
     
-    var isLoading: Bool {
-        get {
-            employeesState == .loading ||
-            requestsState == .loading ||
-            searchState == .loading ||
-            professionsState == .loading ||
-            consentState == .loading
-        }
-        set { /* Gestionat automat prin stări */ }
-    }
-
-    var errorMessage: String? {
-        get {
-            if case .error(let msg) = employeesState { return msg }
-            if case .error(let msg) = requestsState { return msg }
-            if case .error(let msg) = searchState { return msg }
-            if case .error(let msg) = professionsState { return msg }
-            if case .error(let msg) = consentState { return msg }
-            return nil
-        }
-        set { /* Gestionat automat prin stări */ }
-    }
- 
     init(
         session: SessionManager,
         getUserEmploymentRequestsUseCase: GetUserEmploymentRequestsUseCase,
@@ -129,95 +77,72 @@ final class MyEmployeesViewModel: HasLoadingState {
     }
     
     func getEmployeesByOwner() async {
-        guard employeesUiState.data.isEmpty else { return }
+        guard employeesState.data == nil else { return }
         guard employeesState != .loading else { return }
         
         guard let businessOwnerId = session.userInfo?.businessOwnerId else {
-            employeesState = .error("User ID not found in session")
+            logger.error("ERROR: Business Owner ID not found in session")
+            employeesState = .error("Something went wrong")
             return
         }
         
         employeesState = .loading
         
         do {
-            let data = try await withVisibleLoading {
+            let data = try await withLoading {
                 try await getEmployeesByOwnerUseCase(businessOwnerId: businessOwnerId)
             }
-            
-            self.employeesUiState.data = data
-            
-            if data.isEmpty {
-                employeesState = .empty
-            } else {
-                employeesState = .success(data)
-            }
-            
+            employeesState = .success(data)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            employeesState = .error(message)
+            logger.error("ERROR: on Fetching Employees: \(error.localizedDescription)")
+            employeesState = .error("Something went wrong")
         }
     }
     
     func getUserEmploymentRequests() async {
-        guard employmentRequestUiState.data.isEmpty else { return }
+        guard requestsState.data == nil else { return }
         guard requestsState != .loading else { return }
         
         guard let userId = session.userInfo?.id else {
-            requestsState = .error("User ID not found in session")
+            logger.error("ERROR: User ID not found in session")
+            requestsState = .error("Something went wrong")
             return
         }
         
         requestsState = .loading
         
         do {
-            let data = try await withVisibleLoading {
+            let data = try await withLoading {
                 try await getUserEmploymentRequestsUseCase(userId: userId)
             }
-            
-            self.employmentRequestUiState.data = data
-            
-            if data.isEmpty {
-                requestsState = .empty
-            } else {
-                requestsState = .success(data)
-            }
-            
+            requestsState = .success(data)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            requestsState = .error(message)
+            logger.error("ERROR: on Fetching Employment Requests: \(error.localizedDescription)")
+            requestsState = .error("Something went wrong")
         }
     }
     
     func cancelEmploymentRequest(employmentId: Int) async {
-            guard !isSaving else { return }
-            
-            isSaving = true
-            
-            if case .error = requestsState {
-                // Dacă ecranul era blocat pe eroare (teoretic nu e cazul la ștergere), îl resetăm
+        guard let currentRequests = requestsState.data else { return }
+        guard !isSaving else { return }
+        
+        isSaving = true
+        
+        do {
+            _ = try await withLoading {
+                try await cancelEmploymentRequestUseCase(employmentId: employmentId)
             }
             
-            do {
-                _ = try await withVisibleLoading {
-                    try await cancelEmploymentRequestUseCase(employmentId: employmentId)
-                }
-                
-                self.employmentRequestUiState.data.removeAll { $0.id == employmentId }
-                if employmentRequestUiState.data.isEmpty {
-                    self.requestsState = .empty
-                } else {
-                    self.requestsState = .success(employmentRequestUiState.data)
-                }
-                
-                isSaving = false
-                
-            } catch {
-                let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-                
-                print("Eroare la anularea cererii de angajare: \(message)")
-                isSaving = false
-            }
+            var updatedRequests = currentRequests
+            updatedRequests.removeAll { $0.id == employmentId }
+            requestsState = .success(updatedRequests)
+            
+        } catch {
+            logger.error("ERROR: on Cancelling Employment Request (\(employmentId)): \(error.localizedDescription)")
         }
+        
+        isSaving = false
+    }
     
     private func triggerDebouncedEmployeeSearch() {
         searchTask?.cancel()
@@ -226,19 +151,13 @@ final class MyEmployeesViewModel: HasLoadingState {
         
         guard !cleanQuery.isEmpty else {
             self.searchState = .idle
-            self.searchUserResults = []
             return
         }
         
         searchTask = Task {
             do {
                 try await Task.sleep(for: .seconds(0.3))
-                
                 guard !Task.isCancelled else { return }
-                
-                if case .success = searchState, !searchUserResults.isEmpty {
-                    return
-                }
                 
                 self.searchState = .loading
                 
@@ -246,20 +165,14 @@ final class MyEmployeesViewModel: HasLoadingState {
                 
                 guard !Task.isCancelled else { return }
                 
-                self.searchUserResults = users
-                
-                if users.isEmpty {
-                    self.searchState = .empty
-                } else {
-                    self.searchState = .success(users)
-                }
+                self.searchState = .success(users)
                 
             } catch is CancellationError {
-
+                // Nu facem nimic dacă a fost anulat controlat prin tastare rapidă
             } catch {
                 guard !Task.isCancelled else { return }
-                let friendlyError = error.localizedDescription
-                self.searchState = .error(friendlyError)
+                logger.error("ERROR: on Searching Users: \(error.localizedDescription)")
+                self.searchState = .error("Something went wrong")
             }
         }
     }
@@ -270,96 +183,77 @@ final class MyEmployeesViewModel: HasLoadingState {
     }
     
     func getProfessions() async {
-        guard professionsUiState.data.isEmpty else { return }
+        guard professionsState.data == nil else { return }
         guard professionsState != .loading else { return }
         
         guard let businessTypeId = session.userInfo?.businessTypeId else {
-            professionsState = .error("Business Type ID not found in session")
+            logger.error("ERROR: Business Type ID not found in session")
+            professionsState = .error("Something went wrong")
             return
         }
         
         professionsState = .loading
         
         do {
-            let professions = try await withVisibleLoading {
+            let professions = try await withLoading {
                 try await getProfessionsByBusinessTypeUseCase(businessTypeId: businessTypeId)
             }
-            
-            self.professionsUiState.data = professions
-            
-            if professions.isEmpty {
-                professionsState = .empty
-            } else {
-                professionsState = .success(professions)
-            }
-            
+            professionsState = .success(professions)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            professionsState = .error(message)
+            logger.error("ERROR: on Fetching Professions: \(error.localizedDescription)")
+            professionsState = .error("Something went wrong")
         }
     }
     
     func getConsentTerms() async {
-        guard consentUiState.data == nil else { return }
+        guard consentState.data == nil else { return }
         guard consentState != .loading else { return }
         
         consentState = .loading
         
         do {
-            let consent = try await withVisibleLoading {
+            let consent = try await withLoading {
                 try await getConsentByNameUseCase(consentName: .employmentRequestsInitiation)
             }
-            
-            self.consentUiState.data = consent
-            self.consentState = .success(consent)
-            
+            consentState = .success(consent)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            consentState = .error(message)
+            logger.error("ERROR: on Fetching Consent Terms: \(error.localizedDescription)")
+            consentState = .error("Something went wrong")
         }
     }
     
     func createEmploymentRequest() async -> Result<Void, Error> {
-            guard let selectedUser = selectedUserForEmployment else {
-                return .failure(NSError(domain: "EmploymentFlow", code: 400, userInfo: [NSLocalizedDescriptionKey: "Employee not selected"]))
-            }
-            
-            let employeeId = selectedUser.id
-            
-            guard let selectedProfession = selectedProfessionForEmployment else {
-                return .failure(NSError(domain: "EmploymentFlow", code: 400, userInfo: [NSLocalizedDescriptionKey: "Profession not selected"]))
-            }
-            
-            guard let consent = consentUiState.data else {
-                return .failure(NSError(domain: "EmploymentFlow", code: 400, userInfo: [NSLocalizedDescriptionKey: "Consent terms not loaded"]))
-            }
-            
-            guard !isSaving else {
-                return .failure(NSError(domain: "EmploymentFlow", code: 429, userInfo: [NSLocalizedDescriptionKey: "Request already in progress"]))
-            }
-            
-            isSaving = true
-            
-            do {
-                _ = try await withVisibleLoading {
-                    try await createEmploymentRequestUseCase(
-                        employmentId: employeeId,
-                        professionId: selectedProfession.id,
-                        consentId: consent.id
-                    )
-                }
-                
-                self.employmentRequestUiState.data = []
-                self.requestsState = .idle
-                
-                isSaving = false
-                return .success(())
-                
-            } catch {
-                let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-                self.consentState = .error(message)
-                isSaving = false
-                return .failure(error)
-            }
+        guard let selectedUser = selectedUserForEmployment else {
+            return .failure(EmploymentFlowError.employeeNotSelected)
         }
+        
+        guard let selectedProfession = selectedProfessionForEmployment else {
+            return .failure(EmploymentFlowError.professionNotSelected)
+        }
+        
+        guard let consent = consentState.data else { return .failure(EmploymentFlowError.consentNotLoaded) }
+        
+        guard !isSaving else { return .failure(EmploymentFlowError.requestInProgress) }
+        
+        isSaving = true
+        
+        do {
+            _ = try await withLoading {
+                try await createEmploymentRequestUseCase(
+                    employmentId: selectedUser.id,
+                    professionId: selectedProfession.id,
+                    consentId: consent.id
+                )
+            }
+            
+            self.requestsState = .idle
+            isSaving = false
+            return .success(())
+            
+        } catch {
+            logger.error("ERROR: on Creating Employment Request: \(error.localizedDescription)")
+            isSaving = false
+            return .failure(error)
+        }
+    }
 }

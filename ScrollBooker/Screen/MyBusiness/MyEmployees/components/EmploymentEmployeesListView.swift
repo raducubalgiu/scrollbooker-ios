@@ -69,6 +69,7 @@ struct EmploymentEmployeesListView: View {
                     }
                 }
             }
+            .padding(.horizontal, .xl)
         }
         .scrollDismissesKeyboard(.immediately)
     }

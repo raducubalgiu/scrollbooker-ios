@@ -16,23 +16,26 @@ public struct EmployeesTab: View {
             case .idle, .loading:
                 LoadingView()
                 
-            case .error(let message):
-                ErrorView(message: message) {
+            case .error:
+                ErrorView(message: String(localized: "somethingWentWrong")) {
                     Task { await viewModel.getEmployeesByOwner() }
                 }
                 
-            case .empty:
-                NoDataView(
-                    title: String(localized: "employees"),
-                    message: String(localized: "notFoundEmployees"),
-                    systemImage: "person.2"
-                )
-                
             case .success(let employees):
-                EmployeesListView(
-                    employees: employees,
-                    onDismissEmployee: { employee in }
-                )
+                if employees.isEmpty {
+                    NoDataView(
+                        title: String(localized: "employees"),
+                        message: String(localized: "notFoundEmployees"),
+                        systemImage: "person.2"
+                    )
+                } else {
+                    EmployeesListView(
+                        employees: employees,
+                        onDismissEmployee: { employee in
+                            
+                        }
+                    )
+                }
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)

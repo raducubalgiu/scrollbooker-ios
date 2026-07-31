@@ -36,46 +36,44 @@ struct EmploymentAssignJobScreen: View {
                 case .idle, .loading:
                     LoadingView()
                     
-                case .error(let message):
-                    Spacer()
-                    ErrorView(message: message) {
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
                         Task { await viewModel.getProfessions() }
                     }
-                    Spacer()
-                    
-                case .empty:
-                    Spacer()
-                    NoDataView(
-                        title: String(localized: "professions"),
-                        message: String(localized: "notFoundProfessions"),
-                        systemImage: "briefcase.slash"
-                    )
-                    Spacer()
                     
                 case .success(let professions):
-                    ScrollView {
-                        LazyVStack(spacing: 0) {
-                            ForEach(Array(professions.enumerated()), id: \.element.id) { index, profession in
-                                InputRadio(
-                                    title: profession.name,
-                                    isSelected: viewModel.selectedProfessionForEmployment?.id == profession.id,
-                                    onClick: {
-                                        if viewModel.selectedProfessionForEmployment?.id == profession.id {
-                                            viewModel.selectedProfessionForEmployment = nil
-                                        } else {
-                                            viewModel.selectedProfessionForEmployment = profession
+                    if professions.isEmpty {
+                        NoDataView(
+                            title: String(localized: "professions"),
+                            message: String(localized: "notFoundProfessions"),
+                            systemImage: "briefcase.slash"
+                        )
+                    } else {
+                        ScrollView {
+                            LazyVStack(spacing: 0) {
+                                ForEach(Array(professions.enumerated()), id: \.element.id) { index, profession in
+                                    InputRadio(
+                                        title: profession.name,
+                                        isSelected: viewModel.selectedProfessionForEmployment?.id == profession.id,
+                                        onClick: {
+                                            if viewModel.selectedProfessionForEmployment?.id == profession.id {
+                                                viewModel.selectedProfessionForEmployment = nil
+                                            } else {
+                                                viewModel.selectedProfessionForEmployment = profession
+                                            }
                                         }
+                                    )
+                                    
+                                    if index < professions.count - 1 {
+                                        Divider()
+                                            .background(Color(.separator))
+                                            .padding(.vertical, 8)
                                     }
-                                )
-                                
-                                if index < professions.count - 1 {
-                                    Divider()
-                                        .background(Color(.separator))
-                                        .padding(.vertical, 8)
                                 }
                             }
+                            .padding(.top, 8)
+                            .padding(.horizontal, .xl)
                         }
-                        .padding(.top, 8)
                     }
                 }
             }

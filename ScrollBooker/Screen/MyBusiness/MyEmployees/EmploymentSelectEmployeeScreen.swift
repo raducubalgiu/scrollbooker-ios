@@ -20,6 +20,8 @@ struct EmploymentSelectEmployeeScreen: View {
     }
     
     var body: some View {
+        @Bindable var viewModel = viewModel
+        
         FormLayout(
             headline: String(localized: "selectEmployee"),
             subHeadline: String(localized: "searchEmployeeAndSelectToContinue"),
@@ -39,6 +41,7 @@ struct EmploymentSelectEmployeeScreen: View {
                     onSubmit: { viewModel.performInstantEmployeeSearch() },
                     onClear: { viewModel.selectedUserForEmployment = nil }
                 )
+                .padding(.horizontal, .xl)
                 
                 VStack {
                     switch viewModel.searchState {
@@ -52,22 +55,23 @@ struct EmploymentSelectEmployeeScreen: View {
                     case .loading:
                         LoadingView()
                         
-                    case .empty:
-                        NoDataView(
-                            title: String(localized: "users"),
-                            message: String(localized: "notFoundUsers"),
-                            systemImage: "person.slash"
-                        )
+                    case .error:
+                        ErrorView(message: String(localized: "somethingWentWrong")) {
+                            viewModel.performInstantEmployeeSearch()
+                        }
                         
                     case .success(let users):
-                        EmploymentEmployeesListView(
-                            users: users,
-                            selectedUser: $viewModel.selectedUserForEmployment
-                        )
-                        
-                    case .error(let message):
-                        ErrorView(message: message) {
-                            viewModel.performInstantEmployeeSearch()
+                        if users.isEmpty {
+                            NoDataView(
+                                title: String(localized: "users"),
+                                message: String(localized: "notFoundUsers"),
+                                systemImage: "person.slash"
+                            )
+                        } else {
+                            EmploymentEmployeesListView(
+                                users: users,
+                                selectedUser: $viewModel.selectedUserForEmployment
+                            )
                         }
                     }
                 }

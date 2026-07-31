@@ -14,6 +14,7 @@ struct EmploymentAcceptTermsScreen: View {
     let onNext: () -> Void
     
     @State private var isTermsAccepted = false
+    @State private var showFailureAlert = false
     
     private var isButtonDisabled: Bool {
         viewModel.isSaving || !isTermsAccepted
@@ -37,7 +38,7 @@ struct EmploymentAcceptTermsScreen: View {
                             onNext()
                             
                         case .failure:
-                            break
+                            showFailureAlert = true
                         }
                 }
             }
@@ -47,23 +48,24 @@ struct EmploymentAcceptTermsScreen: View {
                 case .idle, .loading:
                     LoadingView()
                     
-                case .error(let message):
-                    ErrorView(message: message) {
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
                         Task { await viewModel.getConsentTerms() }
                     }
                     
-                case .empty:
-                    NoDataView(
-                        title: String(localized: "acceptTerms"),
-                        message: String(localized: "termsNotFound"),
-                        systemImage: "doc.plaintext.fill"
-                    )
-                    
                 case .success(let consent):
-                    EmploymentConsentView(
-                        text: consent.text,
-                        isTermsAccepted: $isTermsAccepted
-                    )
+                    if consent.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        NoDataView(
+                            title: String(localized: "acceptTerms"),
+                            message: String(localized: "termsNotFound"),
+                            systemImage: "doc.plaintext.fill"
+                        )
+                    } else {
+                        EmploymentConsentView(
+                            text: consent.text,
+                            isTermsAccepted: $isTermsAccepted
+                        )
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -71,5 +73,11 @@ struct EmploymentAcceptTermsScreen: View {
         .task {
             await viewModel.getConsentTerms()
         }
+        .alert(String(localized: "somethingWentWrong"), isPresented: $showFailureAlert) {
+            Button(String(localized: "ok"), role: .cancel) { }
+        } message: {
+            Text(String(localized: "failedToCreateEmploymentRequestDescription"))
+        }
     }
 }
+

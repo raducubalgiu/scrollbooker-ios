@@ -362,3 +362,5 @@
 "appointment.status.confirmed" = "Confirmat";
 "appointment.status.finished" = "Finalizat";
 "appointment.status.cancelled" = "Anulat";
+
+"failedToCreateEmploymentRequestDescription" = "Nu am putut crea cererea de angajare. Te rugăm să încerci din nou mai târziu.";

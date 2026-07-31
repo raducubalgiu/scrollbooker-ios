@@ -21,24 +21,24 @@ struct InboxScreen: View {
                 onBack: {}
             )
 
-            VStack {
+            Group {
                 switch viewModel.viewState {
-                    case .idle, .loading:
-                        LoadingView()
-                        
-                    case .error(let message):
-                        ErrorView(message: message) {
-                            Task { await viewModel.refresh() }
-                        }
-                        
-                    case .empty:
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                        Task { await viewModel.refresh() }
+                    }
+                    
+                case .success(let notifications):
+                    if notifications.isEmpty {
                         NoDataView(
                             title: String(localized: "notifications"),
                             message: String(localized: "notFoundNotifications"),
                             systemImage: "bell.badge"
                         )
-                        
-                    case .success(let notifications):
+                    } else {
                         NotificationsListView(
                             notifications: notifications,
                             isPaging: viewModel.isPaging,
@@ -50,11 +50,11 @@ struct InboxScreen: View {
                                     await viewModel.loadMoreIfNeeded(currentNotification: notification)
                                 }
                             },
-                            
                             onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
                             onNavigateToUserProfile: onNavigateToUserProfile
                         )
                     }
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

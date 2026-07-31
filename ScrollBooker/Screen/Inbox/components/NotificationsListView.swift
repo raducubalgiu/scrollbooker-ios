@@ -33,6 +33,7 @@ struct NotificationsListView: View {
                 
                 if isPaging {
                     ProgressView()
+                        .frame(maxWidth: .infinity)
                         .padding(.vertical)
                 }
             }

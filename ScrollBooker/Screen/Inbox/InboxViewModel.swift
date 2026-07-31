@@ -7,41 +7,25 @@
 
 import Foundation
 import Observation
-
-enum InboxState: Equatable {
-    case idle
-    case loading
-    case empty
-    case success([Notification])
-    case error(String)
-}
+import OSLog
 
 @Observable
 @MainActor
-final class InboxViewModel: HasLoadingState {
-    var uiState = UiState(data: [Notification]())
-    
-    private(set) var viewState: InboxState = .idle
+final class InboxViewModel {
+    private(set) var viewState: FeatureState<[Notification]> = .idle
     private(set) var isPaging: Bool = false
-    private(set) var isRefreshing: Bool = false
+    var isRefreshing: Bool = false
 
     private let getUserNotifications: GetUserNotificationsUseCase
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Inbox")
+    
     private var page = 1
     private let limit = 20
     private var totalCount = 0
 
     var hasMore: Bool {
-        uiState.data.count < totalCount
-    }
-
-    var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return false }
-        set { if newValue { viewState = .loading } }
-    }
-
-    var errorMessage: String? {
-        get { if case .error(let msg) = viewState { return msg }; return nil }
-        set { if let msg = newValue { viewState = .error(msg) } }
+        let currentCount = viewState.data?.count ?? 0
+        return currentCount < totalCount
     }
 
     init(getUserNotifications: GetUserNotificationsUseCase) {
@@ -49,7 +33,7 @@ final class InboxViewModel: HasLoadingState {
     }
 
     func initialLoadIfNeeded() async {
-        guard uiState.data.isEmpty else { return }
+        guard viewState.data == nil else { return }
         await load(isFirstPage: true)
     }
 
@@ -57,15 +41,19 @@ final class InboxViewModel: HasLoadingState {
         guard !isRefreshing else { return }
         isRefreshing = true
         page = 1
+        
         await load(isFirstPage: true)
+        
         isRefreshing = false
     }
 
     func loadMoreIfNeeded(currentNotification: Notification?) async {
-        guard hasMore, !isPaging, !isRefreshing, !isLoading else { return }
-
+        let currentData = viewState.data ?? []
+    
+        guard hasMore, !isPaging, !isRefreshing, viewState != .loading else { return }
+        
         guard let current = currentNotification,
-              current.id == uiState.data.last?.id
+              current.id == currentData.last?.id
         else { return }
 
         isPaging = true
@@ -80,32 +68,29 @@ final class InboxViewModel: HasLoadingState {
 
         do {
             let response = try await getUserNotifications(page: page, limit: limit)
+            let existingData = viewState.data ?? []
+            let newData: [Notification]
 
             if isFirstPage {
-                uiState.data = response.results
+                newData = response.results
             } else {
-                let existingIds = Set(uiState.data.map(\.id))
-                let unique = response.results.filter { !existingIds.contains($0.id) }
-                uiState.data.append(contentsOf: unique)
+                let existingIds = Set(existingData.map(\.id))
+                let uniqueItems = response.results.filter { !existingIds.contains($0.id) }
+                newData = existingData + uniqueItems
             }
 
             totalCount = response.count
             page += 1
-
-            if uiState.data.isEmpty {
-                viewState = .empty
-            } else {
-                viewState = .success(uiState.data)
-            }
+            
+            viewState = .success(newData)
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-
+            logger.error("ERROR: on Loading Inbox (FirstPage: \(isFirstPage)): \(error.localizedDescription)")
+            
             if isFirstPage {
-                viewState = .error(message)
-            } else {
-                print("Eroare la încărcarea paginii următoare din Inbox: \(message)")
+                viewState = .error("Something went wrong")
             }
         }
     }
 }
+

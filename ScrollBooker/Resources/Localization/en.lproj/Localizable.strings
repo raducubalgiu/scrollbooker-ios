@@ -364,3 +364,5 @@
 "appointment.status.cancelled" = "Anulat";
 
 "failedToCreateEmploymentRequestDescription" = "Nu am putut crea cererea de angajare. Te rugăm să încerci din nou mai târziu.";
+"recommendedServices" = "Servicii recomandate";
+"postNoLinkedProducts" = "Această postare nu are servicii atașate.";

@@ -5,46 +5,22 @@
 //  Created by Raducu Balgiu on 24.07.2026.
 //
 
-import SwiftUI
-import Observation
 import Foundation
-
-enum LinkedProductsState: Equatable {
-    case idle
-    case loading
-    case success([Product])
-    case error(String)
-    
-    var products: [Product]? {
-        if case .success(let products) = self { return products }
-        return nil
-    }
-}
+import Observation
+import OSLog
 
 @Observable
 @MainActor
-final class LinkedProductsViewModel: HasLoadingState {
-    private(set) var viewState: LinkedProductsState = .idle
+final class LinkedProductsViewModel {
+    private(set) var viewState: FeatureState<[Product]> = .idle
     
+    var isSaving: Bool = false
     var isRefreshing: Bool = false
-    private(set) var operationErrorMessage: String? = nil
-    private(set) var isPerformingAction: Bool = false
+    
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "LinkedProducts")
     
     private let postId: Int
     private let getPostLinkedProductsUseCase: GetPostLinkedProductsUseCase
-    
-    var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return isPerformingAction }
-        set { isPerformingAction = newValue }
-    }
-    
-    var errorMessage: String? {
-        get {
-            if case .error(let msg) = viewState { return msg }
-            return operationErrorMessage
-        }
-        set { operationErrorMessage = newValue }
-    }
     
     init(postId: Int, getPostLinkedProductsUseCase: GetPostLinkedProductsUseCase) {
         self.postId = postId
@@ -52,42 +28,33 @@ final class LinkedProductsViewModel: HasLoadingState {
     }
     
     func loadLinkedProducts() async {
-        guard viewState.products == nil else { return }
+        guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
         
         viewState = .loading
-        operationErrorMessage = nil
         
         do {
-            let result = try await withVisibleLoading {
+            let result = try await withLoading {
                 try await getPostLinkedProductsUseCase(postId: postId)
             }
-            
-            if result.isEmpty {
-                viewState = .success(result)
-            } else {
-                viewState = .success(result)
-            }
+            viewState = .success(result)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            viewState = .error(message)
+            logger.error("ERROR: on Fetching Linked Products for Post (\(self.postId)): \(error.localizedDescription)")
+            viewState = .error("Something went wrong")
         }
     }
     
     func refresh() async {
         guard !isRefreshing else { return }
         isRefreshing = true
-        operationErrorMessage = nil
         
         do {
             let result = try await getPostLinkedProductsUseCase(postId: postId)
             viewState = .success(result)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            if viewState.products == nil {
-                viewState = .error(message)
-            } else {
-                operationErrorMessage = message
+            logger.error("ERROR: on Refreshing Linked Products: \(error.localizedDescription)")
+            if viewState.data == nil {
+                viewState = .error("Something went wrong")
             }
         }
         isRefreshing = false

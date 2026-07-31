@@ -366,3 +366,10 @@
 "failedToCreateEmploymentRequestDescription" = "Nu am putut crea cererea de angajare. Te rugăm să încerci din nou mai târziu.";
 "recommendedServices" = "Servicii recomandate";
 "postNoLinkedProducts" = "Această postare nu are servicii atașate.";
+"notFoundReviews" = "Nu au fost găsite recenzii";
+"notFoundReviewsDescription" = "Acest utilizator nu are încă recenzii înregistrate.";
+"notFoundWrittenReviews" = "Fără recenzii scrise";
+"notFoundWrittenReviewsDescription" = "Nu s-au găsit recenzii scrise pentru criteriile selectate.";
+"notFoundVideoReviews" = "Fără recenzii video";
+"notFoundVideoReviewsDescription" = "Nu s-au găsit clipuri video asociate acestui utilizator.";
+

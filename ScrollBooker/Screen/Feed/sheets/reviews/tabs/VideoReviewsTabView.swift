@@ -18,33 +18,36 @@ struct VideoReviewsTabView: View {
     
     var body: some View {
         Group {
-            if viewModel.videoReviews.isEmpty && !viewModel.isPerformingAction {
+            if viewModel.videoReviews.isEmpty && !viewModel.isSaving {
                 NoDataView(
-                    title: "Fără recenzii video",
-                    message: "Nu s-au găsit clipuri video asociate acestui utilizator.",
+                    title: String(localized: "notFoundVideoReviews"),
+                    message: String(localized: "notFoundVideoReviewsDescription"),
                     systemImage: "video.slash"
                 )
+                .padding(.top, 40)
             } else {
-                LazyVGrid(columns: columns, spacing: 1) {
-                    ForEach(viewModel.videoReviews, id: \.id) { post in
-                        PostGridView(
-                            postId: post.id,
-                            mediaFiles: post.mediaFiles,
-                            viewsCount: post.counters.viewsCount,
-                            onNavigateToPost: { postId in }
-                        )
+                VStack(spacing: 0) {
+                    LazyVGrid(columns: columns, spacing: 1) {
+                        ForEach(viewModel.videoReviews, id: \.id) { post in
+                            PostGridView(
+                                postId: post.id,
+                                mediaFiles: post.mediaFiles,
+                                viewsCount: post.counters.viewsCount,
+                                onNavigateToPost: { postId in }
+                            )
+                            .onAppear {
+                                Task {
+                                    await viewModel.loadMoreVideoReviews(currentPost: post)
+                                }
+                            }
+                        }
                     }
                     
-                    if viewModel.canLoadMoreVideo {
+                    if viewModel.isPaging && viewModel.canLoadMoreVideo {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 15)
                             .frame(minHeight: 50)
-                            .onAppear {
-                                Task {
-                                    await viewModel.loadMoreVideoReviews()
-                                }
-                            }
                     }
                 }
             }

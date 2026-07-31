@@ -7,30 +7,25 @@
 
 import Foundation
 import Observation
-
-enum ReviewsUIState: Equatable {
-    case idle
-    case loading
-    case success(ReviewSummary)
-    case error(String)
-    
-    var summary: ReviewSummary? {
-        if case .success(let summary) = self { return summary }
-        return nil
-    }
-}
+import OSLog
 
 @Observable
 @MainActor
-final class ReviewsViewModel: HasLoadingState {
-    private(set) var viewState: ReviewsUIState = .idle
-    
-    var isRefreshing: Bool = false
-    private(set) var operationErrorMessage: String? = nil
-    private(set) var isPerformingAction: Bool = false
-    
+final class ReviewsViewModel {
+    private(set) var viewState: FeatureState<ReviewSummary> = .idle
     private(set) var writtenReviews: [Review] = []
     private(set) var videoReviews: [Post] = []
+    
+    var isSaving: Bool = false
+    var isRefreshing: Bool = false
+    private(set) var isPaging: Bool = false
+    
+    var selectedTab: ReviewTab = .written {
+        didSet {
+            Task { await handleTabSelection() }
+        }
+    }
+    private(set) var selectedRatings: Set<Int> = []
     
     private var currentWrittenPage = 1
     private var currentVideoPage = 1
@@ -39,26 +34,7 @@ final class ReviewsViewModel: HasLoadingState {
     private(set) var canLoadMoreWritten = true
     private(set) var canLoadMoreVideo = true
     
-    private(set) var selectedRatings: Set<Int> = []
-    
-    var selectedTab: ReviewTab = .written {
-        didSet {
-            Task { await handleTabSelection() }
-        }
-    }
-    
-    var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return isPerformingAction }
-        set { isPerformingAction = newValue }
-    }
-    
-    var errorMessage: String? {
-        get {
-            if case .error(let msg) = viewState { return msg }
-            return operationErrorMessage
-        }
-        set { operationErrorMessage = newValue }
-    }
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Reviews")
     
     private let userId: Int
     private let getWrittenReviewsUseCase: GetWrittenReviewsUseCase
@@ -84,28 +60,29 @@ final class ReviewsViewModel: HasLoadingState {
     }
     
     func loadInitialData() async {
-        guard viewState.summary == nil else { return }
+        guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
         
         viewState = .loading
-        operationErrorMessage = nil
         
         do {
-            let summary = try await getReviewSummaryUseCase(userId: userId)
+            let summary = try await withLoading {
+                try await getReviewSummaryUseCase(userId: userId)
+            }
             viewState = .success(summary)
             
-            await fetchTabContent(for: selectedTab)
+            await fetchTabContent(for: selectedTab, isFirstPage: true, isInitialFetchForTab: true)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            viewState = .error(message)
+            logger.error("ERROR: on Fetching Review Summary: \(error.localizedDescription)")
+            viewState = .error("Something went wrong")
         }
     }
-    
+
     private func handleTabSelection() async {
         if selectedTab == .written && writtenReviews.isEmpty && canLoadMoreWritten {
-            await fetchTabContent(for: .written, isInitialFetchForTab: true)
+            await fetchTabContent(for: .written, isFirstPage: true, isInitialFetchForTab: true)
         } else if selectedTab == .video && videoReviews.isEmpty && canLoadMoreVideo {
-            await fetchTabContent(for: .video, isInitialFetchForTab: true)
+            await fetchTabContent(for: .video, isFirstPage: true, isInitialFetchForTab: true)
         }
     }
     
@@ -126,23 +103,30 @@ final class ReviewsViewModel: HasLoadingState {
             videoReviews.removeAll()
         }
         
-        await fetchTabContent(for: selectedTab, isInitialFetchForTab: true)
+        await fetchTabContent(for: selectedTab, isFirstPage: true, isInitialFetchForTab: true)
+    }
+    
+    func loadMoreWrittenReviews(currentReview: Review?) async {
+        guard canLoadMoreWritten, !isPaging, !isRefreshing, viewState != .loading else { return }
+        guard currentReview?.id == writtenReviews.last?.id else { return }
+        
+        isPaging = true
+        await fetchTabContent(for: .written, isFirstPage: false)
+        isPaging = false
     }
 
-    func loadMoreWrittenReviews() async {
-        guard canLoadMoreWritten, !isPerformingAction else { return }
-        await fetchTabContent(for: .written)
-    }
-
-    func loadMoreVideoReviews() async {
-        guard canLoadMoreVideo, !isPerformingAction else { return }
-        await fetchTabContent(for: .video)
+    func loadMoreVideoReviews(currentPost: Post?) async {
+        guard canLoadMoreVideo, !isPaging, !isRefreshing, viewState != .loading else { return }
+        guard currentPost?.id == videoReviews.last?.id else { return }
+        
+        isPaging = true
+        await fetchTabContent(for: .video, isFirstPage: false)
+        isPaging = false
     }
     
     func refresh() async {
         guard !isRefreshing else { return }
         isRefreshing = true
-        operationErrorMessage = nil
         
         currentWrittenPage = 1
         currentVideoPage = 1
@@ -155,23 +139,21 @@ final class ReviewsViewModel: HasLoadingState {
         do {
             let summary = try await getReviewSummaryUseCase(userId: userId)
             viewState = .success(summary)
-            await fetchTabContent(for: selectedTab, isInitialFetchForTab: true)
+
+            await fetchTabContent(for: selectedTab, isFirstPage: true, isInitialFetchForTab: true)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            if viewState.summary == nil {
-                viewState = .error(message)
-            } else {
-                operationErrorMessage = message
+            logger.error("ERROR: on Refreshing Reviews: \(error.localizedDescription)")
+            if viewState.data == nil {
+                viewState = .error("Something went wrong")
             }
         }
         isRefreshing = false
     }
 
-    private func fetchTabContent(for tab: ReviewTab, isInitialFetchForTab: Bool = false) async {
+    private func fetchTabContent(for tab: ReviewTab, isFirstPage: Bool, isInitialFetchForTab: Bool = false) async {
         if isInitialFetchForTab {
-            isPerformingAction = true
+            isSaving = true
         }
-        operationErrorMessage = nil
         
         let ratingsFilter = selectedRatings.isEmpty ? nil : Array(selectedRatings)
         
@@ -185,10 +167,12 @@ final class ReviewsViewModel: HasLoadingState {
                     ratings: ratingsFilter
                 )
                 
-                if currentWrittenPage == 1 {
+                if isFirstPage {
                     self.writtenReviews = response.results
                 } else {
-                    self.writtenReviews.append(contentsOf: response.results)
+                    let existingIds = Set(self.writtenReviews.map(\.id))
+                    let uniqueItems = response.results.filter { !existingIds.contains($0.id) }
+                    self.writtenReviews.append(contentsOf: uniqueItems)
                 }
                 
                 let loadedCount = (currentWrittenPage - 1) * limit + response.results.count
@@ -203,10 +187,12 @@ final class ReviewsViewModel: HasLoadingState {
                     limit: limit
                 )
                 
-                if currentVideoPage == 1 {
+                if isFirstPage {
                     self.videoReviews = response.results
                 } else {
-                    self.videoReviews.append(contentsOf: response.results)
+                    let existingIds = Set(self.videoReviews.map(\.id))
+                    let uniqueItems = response.results.filter { !existingIds.contains($0.id) }
+                    self.videoReviews.append(contentsOf: uniqueItems)
                 }
                 
                 let loadedVideoCount = (currentVideoPage - 1) * limit + response.results.count
@@ -215,10 +201,10 @@ final class ReviewsViewModel: HasLoadingState {
                 if canLoadMoreVideo { currentVideoPage += 1 }
             }
         } catch {
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            logger.error("ERROR: on Fetching \(tab == .written ? "Written" : "Video") Reviews page: \(error.localizedDescription)")
         }
         
-        isPerformingAction = false
+        isSaving = false
     }
     
     func toggleLikeWrittenReview(id: Int) async {
@@ -235,8 +221,6 @@ final class ReviewsViewModel: HasLoadingState {
             isLiked: newIsLiked
         )
         
-        operationErrorMessage = nil
-        
         do {
             if currentlyLiked {
                 _ = try await unlikeReviewUseCase(id: id)
@@ -244,10 +228,11 @@ final class ReviewsViewModel: HasLoadingState {
                 _ = try await likeReviewUseCase(id: id)
             }
         } catch {
+            logger.error("ERROR: on Toggling Like for Review \(id): \(error.localizedDescription)")
+
             if let currentIndex = writtenReviews.firstIndex(where: { $0.id == id }) {
                 writtenReviews[currentIndex] = originalReview
             }
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
         }
     }
 }

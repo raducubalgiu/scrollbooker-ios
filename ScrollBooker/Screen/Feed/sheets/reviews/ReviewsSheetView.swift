@@ -8,24 +8,24 @@
 import SwiftUI
 
 struct ReviewsSheetView: View {
-    let viewModel: ReviewsViewModel
+    @Bindable var viewModel: ReviewsViewModel
     @Namespace private var indicatorNS
     
     var body: some View {
+        @Bindable var bindableViewModel = viewModel
+        
         NavigationStack {
             Group {
                 switch viewModel.viewState {
                 case .idle, .loading:
                     LoadingView()
                     
-                case .error(let message):
-                    ErrorView(message: message) {
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
                         Task { await viewModel.loadInitialData() }
                     }
                     
                 case .success(let summary):
-                    @Bindable var bindableViewModel = viewModel
-                    
                     ReviewsSheetSuccessView(
                         summary: summary,
                         viewModel: viewModel,
@@ -34,7 +34,7 @@ struct ReviewsSheetView: View {
                     )
                 }
             }
-            .navigationTitle("Recenzii")
+            .navigationTitle(String(localized: "reviews"))
             .navigationBarTitleDisplayMode(.inline)
             .task {
                 await viewModel.loadInitialData()

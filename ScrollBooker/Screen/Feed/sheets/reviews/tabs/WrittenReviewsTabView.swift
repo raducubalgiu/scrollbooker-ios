@@ -12,10 +12,10 @@ struct WrittenReviewsTabView: View {
     
     var body: some View {
         Group {
-            if viewModel.writtenReviews.isEmpty && !viewModel.isPerformingAction {
+            if viewModel.writtenReviews.isEmpty && !viewModel.isSaving {
                 NoDataView(
-                    title: "Fără recenzii text",
-                    message: "Nu s-au găsit recenzii scrise pentru criteriile selectate.",
+                    title: String(localized: "notFoundWrittenReviews"),
+                    message: String(localized: "notFoundWrittenReviewsDescription"),
                     systemImage: "doc.text.magnifyingglass"
                 )
                 .padding(.top, 40)
@@ -38,19 +38,19 @@ struct WrittenReviewsTabView: View {
                                 }
                             }
                         )
+                        .onAppear {
+                            Task {
+                                await viewModel.loadMoreWrittenReviews(currentReview: review)
+                            }
+                        }
                         
                         Divider().padding(.horizontal, 16)
                     }
                     
-                    if viewModel.canLoadMoreWritten {
+                    if viewModel.isPaging && viewModel.canLoadMoreWritten {
                         ProgressView()
                             .frame(maxWidth: .infinity)
                             .padding(.vertical, 20)
-                            .onAppear {
-                                Task {
-                                    await viewModel.loadMoreWrittenReviews()
-                                }
-                            }
                     }
                 }
             }

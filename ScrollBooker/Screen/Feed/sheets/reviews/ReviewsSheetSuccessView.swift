@@ -17,8 +17,8 @@ struct ReviewsSheetSuccessView: View {
     var body: some View {
         if summary.ratingsCount == 0 {
             NoDataView(
-                title: "Nicio recenzie",
-                message: "Acest utilizator nu are încă recenzii înregistrate.",
+                title: String(localized: "notFoundReviews"),
+                message: String(localized: "notFoundReviewsDescription"),
                 systemImage: "star.bubble"
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -47,16 +47,21 @@ struct ReviewsSheetSuccessView: View {
                     }
                 }
             }
+            .refreshable {
+                await viewModel.refresh()
+            }
         }
     }
     
     @ViewBuilder
     private func getTabContent(for tab: ReviewTab) -> some View {
         switch tab {
-            case .written:
-                WrittenReviewsTabView(viewModel: viewModel)
-            case .video:
-                VideoReviewsTabView(viewModel: viewModel)
+        case .written:
+            WrittenReviewsTabView(viewModel: viewModel)
+                .animation(.default, value: viewModel.writtenReviews)
+        case .video:
+            VideoReviewsTabView(viewModel: viewModel)
+                .animation(.default, value: viewModel.videoReviews)
         }
     }
 }

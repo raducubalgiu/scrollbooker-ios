@@ -57,8 +57,8 @@ struct BusinessProfileScreen: View {
                     Task { await viewModel.loadBusinessProfile() }
                 }
 
-        case .error(let message):
-            ErrorView(message: message) {
+        case .error:
+            ErrorView(message: String(localized: "somethingWentWrong")) {
                 Task { await viewModel.refresh() }
             }
 
@@ -222,7 +222,7 @@ struct BusinessProfileScreen: View {
     private func headerOverlay(safeTop: CGFloat) -> some View {
         BusinessProfileHeader(
             showTitle: isStickyActive,
-            title: viewModel.viewState.profile?.owner.fullName ?? "",
+            title: viewModel.viewState.data?.owner.fullName ?? "",
             onBack: onBack
         )
         .frame(height: headerHeight)

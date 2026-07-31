@@ -17,15 +17,16 @@ struct MySchedulesScreen: View {
             case .idle, .loading:
                 LoadingView()
                 
-            case .error(let message):
-                ErrorView(message: message) {
+            case .error:
+                ErrorView(message: String(localized: "somethingWentWrong")) {
                     Task { await viewModel.loadSchedules() }
                 }
                 
-            case .success:
-                if !viewModel.uiState.data.isEmpty {
+            case .success(let schedules):
+                if !schedules.isEmpty {
                     MySchedulesSectionView(
                         viewModel: viewModel,
+                        schedules: schedules,
                         onBack: onBack
                     )
                 } else {

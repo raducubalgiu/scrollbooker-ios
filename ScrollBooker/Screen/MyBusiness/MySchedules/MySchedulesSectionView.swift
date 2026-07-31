@@ -9,16 +9,17 @@ import SwiftUI
 
 struct MySchedulesSectionView: View {
     let viewModel: MySchedulesViewModel
+    let schedules: [Schedule]
     var onBack: () -> Void
     
     @State private var showErrors = false
     
     private var isFormValid: Bool {
-        viewModel.uiState.data.allSatisfy { isScheduleValid(start: $0.startTime, end: $0.endTime) }
+        schedules.allSatisfy { isScheduleValid(start: $0.startTime, end: $0.endTime) }
     }
     
     private var invalidScheduleIds: Set<Int> {
-        Set(viewModel.uiState.data.filter { !isScheduleValid(start: $0.startTime, end: $0.endTime) }.map { $0.id })
+        Set(schedules.filter { !isScheduleValid(start: $0.startTime, end: $0.endTime) }.map { $0.id })
     }
     
     var body: some View {
@@ -42,7 +43,7 @@ struct MySchedulesSectionView: View {
         ) {
             ScrollView {
                 VStack(spacing: 24) {
-                    ForEach(viewModel.uiState.data) { schedule in
+                    ForEach(schedules) { schedule in
                         ScheduleRow(
                             schedule: schedule,
                             onChange: { start, end in
@@ -64,6 +65,7 @@ struct MySchedulesSectionView: View {
                     }
                 }
                 .padding(.top, 12)
+                .padding(.horizontal, .xl)
             }
         }
     }

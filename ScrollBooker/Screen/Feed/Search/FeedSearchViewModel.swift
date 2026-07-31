@@ -7,55 +7,23 @@
 
 import Foundation
 import Observation
-
-enum SearchState: Equatable {
-    case idle
-    case loading
-    case empty
-    case success([SearchUser])
-    case error(String)
-    
-    var users: [SearchUser] {
-        if case .success(let users) = self { return users }
-        return []
-    }
-}
+import OSLog
 
 @Observable
 @MainActor
-final class FeedSearchViewModel: HasLoadingState {
-    private(set) var searchState: SearchState = .idle
-    
-    var isRefreshing: Bool = false
-    private(set) var operationErrorMessage: String? = nil
-    private(set) var isPerformingAction: Bool = false
-    
-    private var lastSearchedQuery: String = ""
+final class FeedSearchViewModel {
+    private(set) var searchState: FeatureState<[SearchUser]> = .idle
     
     var searchText: String = "" {
         didSet {
             triggerDebouncedSearch()
         }
     }
+    private var lastSearchedQuery: String = ""
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "FeedSearch")
     
     private let searchUsersUseCase: SearchUsersUseCase
     private var searchTask: Task<Void, Never>? = nil
-    
-    var isLoading: Bool {
-        get {
-            if case .loading = searchState { return true }
-            return isPerformingAction
-        }
-        set { isPerformingAction = newValue }
-    }
-
-    var errorMessage: String? {
-        get {
-            if case .error(let msg) = searchState { return msg }
-            return operationErrorMessage
-        }
-        set { operationErrorMessage = newValue }
-    }
     
     init(searchUsersUseCase: SearchUsersUseCase) {
         self.searchUsersUseCase = searchUsersUseCase
@@ -79,30 +47,24 @@ final class FeedSearchViewModel: HasLoadingState {
                 try await Task.sleep(for: .seconds(0.3))
 
                 guard !Task.isCancelled else { return }
-
                 self.searchState = .loading
-                self.operationErrorMessage = nil
 
-                let users = try await withVisibleLoading {
+                let users = try await withLoading {
                     try await searchUsersUseCase(query: cleanQuery, roleClient: nil)
                 }
                 
                 guard !Task.isCancelled else { return }
                 self.lastSearchedQuery = cleanQuery
 
-                if users.isEmpty {
-                    self.searchState = .empty
-                } else {
-                    self.searchState = .success(users)
-                }
+                self.searchState = .success(users)
                 
             } catch is CancellationError {
-
+ 
             } catch {
                 guard !Task.isCancelled else { return }
                 
-                let friendlyError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-                self.searchState = .error(friendlyError)
+                logger.error("ERROR: on Searching Feed Users (\(cleanQuery)): \(error.localizedDescription)")
+                self.searchState = .error("Something went wrong")
                 self.lastSearchedQuery = ""
             }
         }
@@ -110,9 +72,7 @@ final class FeedSearchViewModel: HasLoadingState {
 
     func performInstantSearch() {
         searchTask?.cancel()
-        
         self.lastSearchedQuery = ""
-        
         triggerDebouncedSearch()
     }
     
@@ -125,3 +85,4 @@ final class FeedSearchViewModel: HasLoadingState {
         searchState = .idle
     }
 }
+

@@ -49,26 +49,27 @@ struct FeedSearchScreen: View {
                 case .loading:
                     LoadingView()
                     
-                case .empty:
-                    NoDataView(
-                        title: String(localized: "search"),
-                        message: "Nu s-a găsit niciun rezultat pentru \"\(viewModel.searchText)\"",
-                        systemImage: "magnifyingglass"
-                    )
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                        viewModel.performInstantSearch()
+                    }
                     
                 case .success(let users):
-                    FeedSearchSuccessView(
-                        users: users,
-                        onUserClick: {
-                            onNavigateToUserProfile(
-                                ProfileNavigationParams(userId: $0.id, username: $0.username)
-                            )
-                        }
-                    )
-                    
-                case .error(let message):
-                    ErrorView(message: message) {
-                        viewModel.performInstantSearch()
+                    if users.isEmpty {
+                        NoDataView(
+                            title: String(localized: "search"),
+                            message: "Nu s-au găsit rezultate pentru \"\(viewModel.searchText)\"",
+                            systemImage: "magnifyingglass"
+                        )
+                    } else {
+                        FeedSearchSuccessView(
+                            users: users,
+                            onUserClick: { user in
+                                onNavigateToUserProfile(
+                                    ProfileNavigationParams(userId: user.id, username: user.username)
+                                )
+                            }
+                        )
                     }
                 }
             }

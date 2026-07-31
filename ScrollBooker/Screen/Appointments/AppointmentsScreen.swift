@@ -21,22 +21,22 @@ struct AppointmentsScreen: View {
 
             Group {
                 switch viewModel.viewState {
-                    case .idle, .loading:
-                        LoadingView()
-                        
-                    case .error(let message):
-                        ErrorView(message: message) {
-                            Task { await viewModel.refresh() }
-                        }
-                        
-                    case .empty:
+                case .idle, .loading:
+                    LoadingView()
+                    
+                case .error:
+                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                        Task { await viewModel.refresh() }
+                    }
+                    
+                case .success(let appointments):
+                    if appointments.isEmpty {
                         NoDataView(
                             title: String(localized: "bookings"),
                             message: String(localized: "notFoundAppointments"),
                             systemImage: "calendar.badge.clock"
                         )
-                        
-                    case .success(let appointments):
+                    } else {
                         AppointmentsListView(
                             appointments: appointments,
                             isPaging: viewModel.isPaging,
@@ -51,6 +51,7 @@ struct AppointmentsScreen: View {
                             }
                         )
                     }
+                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

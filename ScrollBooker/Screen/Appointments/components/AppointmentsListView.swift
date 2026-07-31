@@ -29,14 +29,18 @@ struct AppointmentsListView: View {
                         onItemAppear(appointment)
                     }
 
-                    Divider()
+                    if appointment.id != appointments.last?.id {
+                        Divider()
+                    }
                 }
                 
                 if isPaging {
                     ProgressView()
+                        .frame(maxWidth: .infinity)
                         .padding(.vertical)
                 }
             }
+            .padding(.top, 12)
         }
         .refreshable {
             await onRefresh()

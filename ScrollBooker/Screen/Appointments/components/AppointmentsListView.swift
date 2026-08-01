@@ -9,31 +9,32 @@ import SwiftUI
 
 struct AppointmentsListView: View {
     let appointments: [Appointment]
-    var isPaging: Bool = false
-    
+    let isPaging: Bool
+
     let onNavigateToAppointmentDetails: (Int) -> Void
     let onItemAppear: (Appointment) -> Void
     let onRefresh: () async -> Void
 
     var body: some View {
+        let lastId = appointments.last?.id
+
         ScrollView {
             LazyVStack(spacing: 12) {
                 ForEach(appointments) { appointment in
                     AppointmentCardView(
                         appointment: appointment,
-                        onClick: {
-                            onNavigateToAppointmentDetails(appointment.id)
-                        }
+                        onClick: { onNavigateToAppointmentDetails(appointment.id) }
                     )
                     .onAppear {
+                        guard appointment.id == lastId else { return }
                         onItemAppear(appointment)
                     }
 
-                    if appointment.id != appointments.last?.id {
+                    if appointment.id != lastId {
                         Divider()
                     }
                 }
-                
+
                 if isPaging {
                     ProgressView()
                         .frame(maxWidth: .infinity)

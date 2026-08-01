@@ -20,38 +20,36 @@ struct AppointmentsScreen: View {
             )
 
             Group {
-                switch viewModel.viewState {
-                case .idle, .loading:
-                    LoadingView()
-                    
-                case .error:
-                    ErrorView(message: String(localized: "somethingWentWrong")) {
-                        Task { await viewModel.refresh() }
-                    }
-                    
-                case .success(let appointments):
-                    if appointments.isEmpty {
-                        NoDataView(
-                            title: String(localized: "bookings"),
-                            message: String(localized: "notFoundAppointments"),
-                            systemImage: "calendar.badge.clock"
-                        )
-                    } else {
-                        AppointmentsListView(
-                            appointments: appointments,
-                            isPaging: viewModel.isPaging,
-                            onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
-                            onItemAppear: { appointment in
-                                Task {
-                                    await viewModel.loadMoreIfNeeded(currentAppointment: appointment)
+                switch viewModel.paginator.viewState {
+                    case .idle, .loading:
+                        LoadingView()
+
+                    case .error(let message):
+                        ErrorView(message: message) {
+                            Task { await viewModel.refresh() }
+                        }
+
+                    case .success(let appointments):
+                        if appointments.isEmpty {
+                            NoDataView(
+                                title: String(localized: "bookings"),
+                                message: String(localized: "notFoundAppointments"),
+                                systemImage: "calendar.badge.clock"
+                            )
+                        } else {
+                            AppointmentsListView(
+                                appointments: appointments,
+                                isPaging: viewModel.paginator.isPaging,
+                                onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
+                                onItemAppear: { appointment in
+                                    Task { await viewModel.loadMoreIfNeeded(currentItem: appointment) }
+                                },
+                                onRefresh: {
+                                    await viewModel.refresh()
                                 }
-                            },
-                            onRefresh: {
-                                await viewModel.refresh()
-                            }
-                        )
+                            )
+                        }
                     }
-                }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
         }

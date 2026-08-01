@@ -24,7 +24,7 @@ struct MySchedulesScreen: View {
                 
             case .success(let schedules):
                 if !schedules.isEmpty {
-                    MySchedulesSectionView(
+                    MySchedulesSuccessView(
                         viewModel: viewModel,
                         schedules: schedules,
                         onBack: onBack

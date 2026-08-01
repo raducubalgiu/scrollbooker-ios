@@ -66,7 +66,10 @@ class BaseFeedViewModel {
         isRefreshing = false
     }
 
-    func loadMoreIfNeeded(currentPost: Post?, fetchBlock: (_ page: Int, _ limit: Int) async throws -> PaginatedResponse<Post>) async {
+    func loadMoreIfNeeded(
+        currentPost: Post?,
+        fetchBlock: (_ page: Int, _ limit: Int
+    ) async throws -> PaginatedResponse<Post>) async {
         guard hasMore, !isPaging, !isRefreshing, !isLoading else { return }
         
         guard let current = currentPost,
@@ -79,7 +82,11 @@ class BaseFeedViewModel {
     }
 
     @MainActor
-    private func load(isFirstPage: Bool, fetchBlock: (_ page: Int, _ limit: Int) async throws -> PaginatedResponse<Post>) async {
+    private func load(
+        isFirstPage: Bool,
+        fetchBlock: (_ page: Int, _ limit: Int
+    ) async throws -> PaginatedResponse<Post>) async {
+        
         if isFirstPage && !isRefreshing {
             viewState = .loading
         }

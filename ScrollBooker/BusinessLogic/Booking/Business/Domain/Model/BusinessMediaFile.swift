@@ -5,6 +5,8 @@
 //  Created by Raducu Balgiu on 16.07.2026.
 //
 
+import Foundation
+
 struct BusinessMediaFile: Identifiable, Equatable, Hashable, Sendable {
     var id: String { urlKey } 
     
@@ -14,4 +16,7 @@ struct BusinessMediaFile: Identifiable, Equatable, Hashable, Sendable {
     let thumbnailKey: String
     let type: String
     let orderIndex: Int
+    
+    var thumbnailURL: URL? { URL(string: thumbnailUrl) }
+    var mediaURL: URL? { URL(string: url) }
 }

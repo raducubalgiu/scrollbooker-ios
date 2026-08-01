@@ -101,7 +101,9 @@ struct ProfileTabRouter: View {
                         )
                         
                     case .myBusinessDetails:
-                        return MyBusinessDetailsScreen()
+                        return MyBusinessDetailsScreen(
+                            onBack: { router.pop() }
+                        )
                     
                     case .mySchedules:
                         return MySchedulesScreen(

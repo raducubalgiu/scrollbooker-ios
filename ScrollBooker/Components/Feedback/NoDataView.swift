@@ -10,6 +10,7 @@ import SwiftUI
 struct NoDataView: View {
     let title: String
     let message: String
+    var maxHeight: CGFloat = .infinity
     var systemImage: String = "tray"
     
     var body: some View {
@@ -24,6 +25,6 @@ struct NoDataView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
-        .frame(maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: maxHeight)
     }
 }

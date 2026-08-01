@@ -12,7 +12,7 @@ enum ProfileTab: String, CaseIterable, Identifiable {
     case products
     case employees
     case bookmarks
-    case info
+    case about
     
     var id: String { self.rawValue }
     
@@ -26,7 +26,7 @@ enum ProfileTab: String, CaseIterable, Identifiable {
             return "person.2"
         case .bookmarks:
             return "bookmark"
-        case .info:
+        case .about:
             return "info.circle"
         }
     }
@@ -42,7 +42,7 @@ enum ProfileTab: String, CaseIterable, Identifiable {
         if isBusinessOrEmployee { tabs.append(.products) }
         if isBusinessOrEmployee && !isEmployee { tabs.append(.employees) }
         if isOwnProfile { tabs.append(.bookmarks) }
-        if isBusinessOrEmployee { tabs.append(.info) }
+        if isBusinessOrEmployee { tabs.append(.about) }
         
         return tabs
     }

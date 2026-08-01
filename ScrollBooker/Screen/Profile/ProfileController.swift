@@ -314,7 +314,7 @@ final class ProfileController: HasLoadingState {
             await loadInitialPosts(userId: userId)
         case .products:
             await loadInitialProducts(businessId: userId, employeeId: employeeId(for: userId))
-        case .info:
+        case .about:
             await loadInitialAbout(userId: userId)
         case .bookmarks:
             await loadInitialBookmarks(userId: userId)
@@ -329,7 +329,7 @@ final class ProfileController: HasLoadingState {
             await refreshPosts(userId: userId)
         case .products:
             await refreshProducts(businessId: userId, employeeId: employeeId(for: userId))
-        case .info:
+        case .about:
             await refreshAbout(userId: userId)
         case .bookmarks:
             await refreshBookmarks(userId: userId)

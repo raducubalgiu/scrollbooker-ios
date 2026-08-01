@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ErrorView: View {
     let message: String
+    var maxHeight: CGFloat = .infinity
     var retryAction: () -> Void
     
     var body: some View {
@@ -29,6 +30,6 @@ struct ErrorView: View {
             .buttonStyle(.borderedProminent)
             .tint(.primarySB)
         }
-        .frame(maxHeight: .infinity)
+        .frame(maxWidth: .infinity, maxHeight: maxHeight)
     }
 }

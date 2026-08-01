@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct MySchedulesSectionView: View {
+struct MySchedulesSuccessView: View {
     let viewModel: MySchedulesViewModel
     let schedules: [Schedule]
     var onBack: () -> Void

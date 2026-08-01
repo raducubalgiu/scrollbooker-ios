@@ -169,8 +169,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                 controller: profileController,
                 userId: user.id
             )
-        case .info:
-            ProfileInfoTabView(
+        case .about:
+            ProfileAboutTabView(
                 controller: profileController,
                 userId: user.id
             )

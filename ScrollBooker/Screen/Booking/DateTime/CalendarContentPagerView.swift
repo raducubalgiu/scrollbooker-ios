@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CalendarContentPagerView: View {
     @Binding var currentDayPage: Int
-    let slotsState: SocialTabState<Slot>
+    let slotsState: CalendarTabState<Slot>
     let viewModel: BookingViewModel
     var onSlotSelected: (Slot) -> Void
     

@@ -8,11 +8,19 @@
 import SwiftUI
 import Observation
 import Photos
+import AVKit
 
 struct LocalVideoAsset: Identifiable, Hashable {
     let id: String
     let asset: PHAsset
     var thumbnail: UIImage?
+}
+
+enum GlobalUploadStatus: Equatable {
+    case idle
+    case uploading
+    case success
+    case error(String)
 }
 
 @Observable
@@ -24,11 +32,30 @@ final class CameraViewModel {
     var isGalleryPresented: Bool = false
     
     var videos: [LocalVideoAsset] = []
+    
+    private(set) var player: AVPlayer? = nil
+    private(set) var selectedVideo: LocalVideoAsset? = nil
+    private(set) var isPlayerLoading: Bool = false
+    
     private var allVideoAssets: PHFetchResult<PHAsset>? = nil
     private var currentIndex = 0
     private let pageSize = 21
     
-    init() {
+    var description: String = ""
+    var uploadStatus: GlobalUploadStatus = .idle
+    
+    func setDescription(_ text: String) {
+        let maxLength = 500
+        if text.count <= maxLength {
+            self.description = text
+        }
+    }
+    
+    private let createVideoPostUseCase: CreateVideoPostUseCase
+    
+    init(createVideoPostUseCase: CreateVideoPostUseCase) {
+        self.createVideoPostUseCase = createVideoPostUseCase
+        
         checkPhotoLibraryPermissions()
     }
     
@@ -75,6 +102,108 @@ final class CameraViewModel {
         }
     }
     
+    func preparePreviewForSelectedVideo() {
+        guard let videoAsset = selectedVideo else { return }
+        
+        player?.pause()
+        player = nil
+        isPlayerLoading = true
+        
+        let options = PHVideoRequestOptions()
+        options.version = .current
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        
+        PHImageManager.default().requestAVAsset(forVideo: videoAsset.asset, options: options) { [weak self] avAsset, _, _ in
+            guard let self else { return }
+            Task { @MainActor in
+                guard self.selectedVideo?.id == videoAsset.id else { return }
+                
+                if let urlAsset = avAsset as? AVURLAsset {
+                    let newPlayer = AVPlayer(url: urlAsset.url)
+                    
+                    NotificationCenter.default.addObserver(
+                        forName: .AVPlayerItemDidPlayToEndTime,
+                        object: newPlayer.currentItem,
+                        queue: .main
+                    ) { _ in
+                        newPlayer.seek(to: .zero)
+                        newPlayer.play()
+                    }
+                    
+                    self.player = newPlayer
+                    self.isPlayerLoading = false
+                    newPlayer.play()
+                } else {
+                    self.isPlayerLoading = false
+                }
+            }
+        }
+    }
+    
+    func clearActivePlayer() {
+        player?.pause()
+        player = nil
+        selectedVideo = nil
+        isPlayerLoading = false
+    }
+    
+    func setSelectedVideo(_ video: LocalVideoAsset) {
+        if selectedVideo?.id != video.id {
+            player?.pause()
+            player = nil
+            isPlayerLoading = false
+        }
+
+        self.selectedVideo = video
+    }
+
+    func resumeOrCreatePreview() {
+        if let player = self.player {
+            player.play()
+            return
+        }
+        
+        guard let videoAsset = selectedVideo else { return }
+        
+        isPlayerLoading = true
+        
+        let options = PHVideoRequestOptions()
+        options.version = .current
+        options.deliveryMode = .highQualityFormat
+        options.isNetworkAccessAllowed = true
+        
+        PHImageManager.default().requestAVAsset(forVideo: videoAsset.asset, options: options) { [weak self] avAsset, _, _ in
+            guard let self else { return }
+            Task { @MainActor in
+                guard self.selectedVideo?.id == videoAsset.id else { return }
+                
+                if let urlAsset = avAsset as? AVURLAsset {
+                    let newPlayer = AVPlayer(url: urlAsset.url)
+                    
+                    NotificationCenter.default.addObserver(
+                        forName: .AVPlayerItemDidPlayToEndTime,
+                        object: newPlayer.currentItem,
+                        queue: .main
+                    ) { _ in
+                        newPlayer.seek(to: .zero)
+                        newPlayer.play()
+                    }
+                    
+                    self.player = newPlayer
+                    self.isPlayerLoading = false
+                    newPlayer.play()
+                } else {
+                    self.isPlayerLoading = false
+                }
+            }
+        }
+    }
+
+    func pauseActivePlayer() {
+        player?.pause()
+    }
+
     private func fetchLastVideoThumbnail() {
         Task.detached(priority: .userInitiated) {
             let fetchOptions = PHFetchOptions()
@@ -125,6 +254,8 @@ final class CameraViewModel {
         
         for i in startIndex..<nextIndex {
             let currentAsset = self.videos[i].asset
+            let targetIndex = i
+            
             PHImageManager.default().requestImage(
                 for: currentAsset,
                 targetSize: CGSize(width: 200, height: 200),
@@ -132,8 +263,8 @@ final class CameraViewModel {
                 options: nil
             ) { [weak self] image, _ in
                 guard let self, let grabbedImage = image else { return }
-                if let index = self.videos.firstIndex(where: { $0.id == currentAsset.localIdentifier }) {
-                    self.videos[index].thumbnail = grabbedImage
+                if targetIndex < self.videos.count && self.videos[targetIndex].id == currentAsset.localIdentifier {
+                    self.videos[targetIndex].thumbnail = grabbedImage
                 }
             }
         }
@@ -144,5 +275,65 @@ final class CameraViewModel {
               lastIndex >= videos.count - 6 else { return }
         loadMoreVideos()
     }
+    
+    var isSaving: Bool = false
+    
+    func createPost() {
+        guard let selectedVideoAsset = selectedVideo else { return }
+        
+        isSaving = true
+        
+        player?.pause()
+        
+        Task {
+            do {
+                let localVideoURL = try await extractURL(from: selectedVideoAsset.asset)
+                
+                _ = try await createVideoPostUseCase(
+                    videoURL: localVideoURL,
+                    description: description,
+                    linkedProductIds: [],
+                    businessOrEmployeeId: nil,
+                    isVideoReview: false,
+                    videoReviewMessage: nil,
+                    rating: nil,
+                    onProgress: { _ in  }
+                )
+                
+                isSaving = false
+                
+            } catch {
+//                // Dacă extractURL sau UseCase-ul aruncă o eroare, o prindem direct aici
+//                self.uploadStatus = .error(error.localizedDescription)
+                isSaving = false
+            }
+        }
+    }
+    
+    private func extractURL(from asset: PHAsset) async throws -> URL {
+        try await withCheckedThrowingContinuation { continuation in
+            let options = PHVideoRequestOptions()
+            options.version = .current
+            options.deliveryMode = .highQualityFormat
+            options.isNetworkAccessAllowed = true
+            
+            PHImageManager.default().requestAVAsset(forVideo: asset, options: options) { avAsset, _, info in
+                if let urlAsset = avAsset as? AVURLAsset {
+                    continuation.resume(returning: urlAsset.url)
+                } else if let sandboxError = info?[PHImageErrorKey] as? Error {
+                    continuation.resume(throwing: sandboxError)
+                } else {
+                    continuation.resume(
+                        throwing: NSError(
+                            domain: "CameraViewModel",
+                            code: 404,
+                            userInfo: [NSLocalizedDescriptionKey: "Nu s-a putut genera adresa locală a fișierului video."]
+                        )
+                    )
+                }
+            }
+        }
+    }
 }
+
 

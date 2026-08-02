@@ -34,6 +34,23 @@ struct TimeslotsCacheKey: Hashable, Sendable {
     let employeeId: Int?
 }
 
+enum CalendarTabState<T: Equatable>: Equatable {
+    case idle
+    case loading
+    case success(data: [T], hasMore: Bool, isPaging: Bool)
+    case error(String)
+    
+    var data: [T] {
+        if case .success(let items, _, _) = self { return items }
+        return []
+    }
+    
+    var isPaging: Bool {
+        if case .success(_, _, let paging) = self { return paging }
+        return false
+    }
+}
+
 @Observable
 @MainActor
 final class BookingViewModel: HasLoadingState {
@@ -68,7 +85,7 @@ final class BookingViewModel: HasLoadingState {
     }
     
     private(set) var calendarHeaderState: CalendarHeaderState = .idle
-    private(set) var availableSlotsState: SocialTabState<Slot> = .idle
+    private(set) var availableSlotsState: CalendarTabState<Slot> = .idle
     
     var selectedDay: Date = Date()
     var selectedSlot: Slot? = nil

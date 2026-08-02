@@ -163,7 +163,9 @@ struct GlobalNavigationModifier: ViewModifier {
                     if let existingVM = router.activeCameraViewModel {
                         return existingVM
                     } else {
-                        let newVM = container.postModule.makeCameraViewModel()
+                        let newVM = container.postModule.makeCameraViewModel(
+                            cloudflareRepository: container.cloudflareModuke.repository
+                        )
                         router.activeCameraViewModel = newVM
                         return newVM
                     }
@@ -175,7 +177,9 @@ struct GlobalNavigationModifier: ViewModifier {
                         router.clearCameraSession()
                         router.pop()
                     },
-                    onNext: {}
+                    onNext: {
+                        router.push(.cameraPreview)
+                    }
                 )
             
             case .cameraPreview:
@@ -183,7 +187,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     CameraPreviewScreen(
                         viewModel: viewModel,
                         onBack: { router.pop() },
-                        onNext: { router.push(.addProduct) }
+                        onNext: { router.push(.createPost) }
                     )
                 } else {
                     LoadingView()
@@ -194,7 +198,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     CreatePostScreen(
                         viewModel: viewModel,
                         onBack: { router.pop()},
-                        onPostCreated: {}
+                        onNavigateToPostPreview: {}
                     )
                 } else {
                     LoadingView()

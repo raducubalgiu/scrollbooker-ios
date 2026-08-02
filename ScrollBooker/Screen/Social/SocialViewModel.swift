@@ -25,9 +25,6 @@ enum SocialTabState<T: Equatable>: Equatable {
     }
 }
 
-import Foundation
-import Observation
-
 @Observable
 @MainActor
 final class SocialViewModel: HasLoadingState {

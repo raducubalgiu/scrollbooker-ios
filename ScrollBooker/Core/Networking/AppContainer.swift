@@ -13,6 +13,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
     let session: SessionManager
     let apiClient: APIClient
 
+    let cloudflareModuke: CloudflareModule
     let commentModule: CommentModule
     let postModule: PostModule
     let availabilityModule: AvailabilityModule
@@ -39,6 +40,7 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
         self.apiClient = APIClient(config: .default)
         self.session = SessionManager(client: apiClient)
         
+        self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
         self.commentModule = CommentModule(apiClient: apiClient)
         self.postModule = PostModule(apiClient: apiClient)
         self.availabilityModule = AvailabilityModule(apiClient: apiClient)

@@ -43,7 +43,21 @@ struct CameraScreen: View {
         .sheet(isPresented: $viewModel.isGalleryPresented) {
             CameraGallerySheet(
                 viewModel: viewModel,
-                onVideoSelected: { selectedAsset in
+                onVideoSelected: { selectedAsset in // Aici selectedAsset este de tip PHAsset
+                    // 1. Închidem sheet-ul din variabila de stare
+                    viewModel.isGalleryPresented = false
+                    
+                    // 2. Împachetăm nativ PHAsset-ul într-un LocalVideoAsset înainte de a-l trimite la ViewModel
+                    let localAsset = LocalVideoAsset(
+                        id: selectedAsset.localIdentifier,
+                        asset: selectedAsset,
+                        thumbnail: nil
+                    )
+                    
+                    // 3. Salvăm referința corectă în ViewModel (Acum compilatorul este fericit)
+                    viewModel.setSelectedVideo(localAsset)
+                    
+                    // 4. Navigăm instant către următorul ecran
                     onNext()
                 }
             )
@@ -51,6 +65,7 @@ struct CameraScreen: View {
             .presentationDragIndicator(.hidden)
             .presentationCornerRadius(25)
         }
+
     }
 }
 

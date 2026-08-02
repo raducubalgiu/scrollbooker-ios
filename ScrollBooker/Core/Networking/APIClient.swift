@@ -291,6 +291,91 @@ struct MultipartFile: Sendable {
     let mimeType: String
 }
 
+private final class UploadProgressDelegate: NSObject, URLSessionTaskDelegate, Sendable {
+    let onProgress: @Sendable (Double) -> Void
+    init(onProgress: @escaping @Sendable (Double) -> Void) { self.onProgress = onProgress }
+    
+    func urlSession(_ session: URLSession, task: URLSessionTask, didSendBodyData bytesSent: Int64, totalBytesSent: Int64, totalBytesExpectedToSend: Int64) {
+        guard totalBytesExpectedToSend > 0 else { return }
+        onProgress((Double(totalBytesSent) / Double(totalBytesExpectedToSend)) * 100.0)
+    }
+}
+
+extension APIClient {
+    func multiPartRequest<T: Decodable>(
+        absoluteURLString: String,
+        method: HTTPMethod = .post,
+        headers: [String: String] = [:],
+        fields: [String: String],
+        files: [MultipartFile] = [],
+        onProgress: @escaping @Sendable (Double) -> Void
+    ) async throws -> T {
+        return try await executeWithRetry(attempts: 0) { [unowned self] in
+            // Rezolvare problemă URL: dacă e URL complet (Cloudflare), îl folosim direct, altfel concatenăm
+            let url: URL
+            if let parsedURL = URL(string: absoluteURLString), parsedURL.scheme != nil {
+                url = parsedURL
+            } else {
+                url = self.config.baseURL.appendingPathComponent(absoluteURLString)
+            }
+            
+            var req = URLRequest(url: url)
+            req.httpMethod = method.rawValue
+            
+            let boundary = "Boundary-\(UUID().uuidString)"
+            var allHeaders = self.config.defaultHeaders.merging(headers, uniquingKeysWith: { _, new in new })
+            allHeaders["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
+            allHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
+            
+            for interceptor in self.interceptors {
+                req = try await interceptor.adapt(req)
+            }
+            
+            let tempFileURL = FileManager.default.temporaryDirectory
+                .appendingPathComponent(UUID().uuidString)
+                .appendingPathExtension("tmp")
+            
+            guard let stream = OutputStream(url: tempFileURL, append: false) else {
+                throw APIError.server(status: 0, data: nil)
+            }
+            stream.open()
+            defer { stream.close() }
+            
+            for (key, value) in fields {
+                if let boundaryData = "--\(boundary)\r\n".data(using: .utf8) { try stream.writeData(boundaryData) }
+                if let dispData = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8) { try stream.writeData(dispData) }
+                if let valueData = "\(value)\r\n".data(using: .utf8) { try stream.writeData(valueData) }
+            }
+            
+            for file in files {
+                if let boundaryData = "--\(boundary)\r\n".data(using: .utf8) { try stream.writeData(boundaryData) }
+                if let dispData = "Content-Disposition: form-data; name=\"\(file.name)\"; filename=\"\(file.filename)\"\r\n".data(using: .utf8) { try stream.writeData(dispData) }
+                if let typeData = "Content-Type: \(file.mimeType)\r\n\r\n".data(using: .utf8) { try stream.writeData(typeData) }
+                try stream.writeData(file.data)
+                if let lineBreak = "\r\n".data(using: .utf8) { try stream.writeData(lineBreak) }
+            }
+            
+            if let endBoundaryData = "--\(boundary)--\r\n".data(using: .utf8) {
+                try stream.writeData(endBoundaryData)
+            }
+            
+            NetworkLogger.request(req, body: "[Multipart Streaming From Disk With Progress]".data(using: .utf8))
+            
+            // Injectăm noul delegat hardware local pentru progres fluid
+            let delegate = UploadProgressDelegate(onProgress: onProgress)
+            let progressSession = URLSession(configuration: self.session.configuration, delegate: delegate, delegateQueue: nil)
+            
+            let (data, resp) = try await progressSession.upload(for: req, fromFile: tempFileURL)
+            try? FileManager.default.removeItem(at: tempFileURL)
+            
+            guard let http = resp as? HTTPURLResponse else { throw APIError.invalidResponse }
+            NetworkLogger.response(req, resp: http, data: data)
+            
+            return try self.handleResponse(http, data: data)
+        }
+    }
+}
+
 @propertyWrapper
 struct LossyDecimal: Codable, Hashable, Sendable {
     var wrappedValue: Decimal

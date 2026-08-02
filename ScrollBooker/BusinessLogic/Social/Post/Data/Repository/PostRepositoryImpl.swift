@@ -69,4 +69,8 @@ final class PostRepositoryImpl: PostRepository {
     func unbookmarkPost(id: Int) async throws -> NoContent {
         return try await api.unbookmarkPost(id: id)
     }
+    
+    func createPost(request: CreatePostRequest) async throws -> NoContent {
+        return try await api.createPost(request: request)
+    }
 }

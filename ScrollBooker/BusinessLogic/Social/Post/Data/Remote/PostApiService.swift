@@ -17,6 +17,7 @@ protocol PostApiService: Sendable {
     func unlikePost(id: Int) async throws -> NoContent
     func bookmarkPost(id: Int) async throws -> NoContent
     func unbookmarkPost(id: Int) async throws -> NoContent
+    func createPost(request: CreatePostRequest) async throws -> NoContent
 }
 
 final class PostAPIImpl: PostApiService {
@@ -116,6 +117,14 @@ final class PostAPIImpl: PostApiService {
             "users/\(userId)/bookmark-posts",
             method: .get,
             query: query
+        )
+    }
+    
+    func createPost(request: CreatePostRequest) async throws -> NoContent {
+        return try await client.request(
+            "posts",
+            method: .post,
+            body: request
         )
     }
 }

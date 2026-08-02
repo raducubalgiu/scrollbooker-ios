@@ -45,9 +45,9 @@ struct SocialUsersTabView: View {
                                         onNavigateToUserProfile: onNavigateToUserProfile,
                                         onFollow: onFollow
                                     )
-                                        .onAppear {
-                                            onLoadMore(userSocial)
-                                        }
+                                    .onAppear {
+                                        onLoadMore(userSocial)
+                                    }
                                 }
                                 
                                 if hasMore || isPaging {

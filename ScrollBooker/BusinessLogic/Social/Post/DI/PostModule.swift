@@ -19,7 +19,7 @@ final class PostModule {
         PostAPIImpl(client: apiClient)
     }()
 
-    private lazy var repository: PostRepository = {
+    lazy var repository: PostRepository = {
         PostRepositoryImpl(api: apiService)
     }()
 
@@ -58,7 +58,7 @@ final class PostModule {
     lazy var getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase = {
         GetUserBookmarkedPostsUseCase(repository: repository)
     }()
-
+    
     func makeExploreTabViewModel() -> ExploreTabViewModel {
         ExploreTabViewModel(
             getExplorePostsUseCase: getExplorePostsUseCase,
@@ -86,7 +86,11 @@ final class PostModule {
         )
     }
     
-    func makeCameraViewModel() -> CameraViewModel {
-        CameraViewModel()
+    func makeCameraViewModel(cloudflareRepository: CloudflareRepository) -> CameraViewModel {
+        let useCase = CreateVideoPostUseCase(
+            cloudflareRepository: cloudflareRepository,
+            postsRepository: self.repository
+        )
+        return CameraViewModel(createVideoPostUseCase: useCase)
     }
 }

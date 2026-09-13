@@ -11,7 +11,5 @@ struct Filter: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String
     let singleSelect: Bool
-    let type: FilterTypeEnum?
     let subFilters: [SubFilter]
-    let unit: String?
 }

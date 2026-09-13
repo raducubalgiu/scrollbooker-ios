@@ -11,6 +11,7 @@ struct BusinessType: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String
     let plural: String
+    let businessDomainId: Int
     let url: String?
     let thumbnailUrl: String?
     

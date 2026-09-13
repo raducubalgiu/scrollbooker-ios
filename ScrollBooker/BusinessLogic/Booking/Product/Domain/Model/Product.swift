@@ -12,6 +12,7 @@ struct Product: Identifiable, Equatable, Hashable, Sendable {
     let name: String
     let description: String?
     let serviceId: Int
+    let serviceDomainId: Int
     let businessId: Int
     let businessOwnerId: Int
     let currencyId: Int
@@ -75,11 +76,6 @@ struct ProductFilter: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String
     let subFilters: [SubFilter]
-    let type: FilterTypeEnum?
-    let unit: String?
-    let minim: Decimal?
-    let maxim: Decimal?
-    let displayAsTab: Bool
 }
 
 extension Product {
@@ -114,26 +110,11 @@ extension Product {
     }
 
     func getFiltersSummary() -> String {
-        let filterParts: [String] = self.filters.compactMap { (filter) -> String? in
-            guard let type = filter.type else { return nil }
-            
-            switch type {
-            case .options:
+        let filterParts: [String] = self.filters.compactMap { filter in
+            if filter.subFilters.isEmpty {
+                return nil
+            } else {
                 return filter.subFilters.map { $0.name }.joined(separator: " & ")
-                
-            case .range:
-                let unit = filter.unit ?? ""
-                
-                switch (filter.minim, filter.maxim) {
-                case let (.some(min), .none):
-                    return "> \(min) \(unit)".trimmingCharacters(in: .whitespaces)
-                case let (.none, .some(max)):
-                    return "< \(max) \(unit)".trimmingCharacters(in: .whitespaces)
-                case let (.some(min), .some(max)):
-                    return "\(min) - \(max) \(unit)".trimmingCharacters(in: .whitespaces)
-                default:
-                    return nil
-                }
             }
         }
 

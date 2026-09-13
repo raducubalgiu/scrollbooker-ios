@@ -26,7 +26,8 @@ struct CommentUser: Identifiable, Equatable, Hashable, Sendable {
     let fullName: String
     let username: String
     let avatar: String?
-    
+    let profession: String
+
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 

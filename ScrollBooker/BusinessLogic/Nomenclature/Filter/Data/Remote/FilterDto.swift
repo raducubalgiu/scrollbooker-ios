@@ -11,7 +11,5 @@ struct FilterDto: Codable {
     let id: Int
     let name: String
     let single_select: Bool
-    let type: String
     let sub_filters: [SubFilterDto]   
-    let unit: String?
 }

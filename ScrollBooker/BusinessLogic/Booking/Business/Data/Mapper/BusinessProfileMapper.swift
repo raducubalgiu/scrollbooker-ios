@@ -108,6 +108,7 @@ extension BusinessProfileReviewer {
         self.id = dto.id
         self.fullName = dto.fullName
         self.username = dto.username
+        self.profession = dto.profession
         self.avatar = dto.avatar
     }
 }

@@ -19,6 +19,7 @@ extension UserProfile {
         self.website = dto.website
         self.publicEmail = dto.publicEmail
         self.instagram = dto.instagram
+        self.youtube = dto.youtube
         self.tiktok = dto.tiktok
         self.businessId = dto.businessId
         self.businessTypeId = dto.businessTypeId
@@ -39,6 +40,7 @@ extension ProfileBusinessOwner {
         self.id = dto.id
         self.fullName = dto.fullname
         self.username = dto.username
+        self.profession = dto.profession
         self.avatar = dto.avatar
     }
 }

@@ -75,6 +75,8 @@ extension AppointmentWrittenReview {
 extension AppointmentProduct {
     init(dto: AppointmentProductDto) {
         self.id = dto.id
+        self.productVariantId = dto.productVariantId
+        self.offeringId = dto.offeringId
         self.name = dto.name
         self.price = dto.price
         self.priceWithDiscount = dto.priceWithDiscount
@@ -100,7 +102,10 @@ extension AppointmentUser {
 
 extension AppointmentBusiness {
     init(dto: AppointmentBusinessDto) {
+        self.id = dto.id
+        self.businessOwnerId = dto.businessOwnerId
         self.address = dto.address
+        self.formattedAddress = dto.formattedAddress
         self.coordinates = BusinessCoordinates(dto: dto.coordinates)
         self.mapUrl = dto.mapUrl
     }

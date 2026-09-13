@@ -15,6 +15,7 @@ extension BusinessMarker {
         self.address = dto.address
         self.coordinates = BusinessCoordinates(dto: dto.coordinates)
         self.isPrimary = dto.isPrimary
+        self.distance = dto.distance
         self.mediaFiles = dto.mediaFiles.map { dtoFile in
             if let dtoFile = dtoFile {
                 return BusinessMediaFile(dto: dtoFile)

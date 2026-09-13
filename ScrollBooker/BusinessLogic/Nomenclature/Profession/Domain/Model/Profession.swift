@@ -10,4 +10,5 @@ import Foundation
 struct Profession: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let name: String
+    let businessDomainId: Int
 }

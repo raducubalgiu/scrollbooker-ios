@@ -10,4 +10,5 @@ import Foundation
 struct ProfessionDto: Codable {
     let id: Int
     let name: String
+    let business_domain_id: Int
 }

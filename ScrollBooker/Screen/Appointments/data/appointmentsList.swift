@@ -19,6 +19,8 @@ let appointmentsList: [Appointment] = [
         products: [
             AppointmentProduct(
                 id: 1,
+                productVariantId: 1,
+                offeringId: 1,
                 name: "Tuns Special",
                 price: 100,
                 priceWithDiscount: 50.0,
@@ -48,7 +50,10 @@ let appointmentsList: [Appointment] = [
             ratingsCount: nil
         ),
         business: AppointmentBusiness(
+            id: 1,
+            businessOwnerId: 1,
             address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
+            formattedAddress: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
             coordinates: BusinessCoordinates(lat: 44.433552, lng: 26.020075),
             mapUrl: "https://apple.com"
         ),
@@ -72,6 +77,8 @@ let appointmentsList: [Appointment] = [
         products: [
             AppointmentProduct(
                 id: 2,
+                productVariantId: 2,
+                offeringId: 2,
                 name: "Curs de dans bachata",
                 price: 100.0,
                 priceWithDiscount: 50.0,
@@ -101,7 +108,10 @@ let appointmentsList: [Appointment] = [
             ratingsCount: nil
         ),
         business: AppointmentBusiness(
+            id: 1,
+            businessOwnerId: 1,
             address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
+            formattedAddress: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
             coordinates: BusinessCoordinates(lat: 44.433552, lng: 26.020075),
             mapUrl: "https://apple.com"
         ),
@@ -125,6 +135,8 @@ let appointmentsList: [Appointment] = [
         products: [
             AppointmentProduct(
                 id: 2,
+                productVariantId: 2,
+                offeringId: 2,
                 name: "Curs de dans bachata",
                 price: 100.0,
                 priceWithDiscount: 50.0,
@@ -154,7 +166,10 @@ let appointmentsList: [Appointment] = [
             ratingsCount: nil
         ),
         business: AppointmentBusiness(
+            id: 1,
+            businessOwnerId: 1,
             address: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
+            formattedAddress: "Bulevardul Iuliu Maniu 67, Bucuresti, 077042, Romania",
             coordinates: BusinessCoordinates(lat: 44.433552, lng: 26.020075),
             mapUrl: "https://apple.com"
         ),

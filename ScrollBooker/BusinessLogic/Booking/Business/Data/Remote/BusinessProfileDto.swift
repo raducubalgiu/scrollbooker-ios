@@ -162,12 +162,14 @@ struct BusinessProfileReviewerDto: Decodable {
     let id: Int
     let fullName: String
     let username: String
+    let profession: String
     let avatar: String?
 
     enum CodingKeys: String, CodingKey {
         case id
         case fullName = "fullname"
         case username
+        case profession
         case avatar
     }
 }

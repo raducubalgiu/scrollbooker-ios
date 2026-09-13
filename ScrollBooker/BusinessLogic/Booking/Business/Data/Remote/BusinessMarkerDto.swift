@@ -16,11 +16,13 @@ struct BusinessMarkerDto: Decodable {
     let coordinates: BusinessCoordinatesDto
     let isPrimary: Bool
     let mediaFiles: [BusinessMediaFileDto?]
+    let distance: Float?
 
     enum CodingKeys: String, CodingKey {
         case id, owner, address, coordinates
         case businessShortDomain = "business_short_domain"
         case isPrimary = "is_primary"
         case mediaFiles = "media_files"
+        case distance
     }
 }

@@ -40,11 +40,13 @@ struct CommentUserDto: Decodable {
     let fullName: String
     let username: String
     let avatar: String?
-    
+    let profession: String
+
     enum CodingKeys: String, CodingKey {
         case id
         case fullName = "fullname"
         case username
         case avatar
+        case profession
     }
 }

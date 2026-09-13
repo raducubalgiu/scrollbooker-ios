@@ -24,7 +24,7 @@ struct PostsSuccessView: View {
                         
                         if let firstMedia = post.mediaFiles.first {
                             GeometryReader { geometry in
-                                AsyncImage(url: URL(string: firstMedia.thumbnailUrl)) { phase in
+                                AsyncImage(url: URL(string: firstMedia.thumbnailUrl ?? "")) { phase in
                                     switch phase {
                                     case .success(let image):
                                         image

@@ -13,16 +13,16 @@ struct Post: Identifiable, Equatable, Hashable, Sendable {
     let user: PostUser
     let businessOwner: PostBusinessOwner
     let employee: PostEmployee?
+    let businessLocation: PostBusinessLocation?
     let counters: PostCounters
     let userActions: UserPostActions
     let mediaFiles: [PostMediaFile]
     let hashtags: [Hashtag]?
     let isVideoReview: Bool
     let isOwnPost: Bool
-    let rating: Int?
-    let bookable: Bool
-    let businessId: Int
-    let lastMinute: LastMinute
+    let businessId: Int?
+    let review: PostReview?
+    let serviceDomain: PostServiceDomain?
     let createdAt: String
 }
 
@@ -42,16 +42,45 @@ struct PostUser: Identifiable, Equatable, Hashable, Sendable {
 struct PostBusinessOwner: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let fullName: String
+    let username: String
     let avatar: String?
+    let profession: String
     let ratingsAverage: Float
-    
+    let ratingsCount: Int
+
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
 struct PostEmployee: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let fullName: String
+    let username: String
     let avatar: String?
+    let profession: String
+    let ratingsAverage: Float
+    let ratingsCount: Int
+
+    var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
+}
+
+struct PostBusinessLocation: Equatable, Hashable, Sendable {
+    let address: String
+    let formattedAddress: String
+    let coordinates: BusinessCoordinates
+    let mapUrl: String?
+    let placeId: String
+}
+
+struct PostReview: Identifiable, Equatable, Hashable, Sendable {
+    let id: Int
+    let review: String?
+    let rating: Double
+    let createdAt: String
+}
+
+struct PostServiceDomain: Identifiable, Equatable, Hashable, Sendable {
+    let id: Int
+    let name: String
 }
 
 struct PostProduct: Identifiable, Equatable, Hashable, Sendable {
@@ -78,12 +107,15 @@ struct UserPostActions: Equatable, Hashable, Sendable {
 
 struct PostMediaFile: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
-    let url: String
+    let url: String?
     let type: String
-    let thumbnailUrl: String
+    let thumbnailUrl: String?
     let duration: Float?
     let postId: Int
     let orderIndex: Int
+    let customCoverUrl: String?
+    let status: String
+    let readyToStream: Bool
 }
 
 struct Hashtag: Identifiable, Equatable, Hashable, Sendable {
@@ -98,21 +130,9 @@ struct PostCounters: Equatable, Hashable, Sendable {
     let likeCount: Int
     let bookmarkCount: Int
     let repostCount: Int
+    let shareCount: Int
     let bookingsCount: Int
     let viewsCount: Int
-}
-
-struct FixedSlots: Equatable, Hashable, Sendable {
-    let startTime: String
-    let endTime: String
-    let isBooked: Bool
-}
-
-struct LastMinute: Equatable, Hashable, Sendable {
-    let isLastMinute: Bool
-    let lastMinuteEnd: String?
-    let hasFixedSlots: Bool
-    let fixedSlots: [FixedSlots]?
 }
 
 extension Post {
@@ -122,16 +142,16 @@ extension Post {
         user: PostUser? = nil,
         businessOwner: PostBusinessOwner? = nil,
         employee: PostEmployee?? = nil,
+        businessLocation: PostBusinessLocation?? = nil,
         counters: PostCounters? = nil,
         userActions: UserPostActions? = nil,
         mediaFiles: [PostMediaFile]? = nil,
         hashtags: [Hashtag]?? = nil,
         isVideoReview: Bool? = nil,
         isOwnPost: Bool? = nil,
-        rating: Int?? = nil,
-        bookable: Bool? = nil,
-        businessId: Int? = nil,
-        lastMinute: LastMinute? = nil,
+        businessId: Int?? = nil,
+        review: PostReview?? = nil,
+        serviceDomain: PostServiceDomain?? = nil,
         createdAt: String? = nil
     ) -> Post {
         Post(
@@ -140,16 +160,16 @@ extension Post {
             user: user ?? self.user,
             businessOwner: businessOwner ?? self.businessOwner,
             employee: employee ?? self.employee,
+            businessLocation: businessLocation ?? self.businessLocation,
             counters: counters ?? self.counters,
             userActions: userActions ?? self.userActions,
             mediaFiles: mediaFiles ?? self.mediaFiles,
             hashtags: hashtags ?? self.hashtags,
             isVideoReview: isVideoReview ?? self.isVideoReview,
             isOwnPost: isOwnPost ?? self.isOwnPost,
-            rating: rating ?? self.rating,
-            bookable: bookable ?? self.bookable,
             businessId: businessId ?? self.businessId,
-            lastMinute: lastMinute ?? self.lastMinute,
+            review: review ?? self.review,
+            serviceDomain: serviceDomain ?? self.serviceDomain,
             createdAt: createdAt ?? self.createdAt
         )
     }
@@ -175,6 +195,7 @@ extension PostCounters {
         likeCount: Int? = nil,
         bookmarkCount: Int? = nil,
         repostCount: Int? = nil,
+        shareCount: Int? = nil,
         bookingsCount: Int? = nil,
         viewsCount: Int? = nil
     ) -> PostCounters {
@@ -183,6 +204,7 @@ extension PostCounters {
             likeCount: likeCount ?? self.likeCount,
             bookmarkCount: bookmarkCount ?? self.bookmarkCount,
             repostCount: repostCount ?? self.repostCount,
+            shareCount: shareCount ?? self.shareCount,
             bookingsCount: bookingsCount ?? self.bookingsCount,
             viewsCount: viewsCount ?? self.viewsCount
         )

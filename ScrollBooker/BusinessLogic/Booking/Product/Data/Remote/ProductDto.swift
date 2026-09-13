@@ -12,6 +12,7 @@ struct ProductDto: Decodable {
     let name: String
     let description: String?
     let serviceId: Int
+    let serviceDomainId: Int
     let businessId: Int
     let businessOwnerId: Int
     let currencyId: Int
@@ -29,6 +30,7 @@ struct ProductDto: Decodable {
         case name
         case description
         case serviceId = "service_id"
+        case serviceDomainId = "service_domain_id"
         case businessId = "business_id"
         case businessOwnerId = "business_owner_id"
         case currencyId = "currency_id"
@@ -129,26 +131,11 @@ struct ProductFilterDto: Decodable {
     let id: Int
     let name: String
     let subFilters: [SubFilterDto]
-    let type: String
-    let unit: String?
-    
-    @LossyOptionalDecimal
-    var minim: Decimal?
-    
-    @LossyOptionalDecimal
-    var maxim: Decimal?
-    
-    let displayAsTab: Bool
-    
+
     enum CodingKeys: String, CodingKey {
         case id
         case name
         case subFilters = "sub_filters"
-        case type
-        case unit
-        case minim
-        case maxim
-        case displayAsTab = "display_as_tab"
     }
 }
 

@@ -64,7 +64,7 @@ struct ServiceStep: View {
                     )
                     
                     if let service = selectedService {
-                        let filteredFilters = service.filters.filter { $0.type != .range }
+                        let filteredFilters = service.filters
                         
                         SearchAdvancedFilters(
                             selectedSubFilterIds: selectedSubFilterIds,

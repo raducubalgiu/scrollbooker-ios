@@ -61,20 +61,24 @@ struct AppointmentWrittenReviewDto: Decodable {
 
 struct AppointmentProductDto: Decodable {
     let id: Int?
+    let productVariantId: Int?
+    let offeringId: Int?
     let name: String
-    
+
     @LossyDecimal var price: Decimal
     @LossyDecimal var priceWithDiscount: Decimal
     @LossyDecimal var discount: Decimal
-    
+
     let duration: Int
     let currency: CurrencyDto
-    
+
     @LossyDecimal var convertedPriceWithDiscount: Decimal
     @LossyOptionalDecimal var exchangeRate: Decimal?
-    
+
     enum CodingKeys: String, CodingKey {
         case id
+        case productVariantId = "product_variant_id"
+        case offeringId = "offering_id"
         case name
         case price
         case priceWithDiscount = "price_with_discount"
@@ -108,12 +112,18 @@ struct AppointmentUserDto: Decodable {
 }
 
 struct AppointmentBusinessDto: Decodable {
+    let id: Int
+    let businessOwnerId: Int
     let address: String
+    let formattedAddress: String
     let coordinates: BusinessCoordinatesDto
     let mapUrl: String?
-    
+
     enum CodingKeys: String, CodingKey {
+        case id
+        case businessOwnerId = "business_owner_id"
         case address
+        case formattedAddress = "formatted_address"
         case coordinates
         case mapUrl = "map_url"
     }

@@ -14,16 +14,16 @@ extension Post {
         self.user = PostUser(from: dto.user)
         self.businessOwner = PostBusinessOwner(from: dto.businessOwner)
         self.employee = dto.employee.map { PostEmployee(from: $0) }
+        self.businessLocation = dto.businessLocation.map { PostBusinessLocation(from: $0) }
         self.counters = PostCounters(from: dto.counters)
         self.userActions = UserPostActions(from: dto.userActions)
         self.mediaFiles = dto.mediaFiles.map { PostMediaFile(from: $0) }
         self.hashtags = dto.hashtags?.map { Hashtag(from: $0) }
         self.isVideoReview = dto.isVideoReview
         self.isOwnPost = dto.isOwnPost
-        self.rating = dto.rating
-        self.bookable = dto.bookable
         self.businessId = dto.businessId
-        self.lastMinute = LastMinute(from: dto.lastMinute)
+        self.review = dto.review.map { PostReview(from: $0) }
+        self.serviceDomain = dto.serviceDomain.map { PostServiceDomain(from: $0) }
         self.createdAt = dto.createdAt
     }
 }
@@ -45,8 +45,11 @@ extension PostBusinessOwner {
     init(from dto: PostBusinessOwnerDto) {
         self.id = dto.id
         self.fullName = dto.fullName
+        self.username = dto.username
         self.avatar = dto.avatar
+        self.profession = dto.profession
         self.ratingsAverage = dto.ratingsAverage
+        self.ratingsCount = dto.ratingsCount
     }
 }
 
@@ -54,7 +57,40 @@ extension PostEmployee {
     init(from dto: PostEmployeeDto) {
         self.id = dto.id
         self.fullName = dto.fullName
+        self.username = dto.username
         self.avatar = dto.avatar
+        self.profession = dto.profession
+        self.ratingsAverage = dto.ratingsAverage
+        self.ratingsCount = dto.ratingsCount
+    }
+}
+
+extension PostBusinessLocation {
+    init(from dto: PostBusinessLocationDto) {
+        self.address = dto.address
+        self.formattedAddress = dto.formattedAddress
+        self.coordinates = BusinessCoordinates(
+            lat: Double(dto.coordinates.lat),
+            lng: Double(dto.coordinates.lng)
+        )
+        self.mapUrl = dto.mapUrl
+        self.placeId = dto.placeId
+    }
+}
+
+extension PostReview {
+    init(from dto: PostReviewDto) {
+        self.id = dto.id
+        self.review = dto.review
+        self.rating = dto.rating
+        self.createdAt = dto.createdAt
+    }
+}
+
+extension PostServiceDomain {
+    init(from dto: PostServiceDomainDto) {
+        self.id = dto.id
+        self.name = dto.name
     }
 }
 
@@ -95,6 +131,9 @@ extension PostMediaFile {
         self.duration = dto.duration
         self.postId = dto.postId
         self.orderIndex = dto.orderIndex
+        self.customCoverUrl = dto.customCoverUrl
+        self.status = dto.status
+        self.readyToStream = dto.readyToStream
     }
 }
 
@@ -113,24 +152,8 @@ extension PostCounters {
         self.likeCount = dto.likeCount
         self.bookmarkCount = dto.bookmarkCount
         self.repostCount = dto.repostCount
+        self.shareCount = dto.shareCount
         self.bookingsCount = dto.bookingsCount
         self.viewsCount = dto.viewsCount
-    }
-}
-
-extension FixedSlots {
-    init(from dto: FixedSlotsDto) {
-        self.startTime = dto.startTime
-        self.endTime = dto.endTime
-        self.isBooked = dto.isBooked
-    }
-}
-
-extension LastMinute {
-    init(from dto: LastMinuteDto) {
-        self.isLastMinute = dto.isLastMinute
-        self.lastMinuteEnd = dto.lastMinuteEnd
-        self.hasFixedSlots = dto.hasFixedSlots
-        self.fixedSlots = dto.fixedSlots?.map { FixedSlots(from: $0) }
     }
 }

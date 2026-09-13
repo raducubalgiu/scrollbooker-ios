@@ -12,6 +12,7 @@ extension BusinessType {
         self.id = dto.id
         self.name = dto.name
         self.plural = dto.plural
+        self.businessDomainId = dto.business_domain_id
         self.url = dto.url
         self.thumbnailUrl = dto.thumbnail_url
     }

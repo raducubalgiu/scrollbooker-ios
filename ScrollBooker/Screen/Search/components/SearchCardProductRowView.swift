@@ -13,7 +13,8 @@ struct SearchCardProductRowView: View {
     
     var body: some View {
         let startingOffering = product.startingOffering
-        
+        let filtersSummary = product.getFiltersSummary()
+
         VStack(alignment: .leading, spacing: 4) {
             HStack(alignment: .top, spacing: 0) {
                 Text(product.name)
@@ -55,50 +56,11 @@ struct SearchCardProductRowView: View {
                         .foregroundColor(.gray)
                 }
                 
-                if !product.filters.isEmpty {
-                    Text("  \u{2022}  ")
+                if !filtersSummary.isEmpty {
+                    Text("  \u{2022}  \(filtersSummary)")
                         .font(.subheadline)
                         .foregroundColor(.gray)
-                }
-                
-                ForEach(Array(product.filters.enumerated()), id: \.element.id) { index, filter in
-                    Group {
-                        switch filter.type {
-                            case .options:
-                                ForEach(Array(filter.subFilters.enumerated()), id: \.element.id) { subIndex, subFilter in
-                                    Text(subFilter.name)
-                                        .font(.subheadline)
-                                        .foregroundColor(.gray)
-                                        .lineLimit(1)
-                                    
-                                    if subIndex < filter.subFilters.count - 1 {
-                                        Text(" & ")
-                                            .font(.subheadline)
-                                            .foregroundColor(.gray)
-                                    }
-                                }
-                                
-                            case .range:
-                                let filterText: String = {
-                                    if let min = filter.minim, filter.maxim == nil { return "> \(min)" }
-                                    if filter.minim == nil, let max = filter.maxim { return "< \(max)" }
-                                    return "\(filter.minim ?? 0) - \(filter.maxim ?? 0)"
-                                }()
-                                
-                                Text("\(filterText) \(filter.unit ?? "")")
-                                    .font(.subheadline)
-                                    .foregroundColor(.gray)
-                                    .lineLimit(1)
-                        case .none:
-                            EmptyView()
-                        }
-                    }
-                    
-                    if index < product.filters.count - 1 {
-                        Text("  \u{2022}  ")
-                            .font(.subheadline)
-                            .foregroundColor(.gray)
-                    }
+                        .lineLimit(1)
                 }
             }
         }

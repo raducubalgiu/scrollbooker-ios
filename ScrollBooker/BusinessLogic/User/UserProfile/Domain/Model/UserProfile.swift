@@ -18,6 +18,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     let website: String?
     let publicEmail: String?
     let instagram: String?
+    let youtube: String?
     let tiktok: String?
     let businessId: Int?
     let businessTypeId: Int?
@@ -52,6 +53,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
             website: self.website,
             publicEmail: self.publicEmail,
             instagram: self.instagram,
+            youtube: self.youtube,
             tiktok: self.tiktok,
             businessId: self.businessId,
             businessTypeId: self.businessTypeId,
@@ -72,8 +74,9 @@ struct ProfileBusinessOwner: Codable, Hashable, Sendable {
     let id: Int
     let fullName: String
     let username: String
+    let profession: String
     let avatar: String?
-    
+
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 

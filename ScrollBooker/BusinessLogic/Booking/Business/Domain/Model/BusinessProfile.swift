@@ -91,6 +91,7 @@ struct BusinessProfileReviewer: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let fullName: String
     let username: String
+    let profession: String
     let avatar: String?
 }
 

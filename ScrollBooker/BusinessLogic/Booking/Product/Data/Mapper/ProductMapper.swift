@@ -13,6 +13,7 @@ extension Product {
         self.name = dto.name
         self.description = dto.description
         self.serviceId = dto.serviceId
+        self.serviceDomainId = dto.serviceDomainId
         self.businessId = dto.businessId
         self.businessOwnerId = dto.businessOwnerId
         self.currencyId = dto.currencyId
@@ -85,12 +86,6 @@ extension ProductFilter {
         self.name = dto.name
         
         self.subFilters = dto.subFilters.map { SubFilter(dto: $0) }
-        
-        self.type = FilterTypeEnum.fromKey(dto.type)
-        self.unit = dto.unit
-        self.minim = dto.minim
-        self.maxim = dto.maxim
-        self.displayAsTab = dto.displayAsTab
     }
 }
 

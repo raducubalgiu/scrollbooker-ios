@@ -16,7 +16,8 @@ struct BusinessMarker: Identifiable, Equatable {
     let coordinates: BusinessCoordinates
     let isPrimary: Bool
     let mediaFiles: [BusinessMediaFile?]
-    
+    let distance: Float?
+
     var clCoordinates: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: coordinates.lat, longitude: coordinates.lng)
     }

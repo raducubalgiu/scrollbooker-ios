@@ -33,5 +33,6 @@ extension CommentUser {
         self.username = dto.username
         self.fullName = dto.fullName
         self.avatar = dto.avatar
+        self.profession = dto.profession
     }
 }

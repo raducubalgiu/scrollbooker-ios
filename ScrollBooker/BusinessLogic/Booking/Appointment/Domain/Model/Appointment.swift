@@ -38,6 +38,8 @@ struct AppointmentWrittenReview: Codable, Hashable, Identifiable {
 
 struct AppointmentProduct: Identifiable, Equatable, Hashable, Sendable {
     let id: Int?
+    let productVariantId: Int?
+    let offeringId: Int?
     let name: String
     let price: Decimal
     let priceWithDiscount: Decimal
@@ -61,7 +63,10 @@ struct AppointmentUser: Identifiable, Equatable, Hashable, Sendable {
 }
 
 struct AppointmentBusiness: Equatable, Hashable, Sendable {
+    let id: Int
+    let businessOwnerId: Int
     let address: String
+    let formattedAddress: String
     let coordinates: BusinessCoordinates
     let mapUrl: String?
 }

@@ -18,6 +18,7 @@ struct UserProfileDTO: Decodable {
     let website: String?
     let publicEmail: String?
     let instagram: String?
+    let youtube: String?
     let tiktok: String?
     let businessId: Int?
     let businessTypeId: Int?
@@ -42,6 +43,7 @@ struct UserProfileDTO: Decodable {
         case website
         case publicEmail = "public_email"
         case instagram
+        case youtube
         case tiktok
         case businessId = "business_id"
         case businessTypeId = "business_type_id"
@@ -52,7 +54,7 @@ struct UserProfileDTO: Decodable {
         case businessOwner = "business_owner"
         case isOwnProfile = "is_own_profile"
         case isBusinessOrEmployee = "is_business_or_employee"
-        case distanceKm
+        case distanceKm = "distance_km"
         case address
     }
     
@@ -63,8 +65,9 @@ struct ProfileBusinessOwnerDTO: Decodable{
     let id: Int
     let fullname: String
     let username: String
+    let profession: String
     let avatar: String?
-    
+
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 

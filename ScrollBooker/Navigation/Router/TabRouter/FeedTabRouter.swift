@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct FeedTabRouter: View {
-    @EnvironmentObject private var container: AppContainer
+    @Environment(AppContainer.self) private var container
     var router: Router
     
     @State private var feedViewModel: FeedViewModel?

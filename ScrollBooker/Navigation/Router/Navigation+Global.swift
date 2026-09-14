@@ -13,7 +13,7 @@ enum DestinationResult<V: View> {
 }
 
 struct GlobalNavigationModifier: ViewModifier {
-    @EnvironmentObject private var container: AppContainer
+    @Environment(AppContainer.self) private var container
     @EnvironmentObject private var session: SessionManager
     @Environment(Router.self) private var router
 

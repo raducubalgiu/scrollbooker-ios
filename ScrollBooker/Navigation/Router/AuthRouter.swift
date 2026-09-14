@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct AuthRouter: View {
-    @EnvironmentObject private var container: AppContainer
+    @Environment(AppContainer.self) private var container
     @EnvironmentObject private var session: SessionManager
     let startStep: RegistrationStepEnum?
     

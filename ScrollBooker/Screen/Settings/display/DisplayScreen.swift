@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct DisplayScreen: View {
-    @EnvironmentObject private var themeManager: ThemeManager
+    @Environment(ThemeManager.self) private var themeManager
     var onBack: () -> Void
     
     var body: some View {

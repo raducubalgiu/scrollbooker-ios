@@ -6,13 +6,17 @@
 //
 
 import Foundation
-import SwiftUI
+import Observation
 
+@Observable
 @MainActor
-final class AppContainer: ObservableObject, AppContainerProtocol {
+final class AppContainer {
     let session: SessionManager
     let apiClient: APIClient
 
+    let authModule: AuthModule
+    let userInfoModule: UserInfoModule
+    let userPermissionsModule: UserPermissionsModule
     let cloudflareModuke: CloudflareModule
     let commentModule: CommentModule
     let postModule: PostModule
@@ -35,12 +39,26 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
     let problemModule: ProblemModule
     let followModule: FollowModule
     let dashboardModule: DashboardModule
-    let userAPI: UserAPI
 
     init() {
         self.apiClient = APIClient(config: .default)
-        self.session = SessionManager(client: apiClient)
-        
+
+        let authModule = AuthModule(apiClient: apiClient)
+        let userInfoModule = UserInfoModule(apiClient: apiClient)
+        let userPermissionsModule = UserPermissionsModule(apiClient: apiClient)
+        self.authModule = authModule
+        self.userInfoModule = userInfoModule
+        self.userPermissionsModule = userPermissionsModule
+        self.session = SessionManager(
+            client: apiClient,
+            loginUseCase: authModule.loginUseCase,
+            registerUseCase: authModule.registerUseCase,
+            refreshSessionUseCase: authModule.refreshSessionUseCase,
+            verifyEmailUseCase: authModule.verifyEmailUseCase,
+            getUserInfoUseCase: userInfoModule.getUserInfoUseCase,
+            getUserPermissionsUseCase: userPermissionsModule.getUserPermissionsUseCase
+        )
+
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
         self.commentModule = CommentModule(apiClient: apiClient)
         self.postModule = PostModule(apiClient: apiClient)
@@ -63,7 +81,6 @@ final class AppContainer: ObservableObject, AppContainerProtocol {
         self.problemModule = ProblemModule(apiClient: apiClient)
         self.followModule = FollowModule(apiClient: apiClient)
         self.dashboardModule = DashboardModule(apiClient: apiClient)
-        self.userAPI = UserAPIImpl(client: apiClient)
     }
     
     func bootstrap() async {

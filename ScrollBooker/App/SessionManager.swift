@@ -14,8 +14,12 @@ enum RootDestination { case splash, auth, main }
 final class SessionManager: ObservableObject {
     private let client: APIClient
 
-    private let authAPI: AuthAPI
-    private let userAPI: UserAPI
+    private let loginUseCase: LoginUseCase
+    private let registerUseCase: RegisterUseCase
+    private let refreshSessionUseCase: RefreshSessionUseCase
+    private let verifyEmailUseCase: VerifyEmailUseCase
+    private let getUserInfoUseCase: GetUserInfoUseCase
+    private let getUserPermissionsUseCase: GetUserPermissionsUseCase
     
     private let store: AuthStore
     private var cancellables = Set<AnyCancellable>()
@@ -35,15 +39,27 @@ final class SessionManager: ObservableObject {
         auth.accessToken
     }
     
-    init(store: AuthStore = AuthStore(), client: APIClient) {
+    init(
+        store: AuthStore = AuthStore(),
+        client: APIClient,
+        loginUseCase: LoginUseCase,
+        registerUseCase: RegisterUseCase,
+        refreshSessionUseCase: RefreshSessionUseCase,
+        verifyEmailUseCase: VerifyEmailUseCase,
+        getUserInfoUseCase: GetUserInfoUseCase,
+        getUserPermissionsUseCase: GetUserPermissionsUseCase
+    ) {
         self.client = client
         self.store = store
         self.auth = store.initialSnapshot
-        
-        // Inițializăm API-urile curat în init
-        self.authAPI = AuthAPIImpl(client: client)
-        self.userAPI = UserAPIImpl(client: client)
-        
+
+        self.loginUseCase = loginUseCase
+        self.registerUseCase = registerUseCase
+        self.refreshSessionUseCase = refreshSessionUseCase
+        self.verifyEmailUseCase = verifyEmailUseCase
+        self.getUserInfoUseCase = getUserInfoUseCase
+        self.getUserPermissionsUseCase = getUserPermissionsUseCase
+
         // Reactive sync cu UI
         store.publisher
             .receive(on: DispatchQueue.main)
@@ -88,7 +104,7 @@ final class SessionManager: ObservableObject {
                 try await refreshSession()
             }
             
-            let info = try await userAPI.userInfo()
+            let info = try await getUserInfoUseCase()
             self.userInfo = info
             isAuthenticated = true
         } catch {
@@ -103,17 +119,16 @@ final class SessionManager: ObservableObject {
         loginError = nil
         
         do {
-            let loginDTO = LoginRequestDTO(username: username, password: password)
-            let loginResponse = try await authAPI.login(body: loginDTO)
-            
+            let loginResponse = try await loginUseCase(username: username, password: password)
+
             await store.refreshTokens(
                 accessToken: loginResponse.accessToken,
                 refreshToken: loginResponse.refreshToken
             )
             
-            let info = try await userAPI.userInfo()
-            
-            let permissions = try await userAPI.userPermission()
+            let info = try await getUserInfoUseCase()
+
+            let permissions = try await getUserPermissionsUseCase()
             let permissionCodes = permissions.map { $0.code }
             
             // 5) Persistăm starea finală și completă în store
@@ -147,17 +162,16 @@ final class SessionManager: ObservableObject {
         loginError = nil
         
         do {
-            let registerDTO = RegisterRequestDTO(email: email, password: password, role_name: roleName)
-            let registerResponse = try await authAPI.register(body: registerDTO)
-            
+            let registerResponse = try await registerUseCase(email: email, password: password, roleName: roleName)
+
             await store.refreshTokens(
                 accessToken: registerResponse.accessToken,
                 refreshToken: registerResponse.refreshToken
             )
             
-            let info = try await userAPI.userInfo()
-            
-            let permissions = try await userAPI.userPermission()
+            let info = try await getUserInfoUseCase()
+
+            let permissions = try await getUserPermissionsUseCase()
             let permissionCodes = permissions.map { $0.code }
             
             await store.storeUserSession(
@@ -195,7 +209,7 @@ final class SessionManager: ObservableObject {
         }
         
         let task = Task<Void, Error> {
-            let refresh = try await authAPI.refresh(refreshToken: refreshToken)
+            let refresh = try await refreshSessionUseCase(refreshToken: refreshToken)
             
             await store.refreshTokens(
                 accessToken: refresh.accessToken,
@@ -227,7 +241,7 @@ final class SessionManager: ObservableObject {
         loginError = nil
         
         do {
-            let authState = try await authAPI.verifyEmail()
+            let authState = try await verifyEmailUseCase()
             updateAuthState(authState)
         } catch {
             self.loginError = (error as? LocalizedError)?.errorDescription

@@ -6,12 +6,13 @@
 //
 
 import SwiftUI
+import Observation
 
+@Observable
+final class ThemeManager {
+    @ObservationIgnored @AppStorage("theme.mode") private var storedMode: String = ThemeMode.system.rawValue
 
-final class ThemeManager: ObservableObject {
-    @AppStorage("theme.mode") private var storedMode: String = ThemeMode.system.rawValue
-    
-    @Published var mode: ThemeMode {
+    var mode: ThemeMode {
         didSet { storedMode = mode.rawValue }
     }
     

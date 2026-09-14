@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CustomTabBar: View {
     @Environment(Router.self) private var router
-    @EnvironmentObject private var theme: ThemeManager
+    @Environment(ThemeManager.self) private var theme
     
     let backgroundColor: Color
     

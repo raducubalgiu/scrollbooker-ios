@@ -10,7 +10,7 @@ import SwiftUI
 struct SearchTabRouter: View {
     var router: Router
     
-    @EnvironmentObject private var container: AppContainer
+    @Environment(AppContainer.self) private var container
     @State private var viewModel: SearchViewModel?
     
     var body: some View {

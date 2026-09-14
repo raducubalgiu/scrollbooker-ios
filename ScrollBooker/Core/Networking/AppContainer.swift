@@ -41,7 +41,11 @@ final class AppContainer {
     let dashboardModule: DashboardModule
 
     init() {
-        self.apiClient = APIClient(config: .default)
+        // Interceptor-ul e construit ÎNAINTE de APIClient și legat direct în init-ul lui,
+        // ca să nu existe niciun request care poate pleca fără el (fără atașare async ulterioară,
+        // care lăsa o fereastră de timp în care primele request-uri de la bootstrap treceau neinterceptate).
+        let authInterceptor = AuthInterceptor()
+        self.apiClient = APIClient(config: .default, interceptors: [authInterceptor])
 
         let authStore = AuthStore()
         let userInfoModule = UserInfoModule(apiClient: apiClient)
@@ -64,6 +68,7 @@ final class AppContainer {
             saveSessionUseCase: authModule.saveSessionUseCase,
             isLoggedInUseCase: authModule.isLoggedInUseCase
         )
+        authInterceptor.sessionManager = session
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
         self.commentModule = CommentModule(apiClient: apiClient)
@@ -87,11 +92,6 @@ final class AppContainer {
         self.problemModule = ProblemModule(apiClient: apiClient)
         self.followModule = FollowModule(apiClient: apiClient)
         self.dashboardModule = DashboardModule(apiClient: apiClient)
-    }
-    
-    func bootstrap() async {
-        let authInterceptor = AuthInterceptor(sessionManager: session)
-        await apiClient.addInterceptor(authInterceptor)
     }
 }
 

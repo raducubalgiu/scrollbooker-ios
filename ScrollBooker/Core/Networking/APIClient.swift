@@ -13,17 +13,19 @@ actor APIClient {
     private let decoder: JSONDecoder
     private let encoder: JSONEncoder
     
-    private var interceptors: [RequestInterceptor] = []
-    
+    private var interceptors: [RequestInterceptor]
+
     init(config: NetworkConfig,
          session: URLSession = .shared,
          decoder: JSONDecoder = JSONDecoder(),
-         encoder: JSONEncoder = JSONEncoder()
+         encoder: JSONEncoder = JSONEncoder(),
+         interceptors: [RequestInterceptor] = []
     ) {
         self.config = config
         self.session = session
         self.decoder = decoder
         self.encoder = encoder
+        self.interceptors = interceptors
     }
     
     func addInterceptor(_ interceptor: RequestInterceptor) {
@@ -37,7 +39,7 @@ actor APIClient {
         query: [String: String]? = nil,
         body: B? = nil
     ) async throws -> T {
-        return try await executeWithRetry(attempts: 0) { [unowned self] in
+        return try await executeWithRetry(path: path, attempts: 0) { [unowned self] in
             var components = URLComponents(url: self.config.baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
             if let query {
                 components?.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
@@ -93,36 +95,36 @@ actor APIClient {
         fields: [String: String],
         files: [MultipartFile] = []
     ) async throws -> T {
-        return try await executeWithRetry(attempts: 0) { [unowned self] in
+        return try await executeWithRetry(path: path, attempts: 0) { [unowned self] in
             let url = self.config.baseURL.appendingPathComponent(path)
             var req = URLRequest(url: url)
             req.httpMethod = method.rawValue
-            
+
             let boundary = "Boundary-\(UUID().uuidString)"
             var allHeaders = self.config.defaultHeaders.merging(headers, uniquingKeysWith: { _, new in new })
             allHeaders["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
             allHeaders.forEach { req.setValue($1, forHTTPHeaderField: $0) }
-            
+
             for interceptor in self.interceptors {
                 req = try await interceptor.adapt(req)
             }
-            
+
             let tempFileURL = FileManager.default.temporaryDirectory
                 .appendingPathComponent(UUID().uuidString)
                 .appendingPathExtension("tmp")
-            
+
             guard let stream = OutputStream(url: tempFileURL, append: false) else {
                 throw APIError.server(status: 0, data: nil)
             }
             stream.open()
             defer { stream.close() }
-            
+
             for (key, value) in fields {
                 if let boundaryData = "--\(boundary)\r\n".data(using: .utf8) { try stream.writeData(boundaryData) }
                 if let dispData = "Content-Disposition: form-data; name=\"\(key)\"\r\n\r\n".data(using: .utf8) { try stream.writeData(dispData) }
                 if let valueData = "\(value)\r\n".data(using: .utf8) { try stream.writeData(valueData) }
             }
-            
+
             for file in files {
                 if let boundaryData = "--\(boundary)\r\n".data(using: .utf8) { try stream.writeData(boundaryData) }
                 if let dispData = "Content-Disposition: form-data; name=\"\(file.name)\"; filename=\"\(file.filename)\"\r\n".data(using: .utf8) { try stream.writeData(dispData) }
@@ -130,11 +132,11 @@ actor APIClient {
                 try stream.writeData(file.data)
                 if let lineBreak = "\r\n".data(using: .utf8) { try stream.writeData(lineBreak) }
             }
-            
+
             if let endBoundaryData = "--\(boundary)--\r\n".data(using: .utf8) {
                 try stream.writeData(endBoundaryData)
             }
-            
+
             NetworkLogger.request(req, body: "[Multipart Streaming From Disk]".data(using: .utf8))
             let (data, resp) = try await self.session.upload(for: req, fromFile: tempFileURL)
             
@@ -153,11 +155,11 @@ actor APIClient {
             headers: [String: String] = [:],
             fields: [String: String]
         ) async throws -> T {
-            return try await executeWithRetry(attempts: 0) { [unowned self] in
+            return try await executeWithRetry(path: path, attempts: 0) { [unowned self] in
                 let url = self.config.baseURL.appendingPathComponent(path)
                 var req = URLRequest(url: url)
                 req.httpMethod = method.rawValue
-                
+
                 let boundary = "Boundary-\(UUID().uuidString)"
                 var allHeaders = self.config.defaultHeaders.merging(headers, uniquingKeysWith: { _, new in new })
                 allHeaders["Content-Type"] = "multipart/form-data; boundary=\(boundary)"
@@ -252,14 +254,14 @@ actor APIClient {
         print("-------------------------------------------------")
     }
     
-    private func executeWithRetry<T>(attempts: Int, action: @escaping () async throws -> T) async throws -> T {
+    private func executeWithRetry<T>(path: String, attempts: Int, action: @escaping () async throws -> T) async throws -> T {
         do {
             return try await action()
         } catch {
+            let requestForRetryCheck = URLRequest(url: config.baseURL.appendingPathComponent(path))
             for interceptor in interceptors {
-                let dummyRequest = URLRequest(url: config.baseURL)
-                if try await interceptor.retry(dummyRequest, dueTo: error, attempts: attempts + 1) {
-                    return try await executeWithRetry(attempts: attempts + 1, action: action)
+                if try await interceptor.retry(requestForRetryCheck, dueTo: error, attempts: attempts + 1) {
+                    return try await executeWithRetry(path: path, attempts: attempts + 1, action: action)
                 }
             }
             throw error
@@ -310,7 +312,7 @@ extension APIClient {
         files: [MultipartFile] = [],
         onProgress: @escaping @Sendable (Double) -> Void
     ) async throws -> T {
-        return try await executeWithRetry(attempts: 0) { [unowned self] in
+        return try await executeWithRetry(path: absoluteURLString, attempts: 0) { [unowned self] in
             // Rezolvare problemă URL: dacă e URL complet (Cloudflare), îl folosim direct, altfel concatenăm
             let url: URL
             if let parsedURL = URL(string: absoluteURLString), parsedURL.scheme != nil {

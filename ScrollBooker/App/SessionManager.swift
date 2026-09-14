@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import Combine
+import OSLog
 
 enum RootDestination { case splash, auth, main }
 
@@ -15,6 +16,7 @@ enum RootDestination { case splash, auth, main }
 @MainActor
 final class SessionManager {
     private let store: AuthStore
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Session")
 
     private let loginUseCase: LoginUseCase
     private let registerUseCase: RegisterUseCase
@@ -117,7 +119,7 @@ final class SessionManager {
             self.isAuthenticated = true
 
         } catch {
-            self.loginError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            self.loginError = logger.userMessage(for: error, context: "Login")
             self.isAuthenticated = false
             await store.clearUserSession()
         }
@@ -138,7 +140,7 @@ final class SessionManager {
             self.isAuthenticated = true
 
         } catch {
-            self.loginError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            self.loginError = logger.userMessage(for: error, context: "Register")
             self.isAuthenticated = false
             await store.clearUserSession()
         }
@@ -170,7 +172,12 @@ final class SessionManager {
 
         defer { self.refreshTask = nil }
 
-        _ = try await task.value
+        do {
+            _ = try await task.value
+        } catch {
+            logger.error("ERROR: on Refreshing Session: \(error.localizedDescription, privacy: .public)")
+            throw error
+        }
     }
 
     func logout() {
@@ -193,7 +200,7 @@ final class SessionManager {
             let authState = try await verifyEmailUseCase()
             updateAuthState(authState)
         } catch {
-            self.loginError = (error as? LocalizedError)?.errorDescription
+            self.loginError = logger.userMessage(for: error, context: "Verifying Email")
         }
 
         isLoading = false

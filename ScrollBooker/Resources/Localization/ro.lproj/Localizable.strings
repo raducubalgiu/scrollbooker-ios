@@ -54,6 +54,7 @@
 "name" = "Nume";
 "editProfile" = "Editează profilul";
 "somethingWentWrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";
+"noInternetConnection" = "Fără conexiune la internet";
 "yourBio" = "Biografia ta";
 "yourName" = "Numele tău";
 "biography" = "Biografie";

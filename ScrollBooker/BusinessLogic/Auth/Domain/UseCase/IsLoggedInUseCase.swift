@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import OSLog
 
 /// Verifică la pornirea aplicației dacă sesiunea salvată local e încă validă.
 ///
@@ -20,6 +21,7 @@ final class IsLoggedInUseCase {
     private let store: AuthStore
     private let getUserInfoUseCase: GetUserInfoUseCase
     private let refreshSessionUseCase: RefreshSessionUseCase
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Session")
 
     init(
         store: AuthStore,
@@ -51,6 +53,8 @@ final class IsLoggedInUseCase {
         } catch {
             if error is URLError {
                 // Eroare de transport — nu am ajuns la server. Avem încredere în cache.
+                logger.notice("Bootstrap fără conexiune — folosim identitatea din cache: \(error.localizedDescription, privacy: .public)")
+
                 if let cached = snapshot.cachedUserInfo {
                     return .authenticated(cached)
                 }
@@ -58,6 +62,7 @@ final class IsLoggedInUseCase {
             }
 
             // Eroare confirmată de server (401 etc.) — sesiunea chiar nu mai e validă.
+            logger.error("ERROR: on Checking Session, clearing session: \(error.localizedDescription, privacy: .public)")
             await store.clearUserSession()
             return .loggedOut
         }

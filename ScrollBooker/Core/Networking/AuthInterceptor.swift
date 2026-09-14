@@ -8,9 +8,9 @@
 import Foundation
 
 final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
-    private weak var sessionManager: SessionManager?
-    
-    init(sessionManager: SessionManager) {
+    weak var sessionManager: SessionManager?
+
+    init(sessionManager: SessionManager? = nil) {
         self.sessionManager = sessionManager
     }
     
@@ -35,18 +35,27 @@ final class AuthInterceptor: RequestInterceptor, @unchecked Sendable {
             return false
         }
 
-        if let apiError = error as? APIError, case .unauthorized = apiError {
-            guard let sessionManager = sessionManager else { return false }
+        guard isUnauthorized(error) else { return false }
+        guard let sessionManager = sessionManager else { return false }
 
-            do {
-                try await sessionManager.refreshSession()
-                return true
-            } catch {
-                await sessionManager.logout()
-                return false
-            }
+        do {
+            try await sessionManager.refreshSession()
+            return true
+        } catch {
+            await sessionManager.logout()
+            return false
         }
+    }
 
-        return false
+    /// Un 401 real de la server ajunge ca `.server(status: 401, _)`, nu ca
+    /// `.unauthorized` — acel caz e aruncat doar sintetic (ex. lipsă refresh
+    /// token). Trebuie tratate amândouă ca "sesiunea nu mai e validă".
+    private func isUnauthorized(_ error: Error) -> Bool {
+        guard let apiError = error as? APIError else { return false }
+        switch apiError {
+        case .unauthorized: return true
+        case .server(let status, _): return status == 401
+        default: return false
+        }
     }
 }

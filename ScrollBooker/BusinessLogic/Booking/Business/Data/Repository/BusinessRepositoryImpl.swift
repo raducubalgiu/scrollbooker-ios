@@ -38,4 +38,16 @@ final class BusinessRepositoryImpl: BusinessRepository {
         let dtoResponse = try await api.getBusinessProfile(username: username)
         return BusinessProfile(from: dtoResponse)
     }
+
+    func getUnapprovedBusinesses(page: Int, limit: Int) async throws -> PaginatedResponse<UnapprovedBusiness> {
+        let dtoResponse = try await api.getUnapprovedBusinesses(page: page, limit: limit)
+
+        return PaginatedResponse(dtoResponse) {
+            UnapprovedBusiness(dto: $0)
+        }
+    }
+
+    func approveBusiness(userId: Int) async throws -> NoContent {
+        return try await api.approveBusiness(userId: userId)
+    }
 }

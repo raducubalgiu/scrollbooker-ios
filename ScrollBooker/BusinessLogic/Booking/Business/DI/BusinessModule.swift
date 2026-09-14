@@ -35,6 +35,14 @@ final class BusinessModule {
         GetBusinessProfileUseCase(repository: repository)
     }()
 
+    private lazy var getUnapprovedBusinessesUseCase: GetUnapprovedBusinessesUseCase = {
+        GetUnapprovedBusinessesUseCase(repository: repository)
+    }()
+
+    private lazy var approveBusinessUseCase: ApproveBusinessUseCase = {
+        ApproveBusinessUseCase(repository: repository)
+    }()
+
     func makeSearchViewModel(
         getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
     ) -> SearchViewModel {
@@ -49,6 +57,13 @@ final class BusinessModule {
         BusinessProfileViewModel(
             username: username,
             getBusinessProfileUseCase: getBusinessProfileUseCase
+        )
+    }
+
+    func makeUnapprovedBusinessesViewModel() -> UnapprovedBusinessesViewModel {
+        UnapprovedBusinessesViewModel(
+            getUnapprovedBusinessesUseCase: getUnapprovedBusinessesUseCase,
+            approveBusinessUseCase: approveBusinessUseCase
         )
     }
 }

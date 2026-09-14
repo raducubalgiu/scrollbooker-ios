@@ -277,6 +277,15 @@
 "my_business_calendar_description" = "Calendarul meu de programări";
 "my_business_employees" = "Angajați";
 "my_business_employees_description" = "Angajați și cereri de angajare";
+"my_business_unapproved" = "Afaceri în aprobare";
+"my_business_unapproved_description" = "Lista de afaceri ce urmează a fi revizuite";
+"my_business_unapproved_type" = "Tip business";
+"my_business_unapproved_address" = "Adresă";
+"my_business_unapproved_has_employees" = "Are angajați";
+"my_business_unapproved_no_employees" = "Fără angajați";
+"my_business_unapproved_empty" = "Nu au fost găsite afaceri în aprobare";
+"my_business_unapproved_reject" = "Respinge";
+"my_business_unapproved_approve" = "Aprobă";
 "posts" = "Postări";
 "finished" = "Finalizat";
 "canceled" = "Anulat";

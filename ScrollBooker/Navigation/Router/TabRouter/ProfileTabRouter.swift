@@ -104,7 +104,13 @@ struct ProfileTabRouter: View {
                         return MyBusinessDetailsScreen(
                             onBack: { router.pop() }
                         )
-                    
+
+                    case .unapprovedBusinesses:
+                        return UnapprovedBusinessesScreen(
+                            viewModel: container.businessModule.makeUnapprovedBusinessesViewModel(),
+                            onBack: { router.pop() }
+                        )
+
                     case .mySchedules:
                         return MySchedulesScreen(
                             viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session),

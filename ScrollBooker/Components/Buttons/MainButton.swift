@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainButton: View {
     var title: String
-    var size: AppButtonSize = .large
+    var size: AppButtonSize = .medium
     var isDisabled: Bool = false
     var isLoading: Bool = false
     var bgColor: Color = .primarySB

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainButtonOutlined: View {
     var title: String
-    var size: AppButtonSize = .large
+    var size: AppButtonSize = .medium
     var fullWidth: Bool = false
     var onClick: () -> Void
     

@@ -16,6 +16,13 @@ private var myBusinessPages = [
     ),
 
     MyBusinessPage(
+        title: String(localized: "my_business_unapproved"),
+        description: String(localized: "my_business_unapproved_description"),
+        icon: "building.2",
+        route: .unapprovedBusinesses
+    ),
+
+    MyBusinessPage(
         title: String(localized: "my_business_details"),
         description: String(localized: "my_business_details_description"),
         icon: "location",

@@ -72,6 +72,7 @@ enum Route: Hashable {
     // My Business
     case myBusiness
     case myBusinessDetails
+    case unapprovedBusinesses
     
     case myEmployees
     case employmentSelectEmployee

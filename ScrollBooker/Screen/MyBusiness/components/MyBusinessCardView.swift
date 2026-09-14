@@ -17,7 +17,7 @@ struct MyBusinessCardView: View {
         Button(action: onClick) {
             VStack(alignment: .leading, spacing: 15) {
                 Image(systemName: icon)
-                    .font(.system(size: 24))
+                    .font(.system(size: 20))
                     .foregroundColor(.onSurfaceSB)
                 
                 Text(title)

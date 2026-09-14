@@ -23,7 +23,7 @@ enum AppButtonSize {
     var font: Font {
         switch self {
         case .small: return .footnote.bold()
-        case .medium: return .subheadline.bold()
+        case .medium: return .footnote.bold()
         case .large: return .body.bold()
         }
     }

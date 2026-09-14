@@ -15,7 +15,7 @@ protocol HasLoadingState: AnyObject {
 
 extension HasLoadingState {
     @discardableResult
-    
+
     func withVisibleLoading<T>(
         minDuration: Duration = .milliseconds(300),
         _ operation: () async throws -> T

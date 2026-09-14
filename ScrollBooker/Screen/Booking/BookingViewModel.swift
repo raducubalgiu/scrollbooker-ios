@@ -222,7 +222,8 @@ final class BookingViewModel: HasLoadingState {
                     businessId: params.businessId,
                     employeeId: selectedEmployeeId,
                     startDate: startDateStr,
-                    endDate: endDateStr
+                    endDate: endDateStr,
+                    slotDuration: bookingTotals.totalDuration
                 )
             }
             

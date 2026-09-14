@@ -1,13 +1,13 @@
 //
-//  GetUserAvailableDaysUseCase.swift
+//  GetUserCalendarEventsUseCase.swift
 //  ScrollBooker
 //
-//  Created by Raducu Balgiu on 22.07.2026.
+//  Created by Raducu Balgiu on 14.09.2026.
 //
 
 import Foundation
 
-final class GetUserAvailableDaysUseCase {
+final class GetUserCalendarEventsUseCase {
     private let repository: AvailabilityRepository
 
     init(repository: AvailabilityRepository) {
@@ -20,8 +20,8 @@ final class GetUserAvailableDaysUseCase {
         startDate: String,
         endDate: String,
         slotDuration: Int
-    ) async throws -> [String] {
-        try await repository.getUserCalendarAvailableDays(
+    ) async throws -> CalendarEvents {
+        try await repository.getUserCalendarEvents(
             businessId: businessId,
             employeeId: employeeId,
             startDate: startDate,

@@ -137,7 +137,13 @@ struct ProfileTabRouter: View {
                         
                     case .myCalendar:
                         return MyCalendarScreen(onBack: { router.pop() })
-                        
+                    
+                    case .myDashboard:
+                        return MyDashboardScreen(
+                            viewModel: container.dashboardModule.makeDashboardViewModel(),
+                            onBack: { router.pop() }
+                        )
+                    
                     case .myEmployees:
                         return EmployeesFlowContainer(
                             container: container,

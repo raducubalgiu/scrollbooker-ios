@@ -11,6 +11,13 @@ enum AppointmentChannelEnum: String, CaseIterable, Equatable, Hashable, Sendable
     case scrollBooker = "scroll_booker"
     case ownClient = "own_client"
 
+    var title: String {
+        switch self {
+        case .scrollBooker: return String(localized: "scrollbooker")
+        case .ownClient: return String(localized: "ownClient")
+        }
+    }
+
     static func fromKey(_ key: String) -> AppointmentChannelEnum? {
         return AppointmentChannelEnum(rawValue: key)
     }

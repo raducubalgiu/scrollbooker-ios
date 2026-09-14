@@ -26,8 +26,20 @@ final class AvailabilityModule {
     lazy var getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase = {
         GetUserAvailableDaysUseCase(repository: repository)
     }()
-    
+
     lazy var getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase = {
         GetUserAvailableTimeslotsUseCase(repository: repository)
+    }()
+
+    lazy var getUserCalendarEventsUseCase: GetUserCalendarEventsUseCase = {
+        GetUserCalendarEventsUseCase(repository: repository)
+    }()
+
+    lazy var getBusinessEmployeesCalendarEventsByDayUseCase: GetBusinessEmployeesCalendarEventsByDayUseCase = {
+        GetBusinessEmployeesCalendarEventsByDayUseCase(repository: repository)
+    }()
+
+    lazy var getEmployeesAvailabilityForDayUseCase: GetEmployeesAvailabilityForDayUseCase = {
+        GetEmployeesAvailabilityForDayUseCase(repository: repository)
     }()
 }

@@ -373,3 +373,23 @@
 "notFoundVideoReviews" = "Fără recenzii video";
 "notFoundVideoReviewsDescription" = "Nu s-au găsit clipuri video asociate acestui utilizator.";
 
+/* --- DASHBOARD --- */
+
+"dashboard" = "Dashboard";
+"myDashboardDescription" = "Statistici despre rezervări și postări";
+"finished" = "Finalizat";
+"canceled" = "Anulat";
+"earnings" = "Încasări";
+"channel" = "Canal";
+"scrollbooker" = "ScrollBooker";
+"ownClient" = "Client Propriu";
+"bookingsDetails" = "Detalii rezervări";
+"fromvideo" = "Din clipuri video";
+"scrollBookerCommission" = "Comision ScrollBooker";
+"bookingsSources" = "Surse rezervări";
+"period_seven_days" = "7 zile";
+"period_one_month" = "1 lună";
+"period_three_months" = "3 luni";
+"period_six_months" = "6 luni";
+"period_one_year" = "1 an";
+

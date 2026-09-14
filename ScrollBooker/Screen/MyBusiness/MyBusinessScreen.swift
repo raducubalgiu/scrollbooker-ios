@@ -9,6 +9,13 @@ import SwiftUI
 
 private var myBusinessPages = [
     MyBusinessPage(
+        title: String(localized: "dashboard"),
+        description: String(localized: "myDashboardDescription"),
+        icon: "square.grid.2x2",
+        route: .myDashboard
+    ),
+
+    MyBusinessPage(
         title: String(localized: "location"),
         description: String(localized: "businessLocationDetails"),
         icon: "location",
@@ -49,6 +56,8 @@ private var myBusinessPages = [
         icon: "person.2",
         route: .myEmployees
     ),
+    
+    
 ]
 
 struct MyBusinessScreen: View {

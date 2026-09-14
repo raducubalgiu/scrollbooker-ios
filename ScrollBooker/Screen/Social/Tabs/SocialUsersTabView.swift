@@ -8,28 +8,30 @@
 import SwiftUI
 
 struct SocialUsersTabView: View {
-    let state: SocialTabState<UserSocial>
-    
+    let state: FeatureState<[UserSocial]>
+    let hasMore: Bool
+    let isPaging: Bool
+
     let noDataTitle: String
     let noDataMessage: String
-    
+
     var onRefresh: () async -> Void
     var onLoadMore: (UserSocial) -> Void
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onFollow: (UserSocial) -> Void
-    
+
     var body: some View {
         VStack {
             switch state {
                 case .idle, .loading:
                     LoadingView()
-                    
+
                 case .error(let message):
                     ErrorView(message: message) {
                         Task { await onRefresh() }
                     }
-                    
-                case .success(let users, let hasMore, let isPaging):
+
+                case .success(let users):
                     if users.isEmpty {
                         NoDataView(
                             title: noDataTitle,
@@ -49,7 +51,7 @@ struct SocialUsersTabView: View {
                                         onLoadMore(userSocial)
                                     }
                                 }
-                                
+
                                 if hasMore || isPaging {
                                     ProgressView()
                                         .frame(height: 60)

@@ -40,6 +40,8 @@ struct SocialScreen: View {
                 
                 SocialUsersTabView(
                     state: viewModel.followersState,
+                    hasMore: viewModel.hasMoreFollowers,
+                    isPaging: viewModel.isPagingFollowers,
                     noDataTitle: "Urmăritori",
                     noDataMessage: "Nu există urmăritori",
                     onRefresh: { await viewModel.refresh(tab: .followers) },
@@ -52,9 +54,11 @@ struct SocialScreen: View {
                     }
                 )
                 .tag(SocialTab.followers)
-                
+
                 SocialUsersTabView(
                     state: viewModel.followingsState,
+                    hasMore: viewModel.hasMoreFollowings,
+                    isPaging: viewModel.isPagingFollowings,
                     noDataTitle: "Urmărește",
                     noDataMessage: "Nu urmărești pe nimeni momentan",
                     onRefresh: { await viewModel.refresh(tab: .following) },

@@ -39,7 +39,7 @@ final class MySchedulesViewModel {
         
         guard let userId = session.userInfo?.id else {
             logger.error("ERROR: User ID not found in session")
-            viewState = .error("Something went wrong")
+            viewState = .error(String(localized: "somethingWentWrong"))
             return
         }
         
@@ -49,8 +49,7 @@ final class MySchedulesViewModel {
             }
             viewState = .success(data)
         } catch {
-            logger.error("ERROR: on Fetching Schedules: \(error.localizedDescription)")
-            viewState = .error("Something went wrong")
+            viewState = .error(logger.userMessage(for: error, context: "Fetching Schedules"))
         }
     }
     

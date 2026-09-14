@@ -8,6 +8,7 @@
 import Foundation
 import Observation
 import CoreLocation
+import OSLog
 
 struct SearchFilters: Equatable {
     var businessDomainId: Int? = nil
@@ -39,6 +40,8 @@ final class SearchViewModel {
     private(set) var isPaging: Bool = false
     private(set) var isRefreshing: Bool = false
     private(set) var operationErrorMessage: String? = nil
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Search")
 
     private let getBusinessesSheetUseCase: GetBusinessesSheetUseCase
     private let getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase
@@ -115,9 +118,7 @@ final class SearchViewModel {
             viewState = .success(sheetResponse.results)
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-
-            viewState = .error(message)
+            viewState = .error(logger.userMessage(for: error, context: "Initializing Search Screen"))
             self.markers = []
         }
     }
@@ -218,14 +219,13 @@ final class SearchViewModel {
             page += 1
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            let message = logger.userMessage(for: error, context: "Loading Business Sheets page \(page) (FirstPage: \(isFirstPage))")
 
             if isFirstPage {
                 viewState = .error(message)
                 self.markers = []
             } else {
                 operationErrorMessage = message
-                print("Eroare la încărcarea paginii \(page) de business sheets: \(message)")
             }
         }
     }

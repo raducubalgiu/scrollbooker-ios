@@ -73,8 +73,7 @@ final class ReviewsViewModel {
             
             await fetchTabContent(for: selectedTab, isFirstPage: true, isInitialFetchForTab: true)
         } catch {
-            logger.error("ERROR: on Fetching Review Summary: \(error.localizedDescription)")
-            viewState = .error("Something went wrong")
+            viewState = .error(logger.userMessage(for: error, context: "Fetching Review Summary"))
         }
     }
 
@@ -142,9 +141,9 @@ final class ReviewsViewModel {
 
             await fetchTabContent(for: selectedTab, isFirstPage: true, isInitialFetchForTab: true)
         } catch {
-            logger.error("ERROR: on Refreshing Reviews: \(error.localizedDescription)")
+            let message = logger.userMessage(for: error, context: "Refreshing Reviews")
             if viewState.data == nil {
-                viewState = .error("Something went wrong")
+                viewState = .error(message)
             }
         }
         isRefreshing = false

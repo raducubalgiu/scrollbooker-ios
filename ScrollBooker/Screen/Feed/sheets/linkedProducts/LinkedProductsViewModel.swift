@@ -39,8 +39,7 @@ final class LinkedProductsViewModel {
             }
             viewState = .success(result)
         } catch {
-            logger.error("ERROR: on Fetching Linked Products for Post (\(self.postId)): \(error.localizedDescription)")
-            viewState = .error("Something went wrong")
+            viewState = .error(logger.userMessage(for: error, context: "Fetching Linked Products for Post (\(self.postId))"))
         }
     }
     
@@ -52,9 +51,9 @@ final class LinkedProductsViewModel {
             let result = try await getPostLinkedProductsUseCase(postId: postId)
             viewState = .success(result)
         } catch {
-            logger.error("ERROR: on Refreshing Linked Products: \(error.localizedDescription)")
+            let message = logger.userMessage(for: error, context: "Refreshing Linked Products")
             if viewState.data == nil {
-                viewState = .error("Something went wrong")
+                viewState = .error(message)
             }
         }
         isRefreshing = false

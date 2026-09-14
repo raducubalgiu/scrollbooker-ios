@@ -85,10 +85,10 @@ final class InboxViewModel {
             viewState = .success(newData)
 
         } catch {
-            logger.error("ERROR: on Loading Inbox (FirstPage: \(isFirstPage)): \(error.localizedDescription)")
-            
+            let message = logger.userMessage(for: error, context: "Loading Inbox (FirstPage: \(isFirstPage))")
+
             if isFirstPage {
-                viewState = .error("Something went wrong")
+                viewState = .error(message)
             }
         }
     }

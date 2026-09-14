@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import OSLog
 
 struct CalendarHeaderData: Equatable {
     let availableDays: Set<String>
@@ -23,6 +24,7 @@ struct TimeslotsCacheKey: Hashable, Sendable {
 @MainActor
 final class BookingViewModel {
     private(set) var viewState: FeatureState<BookingFlow> = .idle
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Booking")
 
     let params: BookingNavigationParams
     private let getBookingFlowUseCase: GetBookingFlowUseCase
@@ -108,8 +110,7 @@ final class BookingViewModel {
             }
             viewState = .success(result)
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            viewState = .error(message)
+            viewState = .error(logger.userMessage(for: error, context: "Loading Booking Flow"))
         }
     }
 
@@ -184,8 +185,7 @@ final class BookingViewModel {
             await loadAvailableTimeSlots(for: selectedDay)
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            calendarHeaderState = .error(message)
+            calendarHeaderState = .error(logger.userMessage(for: error, context: "Loading Calendar Header"))
         }
     }
 
@@ -230,8 +230,7 @@ final class BookingViewModel {
             updateSlotsState(with: availableDayData)
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            availableSlotsState = .error(message)
+            availableSlotsState = .error(logger.userMessage(for: error, context: "Loading Available Time Slots"))
         }
     }
 
@@ -278,8 +277,7 @@ final class BookingViewModel {
             updateSlotsState(with: freshDayData)
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            operationErrorMessage = message
+            operationErrorMessage = logger.userMessage(for: error, context: "Refreshing Time Slots")
         }
 
         isRefreshing = false
@@ -299,7 +297,7 @@ final class BookingViewModel {
                 code: 400,
                 userInfo: [NSLocalizedDescriptionKey: "Datele furnizate pentru programare sunt invalide."]
             )
-            print("🚨 ERROR: on Creating ScrollBooker Appointment, the provided data are invalid")
+            logger.error("ERROR: on Creating ScrollBooker Appointment, the provided data are invalid")
 
             isSaving = false
             self.operationErrorMessage = validationError.localizedDescription
@@ -323,10 +321,7 @@ final class BookingViewModel {
 
         } catch {
             isSaving = false
-            print("🚨 ERROR: onCreating ScrollBooker Appointment \(error)")
-
-            let friendlyError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            self.operationErrorMessage = friendlyError
+            self.operationErrorMessage = logger.userMessage(for: error, context: "Creating ScrollBooker Appointment")
 
             return .failure(error)
         }

@@ -7,10 +7,13 @@
 
 import Foundation
 import Observation
+import OSLog
 
 @Observable
 @MainActor
 final class SocialViewModel {
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Social")
+
     private(set) var followersState: FeatureState<[UserSocial]> = .idle
     private(set) var isPagingFollowers: Bool = false
     private var followersPage = 1
@@ -122,7 +125,7 @@ final class SocialViewModel {
             followersState = .success(newData)
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            let message = logger.userMessage(for: error, context: "Loading Followers (FirstPage: \(isFirstPage))")
 
             if isFirstPage && (followersState.data ?? []).isEmpty {
                 followersState = .error(message)
@@ -151,7 +154,7 @@ final class SocialViewModel {
             followingsState = .success(newData)
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            let message = logger.userMessage(for: error, context: "Loading Followings (FirstPage: \(isFirstPage))")
 
             if isFirstPage && (followingsState.data ?? []).isEmpty {
                 followingsState = .error(message)
@@ -181,7 +184,7 @@ final class SocialViewModel {
             followersState = previousFollowersState
             followingsState = previousFollowingsState
 
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            operationErrorMessage = logger.userMessage(for: error, context: "Toggling Follow Status for user \(targetUser.id)")
         }
     }
 

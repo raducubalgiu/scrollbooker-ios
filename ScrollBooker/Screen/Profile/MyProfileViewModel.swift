@@ -8,12 +8,14 @@
 
 import Foundation
 import Observation
+import OSLog
 
 @Observable
 @MainActor
 final class MyProfileViewModel {
     let profileController: ProfileController
     private let session: SessionManager
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "MyProfile")
 
     var isSaved = false
     var isLoading: Bool = false
@@ -89,7 +91,7 @@ final class MyProfileViewModel {
 
             isSaved = true
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = logger.userMessage(for: error, context: "Updating Full Name")
         }
 
         isLoading = false
@@ -114,7 +116,7 @@ final class MyProfileViewModel {
             }
             isSaved = true
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = logger.userMessage(for: error, context: "Updating Birth Date")
         }
         isLoading = false
     }
@@ -136,7 +138,7 @@ final class MyProfileViewModel {
 
             isSaved = true
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = logger.userMessage(for: error, context: "Updating Gender")
         }
 
         isLoading = false
@@ -159,7 +161,7 @@ final class MyProfileViewModel {
 
             isSaved = true
         } catch {
-            errorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            errorMessage = logger.userMessage(for: error, context: "Updating Bio")
         }
 
         isLoading = false

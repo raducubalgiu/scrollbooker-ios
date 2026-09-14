@@ -49,8 +49,7 @@ final class MyDashboardViewModel {
 
             dashboardBookingState = .success(data)
         } catch {
-            logger.error("ERROR: on fetching Dashboard Booking: \(error.localizedDescription)")
-            dashboardBookingState = .error(error.localizedDescription)
+            dashboardBookingState = .error(logger.userMessage(for: error, context: "Fetching Dashboard Booking"))
         }
     }
 }

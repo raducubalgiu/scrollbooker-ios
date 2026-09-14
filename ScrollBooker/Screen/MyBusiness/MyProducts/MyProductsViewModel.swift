@@ -34,7 +34,7 @@ final class MyProductsViewModel {
         
         guard let businessId = session.userInfo?.businessId else {
             logger.error("ERROR: Business ID not found in session")
-            viewState = .error("Something went wrong")
+            viewState = .error(String(localized: "somethingWentWrong"))
             return
         }
         
@@ -50,8 +50,7 @@ final class MyProductsViewModel {
             
             viewState = .success(productsData)
         } catch {
-            logger.error("ERROR: on Fetching Products: \(error.localizedDescription)")
-            viewState = .error("Something went wrong")
+            viewState = .error(logger.userMessage(for: error, context: "Fetching Products"))
         }
     }
 }

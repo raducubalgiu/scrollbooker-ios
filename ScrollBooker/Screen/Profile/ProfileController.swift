@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import OSLog
 
 @Observable
 @MainActor
@@ -15,6 +16,7 @@ final class ProfileController {
     private(set) var isRefreshing: Bool = false
     var profileRefreshErrorMessage: String?
 
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Profile")
     private let pageLimit = 10
 
     var profile: UserProfile? { viewState.data }
@@ -76,7 +78,7 @@ final class ProfileController {
             }
             viewState = .success(result)
         } catch {
-            viewState = .error(error.readableMessage)
+            viewState = .error(logger.userMessage(for: error, context: "Fetching Profile"))
         }
     }
 
@@ -87,10 +89,12 @@ final class ProfileController {
         } catch {
             guard !error.isCancellation else { return }
 
+            let message = logger.userMessage(for: error, context: "Refreshing Profile")
+
             if viewState.data == nil {
-                viewState = .error(error.readableMessage)
+                viewState = .error(message)
             } else {
-                profileRefreshErrorMessage = error.readableMessage
+                profileRefreshErrorMessage = message
             }
         }
     }
@@ -145,10 +149,10 @@ final class ProfileController {
         } catch {
             guard !error.isCancellation else { return }
 
+            let message = logger.userMessage(for: error, context: "Loading Posts (FirstPage: \(isFirstPage))")
+
             if isFirstPage {
-                postsState = .error(error.readableMessage)
-            } else {
-                print("Eroare paginare profil (posts): \(error.readableMessage)")
+                postsState = .error(message)
             }
         }
     }
@@ -198,10 +202,10 @@ final class ProfileController {
         } catch {
             guard !error.isCancellation else { return }
 
+            let message = logger.userMessage(for: error, context: "Loading Bookmarks (FirstPage: \(isFirstPage))")
+
             if isFirstPage {
-                bookmarksState = .error(error.readableMessage)
-            } else {
-                print("Eroare paginare profil (bookmarks): \(error.readableMessage)")
+                bookmarksState = .error(message)
             }
         }
     }
@@ -230,7 +234,7 @@ final class ProfileController {
             }
             productsState = .success(response)
         } catch {
-            productsState = .error(error.readableMessage)
+            productsState = .error(logger.userMessage(for: error, context: "Loading Products"))
         }
     }
 
@@ -253,7 +257,7 @@ final class ProfileController {
             }
             aboutState = .success(response)
         } catch {
-            aboutState = .error(error.readableMessage)
+            aboutState = .error(logger.userMessage(for: error, context: "Loading About"))
         }
     }
 
@@ -322,9 +326,5 @@ private extension Error {
         if self is CancellationError { return true }
         if let urlError = self as? URLError, urlError.code == .cancelled { return true }
         return false
-    }
-
-    var readableMessage: String {
-        (self as? LocalizedError)?.errorDescription ?? localizedDescription
     }
 }

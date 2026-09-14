@@ -63,8 +63,7 @@ final class FeedSearchViewModel {
             } catch {
                 guard !Task.isCancelled else { return }
                 
-                logger.error("ERROR: on Searching Feed Users (\(cleanQuery)): \(error.localizedDescription)")
-                self.searchState = .error("Something went wrong")
+                self.searchState = .error(logger.userMessage(for: error, context: "Searching Feed Users (\(cleanQuery))"))
                 self.lastSearchedQuery = ""
             }
         }

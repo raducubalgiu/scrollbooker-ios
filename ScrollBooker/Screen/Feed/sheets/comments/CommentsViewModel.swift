@@ -7,6 +7,7 @@
 
 import Foundation
 import Observation
+import OSLog
 
 @Observable
 @MainActor
@@ -15,6 +16,8 @@ final class CommentsViewModel {
     private(set) var isPaging: Bool = false
     private(set) var isSendingComment: Bool = false
     var operationErrorMessage: String?
+
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Comments")
 
     private let postId: Int
     private let createCommentUseCase: CreateCommentUseCase
@@ -123,13 +126,12 @@ final class CommentsViewModel {
             page += 1
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            let message = logger.userMessage(for: error, context: "Loading Comments (FirstPage: \(isFirstPage))")
 
             if isFirstPage {
                 viewState = .error(message)
             } else {
                 operationErrorMessage = message
-                print("Eroare la încărcarea paginii următoare de comentarii: \(message)")
             }
         }
     }
@@ -160,7 +162,7 @@ final class CommentsViewModel {
             replyingToUsername = nil
             isSendingComment = false
         } catch {
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            operationErrorMessage = logger.userMessage(for: error, context: "Sending Comment")
             isSendingComment = false
         }
     }
@@ -209,8 +211,7 @@ final class CommentsViewModel {
                 item.comment = item.comment.copy(likeCount: originalLikeCount, isLiked: originalIsLiked)
                 item.isLikeActionPending = false
             }
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            print("Eroare la toggle like pentru comentariul \(commentId): \(error.localizedDescription)")
+            operationErrorMessage = logger.userMessage(for: error, context: "Toggling Like for Comment \(commentId)")
         }
     }
 
@@ -253,7 +254,7 @@ final class CommentsViewModel {
                     ? .notLoaded
                     : .loaded(replies: existingReplies, nextPage: currentPage, totalCount: item.repliesCount)
             }
-            print("Eroare la încărcarea răspunsurilor pentru \(parentId): \(error.localizedDescription)")
+            logger.error("ERROR: on Loading Replies for \(parentId): \(error.localizedDescription, privacy: .public)")
         }
     }
 

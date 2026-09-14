@@ -82,7 +82,7 @@ final class MyEmployeesViewModel {
         
         guard let businessOwnerId = session.userInfo?.businessOwnerId else {
             logger.error("ERROR: Business Owner ID not found in session")
-            employeesState = .error("Something went wrong")
+            employeesState = .error(String(localized: "somethingWentWrong"))
             return
         }
         
@@ -94,8 +94,7 @@ final class MyEmployeesViewModel {
             }
             employeesState = .success(data)
         } catch {
-            logger.error("ERROR: on Fetching Employees: \(error.localizedDescription)")
-            employeesState = .error("Something went wrong")
+            employeesState = .error(logger.userMessage(for: error, context: "Fetching Employees"))
         }
     }
     
@@ -105,7 +104,7 @@ final class MyEmployeesViewModel {
         
         guard let userId = session.userInfo?.id else {
             logger.error("ERROR: User ID not found in session")
-            requestsState = .error("Something went wrong")
+            requestsState = .error(String(localized: "somethingWentWrong"))
             return
         }
         
@@ -117,8 +116,7 @@ final class MyEmployeesViewModel {
             }
             requestsState = .success(data)
         } catch {
-            logger.error("ERROR: on Fetching Employment Requests: \(error.localizedDescription)")
-            requestsState = .error("Something went wrong")
+            requestsState = .error(logger.userMessage(for: error, context: "Fetching Employment Requests"))
         }
     }
     
@@ -171,8 +169,7 @@ final class MyEmployeesViewModel {
                 // Nu facem nimic dacă a fost anulat controlat prin tastare rapidă
             } catch {
                 guard !Task.isCancelled else { return }
-                logger.error("ERROR: on Searching Users: \(error.localizedDescription)")
-                self.searchState = .error("Something went wrong")
+                self.searchState = .error(logger.userMessage(for: error, context: "Searching Users"))
             }
         }
     }
@@ -188,7 +185,7 @@ final class MyEmployeesViewModel {
         
         guard let businessTypeId = session.userInfo?.businessTypeId else {
             logger.error("ERROR: Business Type ID not found in session")
-            professionsState = .error("Something went wrong")
+            professionsState = .error(String(localized: "somethingWentWrong"))
             return
         }
         
@@ -200,8 +197,7 @@ final class MyEmployeesViewModel {
             }
             professionsState = .success(professions)
         } catch {
-            logger.error("ERROR: on Fetching Professions: \(error.localizedDescription)")
-            professionsState = .error("Something went wrong")
+            professionsState = .error(logger.userMessage(for: error, context: "Fetching Professions"))
         }
     }
     
@@ -217,8 +213,7 @@ final class MyEmployeesViewModel {
             }
             consentState = .success(consent)
         } catch {
-            logger.error("ERROR: on Fetching Consent Terms: \(error.localizedDescription)")
-            consentState = .error("Something went wrong")
+            consentState = .error(logger.userMessage(for: error, context: "Fetching Consent Terms"))
         }
     }
     

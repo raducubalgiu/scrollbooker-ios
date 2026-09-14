@@ -42,8 +42,7 @@ final class BusinessProfileViewModel {
             }
             viewState = .success(result)
         } catch {
-            logger.error("ERROR: on Fetching Business Profile (\(self.username)): \(error.localizedDescription)")
-            viewState = .error("Something went wrong")
+            viewState = .error(logger.userMessage(for: error, context: "Fetching Business Profile (\(self.username))"))
         }
     }
     
@@ -55,10 +54,10 @@ final class BusinessProfileViewModel {
             let result = try await getBusinessProfileUseCase(username: username)
             viewState = .success(result)
         } catch {
-            logger.error("ERROR: on Refreshing Business Profile: \(error.localizedDescription)")
+            let message = logger.userMessage(for: error, context: "Refreshing Business Profile")
 
             if viewState.data == nil {
-                viewState = .error("Something went wrong")
+                viewState = .error(message)
             }
         }
         isRefreshing = false

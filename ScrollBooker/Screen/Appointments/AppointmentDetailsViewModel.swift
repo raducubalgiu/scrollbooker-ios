@@ -56,8 +56,7 @@ final class AppointmentDetailsViewModel {
             }
             viewState = .success(result)
         } catch {
-            logger.error("ERROR: on Fetching Appointment: \(error.localizedDescription)")
-            viewState = .error("Something went wrong") // Mesaj generic direct în starea ecranului
+            viewState = .error(logger.userMessage(for: error, context: "Fetching Appointment"))
         }
     }
     
@@ -69,9 +68,9 @@ final class AppointmentDetailsViewModel {
             let result = try await getAppointmentById(id: appointmentId)
             viewState = .success(result)
         } catch {
-            logger.error("ERROR: on Refreshing Appointment: \(error.localizedDescription)")
+            let message = logger.userMessage(for: error, context: "Refreshing Appointment")
             if viewState.data == nil {
-                viewState = .error("Something went wrong")
+                viewState = .error(message)
             }
         }
         isRefreshing = false

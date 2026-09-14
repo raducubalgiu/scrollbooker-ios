@@ -8,6 +8,7 @@
 import Observation
 import AVKit
 import Foundation
+import OSLog
 
 extension Collection {
     subscript(safe index: Index) -> Element? {
@@ -25,6 +26,8 @@ enum FeedPostsState {
 
 @Observable
 class BaseFeedViewModel {
+    private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Feed")
+
     private(set) var posts: [Post] = []
     
     var players: [Int: AVPlayer] = [:]
@@ -112,12 +115,10 @@ class BaseFeedViewModel {
             }
 
         } catch {
-            let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            let message = logger.userMessage(for: error, context: "Loading Feed (FirstPage: \(isFirstPage))")
 
             if isFirstPage {
                 viewState = .error(message)
-            } else {
-                print("Eroare la încărcarea paginii următoare: \(message)")
             }
         }
     }
@@ -153,10 +154,10 @@ class BaseFeedViewModel {
             if let currentIndex = posts.firstIndex(where: { $0.id == postId }) {
                 posts[currentIndex] = originalPost
             }
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            operationErrorMessage = logger.userMessage(for: error, context: "Toggling Like for post \(postId)")
         }
     }
-    
+
     @MainActor
     func toggleBookmark(
         postId: Int,
@@ -186,7 +187,7 @@ class BaseFeedViewModel {
             if let currentIndex = posts.firstIndex(where: { $0.id == postId }) {
                 posts[currentIndex] = originalPost
             }
-            operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
+            operationErrorMessage = logger.userMessage(for: error, context: "Toggling Bookmark for post \(postId)")
         }
     }
     

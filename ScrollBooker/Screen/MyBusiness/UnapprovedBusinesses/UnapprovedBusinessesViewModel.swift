@@ -95,10 +95,10 @@ final class UnapprovedBusinessesViewModel {
             viewState = .success(newData)
 
         } catch {
-            logger.error("ERROR: on Loading Unapproved Businesses (FirstPage: \(isFirstPage)): \(error.localizedDescription)")
+            let message = logger.userMessage(for: error, context: "Loading Unapproved Businesses (FirstPage: \(isFirstPage))")
 
             if isFirstPage {
-                viewState = .error("Something went wrong")
+                viewState = .error(message)
             }
         }
     }
@@ -115,9 +115,8 @@ final class UnapprovedBusinessesViewModel {
             approvingBusinessId = nil
             await refresh()
         } catch {
-            logger.error("ERROR: on Approving Business for userId \(userId): \(error.localizedDescription)")
             approvingBusinessId = nil
-            errorMessage = "Something went wrong"
+            errorMessage = logger.userMessage(for: error, context: "Approving Business for userId \(userId)")
         }
     }
 }

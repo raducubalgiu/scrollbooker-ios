@@ -102,7 +102,7 @@ final class ProfileController {
 
     // MARK: - Posts
     func loadInitialPosts(userId: Int) async {
-        guard (postsState.data ?? []).isEmpty else { return }
+        guard postsState == .idle else { return }
         await loadPostsData(userId: userId, isFirstPage: true)
     }
 
@@ -155,7 +155,7 @@ final class ProfileController {
 
     // MARK: - Bookmarks
     func loadInitialBookmarks(userId: Int) async {
-        guard (bookmarksState.data ?? []).isEmpty else { return }
+        guard bookmarksState == .idle else { return }
         await loadBookmarksData(userId: userId, isFirstPage: true)
     }
 
@@ -208,7 +208,7 @@ final class ProfileController {
 
     // MARK: - Products
     func loadInitialProducts(businessId: Int, employeeId: Int?) async {
-        guard productsState.data == nil else { return }
+        guard productsState == .idle else { return }
         await loadProductsData(businessId: businessId, employeeId: employeeId)
     }
 
@@ -236,7 +236,7 @@ final class ProfileController {
 
     // MARK: - About
     func loadInitialAbout(userId: Int) async {
-        guard aboutState.data == nil else { return }
+        guard aboutState == .idle else { return }
         await loadAboutData(userId: userId)
     }
 

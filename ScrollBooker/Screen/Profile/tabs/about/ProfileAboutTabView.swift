@@ -12,7 +12,7 @@ struct ProfileAboutTabView: View {
     let userId: Int
 
     var body: some View {
-        switch controller.aboutViewState {
+        switch controller.aboutState {
         case .idle, .loading:
             LoadingView(maxHeight: 500)
 

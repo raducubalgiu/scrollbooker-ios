@@ -29,7 +29,7 @@ struct EditNameScreen: View {
     }
     
     private var isEnabled: Bool {
-        let initialName = viewModel.profileController.uiState.data?.fullName ?? ""
+        let initialName = viewModel.profileController.profile?.fullName ?? ""
         return newFullName != initialName && isInputValid && !viewModel.isLoading
     }
     
@@ -69,7 +69,7 @@ struct EditNameScreen: View {
         .background(Color.backgroundSB)
         .onAppear {
             if newFullName.isEmpty {
-                newFullName = viewModel.profileController.uiState.data?.fullName ?? ""
+                newFullName = viewModel.profileController.profile?.fullName ?? ""
             }
         }
         .onChange(of: viewModel.isSaved) { _, saved in

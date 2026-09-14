@@ -15,7 +15,7 @@ struct ProfileProductsTabView: View {
     var body: some View {
         Group {
             if let businessId {
-                switch controller.productsViewState {
+                switch controller.productsState {
                     case .idle, .loading:
                         LoadingView(maxHeight: 500)
 

@@ -36,7 +36,7 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text(viewModel.profileController.uiState.data?.fullName ?? "")
+                            Text(viewModel.profileController.profile?.fullName ?? "")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             
@@ -58,7 +58,7 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text(viewModel.profileController.uiState.data?.username ?? "")
+                            Text(viewModel.profileController.profile?.username ?? "")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                             
@@ -80,7 +80,7 @@ struct EditProfileScreen: View {
                         Spacer()
                         
                         HStack {
-                            Text(viewModel.profileController.uiState.data?.bio ?? "")
+                            Text(viewModel.profileController.profile?.bio ?? "")
                                 .font(.subheadline.bold())
                                 .foregroundColor(.gray)
                                 .lineLimit(1)

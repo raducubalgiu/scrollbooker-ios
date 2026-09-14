@@ -15,7 +15,7 @@ struct EditGenderScreen: View {
     private let genders = GenderTypeEnum.allCases
     
     private var isButtonDisabled: Bool {
-        let initialGenderKey = viewModel.profileController.uiState.data?.gender ?? ""
+        let initialGenderKey = viewModel.profileController.profile?.gender ?? ""
         let isNotChanged = selectedGender.rawValue == initialGenderKey
         return isNotChanged || viewModel.isLoading
     }
@@ -37,7 +37,7 @@ struct EditGenderScreen: View {
             genderRadioList
         }
         .onAppear {
-            let currentGenderKey = viewModel.profileController.uiState.data?.gender ?? ""
+            let currentGenderKey = viewModel.profileController.profile?.gender ?? ""
             if let matchedEnum = GenderTypeEnum.fromKey(currentGenderKey) {
                 selectedGender = matchedEnum
             }

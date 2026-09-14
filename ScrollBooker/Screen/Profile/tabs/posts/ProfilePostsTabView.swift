@@ -12,16 +12,9 @@ struct ProfilePostsTabView: View {
     let userId: Int
     
     var body: some View {
-        switch controller.postsViewState {
+        switch controller.postsState {
             case .idle, .loading:
                 LoadingView(maxHeight: 500)
-
-            case .empty:
-                NoDataView(
-                    title: String(localized: "posts"),
-                    message: String(localized: "notFoundPosts"),
-                    maxHeight: 500
-                )
 
             case .error(let message):
                 ErrorView(message: message, maxHeight: 500) {
@@ -29,17 +22,24 @@ struct ProfilePostsTabView: View {
                 }
 
             case .success(let posts):
-                ProfilePostsSuccessView(
-                    posts: posts,
-                    isPaging: controller.isPagingPosts,
-                    onLoadMore: { currentPost in
-                        Task {
-                            await controller.loadMorePostsIfNeeded(userId: userId, currentPost: currentPost)
-                        }
-                    },
-                    onNavigateToPost: { postId in }
-                )
+                if posts.isEmpty {
+                    NoDataView(
+                        title: String(localized: "posts"),
+                        message: String(localized: "notFoundPosts"),
+                        maxHeight: 500
+                    )
+                } else {
+                    ProfilePostsSuccessView(
+                        posts: posts,
+                        isPaging: controller.isPagingPosts,
+                        onLoadMore: { currentPost in
+                            Task {
+                                await controller.loadMorePostsIfNeeded(userId: userId, currentPost: currentPost)
+                            }
+                        },
+                        onNavigateToPost: { postId in }
+                    )
+                }
             }
-        
     }
 }

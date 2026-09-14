@@ -12,16 +12,9 @@ struct ProfileBookmarksTabView: View {
     let userId: Int
 
     var body: some View {
-        switch controller.bookmarksViewState {
+        switch controller.bookmarksState {
         case .idle, .loading:
             LoadingView(maxHeight: 500)
-
-        case .empty:
-            NoDataView(
-                title: String(localized: "posts"),
-                message: String(localized: "notFoundPosts"),
-                maxHeight: 500
-            )
 
         case .error(let message):
             ErrorView(message: message, maxHeight: 500) {
@@ -29,19 +22,27 @@ struct ProfileBookmarksTabView: View {
             }
 
         case .success(let posts):
-            ProfileBookmarksSuccessView(
-                posts: posts,
-                isPaging: controller.isPagingPosts,
-                onLoadMore: { currentPost in
-                    Task {
-                        await controller.loadMoreBookmarksIfNeeded(
-                            userId: userId,
-                            currentPost: currentPost
-                        )
-                    }
-                },
-                onNavigateToPost: { postId in }
-            )
+            if posts.isEmpty {
+                NoDataView(
+                    title: String(localized: "posts"),
+                    message: String(localized: "notFoundPosts"),
+                    maxHeight: 500
+                )
+            } else {
+                ProfileBookmarksSuccessView(
+                    posts: posts,
+                    isPaging: controller.isPagingBookmarks,
+                    onLoadMore: { currentPost in
+                        Task {
+                            await controller.loadMoreBookmarksIfNeeded(
+                                userId: userId,
+                                currentPost: currentPost
+                            )
+                        }
+                    },
+                    onNavigateToPost: { postId in }
+                )
+            }
         }
     }
 }

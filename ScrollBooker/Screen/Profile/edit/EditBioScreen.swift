@@ -26,7 +26,7 @@ struct EditBioScreen: View {
     }
     
     private var isEnabled: Bool {
-        let initialBio = viewModel.profileController.uiState.data?.bio ?? ""
+        let initialBio = viewModel.profileController.profile?.bio ?? ""
         return newBio != initialBio && isInputValid && !viewModel.isLoading
     }
     
@@ -68,7 +68,7 @@ struct EditBioScreen: View {
         .background(Color.backgroundSB)
         .onAppear {
             if newBio.isEmpty {
-                newBio = viewModel.profileController.uiState.data?.bio ?? ""
+                newBio = viewModel.profileController.profile?.bio ?? ""
             }
         }
         .onChange(of: viewModel.isSaved) { _, saved in

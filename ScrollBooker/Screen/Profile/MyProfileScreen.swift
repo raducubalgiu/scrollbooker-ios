@@ -32,37 +32,35 @@ struct MyProfileScreen: View {
                 ErrorView(message: String(localized: "errorOccurred")) {
                     Task { await viewModel.loadProfile() }
                 }
-                
-            case .success:
-                if let user = viewModel.profileController.uiState.data {
-                    ProfileLayout(
-                        user: user,
-                        profileController: viewModel.profileController,
-                        selectedTab: $viewModel.selectedTab,
-                        onNavigateToUserSocial: onNavigateToUserSocial,
-                        onNavigateToUserProfile: onNavigateToUserProfile,
-                        onShowOpeningHours: { activeSheet = .openingHours },
-                        onRefresh: {
-                            await viewModel.refresh()
-                        },
-                        header: {
-                            MyProfileHeaderView(
-                                username: "@\(user.username)",
-                                onOpenMenuSheet: { activeSheet = .menu },
-                                onNavigateToCamera: onNavigateToCamera
-                            )
-                            .padding(.vertical).padding(.horizontal)
-                        },
-                        actions: {
-                            MyProfileActionsView(
-                                isBusinessOrEmployee: user.isBusinessOrEmployee,
-                                onNavigateToEditProfile: onNavigateToEditProfile,
-                                onNavigateToMyCalendar: onNavigateToMyCalendar,
-                                onShareProfile: {}
-                            )
-                        }
-                    )
-                }
+
+            case .success(let user):
+                ProfileLayout(
+                    user: user,
+                    profileController: viewModel.profileController,
+                    selectedTab: $viewModel.selectedTab,
+                    onNavigateToUserSocial: onNavigateToUserSocial,
+                    onNavigateToUserProfile: onNavigateToUserProfile,
+                    onShowOpeningHours: { activeSheet = .openingHours },
+                    onRefresh: {
+                        await viewModel.refresh()
+                    },
+                    header: {
+                        MyProfileHeaderView(
+                            username: "@\(user.username)",
+                            onOpenMenuSheet: { activeSheet = .menu },
+                            onNavigateToCamera: onNavigateToCamera
+                        )
+                        .padding(.vertical).padding(.horizontal)
+                    },
+                    actions: {
+                        MyProfileActionsView(
+                            isBusinessOrEmployee: user.isBusinessOrEmployee,
+                            onNavigateToEditProfile: onNavigateToEditProfile,
+                            onNavigateToMyCalendar: onNavigateToMyCalendar,
+                            onShareProfile: {}
+                        )
+                    }
+                )
             }
         }
         .task {

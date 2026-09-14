@@ -41,7 +41,7 @@ struct EditBirthdateScreen: View {
             .padding(.top, .base)
         }
         .onAppear {
-            if let birthDateStr = viewModel.profileController.uiState.data?.dateOfBirth, !birthDateStr.isEmpty {
+            if let birthDateStr = viewModel.profileController.profile?.dateOfBirth, !birthDateStr.isEmpty {
                 let formatter = ISO8601DateFormatter()
                 formatter.formatOptions = [.withFullDate]
                 if let parsedDate = formatter.date(from: birthDateStr) {

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AuthRouter: View {
     @Environment(AppContainer.self) private var container
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     let startStep: RegistrationStepEnum?
     
     @State private var path: [AuthRoute] = []

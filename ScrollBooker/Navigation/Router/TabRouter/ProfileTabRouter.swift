@@ -9,7 +9,7 @@ import SwiftUI
 
 struct ProfileTabRouter: View {
     @Environment(AppContainer.self) private var container
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     var router: Router
     @State private var viewModel: MyProfileViewModel?
     

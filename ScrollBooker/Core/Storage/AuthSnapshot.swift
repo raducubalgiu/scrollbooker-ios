@@ -7,26 +7,23 @@
 
 import Foundation
 
-public struct AuthSnapshot: Equatable {
-    public var accessToken: String?
-    public var refreshToken: String?
-    public var userId: Int?
-    public var username: String?
-    public var fullName: String?
-    public var businessId: Int?
-    public var businessTypeId: Int?
-    public var permissions: [String]
-    
-    public var isAuthenticated: Bool { accessToken?.isEmpty == false }
-    
-    public init(accessToken: String? = nil, refreshToken: String? = nil, userId: Int? = nil, username: String? = nil, fullName: String? = nil, businessId: Int? = nil, businessTypeId: Int? = nil, permissions: [String]) {
+struct AuthSnapshot: Equatable {
+    var accessToken: String?
+    var refreshToken: String?
+    var cachedUserInfo: UserInfo?
+    var permissions: [String]
+
+    var isAuthenticated: Bool { accessToken?.isEmpty == false }
+
+    init(
+        accessToken: String? = nil,
+        refreshToken: String? = nil,
+        cachedUserInfo: UserInfo? = nil,
+        permissions: [String] = []
+    ) {
         self.accessToken = accessToken
         self.refreshToken = refreshToken
-        self.userId = userId
-        self.username = username
-        self.fullName = fullName
-        self.businessId = businessId
-        self.businessTypeId = businessTypeId
+        self.cachedUserInfo = cachedUserInfo
         self.permissions = permissions
     }
 }

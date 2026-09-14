@@ -10,9 +10,20 @@ import Foundation
 @MainActor
 final class AuthModule {
     private let apiClient: APIClient
+    private let store: AuthStore
+    private let getUserInfoUseCase: GetUserInfoUseCase
+    private let getUserPermissionsUseCase: GetUserPermissionsUseCase
 
-    init(apiClient: APIClient) {
+    init(
+        apiClient: APIClient,
+        store: AuthStore,
+        getUserInfoUseCase: GetUserInfoUseCase,
+        getUserPermissionsUseCase: GetUserPermissionsUseCase
+    ) {
         self.apiClient = apiClient
+        self.store = store
+        self.getUserInfoUseCase = getUserInfoUseCase
+        self.getUserPermissionsUseCase = getUserPermissionsUseCase
     }
 
     private lazy var apiService: AuthApiService = {
@@ -37,5 +48,21 @@ final class AuthModule {
 
     lazy var verifyEmailUseCase: VerifyEmailUseCase = {
         VerifyEmailUseCase(repository: repository)
+    }()
+
+    lazy var saveSessionUseCase: SaveSessionUseCase = {
+        SaveSessionUseCase(
+            store: store,
+            getUserInfoUseCase: getUserInfoUseCase,
+            getUserPermissionsUseCase: getUserPermissionsUseCase
+        )
+    }()
+
+    lazy var isLoggedInUseCase: IsLoggedInUseCase = {
+        IsLoggedInUseCase(
+            store: store,
+            getUserInfoUseCase: getUserInfoUseCase,
+            refreshSessionUseCase: refreshSessionUseCase
+        )
     }()
 }

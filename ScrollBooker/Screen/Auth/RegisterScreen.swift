@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct RegisterScreen: View {
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     
     @State private var email: String = ""
     @State private var password: String = ""

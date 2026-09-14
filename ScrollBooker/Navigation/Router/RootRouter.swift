@@ -8,11 +8,11 @@
 import SwiftUI
 
 struct RootRouter: View {
-    @EnvironmentObject private var session: SessionManager
-    
+    @Environment(SessionManager.self) private var session
+
     var body: some View {
         rootContent
-            .environmentObject(session)
+            .environment(session)
     }
     
     @ViewBuilder

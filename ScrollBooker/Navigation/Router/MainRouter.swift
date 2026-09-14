@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MainRouter: View {
     @State private var router = Router()
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     
     var body: some View {
         ZStack {

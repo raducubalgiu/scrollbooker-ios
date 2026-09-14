@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct LoginScreen: View {
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     @State private var username: String = ""
     @State private var password: String = ""
     

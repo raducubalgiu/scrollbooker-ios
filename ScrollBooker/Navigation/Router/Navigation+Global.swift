@@ -14,7 +14,7 @@ enum DestinationResult<V: View> {
 
 struct GlobalNavigationModifier: ViewModifier {
     @Environment(AppContainer.self) private var container
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     @Environment(Router.self) private var router
 
     let localDestination: (Route) -> (any View)?

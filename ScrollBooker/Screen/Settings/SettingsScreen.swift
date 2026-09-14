@@ -20,7 +20,7 @@ private var settingsItems = [
 ]
 
 struct SettingsScreen: View {
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     
     var onNavigate: (Route) -> Void
     var onBack: () -> Void

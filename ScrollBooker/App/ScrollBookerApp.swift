@@ -18,7 +18,7 @@ struct ScrollBookerApp: App {
         WindowGroup {
             RootRouter()
                 .environment(container)
-                .environmentObject(container.session)
+                .environment(container.session)
                 .environment(theme)
                 .tint(.onBackgroundSB)
                 .preferredColorScheme(theme.mode.prefferedColorScheme)

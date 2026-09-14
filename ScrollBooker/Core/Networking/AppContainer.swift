@@ -43,20 +43,26 @@ final class AppContainer {
     init() {
         self.apiClient = APIClient(config: .default)
 
-        let authModule = AuthModule(apiClient: apiClient)
+        let authStore = AuthStore()
         let userInfoModule = UserInfoModule(apiClient: apiClient)
         let userPermissionsModule = UserPermissionsModule(apiClient: apiClient)
+        let authModule = AuthModule(
+            apiClient: apiClient,
+            store: authStore,
+            getUserInfoUseCase: userInfoModule.getUserInfoUseCase,
+            getUserPermissionsUseCase: userPermissionsModule.getUserPermissionsUseCase
+        )
         self.authModule = authModule
         self.userInfoModule = userInfoModule
         self.userPermissionsModule = userPermissionsModule
         self.session = SessionManager(
-            client: apiClient,
+            store: authStore,
             loginUseCase: authModule.loginUseCase,
             registerUseCase: authModule.registerUseCase,
             refreshSessionUseCase: authModule.refreshSessionUseCase,
             verifyEmailUseCase: authModule.verifyEmailUseCase,
-            getUserInfoUseCase: userInfoModule.getUserInfoUseCase,
-            getUserPermissionsUseCase: userPermissionsModule.getUserPermissionsUseCase
+            saveSessionUseCase: authModule.saveSessionUseCase,
+            isLoggedInUseCase: authModule.isLoggedInUseCase
         )
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)

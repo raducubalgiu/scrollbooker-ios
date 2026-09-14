@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CollectEmailVerification: View {
-    @EnvironmentObject private var session: SessionManager
+    @Environment(SessionManager.self) private var session
     
     var body: some View {
         FormLayout(

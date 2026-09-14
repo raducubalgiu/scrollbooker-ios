@@ -5,51 +5,52 @@
 //  Created by Raducu Balgiu on 14.08.2025.
 //
 
-import SwiftUI
+import Foundation
+import Observation
 import Combine
 
 enum RootDestination { case splash, auth, main }
 
+@Observable
 @MainActor
-final class SessionManager: ObservableObject {
-    private let client: APIClient
+final class SessionManager {
+    private let store: AuthStore
 
     private let loginUseCase: LoginUseCase
     private let registerUseCase: RegisterUseCase
     private let refreshSessionUseCase: RefreshSessionUseCase
     private let verifyEmailUseCase: VerifyEmailUseCase
-    private let getUserInfoUseCase: GetUserInfoUseCase
-    private let getUserPermissionsUseCase: GetUserPermissionsUseCase
-    
-    private let store: AuthStore
+    private let saveSessionUseCase: SaveSessionUseCase
+    private let isLoggedInUseCase: IsLoggedInUseCase
+
+    @ObservationIgnored
     private var cancellables = Set<AnyCancellable>()
-    
-    @Published private(set) var auth: AuthSnapshot
-    @Published private(set) var userInfo: UserInfo? = nil
-    @Published var isLoading = false
-    @Published var loginError: String?
-    
-    @Published private(set) var isInitialized = false
-    @Published private(set) var isAuthenticated = false
-    @Published var startDestination: RootDestination = .splash
-    
+
+    private(set) var auth: AuthSnapshot
+    private(set) var userInfo: UserInfo? = nil
+    var isLoading = false
+    var loginError: String?
+
+    private(set) var isInitialized = false
+    private(set) var isAuthenticated = false
+    var startDestination: RootDestination = .splash
+
+    @ObservationIgnored
     private var refreshTask: Task<Void, Error>?
-    
+
     var accessToken: String? {
         auth.accessToken
     }
-    
+
     init(
         store: AuthStore = AuthStore(),
-        client: APIClient,
         loginUseCase: LoginUseCase,
         registerUseCase: RegisterUseCase,
         refreshSessionUseCase: RefreshSessionUseCase,
         verifyEmailUseCase: VerifyEmailUseCase,
-        getUserInfoUseCase: GetUserInfoUseCase,
-        getUserPermissionsUseCase: GetUserPermissionsUseCase
+        saveSessionUseCase: SaveSessionUseCase,
+        isLoggedInUseCase: IsLoggedInUseCase
     ) {
-        self.client = client
         self.store = store
         self.auth = store.initialSnapshot
 
@@ -57,8 +58,8 @@ final class SessionManager: ObservableObject {
         self.registerUseCase = registerUseCase
         self.refreshSessionUseCase = refreshSessionUseCase
         self.verifyEmailUseCase = verifyEmailUseCase
-        self.getUserInfoUseCase = getUserInfoUseCase
-        self.getUserPermissionsUseCase = getUserPermissionsUseCase
+        self.saveSessionUseCase = saveSessionUseCase
+        self.isLoggedInUseCase = isLoggedInUseCase
 
         // Reactive sync cu UI
         store.publisher
@@ -69,10 +70,10 @@ final class SessionManager: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
+
     func updateAuthState(_ authState: AuthState) {
         guard let currentUserInfo = userInfo else { return }
-        
+
         userInfo = UserInfo(
             id: currentUserInfo.id,
             username: currentUserInfo.username,
@@ -87,189 +88,114 @@ final class SessionManager: ObservableObject {
             registrationStep: authState.registrationStep
         )
     }
-    
+
     // MARK: - Bootstrap (Flow-ul de pornire al aplicației)
     func bootstrap() async {
         defer { isInitialized = true }
-        
-        guard let token = auth.accessToken, !token.isEmpty,
-              let refreshToken = auth.refreshToken, !refreshToken.isEmpty else {
-            isAuthenticated = false
-            userInfo = nil
-            return
-        }
-        
-        do {
-            if isTokenExpired(token) {
-                try await refreshSession()
-            }
-            
-            let info = try await getUserInfoUseCase()
+
+        let result = await isLoggedInUseCase()
+
+        switch result {
+        case .authenticated(let info):
             self.userInfo = info
-            isAuthenticated = true
-        } catch {
-            await store.clearUserSession()
+            self.isAuthenticated = true
+        case .loggedOut:
             self.userInfo = nil
-            isAuthenticated = false
+            self.isAuthenticated = false
         }
     }
-    
+
     func login(username: String, password: String) async {
         isLoading = true
         loginError = nil
-        
+
         do {
-            let loginResponse = try await loginUseCase(username: username, password: password)
+            let authResponse = try await loginUseCase(username: username, password: password)
+            let info = try await saveSessionUseCase(authResponse: authResponse)
 
-            await store.refreshTokens(
-                accessToken: loginResponse.accessToken,
-                refreshToken: loginResponse.refreshToken
-            )
-            
-            let info = try await getUserInfoUseCase()
-
-            let permissions = try await getUserPermissionsUseCase()
-            let permissionCodes = permissions.map { $0.code }
-            
-            // 5) Persistăm starea finală și completă în store
-            await store.storeUserSession(
-                accessToken: loginResponse.accessToken,
-                refreshToken: loginResponse.refreshToken,
-                userId: info.id,
-                username: info.username,
-                fullName: info.fullName,
-                businessId: info.businessId,
-                businessTypeId: info.businessTypeId,
-                permissions: permissionCodes
-            )
-            
-            // 6) Actualizăm UI-ul pe MainActor
             self.userInfo = info
             self.isAuthenticated = true
-            
+
         } catch {
             self.loginError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             self.isAuthenticated = false
             await store.clearUserSession()
         }
-        
+
         isLoading = false
     }
-        
+
     // MARK: - Register Flow
     func register(email: String, password: String, roleName: String) async {
         isLoading = true
         loginError = nil
-        
+
         do {
-            let registerResponse = try await registerUseCase(email: email, password: password, roleName: roleName)
+            let authResponse = try await registerUseCase(email: email, password: password, roleName: roleName)
+            let info = try await saveSessionUseCase(authResponse: authResponse)
 
-            await store.refreshTokens(
-                accessToken: registerResponse.accessToken,
-                refreshToken: registerResponse.refreshToken
-            )
-            
-            let info = try await getUserInfoUseCase()
-
-            let permissions = try await getUserPermissionsUseCase()
-            let permissionCodes = permissions.map { $0.code }
-            
-            await store.storeUserSession(
-                accessToken: registerResponse.accessToken,
-                refreshToken: registerResponse.refreshToken,
-                userId: info.id,
-                username: info.username,
-                fullName: info.fullName,
-                businessId: info.businessId,
-                businessTypeId: info.businessTypeId,
-                permissions: permissionCodes
-            )
-            
             self.userInfo = info
             self.isAuthenticated = true
-            
+
         } catch {
             self.loginError = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
             self.isAuthenticated = false
             await store.clearUserSession()
         }
-        
+
         isLoading = false
     }
-    
+
     // MARK: - Global Token Refresh (Apelat automat de AuthInterceptor la erori 401)
     func refreshSession() async throws {
         if let existingTask = refreshTask {
             _ = try await existingTask.value
             return
         }
-        
+
         guard let refreshToken = auth.refreshToken, !refreshToken.isEmpty else {
             throw APIError.unauthorized
         }
-        
+
         let task = Task<Void, Error> {
             let refresh = try await refreshSessionUseCase(refreshToken: refreshToken)
-            
+
             await store.refreshTokens(
                 accessToken: refresh.accessToken,
                 refreshToken: refresh.refreshToken
             )
         }
-        
+
         self.refreshTask = task
-        
+
         defer { self.refreshTask = nil }
-        
+
         _ = try await task.value
     }
-    
+
     func logout() {
         Task { await store.clearUserSession() }
         self.userInfo = nil
         isAuthenticated = false
     }
-    
+
     func verifyEmail() async {
         guard let token = auth.accessToken, !token.isEmpty else {
             isAuthenticated = false
             userInfo = nil
             return
         }
-        
+
         isLoading = true
         loginError = nil
-        
+
         do {
             let authState = try await verifyEmailUseCase()
             updateAuthState(authState)
         } catch {
             self.loginError = (error as? LocalizedError)?.errorDescription
         }
-        
+
         isLoading = false
     }
-    
-    private func isTokenExpired(_ token: String, skewSeconds: TimeInterval = 60) -> Bool {
-        let parts = token.split(separator: ".")
-        guard parts.count >= 2 else { return true }
-        
-        var base64 = parts[1]
-            .replacingOccurrences(of: "-", with: "+")
-            .replacingOccurrences(of: "_", with: "/")
-        
-        while base64.count % 4 != 0 {
-            base64.append("=")
-        }
-        
-        guard let data = Data(base64Encoded: base64),
-              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
-              let exp = json["exp"] as? TimeInterval else {
-            return true
-        }
-        
-        let expirationDate = Date(timeIntervalSince1970: exp)
-        return Date().addingTimeInterval(skewSeconds) >= expirationDate
-    }
 }
-

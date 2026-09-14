@@ -9,14 +9,6 @@ import Foundation
 import Observation
 import CoreLocation
 
-enum SearchBusinessesState {
-    case idle
-    case loading
-    case empty
-    case success([BusinessSheet])
-    case error(String)
-}
-
 struct SearchFilters: Equatable {
     var businessDomainId: Int? = nil
     var serviceDomainId: Int? = nil
@@ -28,7 +20,7 @@ struct SearchFilters: Equatable {
     var startDate: String? = nil
     var startTime: String? = nil
     var endTime: String? = nil
-    
+
     mutating func clear() {
         self = SearchFilters()
     }
@@ -36,9 +28,10 @@ struct SearchFilters: Equatable {
 
 @Observable
 @MainActor
-final class SearchViewModel: HasLoadingState {
-    private(set) var viewState: SearchBusinessesState = .idle
-    private(set) var businesses: [BusinessSheet] = []
+final class SearchViewModel {
+    private(set) var viewState: FeatureState<[BusinessSheet]> = .idle
+    var businesses: [BusinessSheet] { viewState.data ?? [] }
+
     private(set) var markers: [BusinessMarker] = []
     private(set) var businessDomains: [BusinessDomain] = []
     private(set) var totalCount = 0
@@ -71,38 +64,9 @@ final class SearchViewModel: HasLoadingState {
         businesses.count < totalCount
     }
 
-    var isLoading: Bool {
-        get {
-            if case .loading = viewState { return true }
-            return isPaging
-        }
-        set {
-            if newValue && !isPaging && !isRefreshing {
-                viewState = .loading
-            }
-        }
-    }
-
     /// Adevărat DOAR la încărcarea inițială a unei căutări (nu și în timpul paginării).
     var isInitialLoading: Bool {
-        if case .loading = viewState { return true }
-        return false
-    }
-
-    var errorMessage: String? {
-        get {
-            if case .error(let msg) = viewState { return msg }
-            return operationErrorMessage
-        }
-        set {
-            if let msg = newValue {
-                if businesses.isEmpty {
-                    viewState = .error(msg)
-                } else {
-                    operationErrorMessage = msg
-                }
-            }
-        }
+        viewState == .loading
     }
 
     init(
@@ -118,48 +82,42 @@ final class SearchViewModel: HasLoadingState {
     func initializeScreen(bbox: BusinessBoundingBox, zoom: Float) async {
         guard !isInitialized else { return }
         isInitialized = true
-        
+
         self.currentBBox = bbox
         self.currentZoom = zoom
-        
+
         let center = CLLocationCoordinate2D(
             latitude: Double(bbox.minLat + bbox.maxLat) / 2,
             longitude: Double(bbox.minLng + bbox.maxLng) / 2
         )
         lastSearchedCenter = center
         lastSearchedZoom = zoom
-        
+
         viewState = .loading
         operationErrorMessage = nil
-        
+
         let requestDto = createRequestDto(bbox: bbox, zoom: zoom)
-        
+
         do {
-            let (domainsResponse, sheetResponse, markersResponse) = try await withVisibleLoading {
+            let (domainsResponse, sheetResponse, markersResponse) = try await withLoading {
                 async let domainsTask = getAllBusinessDomainsUseCase()
                 async let sheetTask = getBusinessesSheetUseCase(page: 1, limit: self.limit, request: requestDto)
                 async let markersTask = getBusinessesMarkersUseCase(request: requestDto)
                 return try await (domainsTask, sheetTask, markersTask)
             }
-            
+
             self.businessDomains = domainsResponse
-            self.businesses = sheetResponse.results
             self.markers = markersResponse
             totalCount = sheetResponse.count
-            
+
             page = 2
-            
-            if businesses.isEmpty {
-                viewState = .empty
-            } else {
-                viewState = .success(businesses)
-            }
-            
+
+            viewState = .success(sheetResponse.results)
+
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            
+
             viewState = .error(message)
-            self.businesses = []
             self.markers = []
         }
     }
@@ -215,8 +173,7 @@ final class SearchViewModel: HasLoadingState {
     }
 
     func loadMoreIfNeeded(currentBusiness: BusinessSheet?) async {
-        guard hasMore, !isPaging, !isRefreshing else { return }
-        if case .loading = viewState { return }
+        guard hasMore, !isPaging, !isRefreshing, viewState != .loading else { return }
 
         guard let current = currentBusiness,
               current.id == businesses.last?.id
@@ -240,38 +197,31 @@ final class SearchViewModel: HasLoadingState {
 
         do {
             if isFirstPage {
-                let (sheetResponse, markersResponse) = try await withVisibleLoading {
+                let (sheetResponse, markersResponse) = try await withLoading {
                     async let sheetTask = getBusinessesSheetUseCase(page: self.page, limit: self.limit, request: requestDto)
                     async let markersTask = getBusinessesMarkersUseCase(request: requestDto)
                     return try await (sheetTask, markersTask)
                 }
 
-                self.businesses = sheetResponse.results
                 self.markers = markersResponse
                 totalCount = sheetResponse.count
+                viewState = .success(sheetResponse.results)
             } else {
                 let response = try await getBusinessesSheetUseCase(page: self.page, limit: self.limit, request: requestDto)
 
                 let existingIds = Set(businesses.map(\.id))
                 let unique = response.results.filter { !existingIds.contains($0.id) }
-                self.businesses.append(contentsOf: unique)
                 totalCount = response.count
+                viewState = .success(businesses + unique)
             }
 
             page += 1
-
-            if businesses.isEmpty {
-                viewState = .empty
-            } else {
-                viewState = .success(businesses)
-            }
 
         } catch {
             let message = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
 
             if isFirstPage {
                 viewState = .error(message)
-                self.businesses = []
                 self.markers = []
             } else {
                 operationErrorMessage = message
@@ -279,7 +229,7 @@ final class SearchViewModel: HasLoadingState {
             }
         }
     }
-    
+
     /// Helper privat menit să unifice și să curețe instanțierea DTO-ului către server.
     private func createRequestDto(bbox: BusinessBoundingBox, zoom: Float) -> SearchBusinessRequest {
         SearchBusinessRequest(
@@ -300,4 +250,3 @@ final class SearchViewModel: HasLoadingState {
         )
     }
 }
-

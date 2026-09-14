@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CalendarContentPagerView: View {
     @Binding var currentDayPage: Int
-    let slotsState: CalendarTabState<Slot>
+    let slotsState: FeatureState<[Slot]>
     let viewModel: BookingViewModel
     var onSlotSelected: (Slot) -> Void
     
@@ -27,7 +27,7 @@ struct CalendarContentPagerView: View {
                             case .error:
                                 ErrorView(message: "Eroare la încărcarea orelor") {}
                                 
-                            case .success(let availableSlotsList, _, _):
+                            case .success(let availableSlotsList):
                                 if availableSlotsList.isEmpty {
                                     FullyBookedDayMessageView(
                                         onNextOpenDayTap: {}

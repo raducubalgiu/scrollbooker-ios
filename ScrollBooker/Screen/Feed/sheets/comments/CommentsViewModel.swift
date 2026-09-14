@@ -8,25 +8,13 @@
 import Foundation
 import Observation
 
-enum CommentsState: Equatable {
-    case idle
-    case loading
-    case success([CommentUIItem])
-    case error(String)
-
-    var items: [CommentUIItem]? {
-        if case .success(let items) = self { return items }
-        return nil
-    }
-}
-
 @Observable
 @MainActor
-final class CommentsViewModel: HasLoadingState {
-    private(set) var viewState: CommentsState = .idle
+final class CommentsViewModel {
+    private(set) var viewState: FeatureState<[CommentUIItem]> = .idle
     private(set) var isPaging: Bool = false
-    private(set) var operationErrorMessage: String? = nil
-    private(set) var isPerformingAction: Bool = false
+    private(set) var isSendingComment: Bool = false
+    var operationErrorMessage: String?
 
     private let postId: Int
     private let createCommentUseCase: CreateCommentUseCase
@@ -51,21 +39,8 @@ final class CommentsViewModel: HasLoadingState {
     }
 
     var hasMore: Bool {
-        guard let currentCount = viewState.items?.count else { return false }
+        guard let currentCount = viewState.data?.count else { return false }
         return currentCount < totalCount
-    }
-
-    var isLoading: Bool {
-        get { if case .loading = viewState { return true }; return isPerformingAction }
-        set { isPerformingAction = newValue }
-    }
-
-    var errorMessage: String? {
-        get {
-            if case .error(let msg) = viewState { return msg }
-            return operationErrorMessage
-        }
-        set { operationErrorMessage = newValue }
     }
 
     init(
@@ -85,7 +60,7 @@ final class CommentsViewModel: HasLoadingState {
     }
 
     func loadComments() async {
-        guard viewState.items == nil else { return }
+        guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
 
         page = 1
@@ -93,8 +68,8 @@ final class CommentsViewModel: HasLoadingState {
     }
 
     func loadMoreIfNeeded(currentItem: CommentUIItem?) async {
-        guard let items = viewState.items, !items.isEmpty else { return }
-        guard hasMore, !isPaging, !isLoading else { return }
+        guard let items = viewState.data, !items.isEmpty else { return }
+        guard hasMore, !isPaging, viewState != .loading, !isSendingComment else { return }
 
         guard let current = currentItem,
               current.id == items.last?.id
@@ -106,7 +81,7 @@ final class CommentsViewModel: HasLoadingState {
     }
 
     private func fetch(isFirstPage: Bool) async {
-        if isFirstPage && viewState.items != nil {
+        if isFirstPage && viewState.data != nil {
             return
         }
 
@@ -118,7 +93,7 @@ final class CommentsViewModel: HasLoadingState {
         do {
             let response: PaginatedResponse<Comment>
             if isFirstPage {
-                response = try await withVisibleLoading {
+                response = try await withLoading {
                     try await getPostCommentsUseCase(
                         postId: postId,
                         page: page,
@@ -138,7 +113,7 @@ final class CommentsViewModel: HasLoadingState {
             if isFirstPage {
                 viewState = .success(newItems)
             } else {
-                let currentItems = viewState.items ?? []
+                let currentItems = viewState.data ?? []
                 let existingIds = Set(currentItems.map(\.id))
                 let uniqueNewItems = newItems.filter { !existingIds.contains($0.id) }
                 viewState = .success(currentItems + uniqueNewItems)
@@ -164,7 +139,7 @@ final class CommentsViewModel: HasLoadingState {
         guard !cleanedText.isEmpty else { return }
 
         operationErrorMessage = nil
-        isPerformingAction = true
+        isSendingComment = true
 
         do {
             let realComment = try await createCommentUseCase(
@@ -177,16 +152,16 @@ final class CommentsViewModel: HasLoadingState {
             if let rootId = parentId {
                 appendReply(realComment, toParent: rootId)
             } else {
-                let currentItems = viewState.items ?? []
+                let currentItems = viewState.data ?? []
                 viewState = .success([CommentUIItem(comment: realComment)] + currentItems)
                 totalCount += 1
             }
 
             replyingToUsername = nil
-            isPerformingAction = false
+            isSendingComment = false
         } catch {
             operationErrorMessage = (error as? LocalizedError)?.errorDescription ?? error.localizedDescription
-            isPerformingAction = false
+            isSendingComment = false
         }
     }
 
@@ -205,7 +180,7 @@ final class CommentsViewModel: HasLoadingState {
     }
 
     func toggleLikeComment(for commentId: Int) async {
-        guard let items = viewState.items,
+        guard let items = viewState.data,
               let target = findItem(id: commentId, in: items) else { return }
 
         guard !target.isLikeActionPending else { return }
@@ -240,7 +215,7 @@ final class CommentsViewModel: HasLoadingState {
     }
 
     func loadReplies(for parentId: Int) async {
-        guard let items = viewState.items,
+        guard let items = viewState.data,
               let parent = items.first(where: { $0.id == parentId }),
               !parent.repliesState.isLoading else { return }
 
@@ -283,7 +258,7 @@ final class CommentsViewModel: HasLoadingState {
     }
 
     private func mutateItem(id: Int, _ transform: (inout CommentUIItem) -> Void) {
-        guard var items = viewState.items else { return }
+        guard var items = viewState.data else { return }
 
         if let index = items.firstIndex(where: { $0.id == id }) {
             transform(&items[index])

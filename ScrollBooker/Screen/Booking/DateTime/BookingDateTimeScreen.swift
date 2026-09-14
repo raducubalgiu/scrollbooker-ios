@@ -33,10 +33,10 @@ public struct BookingDateTimeScreen: View {
                         Task { await viewModel.loadCalendarHeader() }
                     }
                     
-                case .success(let availableDays, let allCalendarDays):
+                case .success(let headerData):
                     CalendarSuccessView(
-                        availableDays: availableDays,
-                        allCalendarDays: allCalendarDays,
+                        availableDays: headerData.availableDays,
+                        allCalendarDays: headerData.allCalendarDays,
                         viewModel: viewModel,
                         onNavigateToConfirmation: onNavigateToConfirmation
                     )

@@ -13,32 +13,32 @@ struct MyProfileHeaderView: View {
     var onNavigateToCamera: () -> Void
     
     var body: some View {
-        HStack {
-            Spacer()
-            
+        ZStack {
             Text(username)
                 .font(.headline.bold())
-            
-            Spacer()
-            
-            HStack(spacing: 16) {
-                Button {
-                    onNavigateToCamera()
-                } label: {
-                    Image(systemName: "plus.circle")
-                        .foregroundColor(.onBackgroundSB)
-                        .font(.system(size: 24))
+
+            HStack {
+                Spacer()
+
+                HStack(spacing: 16) {
+                    Button {
+                        onNavigateToCamera()
+                    } label: {
+                        Image(systemName: "plus.circle")
+                            .foregroundColor(.onBackgroundSB)
+                            .font(.system(size: 24))
+                    }
+                    .buttonStyle(.plain)
+
+                    Button {
+                        onOpenMenuSheet()
+                    } label: {
+                        Image(systemName: "line.3.horizontal")
+                            .foregroundColor(.onBackgroundSB)
+                            .font(.system(size: 24))
+                    }
+                    .buttonStyle(.plain)
                 }
-                .buttonStyle(.plain)
-                
-                Button {
-                    onOpenMenuSheet()
-                } label: {
-                    Image(systemName: "line.3.horizontal")
-                        .foregroundColor(.onBackgroundSB)
-                        .font(.system(size: 24))
-                }
-                .buttonStyle(.plain)
             }
         }
         .frame(maxWidth: .infinity)

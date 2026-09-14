@@ -55,6 +55,8 @@
 "editProfile" = "Editează profilul";
 "somethingWentWrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";
 "noInternetConnection" = "Fără conexiune la internet";
+"videoReview" = "Recenzie video";
+"leftReviewForPrefix" = "a lăsat o recenzie pentru ";
 "yourBio" = "Biografia ta";
 "yourName" = "Numele tău";
 "biography" = "Biografie";

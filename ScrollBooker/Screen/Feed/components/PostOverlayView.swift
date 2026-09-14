@@ -11,14 +11,7 @@ struct PostOverlayView: View {
     var post: Post
     
     @Environment(\.feedActions) private var actions
-    
-    private func makeProfileNavigationParams() -> ProfileNavigationParams {
-        ProfileNavigationParams(
-            userId: post.user.id,
-            username: post.user.username
-        )
-    }
-    
+
     var body: some View {
         ZStack(alignment: .bottom) {
             LinearGradient(
@@ -36,7 +29,11 @@ struct PostOverlayView: View {
                 VStack(alignment: .leading, spacing: 15) {
                     PostUserView(
                         user: post.user,
-                        onClick: { actions.onNavigateToUserProfile(makeProfileNavigationParams()) }
+                        serviceDomain: post.serviceDomain,
+                        isVideoReview: post.isVideoReview,
+                        businessOwner: post.businessOwner,
+                        employee: post.employee,
+                        onNavigateToUser: { actions.onNavigateToUserProfile($0) }
                     )
                     
                     if let description = post.description?.isEmpty == false ? post.description : nil {

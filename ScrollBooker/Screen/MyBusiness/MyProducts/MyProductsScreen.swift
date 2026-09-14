@@ -17,7 +17,7 @@ struct MyProductsScreen: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(title: "Serviciile mele", onBack: onBack) {
+            HeaderView(title: String(localized: "myServices"), onBack: onBack) {
                 Button(action: onNavigateAddProduct) {
                     Image(systemName: "plus")
                         .font(.title2)

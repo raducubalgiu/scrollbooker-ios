@@ -17,7 +17,7 @@ struct MyServicesScreen: View {
     
     var body: some View {
         FormLayout(
-            headline: String(localized: "services"),
+            headline: String(localized: "serviceCategories"),
             subHeadline: String(localized: "addYourBusinessServices"),
             enableBottomButton: true,
             enableBack: true,

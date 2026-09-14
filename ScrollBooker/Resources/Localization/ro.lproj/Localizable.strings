@@ -33,7 +33,6 @@
 "settings" = "Setări";
 "privacy" = "Confidențialitate";
 "calendar" = "Calendar";
-"myBusiness" = "Afacerea mea";
 "account" = "Cont";
 "security" = "Securitate";
 "notifications" = "Notificări";
@@ -82,7 +81,6 @@
 "service" = "Serviciu";
 "description" = "Descriere";
 "shareProfile" = "Distribuie profilul";
-"scheduleShort" = "Program";
 "employees" = "Angajați";
 "employmentRequests" = "Cereri de angajare";
 "selectOneService" = "Selectează un serviciu";
@@ -133,9 +131,7 @@
 "notFoundBookmarks" = "Încă nu ai salvat nici o postare";
 "notFoundReposts" = "Încă nu ai repostat nimic";
 "businessLocationDetails" = "Detalii despre locația business-ului meu";
-"userScheduleDetails" = "Detalii despre programul meu";
 "userProductsDetails" = "Detalii despre produsele mele";
-"servicesDetails" = "Detalii despre serviciile mele";
 "paymentMethods" = "Modalități de plată";
 "paymentMethodsDetails" = "Alege valutele acceptate pentru plată";
 "collectBusinessTypeHeadline" = "Ce business ai?";
@@ -247,7 +243,9 @@
 "confirmReservation" = "Confirmă rezervarea";
 "explore" = "Explorează";
 "dontHaveAnyNotification" = "Nu ai nici o notificare";
-"categories" = "Categorii";
+"serviceCategories" = "Categorii de servicii";
+"serviceCategoriesDetails" = "Alege categoriile de servicii pe care le oferă afacerea ta";
+"myServicesDetails" = "Adaugă și gestionează serviciile oferite, cu prețuri și durată";
 "bookings" = "Rezervări";
 "bookingDetails" = "Detalii rezervare";
 "myCalendar" = "Calendarul meu";
@@ -262,7 +260,23 @@
 /* --- DASHBOARD --- */
 
 "dashboard" = "Dashboard";
-"myDashboardDescription" = "Statistici despre rezervări și postări";
+
+/* --- MY BUSINESS SCREEN --- */
+"my_business_title" = "Afacerea mea";
+"my_business_dashboard" = "Dashboard";
+"my_business_dashboard_description" = "Statistici despre rezervări și postări";
+"my_business_details" = "Detalii business";
+"my_business_details_description" = "Detalii despre afacerea mea";
+"my_business_schedule" = "Program";
+"my_business_schedule_description" = "Detalii despre programul meu";
+"my_business_services" = "Servicii";
+"my_business_services_description" = "Detalii despre serviciile mele";
+"my_business_categories" = "Categorii";
+"my_business_categories_description" = "Detalii despre categoriile mele de servicii";
+"my_business_calendar" = "Calendar";
+"my_business_calendar_description" = "Calendarul meu de programări";
+"my_business_employees" = "Angajați";
+"my_business_employees_description" = "Angajați și cereri de angajare";
 "posts" = "Postări";
 "finished" = "Finalizat";
 "canceled" = "Anulat";

@@ -241,6 +241,8 @@
 "anytimeAnyHour" = "Oricând la orice oră";
 "chooseWhatDoYouWantToSeeInFeed" = "Alege ce vrei să vezi în Feed-ul tău";
 "clearFilters" = "Elimină filtrele";
+"categories" = "Categorii";
+"onlyVideoReviews" = "Doar recenzii video";
 "filterVideoContentAccordingToYouPreferences" = "Filtrează conținutul video în funcție de preferințele tale";
 "close" = "Închide";
 "locationPermission" = "Permisiunea locației";

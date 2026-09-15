@@ -13,6 +13,7 @@ extension ServiceDomain {
         self.name = dto.name
         self.description = dto.description
         self.url = dto.url
-        self.thumbnailUrl = dto.thumbnail_url
+        self.thumbnailUrl = dto.thumbnailUrl
+        self.services = dto.services?.map { Service(dto: $0) } ?? []
     }
 }

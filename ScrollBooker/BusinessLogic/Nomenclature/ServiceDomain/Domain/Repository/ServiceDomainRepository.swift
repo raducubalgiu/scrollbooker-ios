@@ -6,6 +6,7 @@
 //
 
 protocol ServiceDomainRepository: Sendable {
+    func getAllServiceDomains() async throws -> [ServiceDomain]
     func selectedDomainsByBusiness(businessId: Int) async throws -> [SelectedServiceDomainsWithServices]
     func updateBusinessServices(businessId: Int, request: BusinessUpdateServiesRequest) async throws -> [SelectedServiceDomainsWithServices]
 }

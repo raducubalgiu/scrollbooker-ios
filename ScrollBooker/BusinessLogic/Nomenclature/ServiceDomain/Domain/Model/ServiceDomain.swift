@@ -13,7 +13,8 @@ struct ServiceDomain: Identifiable, Equatable, Hashable, Sendable {
     let description: String?
     let url: String?
     let thumbnailUrl: String?
-    
+    let services: [Service]
+
     var webURL: URL? { url.flatMap(URL.init(string:)) }
     var thumbnailURL: URL? { thumbnailUrl.flatMap(URL.init(string:)) }
 }

@@ -93,7 +93,10 @@ final class AppContainer {
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
         self.commentModule = CommentModule(apiClient: apiClient)
-        self.postModule = PostModule(apiClient: apiClient)
+        self.postModule = PostModule(
+            apiClient: apiClient,
+            getAllServiceDomainsUseCase: servieDomainModule.getAllServiceDomainsUseCase
+        )
         self.availabilityModule = AvailabilityModule(apiClient: apiClient)
         self.bookingFlowModule = BookingFlowModule(apiClient: apiClient)
         self.businessDomainModule = BusinessDomainModule(apiClient: apiClient)

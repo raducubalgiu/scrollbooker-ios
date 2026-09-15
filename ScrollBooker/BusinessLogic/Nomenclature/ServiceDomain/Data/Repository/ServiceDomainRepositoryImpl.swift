@@ -14,6 +14,11 @@ final class ServiceDomainRepositoryImpl: ServiceDomainRepository {
         self.api = api
     }
     
+    func getAllServiceDomains() async throws -> [ServiceDomain] {
+        let dtoResponse = try await api.getAllServiceDomains()
+        return dtoResponse.map { ServiceDomain(dto: $0) }
+    }
+
     func selectedDomainsByBusiness(businessId: Int) async throws -> [SelectedServiceDomainsWithServices] {
         let dtoResponse = try await api.selectedDomainsByBusiness(businessId: businessId)
                 

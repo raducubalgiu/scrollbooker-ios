@@ -12,5 +12,4 @@ struct Service: Identifiable, Equatable, Hashable, Sendable {
     let name: String
     let shortName: String
     let description: String?
-    let businessDomainId: Int
 }

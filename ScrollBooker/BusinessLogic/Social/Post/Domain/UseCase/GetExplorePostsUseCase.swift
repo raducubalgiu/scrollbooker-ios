@@ -16,12 +16,16 @@ final class GetExplorePostsUseCase {
 
     func callAsFunction(
         page: Int,
-        limit: Int
+        limit: Int,
+        serviceIds: [Int] = [],
+        onlyVideoReviews: Bool = false
     ) async throws -> PaginatedResponse<Post> {
 
         try await repository.getExplorePosts(
             page: page,
-            limit: limit
+            limit: limit,
+            serviceIds: serviceIds,
+            onlyVideoReviews: onlyVideoReviews
         )
     }
 }

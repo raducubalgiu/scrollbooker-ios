@@ -37,12 +37,16 @@ actor APIClient {
         method: HTTPMethod = .get,
         headers: [String: String] = [:],
         query: [String: String]? = nil,
+        queryItems: [URLQueryItem]? = nil,
         body: B? = nil
     ) async throws -> T {
         return try await executeWithRetry(path: path, attempts: 0) { [unowned self] in
             var components = URLComponents(url: self.config.baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
-            if let query {
-                components?.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+            // `query` acoperă cazul obișnuit (o valoare per cheie); `queryItems` există separat
+            // pentru chei repetate (ex. service_ids=1&service_ids=2), pe care un [String: String] nu le poate reprezenta.
+            let allItems = (query?.map { URLQueryItem(name: $0.key, value: $0.value) } ?? []) + (queryItems ?? [])
+            if !allItems.isEmpty {
+                components?.queryItems = allItems
             }
             guard let url = components?.url else { throw APIError.invalidURL }
             
@@ -75,7 +79,8 @@ actor APIClient {
             _ path: String,
             method: HTTPMethod = .get,
             headers: [String: String] = [:],
-            query: [String: String]? = nil
+            query: [String: String]? = nil,
+            queryItems: [URLQueryItem]? = nil
         ) async throws -> T {
             // Apelăm funcția ta principală, dar fixăm tipul corpului (B) ca fiind structura 'Empty'
             // Acest lucru îi spune clar compilatorului că corpul este nil și îndeplinește criteriul Encodable
@@ -84,6 +89,7 @@ actor APIClient {
                 method: method,
                 headers: headers,
                 query: query,
+                queryItems: queryItems,
                 body: Optional<Empty>.none
             )
         }

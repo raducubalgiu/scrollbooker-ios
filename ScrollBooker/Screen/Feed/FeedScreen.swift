@@ -15,16 +15,18 @@ struct FeedScreen: View {
     var onNavigateToFeedSearch: () -> Void
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
-    
+    let onOpenDrawer: () -> Void
+
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
     let makeReviewsVM: (Int) -> ReviewsViewModel
-    
+
     init(
         viewModel: FeedViewModel,
         onNavigateToFeedSearch: @escaping () -> Void,
         onNavigateToUserProfile: @escaping (ProfileNavigationParams) -> Void,
         onNavigateToBooking: @escaping (BookingNavigationParams) -> Void,
+        onOpenDrawer: @escaping () -> Void,
         makeCommentsVM: @escaping (Int) -> CommentsViewModel,
         makeLinkedProductsVM: @escaping (Int) -> LinkedProductsViewModel,
         makeReviewsVM: @escaping (Int) -> ReviewsViewModel
@@ -33,6 +35,7 @@ struct FeedScreen: View {
         self.onNavigateToFeedSearch = onNavigateToFeedSearch
         self.onNavigateToUserProfile = onNavigateToUserProfile
         self.onNavigateToBooking = onNavigateToBooking
+        self.onOpenDrawer = onOpenDrawer
         self.makeCommentsVM = makeCommentsVM
         self.makeLinkedProductsVM = makeLinkedProductsVM
         self.makeReviewsVM = makeReviewsVM
@@ -72,7 +75,9 @@ struct FeedScreen: View {
                 onChangeTab: { newTab in
                     viewModel.handleTabChange(to: newTab)
                 },
-                onNavigateToFeedSearch: onNavigateToFeedSearch
+                onNavigateToFeedSearch: onNavigateToFeedSearch,
+                onOpenDrawer: onOpenDrawer,
+                activeFiltersCount: viewModel.exploreViewModel.activeFiltersCount
             )
         }
         .onChange(of: viewModel.selectedTab) { _, newTab in

@@ -13,6 +13,5 @@ extension Service {
         self.name = dto.name
         self.shortName = dto.short_name
         self.description = dto.description
-        self.businessDomainId = dto.business_domain_id
     }
 }

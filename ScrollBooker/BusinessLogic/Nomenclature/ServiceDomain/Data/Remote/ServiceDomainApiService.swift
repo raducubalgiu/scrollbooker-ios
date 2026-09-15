@@ -8,6 +8,7 @@
 import Foundation
 
 protocol ServiceDomainApiService: Sendable {
+    func getAllServiceDomains() async throws -> [ServiceDomainDto]
     func selectedDomainsByBusiness(businessId: Int) async throws -> [SelectedServiceDomainsWithServicesDto]
     func updateBusinessServices(businessId: Int, request: BusinessUpdateServiesRequest) async throws -> [SelectedServiceDomainsWithServicesDto]
 }
@@ -19,6 +20,13 @@ final class ServiceDomainAPIImpl: ServiceDomainApiService {
         self.client = client
     }
     
+    func getAllServiceDomains() async throws -> [ServiceDomainDto] {
+        return try await client.request(
+            "service-domains",
+            method: .get
+        )
+    }
+
     func selectedDomainsByBusiness(businessId: Int) async throws -> [SelectedServiceDomainsWithServicesDto] {
         return try await client.request(
             "businesses/\(businessId)/service-domains",

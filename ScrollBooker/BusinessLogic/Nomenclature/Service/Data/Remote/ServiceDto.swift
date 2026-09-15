@@ -12,5 +12,4 @@ struct ServiceDto: Decodable {
     let name: String
     let short_name: String
     let description: String?
-    let business_domain_id: Int     
 }

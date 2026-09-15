@@ -6,7 +6,7 @@
 //
 
 protocol PostRepository: Sendable {
-    func getExplorePosts(page: Int, limit: Int) async throws -> PaginatedResponse<Post>
+    func getExplorePosts(page: Int, limit: Int, serviceIds: [Int], onlyVideoReviews: Bool) async throws -> PaginatedResponse<Post>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponse<Post>
     func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<Post>
     func getUserPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponse<Post>

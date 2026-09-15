@@ -12,38 +12,96 @@ struct FeedTabRouter: View {
     var router: Router
     
     @State private var feedViewModel: FeedViewModel?
+    @State private var isDrawerOpen = false
+    @State private var dragOffset: CGFloat = 0
 
     var body: some View {
         @Bindable var bindableRouter = router
-        
+
         NavigationStack(path: $bindableRouter.feedPath) {
-            Group {
-                if let viewModel = feedViewModel {
-                    FeedScreen(
-                        viewModel: viewModel,
-                        onNavigateToFeedSearch: { router.push(.feedSearch) },
-                        onNavigateToUserProfile: { router.push(.userProfile($0)) },
-                        onNavigateToBooking: { router.push(.bookingServices($0)) },
-                        makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
-                        makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
-                        makeReviewsVM: {
-                            container.reviewModule.makeReviewsViewModel(
-                                userId: $0,
-                                getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+            GeometryReader { geometry in
+                let drawerWidth = geometry.size.width * 0.8
+
+                ZStack(alignment: .leading) {
+                    Group {
+                        if let viewModel = feedViewModel {
+                            FeedScreen(
+                                viewModel: viewModel,
+                                onNavigateToFeedSearch: { router.push(.feedSearch) },
+                                onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                                onNavigateToBooking: { router.push(.bookingServices($0)) },
+                                onOpenDrawer: {
+                                    withAnimation(.easeInOut(duration: 0.25)) { isDrawerOpen = true }
+                                },
+                                makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
+                                makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
+                                makeReviewsVM: {
+                                    container.reviewModule.makeReviewsViewModel(
+                                        userId: $0,
+                                        getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+                                    )
+                                }
                             )
+                            .safeAreaInset(edge: .bottom, spacing: 0) {
+                                CustomTabBar(backgroundColor: Color.black)
+                            }
+                        } else {
+                            ProgressView()
+                                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                .background(Color.black)
+                        }
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black)
+
+                    if isDrawerOpen {
+                        Color.black.opacity(0.4)
+                            .ignoresSafeArea()
+                            .onTapGesture {
+                                withAnimation(.easeInOut(duration: 0.25)) { isDrawerOpen = false }
+                            }
+                            .transition(.opacity)
+                    }
+
+                    FeedDrawerView(
+                        serviceDomainsState: feedViewModel?.exploreViewModel.serviceDomainsState ?? .idle,
+                        selectedServiceIds: feedViewModel?.exploreViewModel.selectedServiceIds ?? [],
+                        onlyVideoReviews: feedViewModel?.exploreViewModel.onlyVideoReviews ?? false,
+                        isOpen: isDrawerOpen,
+                        onApplyFilters: { serviceIds, onlyVideoReviews in
+                            Task {
+                                await feedViewModel?.exploreViewModel.applyFilters(
+                                    serviceIds: serviceIds,
+                                    onlyVideoReviews: onlyVideoReviews
+                                )
+                            }
+                        },
+                        onRequestClose: {
+                            withAnimation(.easeInOut(duration: 0.25)) { isDrawerOpen = false }
                         }
                     )
-                    .safeAreaInset(edge: .bottom, spacing: 0) {
-                        CustomTabBar(backgroundColor: Color.black)
-                    }
-                } else {
-                    ProgressView()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                        .background(Color.black)
+                        .frame(width: drawerWidth)
+                        .frame(maxHeight: .infinity)
+                        .offset(x: isDrawerOpen ? dragOffset : -drawerWidth)
+                        .gesture(
+                            DragGesture()
+                                .onChanged { value in
+                                    dragOffset = max(-drawerWidth, min(0, value.translation.width))
+                                }
+                                .onEnded { value in
+                                    let closeThreshold = drawerWidth * 0.3
+                                    if value.translation.width < -closeThreshold {
+                                        withAnimation(.easeInOut(duration: 0.25)) {
+                                            isDrawerOpen = false
+                                        }
+                                    }
+                                    withAnimation(.easeInOut(duration: 0.25)) {
+                                        dragOffset = 0
+                                    }
+                                }
+                        )
                 }
             }
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .background(Color.black)
             .withNavigation { route in
                 switch route {
                 case .feedSearch:

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol PostApiService: Sendable {
-    func getExplorePosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
+    func getExplorePosts(page: Int, limit: Int, serviceIds: [Int], onlyVideoReviews: Bool) async throws -> PaginatedResponseDTO<PostDto>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getUserPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
@@ -27,16 +27,19 @@ final class PostAPIImpl: PostApiService {
         self.client = client
     }
     
-    func getExplorePosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto> {
+    func getExplorePosts(page: Int, limit: Int, serviceIds: [Int], onlyVideoReviews: Bool) async throws -> PaginatedResponseDTO<PostDto> {
         let query: [String: String] = [
             "page": "\(page)",
-            "limit": "\(limit)"
+            "limit": "\(limit)",
+            "only_video_reviews": onlyVideoReviews ? "true" : "false"
         ]
-        
+        let serviceIdsQueryItems = serviceIds.map { URLQueryItem(name: "service_ids", value: "\($0)") }
+
         return try await client.request(
             "posts/explore",
             method: .get,
-            query: query
+            query: query,
+            queryItems: serviceIdsQueryItems
         )
     }
     

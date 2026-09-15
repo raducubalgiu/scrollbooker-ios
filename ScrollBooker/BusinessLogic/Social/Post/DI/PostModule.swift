@@ -10,9 +10,11 @@ import Foundation
 @MainActor
 final class PostModule {
     private let apiClient: APIClient
+    private let getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase
 
-    init(apiClient: APIClient) {
+    init(apiClient: APIClient, getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase) {
         self.apiClient = apiClient
+        self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
     }
 
     private lazy var apiService: PostApiService = {
@@ -62,6 +64,7 @@ final class PostModule {
     func makeExploreTabViewModel() -> ExploreTabViewModel {
         ExploreTabViewModel(
             getExplorePostsUseCase: getExplorePostsUseCase,
+            getAllServiceDomainsUseCase: getAllServiceDomainsUseCase,
             likePostUseCase: likePostUseCase,
             unlikePostUseCase: unlikePostUseCase,
             bookmarkPostUseCase: bookmarkPostUseCase,

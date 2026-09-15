@@ -7,10 +7,20 @@
 
 import Foundation
 
-struct ServiceDomainDto: Codable {
+struct ServiceDomainDto: Decodable {
     let id: Int
     let name: String
     let description: String?
     let url: String?
-    let thumbnail_url: String?
+    let thumbnailUrl: String?
+    let services: [ServiceDto]?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case description
+        case url
+        case thumbnailUrl = "thumbnail_url"
+        case services
+    }
 }

@@ -47,6 +47,14 @@ final class OnboardingModule {
         CollectUserUsernameUseCase(repository: repository)
     }()
 
+    lazy var collectClientBirthdateUseCase: CollectClientBirthdateUseCase = {
+        CollectClientBirthdateUseCase(repository: repository)
+    }()
+
+    lazy var collectClientGenderUseCase: CollectClientGenderUseCase = {
+        CollectClientGenderUseCase(repository: repository)
+    }()
+
     lazy var collectBusinessUseCase: CollectBusinessUseCase = {
         CollectBusinessUseCase(repository: repository)
     }()
@@ -63,12 +71,30 @@ final class OnboardingModule {
         CollectBusinessSchedulesUseCase(repository: repository)
     }()
 
+    lazy var collectBusinessHasEmployeesUseCase: CollectBusinessHasEmployeesUseCase = {
+        CollectBusinessHasEmployeesUseCase(repository: repository)
+    }()
+
     func makeCollectUsernameViewModel(session: SessionManager) -> CollectUsernameViewModel {
         CollectUsernameViewModel(
             session: session,
             collectUserUsernameUseCase: collectUserUsernameUseCase,
             searchUsernameUseCase: searchUsernameUseCase,
             getUserInfoUseCase: getUserInfoUseCase
+        )
+    }
+
+    func makeCollectBirthdateViewModel(session: SessionManager) -> CollectBirthdateViewModel {
+        CollectBirthdateViewModel(
+            session: session,
+            collectClientBirthdateUseCase: collectClientBirthdateUseCase
+        )
+    }
+
+    func makeCollectGenderViewModel(session: SessionManager) -> CollectGenderViewModel {
+        CollectGenderViewModel(
+            session: session,
+            collectClientGenderUseCase: collectClientGenderUseCase
         )
     }
 
@@ -102,6 +128,13 @@ final class OnboardingModule {
             session: session,
             getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
             collectBusinessSchedulesUseCase: collectBusinessSchedulesUseCase
+        )
+    }
+
+    func makeCollectBusinessHasEmployeesViewModel(session: SessionManager) -> CollectBusinessHasEmployeesViewModel {
+        CollectBusinessHasEmployeesViewModel(
+            session: session,
+            collectBusinessHasEmployeesUseCase: collectBusinessHasEmployeesUseCase
         )
     }
 }

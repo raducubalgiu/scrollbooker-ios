@@ -14,16 +14,6 @@ struct RegisterScreen: View {
     @State private var password: String = ""
     @State private var showRegisterBusiness = false
 
-    func handleRegister() {
-        Task {
-            await authViewModel.register(
-                email: email,
-                password: password,
-                roleName: "client"
-            )
-        }
-    }
-
     var body: some View {
         FormLayout(
             headline: String(localized: "register"),
@@ -51,7 +41,15 @@ struct RegisterScreen: View {
                     title: String(localized: "register"),
                     isDisabled: authViewModel.isLoading,
                     isLoading: authViewModel.isLoading,
-                    onClick: handleRegister,
+                    onClick: {
+                        Task {
+                            await authViewModel.register(
+                                email: email,
+                                password: password,
+                                roleName: "client"
+                            )
+                        }
+                    },
                 )
                 .padding(.top, .xs)
 
@@ -64,7 +62,7 @@ struct RegisterScreen: View {
                     .fontWeight(.bold)
                 }
 
-                VStack(alignment: .leading, spacing: AppSize.s.rawValue) {
+                VStack(alignment: .center, spacing: AppSize.s.rawValue) {
                     Spacer()
 
                     Divider()

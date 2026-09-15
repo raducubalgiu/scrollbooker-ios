@@ -13,16 +13,6 @@ struct RegisterBusinessScreen: View {
     @State private var email: String = ""
     @State private var password: String = ""
 
-    func handleRegister() {
-        Task {
-            await authViewModel.register(
-                email: email,
-                password: password,
-                roleName: "business"
-            )
-        }
-    }
-
     var body: some View {
         FormLayout(
             headline: String(localized: "registerBusiness"),
@@ -50,7 +40,15 @@ struct RegisterBusinessScreen: View {
                     title: String(localized: "register"),
                     isDisabled: authViewModel.isLoading,
                     isLoading: authViewModel.isLoading,
-                    onClick: handleRegister
+                    onClick: {
+                        Task {
+                            await authViewModel.register(
+                                email: email,
+                                password: password,
+                                roleName: "business"
+                            )
+                        }
+                    }
                 )
                 .padding(.top, .xs)
             }

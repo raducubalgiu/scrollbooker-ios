@@ -11,6 +11,7 @@ struct InputRadio: View {
     let title: String
     let isSelected: Bool
     var leadingIcon: Image? = nil
+    var titleFontWeight: Font.Weight = .regular
     var onClick: () -> Void
 
     var body: some View {
@@ -27,6 +28,7 @@ struct InputRadio: View {
 
                 Text(title)
                     .foregroundColor(.onBackgroundSB)
+                    .fontWeight(titleFontWeight)
 
                 Spacer()
                 
@@ -51,40 +53,4 @@ struct InputRadio: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-}
-
-#Preview("Light") {
-    VStack {
-        InputRadio(
-            title: "Some Title",
-            isSelected: true,
-            onClick: {}
-        )
-        
-        InputRadio(
-            title: "Some Title",
-            isSelected: false,
-            onClick: {}
-        )
-    }
-    .padding()
-}
-
-#Preview("Dark") {
-    VStack {
-        InputRadio(
-            title: "Some Title",
-            isSelected: true,
-            onClick: {}
-        )
-        .preferredColorScheme(.dark)
-        
-        InputRadio(
-            title: "Some Title",
-            isSelected: false,
-            onClick: {}
-        )
-        .preferredColorScheme(.dark)
-    }
-    .padding()
 }

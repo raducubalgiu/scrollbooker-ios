@@ -9,10 +9,13 @@ import Foundation
 
 protocol OnboardingApiService: Sendable {
     func collectUserUsername(request: UpdateUsernameRequest) async throws -> AuthStateDTO
+    func collectClientBirthdate(request: UpdateBirthDateRequest) async throws -> AuthStateDTO
+    func collectClientGender(request: UpdateGenderRequest) async throws -> AuthStateDTO
     func collectBusiness(request: BusinessCreateRequestDTO) async throws -> BusinessCreateResponseDTO
     func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthStateDTO
     func collectBusinessServices(request: ServiceIdsUpdateRequestDTO) async throws -> AuthStateDTO
     func collectBusinessSchedules(schedules: [ScheduleDto]) async throws -> AuthStateDTO
+    func collectBusinessHasEmployees(request: BusinessHasEmployeesUpdateRequestDTO) async throws -> AuthStateDTO
 }
 
 final class OnboardingAPIImpl: OnboardingApiService {
@@ -25,6 +28,22 @@ final class OnboardingAPIImpl: OnboardingApiService {
     func collectUserUsername(request: UpdateUsernameRequest) async throws -> AuthStateDTO {
         try await client.request(
             "onboarding/collect-user-username",
+            method: .patch,
+            body: request
+        )
+    }
+
+    func collectClientBirthdate(request: UpdateBirthDateRequest) async throws -> AuthStateDTO {
+        try await client.request(
+            "onboarding/collect-client-birthdate",
+            method: .patch,
+            body: request
+        )
+    }
+
+    func collectClientGender(request: UpdateGenderRequest) async throws -> AuthStateDTO {
+        try await client.request(
+            "onboarding/collect-client-gender",
             method: .patch,
             body: request
         )
@@ -61,6 +80,14 @@ final class OnboardingAPIImpl: OnboardingApiService {
             "onboarding/collect-business-schedules",
             method: .patch,
             body: schedules
+        )
+    }
+
+    func collectBusinessHasEmployees(request: BusinessHasEmployeesUpdateRequestDTO) async throws -> AuthStateDTO {
+        try await client.request(
+            "onboarding/collect-business-has-employees",
+            method: .patch,
+            body: request
         )
     }
 }

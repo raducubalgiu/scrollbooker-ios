@@ -63,10 +63,18 @@ struct AuthRouter: View {
             CollectPhoneNumberScreen()
 
         case .collectClientBirthdate:
-            CollectBirthdateScreen()
+            CollectBirthdateDestination(
+                container: container,
+                session: session,
+                onBack: { path.removeLast() }
+            )
 
         case .collectClientGender:
-            CollectGenderScreen()
+            CollectGenderDestination(
+                container: container,
+                session: session,
+                onBack: { path.removeLast() }
+            )
 
         case .collectClientLocationPermission:
             CollectLocationPermissionScreen()
@@ -112,7 +120,11 @@ struct AuthRouter: View {
             )
 
         case .collectBusinessHasEmployees:
-            CollectBusinessHasEmployeesScreen()
+            CollectBusinessHasEmployeesDestination(
+                container: container,
+                session: session,
+                onBack: { path.removeLast() }
+            )
 
         case .collectBusinessValidation:
             CollectBusinessValidationScreen()
@@ -140,6 +152,52 @@ private struct CollectUsernameDestination: View {
         .onAppear {
             if viewModel == nil {
                 viewModel = container.onboardingModule.makeCollectUsernameViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectBirthdateDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectBirthdateViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectBirthdateScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectBirthdateViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectGenderDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectGenderViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectGenderScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectGenderViewModel(session: session)
             }
         }
     }
@@ -209,6 +267,29 @@ private struct CollectBusinessSchedulesDestination: View {
         .onAppear {
             if viewModel == nil {
                 viewModel = container.onboardingModule.makeCollectBusinessSchedulesViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectBusinessHasEmployeesDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectBusinessHasEmployeesViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectBusinessHasEmployeesScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectBusinessHasEmployeesViewModel(session: session)
             }
         }
     }

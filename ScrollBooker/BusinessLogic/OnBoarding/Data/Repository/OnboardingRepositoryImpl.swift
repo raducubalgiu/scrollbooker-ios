@@ -19,6 +19,16 @@ final class OnboardingRepositoryImpl: OnboardingRepository {
         return AuthState(dto: dto)
     }
 
+    func collectClientBirthdate(birthdate: String?) async throws -> AuthState {
+        let dto = try await api.collectClientBirthdate(request: UpdateBirthDateRequest(birthdate: birthdate))
+        return AuthState(dto: dto)
+    }
+
+    func collectClientGender(gender: String) async throws -> AuthState {
+        let dto = try await api.collectClientGender(request: UpdateGenderRequest(gender: gender))
+        return AuthState(dto: dto)
+    }
+
     func collectBusiness(
         description: String?,
         placeId: String,
@@ -51,6 +61,13 @@ final class OnboardingRepositoryImpl: OnboardingRepository {
 
     func collectBusinessSchedules(schedules: [Schedule]) async throws -> AuthState {
         let dto = try await api.collectBusinessSchedules(schedules: schedules.toDto())
+        return AuthState(dto: dto)
+    }
+
+    func collectBusinessHasEmployees(hasEmployees: Bool) async throws -> AuthState {
+        let dto = try await api.collectBusinessHasEmployees(
+            request: BusinessHasEmployeesUpdateRequestDTO(hasEmployees: hasEmployees)
+        )
         return AuthState(dto: dto)
     }
 }

@@ -30,7 +30,7 @@ struct CollectBusinessGalleryScreen: View {
         ) {
             ScrollView {
                 BusinessGalleryView(
-                    selectedImages: viewModel.selectedImages,
+                    slots: viewModel.gallerySlots,
                     hasPhotos: viewModel.hasPhotos,
                     pickerItems: $pickerItems,
                     onSelectImage: { index, data in

@@ -9,15 +9,16 @@ import SwiftUI
 import PhotosUI
 
 struct BusinessGalleryView: View {
-    let selectedImages: [Data?]
+    let slots: [BusinessGallerySlot]
     let hasPhotos: Bool
+    var showEmptyHint: Bool = true
     @Binding var pickerItems: [PhotosPickerItem?]
     let onSelectImage: (Int, Data) -> Void
     let onClearSlot: (Int) -> Void
 
     var body: some View {
         VStack(spacing: AppSize.s.rawValue) {
-            if !hasPhotos {
+            if !hasPhotos && showEmptyHint {
                 Text("💡 \(String(localized: "onboarding_business_gallery_skip_hint"))")
                     .font(.subheadline)
                     .foregroundColor(.secondary)
@@ -28,9 +29,9 @@ struct BusinessGalleryView: View {
                     .padding(.bottom, .m)
             }
 
-            ForEach(0..<selectedImages.count, id: \.self) { index in
+            ForEach(0..<slots.count, id: \.self) { index in
                 BusinessPhotoSlotView(
-                    imageData: selectedImages[index],
+                    slot: slots[index],
                     pickerItem: $pickerItems[index],
                     onImageLoaded: { data in onSelectImage(index, data) },
                     onClear: { onClearSlot(index) }

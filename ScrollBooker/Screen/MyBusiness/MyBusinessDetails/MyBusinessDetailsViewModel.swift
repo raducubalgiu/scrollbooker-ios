@@ -9,19 +9,6 @@ import Foundation
 import Observation
 import OSLog
 
-/// Un slot din galerie poate fi gol, poate arăta o poză deja urcată (`existing`,
-/// doar URL, fără bytes descărcați încă) sau o poză aleasă acum din galerie
-/// (`picked`, bytes gata de urcat). Distincția contează la salvare: endpoint-ul
-/// de business gallery face un full-replace (șterge tot ce exista și scrie
-/// exact ce trimitem), deci un slot `existing` neschimbat trebuie re-descărcat
-/// și re-urcat — exact ca pe Android (`readUriBytes` face același lucru pentru
-/// un Uri http/https). Nu există un mecanism de "păstrează poza asta" pe server.
-enum BusinessGallerySlot: Equatable {
-    case empty
-    case existing(URL)
-    case picked(Data)
-}
-
 @Observable
 @MainActor
 final class MyBusinessDetailsViewModel {

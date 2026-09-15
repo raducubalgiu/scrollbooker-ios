@@ -18,12 +18,12 @@ final class CollectBusinessGalleryViewModel {
     private let collectBusinessGalleryUseCase: CollectBusinessGalleryUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Onboarding")
 
-    var selectedImages: [Data?] = Array(repeating: nil, count: slotCount)
+    var gallerySlots: [BusinessGallerySlot] = Array(repeating: .empty, count: slotCount)
     var isSaving = false
     var saveError: String?
 
     var hasPhotos: Bool {
-        selectedImages.contains { $0 != nil }
+        gallerySlots.contains { $0 != .empty }
     }
 
     init(session: SessionManager, collectBusinessGalleryUseCase: CollectBusinessGalleryUseCase) {
@@ -31,13 +31,14 @@ final class CollectBusinessGalleryViewModel {
         self.collectBusinessGalleryUseCase = collectBusinessGalleryUseCase
     }
 
-    func setImage(_ data: Data?, at slot: Int) {
-        guard selectedImages.indices.contains(slot) else { return }
-        selectedImages[slot] = data
+    func setImage(_ data: Data, at slot: Int) {
+        guard gallerySlots.indices.contains(slot) else { return }
+        gallerySlots[slot] = .picked(data)
     }
 
     func clearImage(at slot: Int) {
-        setImage(nil, at: slot)
+        guard gallerySlots.indices.contains(slot) else { return }
+        gallerySlots[slot] = .empty
     }
 
     @discardableResult
@@ -52,7 +53,10 @@ final class CollectBusinessGalleryViewModel {
         saveError = nil
 
         let skipUpdateGallery = !hasPhotos
-        let photos = selectedImages.compactMap { $0 }
+        let photos: [Data] = gallerySlots.compactMap {
+            if case .picked(let data) = $0 { return data }
+            return nil
+        }
 
         do {
             let authState = try await withLoading {

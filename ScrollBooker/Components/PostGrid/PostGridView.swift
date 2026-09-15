@@ -46,11 +46,12 @@ struct PostGridView: View {
             .allowsHitTesting(false)
 
             HStack(spacing: 3) {
-                Image(systemName: "play.fill")
-                    .font(.system(size: 10, weight: .bold))
+                Image(systemName: "play")
+                    .font(.system(size: 12, weight: .bold))
                 
                 Text("\(viewsCount)")
-                    .font(.system(size: 11, weight: .semibold))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
             }
             .foregroundColor(.white)
             .padding(.horizontal, 6)

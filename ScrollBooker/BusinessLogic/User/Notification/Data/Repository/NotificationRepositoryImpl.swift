@@ -21,4 +21,8 @@ final class NotificationRepositoryImpl: NotificationRepository {
             Notification(dto: $0)
         }
     }
+
+    func getUserNotificationsNumber() async throws -> Int {
+        return try await api.getUserNotificationsNumber()
+    }
 }

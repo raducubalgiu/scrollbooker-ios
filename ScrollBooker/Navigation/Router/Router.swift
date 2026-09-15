@@ -20,6 +20,13 @@ final class Router {
     var selectedTab: MainTab = .feed
     var activeBookingViewModel: BookingViewModel?
     var activeCameraViewModel: CameraViewModel?
+
+    // Numărul din badge-urile bottom bar-ului (Appointments/Inbox). Încărcate o singură
+    // dată la pornirea sesiunii (vezi MainRouter) — nu sunt polled. Actualizarea optimistă
+    // locală (increment la crearea unei programări, decrement la marcarea ca citit) e
+    // TODO, documentat în CLAUDE.md.
+    var appointmentsCount: Int = 0
+    var notificationsCount: Int = 0
     
     func push(_ route: Route) {
         switch selectedTab {

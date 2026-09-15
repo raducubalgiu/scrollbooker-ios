@@ -28,6 +28,10 @@ final class NotificationModule {
         GetUserNotificationsUseCase(repository: repository)
     }()
 
+    lazy var getUserNotificationsNumberUseCase: GetUserNotificationsNumberUseCase = {
+        GetUserNotificationsNumberUseCase(repository: repository)
+    }()
+
     func makeNotificationsViewModel() -> InboxViewModel {
         InboxViewModel(
             getUserNotifications: getUserNotificationsUseCase

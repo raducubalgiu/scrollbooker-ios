@@ -104,6 +104,7 @@
 "applicationTheme" = "Tema aplicației";
 "deviceSettings" = "Setările dispozitivului";
 "report" = "Raportează";
+"details" = "Vezi detalii";
 "tellUsWhatWentWrong" = "Spune-ne ce nu a funcționat corect sau ce ar trebui îmbunătățit.";
 "allMessagesAreComingToOurTeam" = "Toate mesajele ajung direct la echipa noastră și ne ajută să facem aplicația mai bună.";
 "pleaseGiveUseAllTheDetails" = "Te rugăm să oferi cât mai multe detalii (ex. ce acțiune făceai, ce s-a intamplat, pe ce ecran erai).";

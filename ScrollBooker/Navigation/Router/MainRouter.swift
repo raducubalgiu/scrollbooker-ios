@@ -10,7 +10,8 @@ import SwiftUI
 struct MainRouter: View {
     @State private var router = Router()
     @Environment(SessionManager.self) private var session
-    
+    @Environment(AppContainer.self) private var container
+
     var body: some View {
         ZStack {
             FeedTabRouter(router: router)
@@ -34,5 +35,13 @@ struct MainRouter: View {
                 .zIndex(router.selectedTab == .profile ? 1 : 0)
         }
         .environment(router)
+        .task {
+            async let appointments = try? container.appointmentModule.getUserAppointmentsNumberUseCase()
+            async let notifications = try? container.notificationModule.getUserNotificationsNumberUseCase()
+            let (appointmentsCount, notificationsCount) = await (appointments, notifications)
+
+            router.appointmentsCount = appointmentsCount ?? 0
+            router.notificationsCount = notificationsCount ?? 0
+        }
     }
 }

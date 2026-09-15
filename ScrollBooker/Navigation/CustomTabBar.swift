@@ -24,9 +24,9 @@ struct CustomTabBar: View {
     var body: some View {
         HStack {
             CustomTabBarItem(title: String(localized: "home"), icon: "house", tab: .feed, badge: nil, activeColor: activeColor)
-            CustomTabBarItem(title: String(localized: "inbox"), icon: "bell", tab: .inbox, badge: 10, activeColor: activeColor)
+            CustomTabBarItem(title: String(localized: "inbox"), icon: "bell", tab: .inbox, badge: router.notificationsCount, activeColor: activeColor)
             CustomTabBarItem(title: String(localized: "search"), icon: "magnifyingglass", tab: .search, badge: nil, activeColor: activeColor)
-            CustomTabBarItem(title: String(localized: "bookings"), icon: "calendar", tab: .appointments, badge: 5, activeColor: activeColor)
+            CustomTabBarItem(title: String(localized: "bookings"), icon: "calendar", tab: .appointments, badge: router.appointmentsCount, activeColor: activeColor)
             CustomTabBarItem(title: String(localized: "profile"), icon: "person", tab: .profile, badge: nil, activeColor: activeColor)
         }
         .padding(.top, 6)

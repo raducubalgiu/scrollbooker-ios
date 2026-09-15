@@ -7,4 +7,5 @@
 
 protocol NotificationRepository: Sendable {
     func getUserNotifications(page: Int, limit: Int) async throws -> PaginatedResponse<Notification>
+    func getUserNotificationsNumber() async throws -> Int
 }

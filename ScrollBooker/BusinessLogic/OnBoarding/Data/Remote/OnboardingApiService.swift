@@ -9,6 +9,7 @@ import Foundation
 
 protocol OnboardingApiService: Sendable {
     func collectUserUsername(request: UpdateUsernameRequest) async throws -> AuthStateDTO
+    func collectBusiness(request: BusinessCreateRequestDTO) async throws -> BusinessCreateResponseDTO
 }
 
 final class OnboardingAPIImpl: OnboardingApiService {
@@ -22,6 +23,14 @@ final class OnboardingAPIImpl: OnboardingApiService {
         try await client.request(
             "onboarding/collect-user-username",
             method: .patch,
+            body: request
+        )
+    }
+
+    func collectBusiness(request: BusinessCreateRequestDTO) async throws -> BusinessCreateResponseDTO {
+        try await client.request(
+            "onboarding/collect-business",
+            method: .post,
             body: request
         )
     }

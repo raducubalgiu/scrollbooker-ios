@@ -18,6 +18,7 @@ final class AppContainer {
     let userInfoModule: UserInfoModule
     let userPermissionsModule: UserPermissionsModule
     let onboardingModule: OnboardingModule
+    let businessTypeModule: BusinessTypeModule
     let cloudflareModuke: CloudflareModule
     let commentModule: CommentModule
     let postModule: PostModule
@@ -69,10 +70,16 @@ final class AppContainer {
 
         let userProfileModule = UserProfileModule(apiClient: apiClient)
         self.userProfileModule = userProfileModule
+        let businessTypeModule = BusinessTypeModule(apiClient: apiClient)
+        self.businessTypeModule = businessTypeModule
+        let businessModule = BusinessModule(apiClient: apiClient)
+        self.businessModule = businessModule
         self.onboardingModule = OnboardingModule(
             apiClient: apiClient,
             getUserInfoUseCase: userInfoModule.getUserInfoUseCase,
-            searchUsernameUseCase: userProfileModule.searchUsernameUseCase
+            searchUsernameUseCase: userProfileModule.searchUsernameUseCase,
+            getAllPaginatedBusinessTypesUseCase: businessTypeModule.getAllPaginatedBusinessTypesUseCase,
+            searchBusinessAddressUseCase: businessModule.searchBusinessAddressUseCase
         )
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
@@ -81,7 +88,6 @@ final class AppContainer {
         self.availabilityModule = AvailabilityModule(apiClient: apiClient)
         self.bookingFlowModule = BookingFlowModule(apiClient: apiClient)
         self.businessDomainModule = BusinessDomainModule(apiClient: apiClient)
-        self.businessModule = BusinessModule(apiClient: apiClient)
         self.productModule = ProductModule(apiClient: apiClient)
         self.scheduleModule = ScheduleModule(apiClient: apiClient)
         self.consentModule = ConsentModule(apiClient: apiClient)

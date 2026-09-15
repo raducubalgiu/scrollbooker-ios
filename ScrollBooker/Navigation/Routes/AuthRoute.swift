@@ -56,7 +56,10 @@ extension AuthRoute {
             
         case .collectBusiness:
             self = .collectBusiness
-            
+
+        case .collectBusinessGallery:
+            self = .collectBusinessGallery
+
         case .collectBusinessServices:
             self = .collectBusinessServices
             

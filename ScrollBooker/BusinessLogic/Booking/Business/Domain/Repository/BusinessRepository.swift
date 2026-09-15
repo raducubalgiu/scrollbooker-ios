@@ -11,4 +11,5 @@ protocol BusinessRepository: Sendable {
     func getBusinessProfile(username: String) async throws -> BusinessProfile
     func getUnapprovedBusinesses(page: Int, limit: Int) async throws -> PaginatedResponse<UnapprovedBusiness>
     func approveBusiness(userId: Int) async throws -> NoContent
+    func searchBusinessAddress(query: String) async throws -> [BusinessAddress]
 }

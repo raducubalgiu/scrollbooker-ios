@@ -3,8 +3,6 @@
 "feed" = "Acasă";
 "inbox" = "Inbox";
 "search" = "Caută";
-"searchUsers" = "Caută utilizatori";
-"searchUsersInApp" = "Caută utilizatori în aplicație";
 "appointments" = "Comenzi";
 "profile" = "Profil";
 "login" = "Logare";
@@ -20,7 +18,6 @@
 "omit" = "Omite";
 "nextStep" = "Pasul următor";
 "location" = "Locație";
-"addYourBusinessLocation" = "Adaugă adresa locației unde vei primi clienții";
 "services" = "Servicii";
 "addYourBusinessServices" = "Adaugă serviciile pe care le desfășori la locație";
 "schedule" = "Programul de lucru";
@@ -29,6 +26,7 @@
 "forMe" = "Pentru mine";
 "follow" = "Urmărește";
 "following" = "Urmărești";
+"startedFollowingYou" = "a început să te urmărească";
 "sentYouAnEmploymentRequest" = "ți-a trimis o cerere de angajare";
 "likedYourPost" = "ți-a apreciat postarea";
 "settings" = "Setări";
@@ -39,7 +37,6 @@
 "notifications" = "Notificări";
 "display" = "Afișare";
 "reportProblem" = "Raportează o problemă";
-"describeTheProblem" = "Descrie problema aici...";
 "support" = "Suport";
 "termsAndConditions" = "Termeni și condiții";
 "cancel" = "Anulează";
@@ -55,16 +52,16 @@
 "mySchedule" = "Programul meu de lucru";
 "name" = "Nume";
 "editProfile" = "Editează profilul";
-"somethingWentWrong" = "Something went wrong. Try again later";
-"noInternetConnection" = "No internet connection";
-"videoReview" = "Video Review";
-"leftReviewForPrefix" = "left a review for ";
+"somethingWentWrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";
+"noInternetConnection" = "Fără conexiune la internet";
+"videoReview" = "Recenzie video";
+"leftReviewForPrefix" = "a lăsat o recenzie pentru ";
 "yourBio" = "Biografia ta";
 "yourName" = "Numele tău";
 "biography" = "Biografie";
 "userNotLoggedIn" = "User-ul nu este logat";
 "edit" = "Editează";
-"save" = "Save";
+"save" = "Salvează";
 "closed" = "Închis";
 "youSuccesfullyEditedSchedules" = "Ți-ai editat cu succes programul";
 "createNewProduct" = "Creează un produs nou";
@@ -74,10 +71,7 @@
 "genderLabelDescription" = "Ne ajută să îți oferim servicii relevante pentru tine";
 "delete" = "Șterge";
 "aboutYou" = "Despre tine";
-"writeSomethingAboutYou" = "Scrie câteva cuvinte despre tine";
 "dontHaveAppointmentsYet" = "Nu ai nici o proramare momentan";
-"bio_length_error %d" = "Biografia nu poate depăși %d de caractere";
-"name_min_length_error %d" = "Numele trebuie să aibă minim %d caractere";
 "reviews" = "Recenzii";
 "followers" = "Urmăritori";
 "dontFoundResults" = "Nu au fost găsite rezultate";
@@ -102,8 +96,6 @@
 "dismissal" = "Concediere";
 "hireDate" = "Data angajării";
 "sendAnEmploymentRequest" = "Trimite o cerere de angajare";
-"areYouSureDeleteEmploymentRequest" = "Ești sigur că vrei să ștergi această cerere de angajare?";
-"deleteRequest" = "Ștergere cerere";
 "notFoundEmploymentRequests" = "Nu au fost găsite cereri de angajare";
 "sendTheRequest" = "Trimite cererea";
 "assignJob" = "Atribuie o funcție";
@@ -137,8 +129,6 @@
 "rating_3" = "A fost ok";
 "rating_4" = "Mi-a plăcut";
 "rating_5" = "Mi-a plăcut foarte mult";
-"posts" = "Postări";
-"nearbyServices" = "Servicii în apropiere";
 "notFoundPosts" = "Nu au fost găsite postări";
 "notFoundBookmarks" = "Încă nu ai salvat nici o postare";
 "notFoundReposts" = "Încă nu ai repostat nimic";
@@ -146,8 +136,6 @@
 "userProductsDetails" = "Detalii despre produsele mele";
 "paymentMethods" = "Modalități de plată";
 "paymentMethodsDetails" = "Alege valutele acceptate pentru plată";
-"collectBusinessTypeHeadline" = "Ce business ai?";
-"collectBusinessTypeSubHeadline" = "Alege categoria care descrie cel mai bine activitatea ta.";
 "scheduleSubheaderDescription" = "Adaugă intervalele orare în care locația ta este deschisă pentru clienți";
 "comments" = "Comentarii";
 "notFoundComments" = "Încă nu au fost găsite comentarii";
@@ -159,11 +147,9 @@
 "passwordShouldContainMaximumTwentyCharacters" = "Parola trebuie să conțină maxim 20 de caractere";
 "passwordShouldContainAtLeastOneBigLetter" = "Parola trebuie sa conțină cel puțin o literă mare";
 "passwordShouldContainAtLeastOneDigit" = "Parola trebuie sa conțină cel puțin o cifră";
-"username" = "Username";
-"usernameOrEmail" = "Username or Email";
-"usernameTitle" = "Username";
-"addUniqueUsername" = "Enter a unique username";
-"chooseUsernameDescription" = "Choose a unique username for your profile. You can pick any available option,";
+"username" = "Utilizator";
+"usernameOrEmail" = "Username sau Email";
+"addUniqueUsername" = "Introdu un nume de utilizator unic";
 "preferNotToSay" = "Prefer să nu spun";
 "day" = "Ziua";
 "month" = "Luna";
@@ -176,9 +162,7 @@
 "next" = "Înainte";
 "addDescription" = "Adaugă o descriere";
 "yourBusinessName" = "Numele business-ului tău";
-"locationPresentation" = "Prezentarea locației";
-"locationPresentationDescription" = "Spune-ne cum se numește business-ul tău și oferă cateva detalii despre servicii, atmosferă sau orice crezi ca e important";
-"locationAddress" = "Adresa locației";
+"onboarding_business_location_title" = "Adresa locației";
 "photoGallery" = "Galerie foto";
 "photoGalleryDescription" = "Încarcă cateva imagini de la locație - o prezentare vizuală bună atrage mai mulți clienți";
 "doYouHaveEmployees" = "Ai angajați care primesc programări?";
@@ -263,120 +247,34 @@
 "bookingDetails" = "Detalii rezervare";
 "myCalendar" = "Calendarul meu";
 "send" = "Trimite";
-"name" = "Nume";
-"biography" = "Biografie";
-"birthdate" = "Data nașterii";
-"gender" = "Gen";
-"editProfile" = "Editează profilul";
-"preferNotToSay" = "Prefer să nu spun";
-"aboutYou" = "Despre tine";
-"display" = "Afișare";
-"bookedServices" = "Servicii rezervate";
-"clickOnRatingToEvaluate" = "Click pe o stea pentru a evalua";
-"total" = "Total";
+"posts" = "Postări";
+"finished" = "Finalizat";
+"canceled" = "Anulat";
+"earnings" = "Încasări";
+"channel" = "Canal";
+"scrollbooker" = "ScrollBooker";
+"ownClient" = "Client Propriu";
+"bookingsDetails" = "Detalii rezervări";
+"fromvideo" = "Din clipuri video";
+"scrollBookerCommission" = "Comision ScrollBooker";
+"bookingsSources" = "Surse rezervări";
+"period_seven_days" = "7 zile";
+"period_one_month" = "1 lună";
+"period_three_months" = "3 luni";
+"period_six_months" = "6 luni";
+"period_one_year" = "1 an";
 
-"others" = "Altele";
-"reasonCancel_cannotArrive" = "Nu mai pot ajunge la programare";
-"reasonCancel_foundBetterOffer" = "Am găsit o ofertă mai bună";
-"reasonCancel_bookedByMistake" = "Am rezervat din greșeală";
-
-"rating_1" = "Nu mi-a plăcut deloc";
-"rating_2" = "Nu prea mi-a plăcut";
-"rating_3" = "A fost ok";
-"rating_4" = "Mi-a plăcut";
-"rating_5" = "Mi-a plăcut foarte mult";
-
-"writeAReview" = "Scrie o recenzie";
-"yourReview" = "Recenzia ta";
-"howWasYourExperience" = "Cum a fost experiența ta?";
-"howWasYourExperienceDescription" = "Recenzia ta îi ajută pe alții să facă alegeri potrivite, iar business-ul să-și îmbunătățească serviciile.";
-"shareSomeDetailsAboutYourExperience" = "Împărtășește câteva detalii (atmosferă, rezultate, comunicare…)";
-"from5" = "din 5";
-"navigationDirections" = "Direcții de navigare";
-
-"retry" = "Reîncearcă";
-"errorOccurred" = "A apărut o eroare";
-"notFoundAppointments" = "Nu au fost găsite rezervări";
-"notFoundEmployees" = "Momentan nu ai nici un angajat";
-
-"selectEmployee" = "Selectează angajat";
-"searchEmployeeAndSelectToContinue" = "Caută angajatul în lista de mai jos și selectează-l pentru a continua";
-"searchEmployeeIdleMessage" = "Introdu numele sau username-ul pentru a căuta";
-"users" = "Utilizatori";
-"notFoundUsers" = "Nu au fost găsiți utilizatori";
-"details" = "Detalii";
-"bookNow" = "Rezervă acum";
-"yourName" = "Numele tău";
-"fullname" = "Numele complet";
-"closingAt" = "Închide la";
-
-"gender_male" = "Masculin";
-"gender_female" = "Feminin";
-"gender_other" = "Altele";
-
-"recommended" = "Recomandat";
-"distance" = "Distanță";
-"rating" = "Rating";
-"price" = "Preț";
-"filters" = "Filtre";
-"options" = "Opțiuni";
-"showResults" = "Arată rezultatele";
-"deleteAll" = "Șterge tot";
-"all" = "Toate";
-
-"checkDetails" = "Verifică detaliile";
-"checkAppointmentDetailsDescriptiom" = "Verifică detaliile programării înainte de a o confirma";
-"selectedServices" = "Servicii selectate";
-"dateAndTime" = "Data și ora";
-"cancellationPolicy" = "Politica de anulare";
-"cancellationPolicyDescription" = "Rezervarea poate fi anulată gratuit cu până la 24 de ore înainte de începerea serviciului. În caz contrar, se pot aplica taxe.";
-
-/* --- NOTIFICATIONS --- */
-"notification_received_new" = "ai primit o notificare nouă";
-
-/* --- NOTIFICATIONS SOCIAL --- */
-"notification_follow" = "a început să te urmărească";
-"notification_like_post" = "ți-a apreciat postarea";
-"notification_like_post_and_others" = "a apreciat postarea ta și încă %lld persoane";
-"notification_comment" = "a comentat la postarea ta";
-"notification_repost" = "ți-a repostat postarea";
-"notification_mention_post" = "te-a menționat într-o postare";
-
-/* --- NOTIFICATIONS APPOINTMENTS --- */
-"notification_appointment_booked" = "a efectuat o programare pentru data de %@";
-"notification_appointment_canceled_with_reason" = "a anulat programarea. Motiv: %@";
-"notification_appointment_canceled" = "a anulat rezervarea";
-"notification_appointment_rescheduled" = "Programarea a fost replanificată pe %@";
-"notification_appointment_reminder" = "Memento: Ai o programare stabilită în curând.";
-"notification_appointment_reviewed" = "a lăsat o recenzie de %lld stele pentru programarea finalizată.";
-
-/* --- NOTIFICATIONS EMPLOYMENT REQUESTS --- */
-"notification_employment_request" = "ai primit o cerere de angajare pentru rolul de %@";
-"notification_employment_accepted" = "a acceptat cererea ta de angajare.";
-"notification_employment_denied" = "a respins cererea ta de angajare.";
-
-/* --- NOTIFICATIONS BUSINESS VALIDATIONS --- */
-"notification_business_validation_approved" = "Afacerea ta a fost validată cu succes de administratori.";
-"notification_business_validation_rejected" = "Afacerea ta a fost respinsă de administratori. Motiv: %@";
-
-
-/* --- DYNAMIC --- */
-"appointment.status.confirmed" = "Confirmat";
-"appointment.status.finished" = "Finalizat";
-"appointment.status.cancelled" = "Anulat";
-
-"failedToCreateEmploymentRequestDescription" = "Nu am putut crea cererea de angajare. Te rugăm să încerci din nou mai târziu.";
-"recommendedServices" = "Servicii recomandate";
-"postNoLinkedProducts" = "Această postare nu are servicii atașate.";
-"notFoundReviews" = "Nu au fost găsite recenzii";
-"notFoundReviewsDescription" = "Acest utilizator nu are încă recenzii înregistrate.";
-"notFoundWrittenReviews" = "Fără recenzii scrise";
-"notFoundWrittenReviewsDescription" = "Nu s-au găsit recenzii scrise pentru criteriile selectate.";
-"notFoundVideoReviews" = "Fără recenzii video";
-"notFoundVideoReviewsDescription" = "Nu s-au găsit clipuri video asociate acestui utilizator.";
+/* --- ONBOARDING --- */
+"onboarding_username_title" = "Nume de utilizator";
+"onboarding_username_description" = "Alege un nume unic pentru profilul tău. Poți alege orice variantă disponibilă,";
+"onboarding_business_type_title" = "Ce business ai?";
+"onboarding_business_type_description" = "Alege categoria care descrie cel mai bine activitatea ta.";
+"onboarding_business_details_title" = "Prezentarea locației";
+"onboarding_business_details_description" = "Spune-ne cum se numește business-ul tău și oferă cateva detalii despre servicii, atmosferă sau orice crezi ca e important";
+"onboarding_business_location_description" = "Adaugă adresa locației unde vei primi clienții";
+"onboarding_business_location_search_placeholder" = "Caută adresa";
 
 /* --- DASHBOARD --- */
-
 "dashboard" = "Dashboard";
 
 /* --- MY BUSINESS SCREEN --- */
@@ -404,19 +302,9 @@
 "my_business_unapproved_empty" = "Nu au fost găsite afaceri în aprobare";
 "my_business_unapproved_reject" = "Respinge";
 "my_business_unapproved_approve" = "Aprobă";
-"finished" = "Finalizat";
-"canceled" = "Anulat";
-"earnings" = "Încasări";
-"channel" = "Canal";
-"scrollbooker" = "ScrollBooker";
-"ownClient" = "Client Propriu";
-"bookingsDetails" = "Detalii rezervări";
-"fromvideo" = "Din clipuri video";
-"scrollBookerCommission" = "Comision ScrollBooker";
-"bookingsSources" = "Surse rezervări";
-"period_seven_days" = "7 zile";
-"period_one_month" = "1 lună";
-"period_three_months" = "3 luni";
-"period_six_months" = "6 luni";
-"period_one_year" = "1 an";
+
+/* --- DYNAMIC --- */
+"appointment.status.confirmed" = "Confirmat";
+"appointment.status.finished" = "Finalizat";
+"appointment.status.cancelled" = "Anulat";
 

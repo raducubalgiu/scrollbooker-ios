@@ -10,8 +10,9 @@ import SwiftUI
 struct InputRadio: View {
     let title: String
     let isSelected: Bool
+    var leadingIcon: Image? = nil
     var onClick: () -> Void
-    
+
     var body: some View {
         Button(action: {
             withAnimation(.easeInOut) {
@@ -19,9 +20,14 @@ struct InputRadio: View {
             }
         }) {
             HStack {
+                if let leadingIcon {
+                    leadingIcon
+                        .foregroundColor(.gray)
+                }
+
                 Text(title)
                     .foregroundColor(.onBackgroundSB)
-                
+
                 Spacer()
                 
                 ZStack {

@@ -20,6 +20,7 @@ enum RegistrationStepEnum: String, CaseIterable, Equatable, Hashable, Sendable, 
 
     // Business
     case collectBusiness = "collect_business"
+    case collectBusinessGallery = "collect_business_gallery"
     case collectBusinessServices = "collect_business_services"
     case collectBusinessSchedules = "collect_business_schedules"
     case collectBusinessHasEmployees = "collect_business_has_employees"

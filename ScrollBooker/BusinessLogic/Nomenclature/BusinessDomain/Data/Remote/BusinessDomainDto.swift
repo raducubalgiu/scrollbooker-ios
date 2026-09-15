@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct BusinessDomainDto: Codable {
+struct BusinessDomainDto: Decodable {
     let id: Int
     let name: String
     let short_name: String

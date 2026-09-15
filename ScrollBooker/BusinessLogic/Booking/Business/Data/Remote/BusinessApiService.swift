@@ -13,6 +13,7 @@ protocol BusinessApiService: Sendable {
     func getBusinessProfile(username: String) async throws -> BusinessProfileDto
     func getUnapprovedBusinesses(page: Int, limit: Int) async throws -> PaginatedResponseDTO<UnapprovedBusinessDto>
     func approveBusiness(userId: Int) async throws -> NoContent
+    func searchBusinessAddress(query: String) async throws -> [BusinessAddressDto]
 }
 
 final class BusinessAPIImpl: BusinessApiService {
@@ -66,6 +67,14 @@ final class BusinessAPIImpl: BusinessApiService {
         return try await client.request(
             "users/\(userId)/approve",
             method: .post
+        )
+    }
+
+    func searchBusinessAddress(query: String) async throws -> [BusinessAddressDto] {
+        return try await client.request(
+            "places",
+            method: .get,
+            query: ["query": query]
         )
     }
 }

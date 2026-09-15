@@ -7,4 +7,10 @@
 
 protocol OnboardingRepository: Sendable {
     func collectUserUsername(username: String) async throws -> AuthState
+    func collectBusiness(
+        description: String?,
+        placeId: String,
+        businessTypeId: Int,
+        ownerFullName: String
+    ) async throws -> BusinessCreateResponse
 }

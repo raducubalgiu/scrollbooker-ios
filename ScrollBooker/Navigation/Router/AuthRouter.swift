@@ -12,6 +12,7 @@ struct AuthRouter: View {
     let container: AppContainer
     let session: SessionManager
     let authViewModel: AuthViewModel
+    let collectBusinessViewModel: CollectBusinessViewModel
 
     @State private var path: [AuthRoute]
 
@@ -20,16 +21,18 @@ struct AuthRouter: View {
         self.container = container
         self.session = session
         self.authViewModel = container.authModule.makeAuthViewModel(session: session)
+        self.collectBusinessViewModel = container.onboardingModule.makeCollectBusinessViewModel(session: session)
         _path = State(initialValue: startStep.map { [AuthRoute(step: $0)] } ?? [])
     }
 
     var body: some View {
         NavigationStack(path: $path) {
             LoginScreen(authViewModel: authViewModel)
+                .toolbar(.hidden, for: .navigationBar)
                 .navigationDestination(for: AuthRoute.self) { route in
                     screen(for: route, authViewModel: authViewModel)
+                        .toolbar(.hidden, for: .navigationBar)
                 }
-                .toolbar(.hidden, for: .navigationBar)
         }
         .onChange(of: session.userInfo?.registrationStep) { _, newStep in
             if let newStep {
@@ -43,39 +46,49 @@ struct AuthRouter: View {
         switch route {
         case .login:
             LoginScreen(authViewModel: authViewModel)
-
+            
         case .registerClient:
             RegisterScreen(authViewModel: authViewModel)
-
+            
         case .registerBusiness:
             RegisterBusinessScreen(authViewModel: authViewModel)
-
+            
         case .collectEmailValidation:
             CollectEmailVerification(authViewModel: authViewModel)
-
+            
         case .collectUserUsername:
             CollectUsernameScreen(viewModel: container.onboardingModule.makeCollectUsernameViewModel(session: session))
-
+            
         case .collectUserPhoneNumber:
             CollectPhoneNumberScreen()
-
+            
         case .collectClientBirthdate:
             CollectBirthdateScreen()
-
+            
         case .collectClientGender:
             CollectGenderScreen()
-
+            
         case .collectClientLocationPermission:
             CollectLocationPermissionScreen()
-
+            
         case .collectBusiness:
-            CollectBusinessTypeScreen()
-
+            CollectBusinessTypeScreen(
+                viewModel: collectBusinessViewModel,
+                onNext: { path.append(.collectBusinessDetails) }
+            )
+            
         case .collectBusinessDetails:
-            CollectBusinessDetailsScreen()
+            CollectBusinessDetailsScreen(
+                viewModel: collectBusinessViewModel,
+                onBack: { path.removeLast() },
+                onNext: { path.append(.collectBusinessLocation) }
+            )
             
         case .collectBusinessLocation:
-            CollectBusinessAdressScreen()
+            CollectBusinessLocationScreen(
+                viewModel: collectBusinessViewModel,
+                onBack: { path.removeLast() }
+            )
             
         case .collectBusinessGallery:
             CollectBusinessGalleryScreen()
@@ -92,8 +105,8 @@ struct AuthRouter: View {
         case .collectBusinessValidation:
             CollectBusinessValidationScreen()
             
-        case .collectBusinessCurrencies: 
-            CollectBusinessCurrenciesScreen()
+        case .collectBusinessCurrencies:
+            EmptyView()
         }
     }
 }

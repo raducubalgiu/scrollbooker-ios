@@ -29,15 +29,15 @@ struct CollectUsernameScreen: View {
 
     var body: some View {
         FormLayout(
-            headline: String(localized: "usernameTitle"),
-            subHeadline: String(localized: "chooseUsernameDescription"),
+            headline: String(localized: "onboarding_username_title"),
+            subHeadline: String(localized: "onboarding_username_description"),
             enableBottomButton: false,
             onBack: {}
         ) {
             VStack(spacing: 0) {
                 Input(
                     text: $viewModel.username,
-                    placeholder: String(localized: "usernameTitle"),
+                    placeholder: String(localized: "onboarding_username_title"),
                     isLoading: isSearching,
                     leadingIcon: Image(systemName: "at"),
                     trailingIcon: trailingIcon,

@@ -7,11 +7,20 @@
 
 import Foundation
 
-struct BusinessTypeDto: Codable {
+struct BusinessTypeDto: Decodable {
     let id: Int
     let name: String
     let plural: String
-    let business_domain_id: Int
+    let businessDomainId: Int
     let url: String?
-    let thumbnail_url: String?
+    let thumbnailUrl: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case name
+        case plural
+        case businessDomainId = "business_domain_id"
+        case url
+        case thumbnailUrl = "thumbnail_url"
+    }
 }

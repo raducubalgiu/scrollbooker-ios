@@ -18,7 +18,6 @@
 "omit" = "Omite";
 "nextStep" = "Pasul următor";
 "location" = "Locație";
-"addYourBusinessLocation" = "Adaugă adresa locației unde vei primi clienții";
 "services" = "Servicii";
 "addYourBusinessServices" = "Adaugă serviciile pe care le desfășori la locație";
 "schedule" = "Programul de lucru";
@@ -137,8 +136,6 @@
 "userProductsDetails" = "Detalii despre produsele mele";
 "paymentMethods" = "Modalități de plată";
 "paymentMethodsDetails" = "Alege valutele acceptate pentru plată";
-"collectBusinessTypeHeadline" = "Ce business ai?";
-"collectBusinessTypeSubHeadline" = "Alege categoria care descrie cel mai bine activitatea ta.";
 "scheduleSubheaderDescription" = "Adaugă intervalele orare în care locația ta este deschisă pentru clienți";
 "comments" = "Comentarii";
 "notFoundComments" = "Încă nu au fost găsite comentarii";
@@ -152,9 +149,7 @@
 "passwordShouldContainAtLeastOneDigit" = "Parola trebuie sa conțină cel puțin o cifră";
 "username" = "Utilizator";
 "usernameOrEmail" = "Username sau Email";
-"usernameTitle" = "Nume de utilizator";
 "addUniqueUsername" = "Introdu un nume de utilizator unic";
-"chooseUsernameDescription" = "Alege un nume unic pentru profilul tău. Poți alege orice variantă disponibilă,";
 "preferNotToSay" = "Prefer să nu spun";
 "day" = "Ziua";
 "month" = "Luna";
@@ -167,9 +162,7 @@
 "next" = "Înainte";
 "addDescription" = "Adaugă o descriere";
 "yourBusinessName" = "Numele business-ului tău";
-"locationPresentation" = "Prezentarea locației";
-"locationPresentationDescription" = "Spune-ne cum se numește business-ul tău și oferă cateva detalii despre servicii, atmosferă sau orice crezi ca e important";
-"locationAddress" = "Adresa locației";
+"onboarding_business_location_title" = "Adresa locației";
 "photoGallery" = "Galerie foto";
 "photoGalleryDescription" = "Încarcă cateva imagini de la locație - o prezentare vizuală bună atrage mai mulți clienți";
 "doYouHaveEmployees" = "Ai angajați care primesc programări?";
@@ -254,15 +247,34 @@
 "bookingDetails" = "Detalii rezervare";
 "myCalendar" = "Calendarul meu";
 "send" = "Trimite";
+"posts" = "Postări";
+"finished" = "Finalizat";
+"canceled" = "Anulat";
+"earnings" = "Încasări";
+"channel" = "Canal";
+"scrollbooker" = "ScrollBooker";
+"ownClient" = "Client Propriu";
+"bookingsDetails" = "Detalii rezervări";
+"fromvideo" = "Din clipuri video";
+"scrollBookerCommission" = "Comision ScrollBooker";
+"bookingsSources" = "Surse rezervări";
+"period_seven_days" = "7 zile";
+"period_one_month" = "1 lună";
+"period_three_months" = "3 luni";
+"period_six_months" = "6 luni";
+"period_one_year" = "1 an";
 
-/* --- DYNAMIC --- */
-
-"appointment.status.confirmed" = "Confirmat";
-"appointment.status.finished" = "Finalizat";
-"appointment.status.cancelled" = "Anulat";
+/* --- ONBOARDING --- */
+"onboarding_username_title" = "Nume de utilizator";
+"onboarding_username_description" = "Alege un nume unic pentru profilul tău. Poți alege orice variantă disponibilă,";
+"onboarding_business_type_title" = "Ce business ai?";
+"onboarding_business_type_description" = "Alege categoria care descrie cel mai bine activitatea ta.";
+"onboarding_business_details_title" = "Prezentarea locației";
+"onboarding_business_details_description" = "Spune-ne cum se numește business-ul tău și oferă cateva detalii despre servicii, atmosferă sau orice crezi ca e important";
+"onboarding_business_location_description" = "Adaugă adresa locației unde vei primi clienții";
+"onboarding_business_location_search_placeholder" = "Caută adresa";
 
 /* --- DASHBOARD --- */
-
 "dashboard" = "Dashboard";
 
 /* --- MY BUSINESS SCREEN --- */
@@ -290,19 +302,8 @@
 "my_business_unapproved_empty" = "Nu au fost găsite afaceri în aprobare";
 "my_business_unapproved_reject" = "Respinge";
 "my_business_unapproved_approve" = "Aprobă";
-"posts" = "Postări";
-"finished" = "Finalizat";
-"canceled" = "Anulat";
-"earnings" = "Încasări";
-"channel" = "Canal";
-"scrollbooker" = "ScrollBooker";
-"ownClient" = "Client Propriu";
-"bookingsDetails" = "Detalii rezervări";
-"fromvideo" = "Din clipuri video";
-"scrollBookerCommission" = "Comision ScrollBooker";
-"bookingsSources" = "Surse rezervări";
-"period_seven_days" = "7 zile";
-"period_one_month" = "1 lună";
-"period_three_months" = "3 luni";
-"period_six_months" = "6 luni";
-"period_one_year" = "1 an";
+
+/* --- DYNAMIC --- */
+"appointment.status.confirmed" = "Confirmat";
+"appointment.status.finished" = "Finalizat";
+"appointment.status.cancelled" = "Anulat";

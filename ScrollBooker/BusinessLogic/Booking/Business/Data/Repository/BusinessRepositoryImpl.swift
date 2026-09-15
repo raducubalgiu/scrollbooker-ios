@@ -50,4 +50,9 @@ final class BusinessRepositoryImpl: BusinessRepository {
     func approveBusiness(userId: Int) async throws -> NoContent {
         return try await api.approveBusiness(userId: userId)
     }
+
+    func searchBusinessAddress(query: String) async throws -> [BusinessAddress] {
+        let dtoResponse = try await api.searchBusinessAddress(query: query)
+        return dtoResponse.map { BusinessAddress(dto: $0) }
+    }
 }

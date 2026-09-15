@@ -65,4 +65,14 @@ final class AuthModule {
             refreshSessionUseCase: refreshSessionUseCase
         )
     }()
+
+    func makeAuthViewModel(session: SessionManager) -> AuthViewModel {
+        AuthViewModel(
+            session: session,
+            loginUseCase: loginUseCase,
+            registerUseCase: registerUseCase,
+            verifyEmailUseCase: verifyEmailUseCase,
+            saveSessionUseCase: saveSessionUseCase
+        )
+    }
 }

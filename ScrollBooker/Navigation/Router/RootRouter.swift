@@ -8,13 +8,14 @@
 import SwiftUI
 
 struct RootRouter: View {
+    @Environment(AppContainer.self) private var container
     @Environment(SessionManager.self) private var session
 
     var body: some View {
         rootContent
             .environment(session)
     }
-    
+
     @ViewBuilder
     private var rootContent: some View {
         if !session.isInitialized {
@@ -23,12 +24,12 @@ struct RootRouter: View {
                     await session.bootstrap()
                 }
         } else if !session.isAuthenticated {
-            AuthRouter(startStep: nil)
+            AuthRouter(startStep: nil, container: container, session: session)
         } else if let info = session.userInfo {
             if info.isValidated {
                 MainRouter()
             } else {
-                AuthRouter(startStep: info.registrationStep)
+                AuthRouter(startStep: info.registrationStep, container: container, session: session)
             }
         } else {
             SplashView()

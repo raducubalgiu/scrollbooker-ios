@@ -18,11 +18,7 @@ final class SessionManager {
     private let store: AuthStore
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Session")
 
-    private let loginUseCase: LoginUseCase
-    private let registerUseCase: RegisterUseCase
     private let refreshSessionUseCase: RefreshSessionUseCase
-    private let verifyEmailUseCase: VerifyEmailUseCase
-    private let saveSessionUseCase: SaveSessionUseCase
     private let isLoggedInUseCase: IsLoggedInUseCase
 
     @ObservationIgnored
@@ -30,8 +26,6 @@ final class SessionManager {
 
     private(set) var auth: AuthSnapshot
     private(set) var userInfo: UserInfo? = nil
-    var isLoading = false
-    var loginError: String?
 
     private(set) var isInitialized = false
     private(set) var isAuthenticated = false
@@ -46,21 +40,13 @@ final class SessionManager {
 
     init(
         store: AuthStore = AuthStore(),
-        loginUseCase: LoginUseCase,
-        registerUseCase: RegisterUseCase,
         refreshSessionUseCase: RefreshSessionUseCase,
-        verifyEmailUseCase: VerifyEmailUseCase,
-        saveSessionUseCase: SaveSessionUseCase,
         isLoggedInUseCase: IsLoggedInUseCase
     ) {
         self.store = store
         self.auth = store.initialSnapshot
 
-        self.loginUseCase = loginUseCase
-        self.registerUseCase = registerUseCase
         self.refreshSessionUseCase = refreshSessionUseCase
-        self.verifyEmailUseCase = verifyEmailUseCase
-        self.saveSessionUseCase = saveSessionUseCase
         self.isLoggedInUseCase = isLoggedInUseCase
 
         // Reactive sync cu UI
@@ -71,6 +57,17 @@ final class SessionManager {
                 self?.isAuthenticated = snap.isAuthenticated
             }
             .store(in: &cancellables)
+    }
+
+    func setAuthenticated(_ userInfo: UserInfo) {
+        self.userInfo = userInfo
+        self.isAuthenticated = true
+    }
+
+    func clearSession() async {
+        await store.clearUserSession()
+        self.userInfo = nil
+        self.isAuthenticated = false
     }
 
     func updateAuthState(_ authState: AuthState) {
@@ -107,47 +104,6 @@ final class SessionManager {
         }
     }
 
-    func login(username: String, password: String) async {
-        isLoading = true
-        loginError = nil
-
-        do {
-            let authResponse = try await loginUseCase(username: username, password: password)
-            let info = try await saveSessionUseCase(authResponse: authResponse)
-
-            self.userInfo = info
-            self.isAuthenticated = true
-
-        } catch {
-            self.loginError = logger.userMessage(for: error, context: "Login")
-            self.isAuthenticated = false
-            await store.clearUserSession()
-        }
-
-        isLoading = false
-    }
-
-    // MARK: - Register Flow
-    func register(email: String, password: String, roleName: String) async {
-        isLoading = true
-        loginError = nil
-
-        do {
-            let authResponse = try await registerUseCase(email: email, password: password, roleName: roleName)
-            let info = try await saveSessionUseCase(authResponse: authResponse)
-
-            self.userInfo = info
-            self.isAuthenticated = true
-
-        } catch {
-            self.loginError = logger.userMessage(for: error, context: "Register")
-            self.isAuthenticated = false
-            await store.clearUserSession()
-        }
-
-        isLoading = false
-    }
-
     // MARK: - Global Token Refresh (Apelat automat de AuthInterceptor la erori 401)
     func refreshSession() async throws {
         if let existingTask = refreshTask {
@@ -181,28 +137,6 @@ final class SessionManager {
     }
 
     func logout() {
-        Task { await store.clearUserSession() }
-        self.userInfo = nil
-        isAuthenticated = false
-    }
-
-    func verifyEmail() async {
-        guard let token = auth.accessToken, !token.isEmpty else {
-            isAuthenticated = false
-            userInfo = nil
-            return
-        }
-
-        isLoading = true
-        loginError = nil
-
-        do {
-            let authState = try await verifyEmailUseCase()
-            updateAuthState(authState)
-        } catch {
-            self.loginError = logger.userMessage(for: error, context: "Verifying Email")
-        }
-
-        isLoading = false
+        Task { await clearSession() }
     }
 }

@@ -8,80 +8,66 @@
 import SwiftUI
 
 struct AuthRouter: View {
-    @Environment(AppContainer.self) private var container
-    @Environment(SessionManager.self) private var session
     let startStep: RegistrationStepEnum?
-    
-    @State private var path: [AuthRoute] = []
-    
-    private var startDestination: AuthRoute {
-        if let step = startStep {
-            return AuthRoute(step: step)
-        } else {
-            return .login
-        }
+    let container: AppContainer
+    let session: SessionManager
+    let authViewModel: AuthViewModel
+
+    @State private var path: [AuthRoute]
+
+    init(startStep: RegistrationStepEnum?, container: AppContainer, session: SessionManager) {
+        self.startStep = startStep
+        self.container = container
+        self.session = session
+        self.authViewModel = container.authModule.makeAuthViewModel(session: session)
+        _path = State(initialValue: startStep.map { [AuthRoute(step: $0)] } ?? [])
     }
-    
+
     var body: some View {
         NavigationStack(path: $path) {
-            startView
+            LoginScreen(authViewModel: authViewModel)
                 .navigationDestination(for: AuthRoute.self) { route in
-                    screen(for: route)
+                    screen(for: route, authViewModel: authViewModel)
                 }
-                .onAppear {
-                    if startStep != nil && path.isEmpty {
-                        path = [startDestination]
-                    }
-                }
+                .toolbar(.hidden, for: .navigationBar)
+        }
+        .onChange(of: session.userInfo?.registrationStep) { _, newStep in
+            if let newStep {
+                path.append(AuthRoute(step: newStep))
+            }
         }
     }
-    
+
     @ViewBuilder
-    private var startView: some View {
-        switch startDestination {
-        case .login:
-            LoginScreen()
-        default:
-            screen(for: startDestination)
-        }
-    }
-        
-    @ViewBuilder
-    private func screen(for route: AuthRoute) -> some View {
+    private func screen(for route: AuthRoute, authViewModel: AuthViewModel) -> some View {
         switch route {
         case .login:
-            LoginScreen()
-            
+            LoginScreen(authViewModel: authViewModel)
+
         case .registerClient:
-            RegisterScreen()
-            
+            RegisterScreen(authViewModel: authViewModel)
+
         case .registerBusiness:
-            RegisterBusinessScreen()
-            
+            RegisterBusinessScreen(authViewModel: authViewModel)
+
         case .collectEmailValidation:
-            CollectEmailVerification()
-                .toolbar(.hidden, for: .navigationBar)
-            
+            CollectEmailVerification(authViewModel: authViewModel)
+
         case .collectUserUsername:
-            CollectUsernameScreen()
-            .toolbar(.hidden, for: .navigationBar)
-            
+            CollectUsernameScreen(viewModel: container.onboardingModule.makeCollectUsernameViewModel(session: session))
+
         case .collectUserPhoneNumber:
             CollectPhoneNumberScreen()
-                .toolbar(.hidden, for: .navigationBar)
-            
+
         case .collectClientBirthdate:
             CollectBirthdateScreen()
-            .toolbar(.hidden, for: .navigationBar)
-            
+
         case .collectClientGender:
             CollectGenderScreen()
-            .toolbar(.hidden, for: .navigationBar)
-            
+
         case .collectClientLocationPermission:
             CollectLocationPermissionScreen()
-            .toolbar(.hidden, for: .navigationBar)
-            
+
         case .collectBusiness:
             CollectBusinessTypeScreen()
 

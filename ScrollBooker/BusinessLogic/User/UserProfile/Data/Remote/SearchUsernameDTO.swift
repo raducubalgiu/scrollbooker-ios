@@ -10,5 +10,4 @@ import Foundation
 struct SearchUsernameDTO: Codable {
     let available: Bool
     let suggestions: [String]
-    let username: String?
 }

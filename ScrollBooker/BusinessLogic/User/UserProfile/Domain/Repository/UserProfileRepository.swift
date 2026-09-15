@@ -15,4 +15,5 @@ protocol UserProfileRepository: Sendable {
     func updateBio(request: UpdateBioRequest) async throws -> UserProfileUpdate
     func updateWebsite(request: UpdateWebsiteRequest) async throws -> UserProfileUpdate
     func updatePublicEmail(request: UpdatePublicEmailRequest) async throws -> UserProfileUpdate
+    func searchUsername(username: String) async throws -> SearchUsername
 }

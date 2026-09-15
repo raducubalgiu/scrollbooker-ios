@@ -151,6 +151,7 @@
 "passwordShouldContainAtLeastOneBigLetter" = "Parola trebuie sa conțină cel puțin o literă mare";
 "passwordShouldContainAtLeastOneDigit" = "Parola trebuie sa conțină cel puțin o cifră";
 "username" = "Utilizator";
+"usernameOrEmail" = "Username sau Email";
 "usernameTitle" = "Nume de utilizator";
 "addUniqueUsername" = "Introdu un nume de utilizator unic";
 "chooseUsernameDescription" = "Alege un nume unic pentru profilul tău. Poți alege orice variantă disponibilă,";

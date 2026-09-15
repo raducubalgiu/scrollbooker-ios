@@ -15,7 +15,7 @@ enum AppButtonSize {
     var minHeight: CGFloat {
         switch self {
         case .small: return 38
-        case .medium: return 40
+        case .medium: return 44
         case .large: return 48
         }
     }

@@ -64,7 +64,7 @@
 "biography" = "Biografie";
 "userNotLoggedIn" = "User-ul nu este logat";
 "edit" = "Editează";
-"save" = "Salvează";
+"save" = "Save";
 "closed" = "Închis";
 "youSuccesfullyEditedSchedules" = "Ți-ai editat cu succes programul";
 "createNewProduct" = "Creează un produs nou";
@@ -159,10 +159,11 @@
 "passwordShouldContainMaximumTwentyCharacters" = "Parola trebuie să conțină maxim 20 de caractere";
 "passwordShouldContainAtLeastOneBigLetter" = "Parola trebuie sa conțină cel puțin o literă mare";
 "passwordShouldContainAtLeastOneDigit" = "Parola trebuie sa conțină cel puțin o cifră";
-"username" = "Utilizator";
-"usernameTitle" = "Nume de utilizator";
-"addUniqueUsername" = "Introdu un nume de utilizator unic";
-"chooseUsernameDescription" = "Alege un nume unic pentru profilul tău. Poți alege orice variantă disponibilă,";
+"username" = "Username";
+"usernameOrEmail" = "Username or Email";
+"usernameTitle" = "Username";
+"addUniqueUsername" = "Enter a unique username";
+"chooseUsernameDescription" = "Choose a unique username for your profile. You can pick any available option,";
 "preferNotToSay" = "Prefer să nu spun";
 "day" = "Ziua";
 "month" = "Luna";

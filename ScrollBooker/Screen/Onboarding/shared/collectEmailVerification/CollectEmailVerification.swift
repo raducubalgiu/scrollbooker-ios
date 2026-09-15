@@ -8,26 +8,17 @@
 import SwiftUI
 
 struct CollectEmailVerification: View {
-    @Environment(SessionManager.self) private var session
-    
+    let authViewModel: AuthViewModel
+
     var body: some View {
         FormLayout(
             headline: "Email Verification",
             subHeadline: "",
             buttonTitle: "Verify",
             onBack: {},
-            onClick: { Task { await session.verifyEmail() } },
+            onClick: { Task { await authViewModel.verifyEmail() } },
         ) {
-            
+
         }
     }
-}
-
-#Preview("Light") {
-    CollectEmailVerification()
-}
-
-#Preview("Dark") {
-    CollectEmailVerification()
-        .preferredColorScheme(.dark)
 }

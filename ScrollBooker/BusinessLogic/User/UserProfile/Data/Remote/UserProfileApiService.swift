@@ -17,6 +17,7 @@ protocol UserProfileApiService: Sendable {
     func updateBio(request: UpdateBioRequest) async throws -> UserProfileUpdateDto
     func updateWebsite(request: UpdateWebsiteRequest) async throws -> UserProfileUpdateDto
     func updatePublicEmail(request: UpdatePublicEmailRequest) async throws -> UserProfileUpdateDto
+    func searchUsername(username: String) async throws -> SearchUsernameDTO
 }
 
 final class UserProfileApiImpl: UserProfileApiService {
@@ -93,6 +94,14 @@ final class UserProfileApiImpl: UserProfileApiService {
             "users/user-info/public-email",
             method: .patch,
             body: request
+        )
+    }
+
+    func searchUsername(username: String) async throws -> SearchUsernameDTO {
+        try await client.request(
+            "users/available-username",
+            method: .get,
+            query: ["username": username]
         )
     }
 }

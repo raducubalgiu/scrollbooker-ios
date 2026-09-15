@@ -58,4 +58,9 @@ final class UserProfileRepositoryImpl: UserProfileRepository {
         let dtoResponse = try await api.updatePublicEmail(request: request)
         return UserProfileUpdate(dto: dtoResponse)
     }
+
+    func searchUsername(username: String) async throws -> SearchUsername {
+        let dto = try await api.searchUsername(username: username)
+        return SearchUsername(dto: dto, username: username)
+    }
 }

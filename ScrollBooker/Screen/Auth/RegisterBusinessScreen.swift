@@ -8,9 +8,21 @@
 import SwiftUI
 
 struct RegisterBusinessScreen: View {
+    let authViewModel: AuthViewModel
+
     @State private var email: String = ""
     @State private var password: String = ""
-    
+
+    func handleRegister() {
+        Task {
+            await authViewModel.register(
+                email: email,
+                password: password,
+                roleName: "business"
+            )
+        }
+    }
+
     var body: some View {
         FormLayout(
             headline: String(localized: "registerBusiness"),
@@ -18,33 +30,31 @@ struct RegisterBusinessScreen: View {
             enableBottomButton: false,
             onBack: {}
         ) {
-            Input(
-                label: "Email",
-                text: $email,
-                placeholder: "Email",
-                keyboardType: .emailAddress,
-            )
-            
-            Input(
-                label: "Parola",
-                text: $password,
-                placeholder: "Parola",
-                keyboardType: .emailAddress,
-            )
-            
-            MainButton(
-                title: String(localized: "register"),
-                onClick: {  }
-            )
+            VStack(alignment: .leading, spacing: AppSize.s.rawValue) {
+                Input(
+                    label: String(localized: "email"),
+                    text: $email,
+                    placeholder: String(localized: "email"),
+                    keyboardType: .emailAddress,
+                )
+                .textInputAutocapitalization(.never)
+
+                Input(
+                    label: String(localized: "password"),
+                    text: $password,
+                    placeholder: String(localized: "password"),
+                    isSecure: true
+                )
+
+                MainButton(
+                    title: String(localized: "register"),
+                    isDisabled: authViewModel.isLoading,
+                    isLoading: authViewModel.isLoading,
+                    onClick: handleRegister
+                )
+                .padding(.top, .xs)
+            }
+            .padding(.horizontal, .xl)
         }
     }
-}
-
-#Preview("Light") {
-    RegisterBusinessScreen()
-}
-
-#Preview("Dark") {
-    RegisterBusinessScreen()
-        .preferredColorScheme(.dark)
 }

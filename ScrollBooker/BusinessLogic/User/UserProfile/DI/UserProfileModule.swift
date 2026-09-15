@@ -46,7 +46,11 @@ final class UserProfileModule {
     private lazy var updateUserBioUseCase: UpdateUserBioUseCase = {
         UpdateUserBioUseCase(repository: repository)
     }()
-    
+
+    lazy var searchUsernameUseCase: SearchUsernameUseCase = {
+        SearchUsernameUseCase(repository: repository)
+    }()
+
     func makeMyProfileViewModel(
         session: SessionManager,
         getUserPostsUseCase: GetUserPostsUseCase,

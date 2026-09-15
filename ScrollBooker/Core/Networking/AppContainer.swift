@@ -17,6 +17,7 @@ final class AppContainer {
     let authModule: AuthModule
     let userInfoModule: UserInfoModule
     let userPermissionsModule: UserPermissionsModule
+    let onboardingModule: OnboardingModule
     let cloudflareModuke: CloudflareModule
     let commentModule: CommentModule
     let postModule: PostModule
@@ -61,14 +62,18 @@ final class AppContainer {
         self.userPermissionsModule = userPermissionsModule
         self.session = SessionManager(
             store: authStore,
-            loginUseCase: authModule.loginUseCase,
-            registerUseCase: authModule.registerUseCase,
             refreshSessionUseCase: authModule.refreshSessionUseCase,
-            verifyEmailUseCase: authModule.verifyEmailUseCase,
-            saveSessionUseCase: authModule.saveSessionUseCase,
             isLoggedInUseCase: authModule.isLoggedInUseCase
         )
         authInterceptor.sessionManager = session
+
+        let userProfileModule = UserProfileModule(apiClient: apiClient)
+        self.userProfileModule = userProfileModule
+        self.onboardingModule = OnboardingModule(
+            apiClient: apiClient,
+            getUserInfoUseCase: userInfoModule.getUserInfoUseCase,
+            searchUsernameUseCase: userProfileModule.searchUsernameUseCase
+        )
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
         self.commentModule = CommentModule(apiClient: apiClient)
@@ -86,7 +91,6 @@ final class AppContainer {
         self.employmentRequestModule = EmploymentRequestModule(apiClient: apiClient)
         self.servieDomainModule = ServiceDomainModule(apiClient: apiClient)
         self.reviewModule = ReviewModule(apiClient: apiClient)
-        self.userProfileModule = UserProfileModule(apiClient: apiClient)
         self.appointmentModule = AppointmentModule(apiClient: apiClient)
         self.notificationModule = NotificationModule(apiClient: apiClient)
         self.problemModule = ProblemModule(apiClient: apiClient)

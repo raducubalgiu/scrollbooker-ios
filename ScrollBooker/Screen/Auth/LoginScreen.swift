@@ -8,19 +8,19 @@
 import SwiftUI
 
 struct LoginScreen: View {
-    @Environment(SessionManager.self) private var session
+    let authViewModel: AuthViewModel
+
     @State private var username: String = ""
     @State private var password: String = ""
-    
-    func handleLogin() {
-        Task {
-            await session.login(
-                username: username,
-                password: password
-            )
-        }
+    @State private var showRegisterBusiness = false
+
+    private var lowercasedUsername: Binding<String> {
+        Binding(
+            get: { username },
+            set: { username = $0.lowercased() }
+        )
     }
-    
+
     var body: some View {
         FormLayout(
             headline: String(localized: "login"),
@@ -28,58 +28,63 @@ struct LoginScreen: View {
             enableBottomButton: false,
             onBack: {}
         ) {
-            Input(
-                label: String(localized: "username"),
-                text: $username,
-                placeholder: "Username",
-            )
-            
-            Input(
-                label: String(localized: "password"),
-                text: $password,
-                placeholder: String(localized: "password")
-            )
-            
-            MainButton(
-                title: String(localized: "login"),
-                isDisabled: session.isLoading,
-                isLoading: session.isLoading,
-                onClick: handleLogin,
-            )
-            
-            HStack {
-                Text("dontHaveAnAccount")
-                NavigationLink("register") {
-                    RegisterScreen()
-                }
-                .foregroundColor(.primarySB)
-                .fontWeight(.bold)
-            }
-            
-            VStack {
-                Spacer()
-                
-                Divider()
-                
-                Text("doYouHaveABusinessWhichReceivesAppointments")
-                    .padding(.vertical)
-                
-                MainButtonOutlined(
-                    title: String(localized: "registerNow"),
-                    onClick: {}
+            VStack(alignment: .leading, spacing: AppSize.s.rawValue) {
+                Input(
+                    label: String(localized: "usernameOrEmail"),
+                    text: lowercasedUsername,
+                    placeholder: String(localized: "usernameOrEmail"),
                 )
+                .textInputAutocapitalization(.never)
+
+                Input(
+                    label: String(localized: "password"),
+                    text: $password,
+                    placeholder: String(localized: "password"),
+                    isSecure: true
+                )
+
+                MainButton(
+                    title: String(localized: "login"),
+                    isDisabled: authViewModel.isLoading,
+                    isLoading: authViewModel.isLoading,
+                    onClick: {
+                        Task {
+                            await authViewModel.login(
+                                username: username,
+                                password: password
+                            )
+                        }
+                    },
+                )
+                .padding(.top, .xs)
+
+                HStack {
+                    Text("dontHaveAnAccount")
+                    NavigationLink("register") {
+                        RegisterScreen(authViewModel: authViewModel)
+                    }
+                    .foregroundColor(.primarySB)
+                    .fontWeight(.bold)
+                }
+
+                VStack(alignment: .center, spacing: AppSize.s.rawValue) {
+                    Spacer()
+
+                    Divider()
+
+                    Text("doYouHaveABusinessWhichReceivesAppointments")
+
+                    MainButtonOutlined(
+                        title: String(localized: "registerNow"),
+                        onClick: { showRegisterBusiness = true }
+                    )
+                }
             }
+            .padding(.horizontal, .xl)
+            .ignoresSafeArea(.keyboard, edges: .bottom)
+        }
+        .navigationDestination(isPresented: $showRegisterBusiness) {
+            RegisterBusinessScreen(authViewModel: authViewModel)
         }
     }
 }
-
-//#Preview("Light") {
-//    LoginScreen()
-//        .environmentObject(SessionManager())
-//}
-//
-//#Preview("Dark") {
-//    LoginScreen()
-//        .environmentObject(SessionManager())
-//        .preferredColorScheme(.dark)
-//}

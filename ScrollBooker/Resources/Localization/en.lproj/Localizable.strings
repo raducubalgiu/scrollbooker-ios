@@ -164,7 +164,6 @@
 "yourBusinessName" = "Numele business-ului tău";
 "onboarding_business_location_title" = "Adresa locației";
 "photoGallery" = "Galerie foto";
-"photoGalleryDescription" = "Încarcă cateva imagini de la locație - o prezentare vizuală bună atrage mai mulți clienți";
 "doYouHaveEmployees" = "Ai angajați care primesc programări?";
 "ifHaveEmployeesDescription" = "Daca da, fiecare angajat va avea propriul calendar și își va gestiona propriile produse separat.";
 "ifNotHaveEmployeesDescription" = "Daca nu, toate programările vor fi gestionate direct în numele business-ului tău, intr-un singur calendar.";
@@ -273,6 +272,9 @@
 "onboarding_business_details_description" = "Spune-ne cum se numește business-ul tău și oferă cateva detalii despre servicii, atmosferă sau orice crezi ca e important";
 "onboarding_business_location_description" = "Adaugă adresa locației unde vei primi clienții";
 "onboarding_business_location_search_placeholder" = "Caută adresa";
+"onboarding_business_gallery_title" = "Prezentare vizuală";
+"onboarding_business_gallery_description" = "Încarcă cateva imagini de la locație - o prezentare vizuală bună atrage mai mulți clienți";
+"onboarding_business_gallery_skip_hint" = "Poți sări peste acest pas acum și adăugi imagini mai târziu din setările business-ului tău.";
 
 /* --- DASHBOARD --- */
 "dashboard" = "Dashboard";

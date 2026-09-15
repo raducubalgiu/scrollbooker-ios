@@ -34,4 +34,13 @@ final class OnboardingRepositoryImpl: OnboardingRepository {
         let dto = try await api.collectBusiness(request: request)
         return BusinessCreateResponse(dto: dto)
     }
+
+    func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthState {
+        let dto = try await api.collectBusinessGallery(
+            businessId: businessId,
+            photos: photos,
+            skipUpdateGallery: skipUpdateGallery
+        )
+        return AuthState(dto: dto)
+    }
 }

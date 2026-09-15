@@ -45,6 +45,10 @@ final class OnboardingModule {
         CollectBusinessUseCase(repository: repository)
     }()
 
+    lazy var collectBusinessGalleryUseCase: CollectBusinessGalleryUseCase = {
+        CollectBusinessGalleryUseCase(repository: repository)
+    }()
+
     func makeCollectUsernameViewModel(session: SessionManager) -> CollectUsernameViewModel {
         CollectUsernameViewModel(
             session: session,
@@ -61,6 +65,13 @@ final class OnboardingModule {
             getUserInfoUseCase: getUserInfoUseCase,
             getAllPaginatedBusinessTypesUseCase: getAllPaginatedBusinessTypesUseCase,
             searchBusinessAddressUseCase: searchBusinessAddressUseCase
+        )
+    }
+
+    func makeCollectBusinessGalleryViewModel(session: SessionManager) -> CollectBusinessGalleryViewModel {
+        CollectBusinessGalleryViewModel(
+            session: session,
+            collectBusinessGalleryUseCase: collectBusinessGalleryUseCase
         )
     }
 }

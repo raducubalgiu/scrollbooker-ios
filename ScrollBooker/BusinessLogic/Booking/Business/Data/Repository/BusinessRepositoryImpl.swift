@@ -55,4 +55,8 @@ final class BusinessRepositoryImpl: BusinessRepository {
         let dtoResponse = try await api.searchBusinessAddress(query: query)
         return dtoResponse.map { BusinessAddress(dto: $0) }
     }
+
+    func updateBusinessGallery(businessId: Int, photos: [Data]) async throws -> NoContent {
+        return try await api.updateBusinessGallery(businessId: businessId, photos: photos)
+    }
 }

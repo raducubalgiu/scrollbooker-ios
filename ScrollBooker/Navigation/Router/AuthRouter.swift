@@ -91,7 +91,10 @@ struct AuthRouter: View {
             )
             
         case .collectBusinessGallery:
-            CollectBusinessGalleryScreen()
+            CollectBusinessGalleryScreen(
+                viewModel: container.onboardingModule.makeCollectBusinessGalleryViewModel(session: session),
+                onBack: { path.removeLast() }
+            )
             
         case .collectBusinessServices:
             CollectBusinessServicesScreen()

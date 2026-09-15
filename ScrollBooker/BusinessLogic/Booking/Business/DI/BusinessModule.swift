@@ -47,6 +47,10 @@ final class BusinessModule {
         SearchBusinessAddressUseCase(repository: repository)
     }()
 
+    lazy var updateBusinessGalleryUseCase: UpdateBusinessGalleryUseCase = {
+        UpdateBusinessGalleryUseCase(repository: repository)
+    }()
+
     func makeSearchViewModel(
         getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
     ) -> SearchViewModel {

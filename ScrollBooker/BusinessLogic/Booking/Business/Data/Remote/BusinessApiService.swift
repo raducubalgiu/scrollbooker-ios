@@ -14,6 +14,7 @@ protocol BusinessApiService: Sendable {
     func getUnapprovedBusinesses(page: Int, limit: Int) async throws -> PaginatedResponseDTO<UnapprovedBusinessDto>
     func approveBusiness(userId: Int) async throws -> NoContent
     func searchBusinessAddress(query: String) async throws -> [BusinessAddressDto]
+    func updateBusinessGallery(businessId: Int, photos: [Data]) async throws -> NoContent
 }
 
 final class BusinessAPIImpl: BusinessApiService {
@@ -75,6 +76,15 @@ final class BusinessAPIImpl: BusinessApiService {
             "places",
             method: .get,
             query: ["query": query]
+        )
+    }
+
+    func updateBusinessGallery(businessId: Int, photos: [Data]) async throws -> NoContent {
+        return try await client.multiPartRequest(
+            "businesses/\(businessId)/gallery",
+            method: .patch,
+            fields: [:],
+            files: MultipartFile.compressedJPEGs(photos)
         )
     }
 }

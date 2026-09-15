@@ -92,11 +92,16 @@ actor APIClient {
         _ path: String,
         method: HTTPMethod = .post,
         headers: [String: String] = [:],
+        query: [String: String]? = nil,
         fields: [String: String],
         files: [MultipartFile] = []
     ) async throws -> T {
         return try await executeWithRetry(path: path, attempts: 0) { [unowned self] in
-            let url = self.config.baseURL.appendingPathComponent(path)
+            var components = URLComponents(url: self.config.baseURL.appendingPathComponent(path), resolvingAgainstBaseURL: false)
+            if let query {
+                components?.queryItems = query.map { URLQueryItem(name: $0.key, value: $0.value) }
+            }
+            guard let url = components?.url else { throw APIError.invalidURL }
             var req = URLRequest(url: url)
             req.httpMethod = method.rawValue
 

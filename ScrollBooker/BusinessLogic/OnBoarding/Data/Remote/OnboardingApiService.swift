@@ -10,6 +10,7 @@ import Foundation
 protocol OnboardingApiService: Sendable {
     func collectUserUsername(request: UpdateUsernameRequest) async throws -> AuthStateDTO
     func collectBusiness(request: BusinessCreateRequestDTO) async throws -> BusinessCreateResponseDTO
+    func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthStateDTO
 }
 
 final class OnboardingAPIImpl: OnboardingApiService {
@@ -32,6 +33,16 @@ final class OnboardingAPIImpl: OnboardingApiService {
             "onboarding/collect-business",
             method: .post,
             body: request
+        )
+    }
+
+    func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthStateDTO {
+        return try await client.multiPartRequest(
+            "onboarding/collect-business-gallery/\(businessId)/update",
+            method: .patch,
+            query: ["skip_update_gallery": skipUpdateGallery ? "true" : "false"],
+            fields: [:],
+            files: MultipartFile.compressedJPEGs(photos)
         )
     }
 }

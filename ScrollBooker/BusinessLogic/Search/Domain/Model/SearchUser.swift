@@ -13,7 +13,7 @@ struct SearchUser: Identifiable, Equatable, Hashable, Sendable {
     let fullName: String
     let avatar: String?
     let profession: String
-    let ratingsAverage: Double
+    let ratingsAverage: Float
     let isBusinessOrEmployee: Bool
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }

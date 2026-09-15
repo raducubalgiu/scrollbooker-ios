@@ -56,7 +56,7 @@ struct AppointmentUser: Identifiable, Equatable, Hashable, Sendable {
     let username: String?
     let avatar: String?
     let profession: String?
-    let ratingsAverage: Double?
+    let ratingsAverage: Float?
     let ratingsCount: Int?
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }

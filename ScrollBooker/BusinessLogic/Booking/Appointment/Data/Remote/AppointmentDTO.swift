@@ -97,7 +97,7 @@ struct AppointmentUserDto: Decodable {
     let username: String?
     let avatar: String?
     let profession: String?
-    let ratingsAverage: Double?
+    let ratingsAverage: Float?
     let ratingsCount: Int?
     
     enum CodingKeys: String, CodingKey {

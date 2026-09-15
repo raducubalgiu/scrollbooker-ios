@@ -9,7 +9,7 @@ import SwiftUI
 
 struct AvatarWithRatingView: View {
     var url: URL?
-    let rating: Double
+    let rating: Float
     var size: AvatarView.AvatarSize = .l
     var badgeBackgroundColor: Color? = nil
     var onClick: (() -> Void)? = nil
@@ -43,7 +43,7 @@ struct AvatarWithRatingView: View {
                     .font(.system(size: starFontSize, weight: .bold))
                     .foregroundColor(.ratingSB)
                 
-                Text(String(format: "%.1f", rating))
+                Text(rating.formatRating())
                     .font(.system(size: textFontSize, weight: .bold))
                     .foregroundColor(resolvedTextColor)
             }

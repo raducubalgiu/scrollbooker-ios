@@ -14,7 +14,7 @@ extension SearchUser {
         self.fullName = dto.fullname
         self.avatar = dto.avatar
         self.profession = dto.profession
-        self.ratingsAverage = Double(dto.ratings_average)
+        self.ratingsAverage = dto.ratings_average
         self.isBusinessOrEmployee = dto.is_business_or_employee
     }
 }

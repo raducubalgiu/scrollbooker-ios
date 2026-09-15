@@ -11,7 +11,7 @@ struct UserSocial: Identifiable, Equatable, Hashable, Sendable {
     let username: String
     let profession: String
     let avatar: String?
-    let ratingsAverage: Double
+    let ratingsAverage: Float
     let isFollow: Bool
     let isBusinessOrEmployee: Bool
     
@@ -21,7 +21,7 @@ struct UserSocial: Identifiable, Equatable, Hashable, Sendable {
         username: String? = nil,
         profession: String? = nil,
         avatar: String? = nil,
-        ratingsAverage: Double? = nil,
+        ratingsAverage: Float? = nil,
         isFollow: Bool? = nil,
         isBusinessOrEmployee: Bool? = nil
     ) -> UserSocial {

@@ -27,7 +27,7 @@ struct BookingFlowUser: Identifiable, Equatable, Hashable, Sendable {
     let profession: String
     let avatar: String?
     let ratingsCount: Int
-    let ratingsAverage: Double
+    let ratingsAverage: Float
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }

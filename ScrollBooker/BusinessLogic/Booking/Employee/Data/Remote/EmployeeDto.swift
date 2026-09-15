@@ -14,7 +14,7 @@ struct EmployeeDto: Codable {
     let avatar: String?
     let job: String
     let hireDate: String
-    let ratingsAverage: Double
+    let ratingsAverage: Float
     let followersCount: Int
     let ratingsCount: Int
     let productsCount: Int

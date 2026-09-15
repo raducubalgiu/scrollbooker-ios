@@ -30,7 +30,7 @@ struct PostActionsView: View {
             } else {
                 AvatarWithRatingView(
                     url: post.user.avatarURL,
-                    rating: 5,
+                    rating: post.user.ratingsAverage,
                     size: .l,
                     badgeBackgroundColor: .white,
                     onClick: { actions.onNavigateToUserProfile(makeProfileNavigationParams()) }

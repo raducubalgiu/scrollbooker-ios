@@ -31,6 +31,6 @@ extension BookingFlowUser {
         self.profession = dto.profession
         self.avatar = dto.avatar
         self.ratingsCount = dto.ratingsCount
-        self.ratingsAverage = Double(dto.ratingsAverage)
+        self.ratingsAverage = dto.ratingsAverage
     }
 }

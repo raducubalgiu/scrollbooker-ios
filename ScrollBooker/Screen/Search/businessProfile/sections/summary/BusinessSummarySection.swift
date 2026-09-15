@@ -25,7 +25,7 @@ struct BusinessSummarySection: View {
             HStack(alignment: .center, spacing: 0) {
                 AvatarWithRatingView(
                     url: owner.avatarURL,
-                    rating: Double(owner.counters.ratingsAverage),
+                    rating: owner.counters.ratingsAverage,
                     size: .xl,
                     onClick: { onNavigateToOwnerProfile(owner.username) },
                 )

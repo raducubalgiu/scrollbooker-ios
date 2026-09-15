@@ -13,7 +13,7 @@ struct BusinessEmployeeCard: View {
     var body: some View {
         VStack {
             AvatarWithRatingView(
-                rating: Double(employee.ratingsAverage),
+                rating: employee.ratingsAverage,
                 size: .xl,
                 onClick: {}
             )

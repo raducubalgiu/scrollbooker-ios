@@ -13,7 +13,7 @@ struct UserSocialDto: Decodable {
     let username: String
     let profession: String
     let avatar: String?
-    let ratingsAverage: Double
+    let ratingsAverage: Float
     let isFollow: Bool
     let isBusinessOrEmployee: Bool
     

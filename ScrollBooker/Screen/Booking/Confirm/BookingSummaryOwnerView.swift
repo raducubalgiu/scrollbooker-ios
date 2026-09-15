@@ -11,7 +11,7 @@ struct BookingSummaryOwnerView: View {
     let owner: BookingFlowUser
     
     private var formattedRating: String {
-        String(format: "%.1f", owner.ratingsAverage)
+        owner.ratingsAverage.formatRating()
     }
     
     var body: some View {
@@ -35,7 +35,7 @@ struct BookingSummaryOwnerView: View {
                         .foregroundColor(.onBackgroundSB)
                     
                     StarRatingView(
-                        rating: owner.ratingsAverage,
+                        rating: Double(owner.ratingsAverage),
                         imageScale: .small
                     )
                     

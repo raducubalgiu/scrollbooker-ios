@@ -8,34 +8,36 @@
 import SwiftUI
 
 struct MySchedulesSuccessView: View {
-    let viewModel: MySchedulesViewModel
     let schedules: [Schedule]
-    var onBack: () -> Void
-    
+    let isSaving: Bool
+    let onBack: () -> Void
+    let onScheduleChanged: (Schedule) -> Void
+    let onSave: () -> Void
+
     @State private var showErrors = false
-    
+
     private var isFormValid: Bool {
         schedules.allSatisfy { isScheduleValid(start: $0.startTime, end: $0.endTime) }
     }
-    
+
     private var invalidScheduleIds: Set<Int> {
         Set(schedules.filter { !isScheduleValid(start: $0.startTime, end: $0.endTime) }.map { $0.id })
     }
-    
+
     var body: some View {
         FormLayout(
-            headline: String(localized: "schedule"),
-            subHeadline: String(localized: "scheduleSubheaderDescription"),
+            headline: String(localized: "my_business_schedule"),
+            subHeadline: String(localized: "my_business_schedule_full_description"),
             enableBottomButton: true,
             enableBack: true,
             buttonTitle: String(localized: "save"),
-            isDisabled: viewModel.isSaving,
-            isLoading: viewModel.isSaving,
+            isDisabled: isSaving,
+            isLoading: isSaving,
             onBack: onBack,
             onClick: {
                 if isFormValid {
                     showErrors = false
-                    Task { await viewModel.saveSchedules() }
+                    onSave()
                 } else {
                     withAnimation { showErrors = true }
                 }
@@ -49,15 +51,15 @@ struct MySchedulesSuccessView: View {
                             onChange: { start, end in
                                 let cleanStart = start == "null" ? nil : start
                                 let cleanEnd = end == "null" ? nil : end
-                                
+
                                 let updated = Schedule(
                                     id: schedule.id,
                                     dayOfWeek: schedule.dayOfWeek,
                                     startTime: cleanStart,
                                     endTime: cleanEnd
                                 )
-                                
-                                viewModel.updateLocalScheduleRow(updatedSchedule: updated)
+
+                                onScheduleChanged(updated)
                             },
                             isNotValid: invalidScheduleIds.contains(schedule.id),
                             showErrors: showErrors
@@ -69,10 +71,9 @@ struct MySchedulesSuccessView: View {
             }
         }
     }
-    
+
     private func isScheduleValid(start: String?, end: String?) -> Bool {
         guard let start = start, let end = end, start != "null", end != "null" else { return true }
         return start < end
     }
 }
-

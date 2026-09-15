@@ -19,8 +19,6 @@
 "nextStep" = "Pasul următor";
 "location" = "Locație";
 "services" = "Servicii";
-"schedule" = "Programul de lucru";
-"addYourBusinessSchedule" = "Adaugă programul de lucru pentru Business-ului tău";
 "forOthers" = "Pentru alții";
 "forMe" = "Pentru mine";
 "follow" = "Urmărește";
@@ -275,6 +273,7 @@
 "onboarding_business_gallery_description" = "Încarcă cateva imagini de la locație - o prezentare vizuală bună atrage mai mulți clienți";
 "onboarding_business_gallery_skip_hint" = "Poți sări peste acest pas acum și adăugi imagini mai târziu din setările business-ului tău.";
 
+
 /* --- DASHBOARD --- */
 "dashboard" = "Dashboard";
 
@@ -284,8 +283,9 @@
 "my_business_dashboard_description" = "Statistici despre rezervări și postări";
 "my_business_details" = "Detalii business";
 "my_business_details_description" = "Detalii despre afacerea mea";
-"my_business_schedule" = "Program";
+"my_business_schedule" = "Programul de lucru";
 "my_business_schedule_description" = "Detalii despre programul meu";
+"my_business_schedule_full_description" = "Adaugă intervalele orare în care locația ta este deschisă pentru clienți";
 "my_business_services" = "Servicii";
 "my_business_services_description" = "Detalii despre serviciile mele";
 "my_business_categories" = "Categorii";

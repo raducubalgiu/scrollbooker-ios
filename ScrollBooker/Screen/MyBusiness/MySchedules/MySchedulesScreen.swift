@@ -25,9 +25,11 @@ struct MySchedulesScreen: View {
             case .success(let schedules):
                 if !schedules.isEmpty {
                     MySchedulesSuccessView(
-                        viewModel: viewModel,
                         schedules: schedules,
-                        onBack: onBack
+                        isSaving: viewModel.isSaving,
+                        onBack: onBack,
+                        onScheduleChanged: { viewModel.updateLocalScheduleRow(updatedSchedule: $0) },
+                        onSave: { Task { await viewModel.saveSchedules() } }
                     )
                 } else {
                     NoDataView(

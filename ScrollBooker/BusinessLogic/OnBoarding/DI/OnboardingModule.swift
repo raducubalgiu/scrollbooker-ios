@@ -15,6 +15,7 @@ final class OnboardingModule {
     private let getAllPaginatedBusinessTypesUseCase: GetAllPaginatedBusinessTypesUseCase
     private let searchBusinessAddressUseCase: SearchBusinessAddressUseCase
     private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
+    private let getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
 
     init(
         apiClient: APIClient,
@@ -22,7 +23,8 @@ final class OnboardingModule {
         searchUsernameUseCase: SearchUsernameUseCase,
         getAllPaginatedBusinessTypesUseCase: GetAllPaginatedBusinessTypesUseCase,
         searchBusinessAddressUseCase: SearchBusinessAddressUseCase,
-        getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
+        getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase,
+        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
     ) {
         self.apiClient = apiClient
         self.getUserInfoUseCase = getUserInfoUseCase
@@ -30,6 +32,7 @@ final class OnboardingModule {
         self.getAllPaginatedBusinessTypesUseCase = getAllPaginatedBusinessTypesUseCase
         self.searchBusinessAddressUseCase = searchBusinessAddressUseCase
         self.getSelectedDomainsByBusinessUseCase = getSelectedDomainsByBusinessUseCase
+        self.getSchedulesByUserIdUseCase = getSchedulesByUserIdUseCase
     }
 
     private lazy var apiService: OnboardingApiService = {
@@ -54,6 +57,10 @@ final class OnboardingModule {
 
     lazy var collectBusinessServicesUseCase: CollectBusinessServicesUseCase = {
         CollectBusinessServicesUseCase(repository: repository)
+    }()
+
+    lazy var collectBusinessSchedulesUseCase: CollectBusinessSchedulesUseCase = {
+        CollectBusinessSchedulesUseCase(repository: repository)
     }()
 
     func makeCollectUsernameViewModel(session: SessionManager) -> CollectUsernameViewModel {
@@ -87,6 +94,14 @@ final class OnboardingModule {
             session: session,
             getSelectedDomainsByBusinessUseCase: getSelectedDomainsByBusinessUseCase,
             collectBusinessServicesUseCase: collectBusinessServicesUseCase
+        )
+    }
+
+    func makeCollectBusinessSchedulesViewModel(session: SessionManager) -> CollectBusinessSchedulesViewModel {
+        CollectBusinessSchedulesViewModel(
+            session: session,
+            getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
+            collectBusinessSchedulesUseCase: collectBusinessSchedulesUseCase
         )
     }
 }

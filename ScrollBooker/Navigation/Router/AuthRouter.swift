@@ -46,75 +46,170 @@ struct AuthRouter: View {
         switch route {
         case .login:
             LoginScreen(authViewModel: authViewModel)
-            
+
         case .registerClient:
             RegisterScreen(authViewModel: authViewModel)
-            
+
         case .registerBusiness:
             RegisterBusinessScreen(authViewModel: authViewModel)
-            
+
         case .collectEmailValidation:
             CollectEmailVerification(authViewModel: authViewModel)
-            
+
         case .collectUserUsername:
-            CollectUsernameScreen(viewModel: container.onboardingModule.makeCollectUsernameViewModel(session: session))
-            
+            CollectUsernameDestination(container: container, session: session)
+
         case .collectUserPhoneNumber:
             CollectPhoneNumberScreen()
-            
+
         case .collectClientBirthdate:
             CollectBirthdateScreen()
-            
+
         case .collectClientGender:
             CollectGenderScreen()
-            
+
         case .collectClientLocationPermission:
             CollectLocationPermissionScreen()
-            
+
         case .collectBusiness:
             CollectBusinessTypeScreen(
                 viewModel: collectBusinessViewModel,
                 onNext: { path.append(.collectBusinessDetails) }
             )
-            
+
         case .collectBusinessDetails:
             CollectBusinessDetailsScreen(
                 viewModel: collectBusinessViewModel,
                 onBack: { path.removeLast() },
                 onNext: { path.append(.collectBusinessLocation) }
             )
-            
+
         case .collectBusinessLocation:
             CollectBusinessLocationScreen(
                 viewModel: collectBusinessViewModel,
                 onBack: { path.removeLast() }
             )
-            
+
         case .collectBusinessGallery:
-            CollectBusinessGalleryScreen(
-                viewModel: container.onboardingModule.makeCollectBusinessGalleryViewModel(session: session),
+            CollectBusinessGalleryDestination(
+                container: container,
+                session: session,
                 onBack: { path.removeLast() }
             )
-            
+
         case .collectBusinessServices:
-            CollectBusinessServicesScreen(
-                viewModel: container.onboardingModule.makeCollectBusinessServicesViewModel(session: session),
+            CollectBusinessServicesDestination(
+                container: container,
+                session: session,
                 onBack: { path.removeLast() }
             )
-            
+
         case .collectBusinessSchedules:
-            CollectBusinessSchedulesScreen()
-            
+            CollectBusinessSchedulesDestination(
+                container: container,
+                session: session,
+                onBack: { path.removeLast() }
+            )
+
         case .collectBusinessHasEmployees:
             CollectBusinessHasEmployeesScreen()
-            
+
         case .collectBusinessValidation:
             CollectBusinessValidationScreen()
-            
+
         case .collectBusinessCurrencies:
             EmptyView()
         }
     }
 }
 
+private struct CollectUsernameDestination: View {
+    let container: AppContainer
+    let session: SessionManager
 
+    @State private var viewModel: CollectUsernameViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectUsernameScreen(viewModel: viewModel)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectUsernameViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectBusinessGalleryDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectBusinessGalleryViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectBusinessGalleryScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectBusinessGalleryViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectBusinessServicesDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectBusinessServicesViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectBusinessServicesScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectBusinessServicesViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectBusinessSchedulesDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectBusinessSchedulesViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectBusinessSchedulesScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectBusinessSchedulesViewModel(session: session)
+            }
+        }
+    }
+}

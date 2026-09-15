@@ -12,6 +12,7 @@ protocol OnboardingApiService: Sendable {
     func collectBusiness(request: BusinessCreateRequestDTO) async throws -> BusinessCreateResponseDTO
     func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthStateDTO
     func collectBusinessServices(request: ServiceIdsUpdateRequestDTO) async throws -> AuthStateDTO
+    func collectBusinessSchedules(schedules: [ScheduleDto]) async throws -> AuthStateDTO
 }
 
 final class OnboardingAPIImpl: OnboardingApiService {
@@ -52,6 +53,14 @@ final class OnboardingAPIImpl: OnboardingApiService {
             "onboarding/collect-business-services",
             method: .patch,
             body: request
+        )
+    }
+
+    func collectBusinessSchedules(schedules: [ScheduleDto]) async throws -> AuthStateDTO {
+        try await client.request(
+            "onboarding/collect-business-schedules",
+            method: .patch,
+            body: schedules
         )
     }
 }

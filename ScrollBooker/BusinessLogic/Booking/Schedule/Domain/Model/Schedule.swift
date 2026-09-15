@@ -27,6 +27,11 @@ extension Schedule {
         )
     }
     
+    var isValid: Bool {
+        guard let start = startTime, let end = endTime, start != "null", end != "null" else { return true }
+        return start < end
+    }
+
     var localizedDayOfWeek: String {
         switch dayOfWeek {
             case "Monday":    return String(localized: "monday", defaultValue: "Luni")

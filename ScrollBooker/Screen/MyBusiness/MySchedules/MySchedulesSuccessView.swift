@@ -17,11 +17,11 @@ struct MySchedulesSuccessView: View {
     @State private var showErrors = false
 
     private var isFormValid: Bool {
-        schedules.allSatisfy { isScheduleValid(start: $0.startTime, end: $0.endTime) }
+        schedules.allSatisfy(\.isValid)
     }
 
     private var invalidScheduleIds: Set<Int> {
-        Set(schedules.filter { !isScheduleValid(start: $0.startTime, end: $0.endTime) }.map { $0.id })
+        Set(schedules.filter { !$0.isValid }.map { $0.id })
     }
 
     var body: some View {
@@ -70,10 +70,5 @@ struct MySchedulesSuccessView: View {
                 .padding(.horizontal, .xl)
             }
         }
-    }
-
-    private func isScheduleValid(start: String?, end: String?) -> Bool {
-        guard let start = start, let end = end, start != "null", end != "null" else { return true }
-        return start < end
     }
 }

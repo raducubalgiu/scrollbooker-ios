@@ -11,6 +11,7 @@ protocol BusinessApiService: Sendable {
     func getBusinessesSheet(page: Int, limit: Int, request: SearchBusinessRequest) async throws -> PaginatedResponseDTO<BusinessSheetDto>
     func getBusinessesMarkers(request: SearchBusinessRequest) async throws -> [BusinessMarkerDto]
     func getBusinessProfile(username: String) async throws -> BusinessProfileDto
+    func getMyBusinessDetails() async throws -> BusinessDetailsDto
     func getUnapprovedBusinesses(page: Int, limit: Int) async throws -> PaginatedResponseDTO<UnapprovedBusinessDto>
     func approveBusiness(userId: Int) async throws -> NoContent
     func searchBusinessAddress(query: String) async throws -> [BusinessAddressDto]
@@ -49,6 +50,13 @@ final class BusinessAPIImpl: BusinessApiService {
     func getBusinessProfile(username: String) async throws -> BusinessProfileDto {
         return try await client.request(
             "businesses/\(username)/profile",
+            method: .get
+        )
+    }
+
+    func getMyBusinessDetails() async throws -> BusinessDetailsDto {
+        return try await client.request(
+            "businesses/my-business-details",
             method: .get
         )
     }

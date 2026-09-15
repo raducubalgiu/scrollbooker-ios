@@ -72,12 +72,15 @@ final class AppContainer {
         self.userProfileModule = userProfileModule
         let businessTypeModule = BusinessTypeModule(apiClient: apiClient)
         self.businessTypeModule = businessTypeModule
-        let businessModule = BusinessModule(apiClient: apiClient)
+        let scheduleModule = ScheduleModule(apiClient: apiClient)
+        self.scheduleModule = scheduleModule
+        let businessModule = BusinessModule(
+            apiClient: apiClient,
+            updateSchedulesUseCase: scheduleModule.updateSchedulesUseCase
+        )
         self.businessModule = businessModule
         let servieDomainModule = ServiceDomainModule(apiClient: apiClient)
         self.servieDomainModule = servieDomainModule
-        let scheduleModule = ScheduleModule(apiClient: apiClient)
-        self.scheduleModule = scheduleModule
         self.onboardingModule = OnboardingModule(
             apiClient: apiClient,
             getUserInfoUseCase: userInfoModule.getUserInfoUseCase,

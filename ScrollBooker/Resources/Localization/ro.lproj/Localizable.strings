@@ -164,6 +164,11 @@
 "yourBusinessName" = "Numele business-ului tău";
 "onboarding_business_location_title" = "Adresa locației";
 "photoGallery" = "Galerie foto";
+"summary" = "Sumar";
+"schedule" = "Programul de lucru";
+"scheduleShort" = "Program";
+"businessHasEmployeesLabel" = "Are angajați";
+"businessNoEmployeesLabel" = "Lucrează fără angajați";
 "onboarding_has_employee_title" = "Ai angajați care primesc programări?";
 "onboarding_has_employee_yes" = "DA, am angajați care primesc programări";
 "onboarding_has_employee_yes_description" = "Daca da, fiecare angajat va avea propriul calendar și își va gestiona propriile produse separat.";

@@ -102,6 +102,7 @@ struct ProfileTabRouter: View {
                         
                     case .myBusinessDetails:
                         return MyBusinessDetailsScreen(
+                            viewModel: container.businessModule.makeMyBusinessDetailsViewModel(session: session),
                             onBack: { router.pop() }
                         )
 

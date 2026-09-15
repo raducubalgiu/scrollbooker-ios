@@ -9,7 +9,7 @@ extension UserProfileAbout {
     init(dto: UserProfileAboutDto) {
         self.description = dto.description
         self.schedules = dto.schedules.map { Schedule(dto: $0) }
-        self.location = BusinessLocation(from: dto.location)
+        self.location = BusinessLocation(dto: dto.location)
         self.owner = UserProfileAboutOwner(dto: dto.owner)
         self.businessMedia = dto.businessMedia.map { BusinessMediaFile(dto: $0) }
     }

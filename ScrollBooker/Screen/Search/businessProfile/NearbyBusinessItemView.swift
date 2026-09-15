@@ -52,7 +52,7 @@ struct NearbyBusinessItemView: View {
                 .foregroundColor(.gray)
                 .lineLimit(1)
             
-            Text(location.formattedAddress)
+            Text(location.formattedAddress ?? location.address)
                 .font(.subheadline)
                 .foregroundColor(.gray)
                 .lineLimit(1)

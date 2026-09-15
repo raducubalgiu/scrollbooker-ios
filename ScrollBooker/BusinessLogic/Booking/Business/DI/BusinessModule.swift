@@ -10,9 +10,11 @@ import Foundation
 @MainActor
 final class BusinessModule {
     private let apiClient: APIClient
+    private let updateSchedulesUseCase: UpdateSchedulesUseCase
 
-    init(apiClient: APIClient) {
+    init(apiClient: APIClient, updateSchedulesUseCase: UpdateSchedulesUseCase) {
         self.apiClient = apiClient
+        self.updateSchedulesUseCase = updateSchedulesUseCase
     }
 
     private lazy var apiService: BusinessApiService = {
@@ -33,6 +35,10 @@ final class BusinessModule {
     
     private lazy var getBusinessProfileUseCase: GetBusinessProfileUseCase = {
         GetBusinessProfileUseCase(repository: repository)
+    }()
+
+    lazy var getMyBusinessDetailsUseCase: GetMyBusinessDetailsUseCase = {
+        GetMyBusinessDetailsUseCase(repository: repository)
     }()
 
     private lazy var getUnapprovedBusinessesUseCase: GetUnapprovedBusinessesUseCase = {
@@ -72,6 +78,15 @@ final class BusinessModule {
         UnapprovedBusinessesViewModel(
             getUnapprovedBusinessesUseCase: getUnapprovedBusinessesUseCase,
             approveBusinessUseCase: approveBusinessUseCase
+        )
+    }
+
+    func makeMyBusinessDetailsViewModel(session: SessionManager) -> MyBusinessDetailsViewModel {
+        MyBusinessDetailsViewModel(
+            session: session,
+            getMyBusinessDetailsUseCase: getMyBusinessDetailsUseCase,
+            updateBusinessGalleryUseCase: updateBusinessGalleryUseCase,
+            updateSchedulesUseCase: updateSchedulesUseCase
         )
     }
 }

@@ -162,7 +162,7 @@ struct BusinessProfileScreen: View {
                 owner: profile.owner,
                 distance: profile.distanceKm,
                 address: profile.location.address,
-                formattedAddress: profile.location.formattedAddress,
+                formattedAddress: profile.location.formattedAddress ?? profile.location.address,
                 openingHours: profile.openingHours,
                 isFollow: profile.owner.isFollow,
                 isFollowEnabled: true,

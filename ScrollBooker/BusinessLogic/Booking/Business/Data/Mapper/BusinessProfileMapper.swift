@@ -13,7 +13,7 @@ extension BusinessProfile {
         self.owner = BusinessProfileOwner(from: dto.owner)
         self.openingHours = OpeningHours(dto: dto.openingHours)
         self.mediaFiles = dto.mediaFiles.map { BusinessMediaFile(from: $0) }
-        self.location = BusinessLocation(from: dto.location)
+        self.location = BusinessLocation(dto: dto.location)
         self.distanceKm = dto.distanceKm
         self.description = dto.description
         self.employees = dto.employees.map { BusinessProfileEmployee(from: $0) }
@@ -54,15 +54,6 @@ extension BusinessProfileOwner {
         self.avatar = dto.avatar
         self.counters = BusinessProfileCounters(from: dto.counters)
         self.isFollow = dto.isFollow
-    }
-}
-
-extension BusinessLocation {
-    init(from dto: BusinessLocationDto) {
-        self.address = dto.address
-        self.formattedAddress = dto.formattedAddress
-        self.coordinates = dto.coordinates
-        self.mapUrl = dto.mapUrl
     }
 }
 
@@ -129,7 +120,7 @@ extension NearbyBusiness {
         self.id = dto.id
         self.owner = NearbyBusinessOwner(from: dto.owner)
         self.mediaFiles = dto.mediaFiles.map { BusinessMediaFile(from: $0) }
-        self.location = BusinessLocation(from: dto.location)
+        self.location = BusinessLocation(dto: dto.location)
         self.distanceKm = dto.distanceKm
     }
 }

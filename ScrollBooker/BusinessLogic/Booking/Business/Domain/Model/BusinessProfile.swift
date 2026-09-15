@@ -51,13 +51,6 @@ struct BusinessProfileOwner: Identifiable, Equatable, Hashable, Sendable {
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
-struct BusinessLocation: Equatable, Hashable, Sendable {
-    let address: String
-    let formattedAddress: String
-    let coordinates: BusinessCoordinates
-    let mapUrl: String?
-}
-
 struct BusinessProfileCounters: Equatable, Hashable, Sendable {
     let followersCount: Int
     let followingsCount: Int

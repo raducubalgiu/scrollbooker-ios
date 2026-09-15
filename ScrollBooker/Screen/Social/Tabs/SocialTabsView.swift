@@ -26,6 +26,7 @@ struct SocialTabsView: View {
                                 .font(.subheadline)
                                 .fontWeight(selectedTab == tab ? .bold : .medium)
                                 .foregroundStyle(selectedTab == tab ? Color.primary : Color.secondary)
+                                .padding(.vertical, .s)
                             
                             ZStack {
                                 if selectedTab == tab {

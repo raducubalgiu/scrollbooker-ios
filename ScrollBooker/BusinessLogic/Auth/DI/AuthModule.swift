@@ -62,6 +62,7 @@ final class AuthModule {
         IsLoggedInUseCase(
             store: store,
             getUserInfoUseCase: getUserInfoUseCase,
+            getUserPermissionsUseCase: getUserPermissionsUseCase,
             refreshSessionUseCase: refreshSessionUseCase
         )
     }()

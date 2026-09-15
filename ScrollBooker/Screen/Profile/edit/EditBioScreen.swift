@@ -53,7 +53,7 @@ struct EditBioScreen: View {
             VStack {
                 Textarea(
                     text: $newBio,
-                    placeholder: String(localized: "writeSomethingAboutYou"),
+                    placeholder: String(localized: "edit_bio_placeholder"),
                     label: String(localized: "aboutYou"),
                     isError: errorMessage != nil,
                     errorMessage: errorMessage ?? "",

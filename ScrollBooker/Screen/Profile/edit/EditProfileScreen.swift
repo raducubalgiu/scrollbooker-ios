@@ -119,7 +119,7 @@ struct EditProfileScreen: View {
                     onNavigate(.editBirthdate)
                 } label: {
                     HStack {
-                        Text(String(localized: "birthdate"))
+                        Text(String(localized: "dateOfBirth"))
                             .font(.subheadline.bold())
                             .foregroundColor(.onBackgroundSB)
                         

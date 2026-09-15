@@ -12,62 +12,94 @@ private var myBusinessPages = [
         title: String(localized: "my_business_dashboard"),
         description: String(localized: "my_business_dashboard_description"),
         icon: "square.grid.2x2",
-        route: .myDashboard
+        route: .myDashboard,
+        permission: .myDashboardView
     ),
 
     MyBusinessPage(
         title: String(localized: "my_business_unapproved"),
         description: String(localized: "my_business_unapproved_description"),
         icon: "building.2",
-        route: .unapprovedBusinesses
+        route: .unapprovedBusinesses,
+        permission: .nomenclaturesView
     ),
 
     MyBusinessPage(
         title: String(localized: "my_business_details"),
         description: String(localized: "my_business_details_description"),
         icon: "location",
-        route: .myBusinessDetails
+        route: .myBusinessDetails,
+        permission: .myBusinessLocationView
     ),
 
     MyBusinessPage(
         title: String(localized: "my_business_schedule"),
         description: String(localized: "my_business_schedule_description"),
         icon: "clock",
-        route: .mySchedules
+        route: .mySchedules,
+        permission: .mySchedulesView
+    ),
+    
+    MyBusinessPage(
+        title: String(localized: "my_business_categories"),
+        description: String(localized: "my_business_categories_description"),
+        icon: "book.closed",
+        route: .myServices,
+        permission: .myServicesView
     ),
 
     MyBusinessPage(
         title: String(localized: "my_business_services"),
         description: String(localized: "my_business_services_description"),
         icon: "bag",
-        route: .myProducts
-    ),
-
-    MyBusinessPage(
-        title: String(localized: "my_business_categories"),
-        description: String(localized: "my_business_categories_description"),
-        icon: "book.closed",
-        route: .myServices
+        route: .myProducts,
+        permission: .myProductsView
     ),
 
     MyBusinessPage(
         title: String(localized: "my_business_calendar"),
         description: String(localized: "my_business_calendar_description"),
         icon: "calendar",
-        route: .myCalendar
+        route: .myCalendar,
+        permission: .myCalendarView
     ),
 
     MyBusinessPage(
         title: String(localized: "my_business_employees"),
         description: String(localized: "my_business_employees_description"),
         icon: "person.2",
-        route: .myEmployees
+        route: .myEmployees,
+        permission: .myEmployeesView
     ),
 ]
 
 struct MyBusinessScreen: View {
     var onNavigate: (Route) -> Void
     var onBack: () -> Void
+
+    @Environment(SessionManager.self) private var session
+
+    private var isEmployee: Bool {
+        guard let userInfo = session.userInfo, let businessOwnerId = userInfo.businessOwnerId else {
+            return false
+        }
+        return userInfo.id != businessOwnerId
+    }
+
+    private var visiblePages: [MyBusinessPage] {
+        myBusinessPages.filter { page in
+            switch page.permission {
+            case .myEmployeesView:
+                guard session.userInfo?.hasEmployees == true else { return false }
+            case .mySchedulesView:
+                guard isEmployee else { return false }
+            default:
+                break
+            }
+
+            return session.hasPermission(page.permission)
+        }
+    }
 
     var body: some View {
         HeaderView(
@@ -82,7 +114,7 @@ struct MyBusinessScreen: View {
 
         ScrollView {
             LazyVGrid(columns: columns, spacing: 8) {
-                ForEach(myBusinessPages) { page in
+                ForEach(visiblePages) { page in
                     MyBusinessCardView(
                         title: page.title,
                         description: page.description,
@@ -103,4 +135,5 @@ struct MyBusinessPage: Identifiable {
     let description: String
     let icon: String
     let route: Route
+    let permission: PermissionEnum
 }

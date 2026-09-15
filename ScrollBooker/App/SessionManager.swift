@@ -38,6 +38,14 @@ final class SessionManager {
         auth.accessToken
     }
 
+    var permissions: [PermissionEnum] {
+        PermissionEnum.fromKeys(auth.permissions)
+    }
+
+    func hasPermission(_ permission: PermissionEnum) -> Bool {
+        permissions.has(permission)
+    }
+
     init(
         store: AuthStore = AuthStore(),
         refreshSessionUseCase: RefreshSessionUseCase,

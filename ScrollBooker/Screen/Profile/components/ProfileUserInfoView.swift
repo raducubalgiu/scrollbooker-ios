@@ -30,11 +30,11 @@ struct ProfileUserInfoView: View {
                 
                 HStack(spacing: 6) {
                     Text(profession)
-                        .font(.subheadline)
+                        .font(.footnote)
                         .foregroundColor(.gray)
                     
                     Image(systemName: "star.fill")
-                        .foregroundColor(.primarySB)
+                        .foregroundColor(.ratingSB)
                     
                     Text("\(ratingsAverage.formatRating())")
                         .font(.headline.bold())
@@ -48,7 +48,7 @@ struct ProfileUserInfoView: View {
                             .foregroundColor(.onBackgroundSB)
                         
                         Text(openingHours.formattedStatus)
-                            .font(.subheadline)
+                            .font(.footnote.bold())
                             .foregroundColor(.onBackgroundSB)
                         
                         Image(systemName: "chevron.down")

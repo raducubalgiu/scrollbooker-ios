@@ -22,24 +22,9 @@ struct ProfileCounterView: View {
                     .fontWeight(.bold)
                     .foregroundColor(.onBackgroundSB)
                 Text(label)
-                    .font(.subheadline)
-                    .foregroundColor(.onBackgroundSB)
+                    .font(.footnote)
+                    .foregroundColor(.gray)
             }
         }
     }
-}
-
-#Preview("Light") {
-    ProfileCounterView(
-        label: "Recenzii",
-        onClick: {}
-    )
-}
-
-#Preview("Dark") {
-    ProfileCounterView(
-        label: "Recenzii",
-        onClick: {}
-    )
-        .preferredColorScheme(.dark)
 }

@@ -7,41 +7,65 @@
 
 import SwiftUI
 
+private struct ProfileMenuItem: Identifiable {
+    let id = UUID()
+    let title: String
+    let icon: String
+    let permission: PermissionEnum
+    let onClick: () -> Void
+}
+
 struct ProfileMenuSheetView: View {
     @Binding var showMenuSheet: Bool
-    
+
     var onCreatePost: () -> Void
     var onNavigateToMyBusiness: () -> Void
     var onNavigateToSettings: () -> Void
-    
+
+    @Environment(SessionManager.self) private var session
     @State private var measuredHeight: CGFloat = 0
-    
-    var body: some View {
-        VStack {
-            ListItemView(
-                title: "Creaza o postare",
-                leadingIcon: "camera",
+
+    private var links: [ProfileMenuItem] {
+        [
+            ProfileMenuItem(
+                title: String(localized: "createPost"),
+                icon: "camera",
+                permission: .postCreate,
                 onClick: {
                     showMenuSheet = false
                     onCreatePost()
-                },
-                showTrailingIcon: false
-            )
-            .padding(.horizontal)
-            
-            ListItemView(
-                title: "Afacerea mea",
-                leadingIcon: "bag",
+                }
+            ),
+            ProfileMenuItem(
+                title: String(localized: "myBusiness"),
+                icon: "bag",
+                permission: .myBusinessRoutesView,
                 onClick: {
                     showMenuSheet = false
                     onNavigateToMyBusiness()
-                },
-                showTrailingIcon: false
+                }
             )
-            .padding(.horizontal)
-            
+        ]
+    }
+
+    private var visibleLinks: [ProfileMenuItem] {
+        links.filter { session.hasPermission($0.permission) }
+    }
+
+    var body: some View {
+        VStack {
+            ForEach(visibleLinks) { link in
+                ListItemView(
+                    title: link.title,
+                    leadingIcon: link.icon,
+                    onClick: link.onClick,
+                    showTrailingIcon: false
+                )
+                .padding(.horizontal)
+            }
+
             ListItemView(
-                title: "Setari",
+                title: String(localized: "settings"),
                 leadingIcon: "gearshape",
                 onClick: {
                     showMenuSheet = false
@@ -68,7 +92,3 @@ struct ProfileMenuSheetView: View {
         .presentationCornerRadius(25)
     }
 }
-
-//#Preview {
-//    ProfileMenuSheet()
-//}

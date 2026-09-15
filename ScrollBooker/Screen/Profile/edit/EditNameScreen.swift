@@ -54,7 +54,7 @@ struct EditNameScreen: View {
                 InputEdit(
                     text: $newFullName,
                     placeholder: String(localized: "yourName"),
-                    label: String(localized: "fullname"),
+                    label: String(localized: "name"),
                     isError: errorMessage != nil,
                     errorMessage: errorMessage ?? "",
                     isDisabled: viewModel.isLoading,

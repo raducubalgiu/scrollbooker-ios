@@ -46,9 +46,10 @@
 "addNewProduct" = "Adaugă un produs nou";
 "myProducts" = "Produsele mele";
 "myServices" = "Serviciile mele";
+"createPost" = "Creează o postare";
+"myBusiness" = "Afacerea mea";
 "mySchedule" = "Programul meu de lucru";
 "name" = "Nume";
-"editProfile" = "Editează profilul";
 "somethingWentWrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";
 "noInternetConnection" = "Fără conexiune la internet";
 "errorOccurred" = "A apărut o eroare";
@@ -272,6 +273,10 @@
 "period_three_months" = "3 luni";
 "period_six_months" = "6 luni";
 "period_one_year" = "1 an";
+
+/* --- EDIT PROFILE --- */
+"editProfile" = "Editează profilul";
+"edit_bio_placeholder" = "Scrie ceva despre tine..";
 
 /* --- ONBOARDING --- */
 "onboarding_username_title" = "Nume de utilizator";

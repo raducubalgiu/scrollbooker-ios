@@ -92,6 +92,22 @@ actor AuthStore {
         }
     }
 
+    // Update userInfo + permissions only (tokens unchanged) — folosit la bootstrap.
+    func updateUserSession(userInfo: UserInfo, permissions: [String]) {
+        snapshot.cachedUserInfo = userInfo
+        snapshot.permissions = permissions
+        subject.send(snapshot)
+
+        Task.detached { [defaults] in
+            if let data = try? JSONEncoder().encode(userInfo) {
+                defaults.set(data, forKey: K.cachedUserInfo)
+            }
+            if let data = try? JSONEncoder().encode(permissions) {
+                defaults.set(data, forKey: K.permissions)
+            }
+        }
+    }
+
     func current() -> AuthSnapshot { snapshot }
 
     func refreshTokens(accessToken: String, refreshToken: String) {

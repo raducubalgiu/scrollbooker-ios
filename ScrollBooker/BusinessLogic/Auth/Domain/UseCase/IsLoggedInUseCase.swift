@@ -20,16 +20,19 @@ import OSLog
 final class IsLoggedInUseCase {
     private let store: AuthStore
     private let getUserInfoUseCase: GetUserInfoUseCase
+    private let getUserPermissionsUseCase: GetUserPermissionsUseCase
     private let refreshSessionUseCase: RefreshSessionUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Session")
 
     init(
         store: AuthStore,
         getUserInfoUseCase: GetUserInfoUseCase,
+        getUserPermissionsUseCase: GetUserPermissionsUseCase,
         refreshSessionUseCase: RefreshSessionUseCase
     ) {
         self.store = store
         self.getUserInfoUseCase = getUserInfoUseCase
+        self.getUserPermissionsUseCase = getUserPermissionsUseCase
         self.refreshSessionUseCase = refreshSessionUseCase
     }
 
@@ -47,7 +50,12 @@ final class IsLoggedInUseCase {
                 await store.refreshTokens(accessToken: refreshed.accessToken, refreshToken: refreshed.refreshToken)
             }
 
-            let userInfo = try await getUserInfoUseCase()
+            async let userInfoTask = getUserInfoUseCase()
+            async let permissionsTask = getUserPermissionsUseCase()
+            let (userInfo, permissions) = try await (userInfoTask, permissionsTask)
+
+            await store.updateUserSession(userInfo: userInfo, permissions: permissions.map(\.code))
+
             return .authenticated(userInfo)
 
         } catch {

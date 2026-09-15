@@ -77,7 +77,11 @@ struct AuthRouter: View {
             )
 
         case .collectClientLocationPermission:
-            CollectLocationPermissionScreen()
+            CollectLocationPermissionDestination(
+                container: container,
+                session: session,
+                onBack: { path.removeLast() }
+            )
 
         case .collectBusiness:
             CollectBusinessTypeScreen(
@@ -198,6 +202,29 @@ private struct CollectGenderDestination: View {
         .onAppear {
             if viewModel == nil {
                 viewModel = container.onboardingModule.makeCollectGenderViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectLocationPermissionDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectLocationPermissionViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectLocationPermissionScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectLocationPermissionViewModel(session: session)
             }
         }
     }

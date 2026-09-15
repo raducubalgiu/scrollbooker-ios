@@ -239,6 +239,8 @@
 "close" = "Închide";
 "locationPermission" = "Permisiunea locației";
 "locationPermissionDescription" = "Ne ajută să îți oferim servicii din apropiere și să îți personalizăm experiența";
+"allowLocationAccess" = "Permite accesul la locație";
+"notNow" = "Nu acum";
 "bookings" = "Rezervări";
 "seeAllProducts" = "Vezi toate produsele";
 "nearestServices" = "Servicii în apropiere";

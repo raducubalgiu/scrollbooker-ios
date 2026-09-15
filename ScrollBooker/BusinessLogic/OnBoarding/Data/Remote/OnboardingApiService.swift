@@ -11,6 +11,7 @@ protocol OnboardingApiService: Sendable {
     func collectUserUsername(request: UpdateUsernameRequest) async throws -> AuthStateDTO
     func collectClientBirthdate(request: UpdateBirthDateRequest) async throws -> AuthStateDTO
     func collectClientGender(request: UpdateGenderRequest) async throws -> AuthStateDTO
+    func collectClientLocationPermission() async throws -> AuthStateDTO
     func collectBusiness(request: BusinessCreateRequestDTO) async throws -> BusinessCreateResponseDTO
     func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthStateDTO
     func collectBusinessServices(request: ServiceIdsUpdateRequestDTO) async throws -> AuthStateDTO
@@ -46,6 +47,13 @@ final class OnboardingAPIImpl: OnboardingApiService {
             "onboarding/collect-client-gender",
             method: .patch,
             body: request
+        )
+    }
+
+    func collectClientLocationPermission() async throws -> AuthStateDTO {
+        try await client.request(
+            "onboarding/collect-user-location-permission",
+            method: .patch
         )
     }
 

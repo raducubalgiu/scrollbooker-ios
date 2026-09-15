@@ -55,6 +55,10 @@ final class OnboardingModule {
         CollectClientGenderUseCase(repository: repository)
     }()
 
+    lazy var collectClientLocationPermissionUseCase: CollectClientLocationPermissionUseCase = {
+        CollectClientLocationPermissionUseCase(repository: repository)
+    }()
+
     lazy var collectBusinessUseCase: CollectBusinessUseCase = {
         CollectBusinessUseCase(repository: repository)
     }()
@@ -95,6 +99,13 @@ final class OnboardingModule {
         CollectGenderViewModel(
             session: session,
             collectClientGenderUseCase: collectClientGenderUseCase
+        )
+    }
+
+    func makeCollectLocationPermissionViewModel(session: SessionManager) -> CollectLocationPermissionViewModel {
+        CollectLocationPermissionViewModel(
+            session: session,
+            collectClientLocationPermissionUseCase: collectClientLocationPermissionUseCase
         )
     }
 

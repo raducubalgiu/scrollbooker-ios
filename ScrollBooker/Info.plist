@@ -8,5 +8,7 @@
 	<string>$(API_SCHEME)</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>Aplicația are nevoie de acces la galerie pentru a selecta clipuri video pentru postări.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Folosim locația ta pentru a-ți arăta postări și programări relevante din zona ta.</string>
 </dict>
 </plist>

@@ -11,6 +11,7 @@ protocol OnboardingRepository: Sendable {
     func collectUserUsername(username: String) async throws -> AuthState
     func collectClientBirthdate(birthdate: String?) async throws -> AuthState
     func collectClientGender(gender: String) async throws -> AuthState
+    func collectClientLocationPermission() async throws -> AuthState
     func collectBusiness(
         description: String?,
         placeId: String,

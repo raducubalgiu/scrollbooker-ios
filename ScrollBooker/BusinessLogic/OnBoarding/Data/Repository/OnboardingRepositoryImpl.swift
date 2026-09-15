@@ -29,6 +29,11 @@ final class OnboardingRepositoryImpl: OnboardingRepository {
         return AuthState(dto: dto)
     }
 
+    func collectClientLocationPermission() async throws -> AuthState {
+        let dto = try await api.collectClientLocationPermission()
+        return AuthState(dto: dto)
+    }
+
     func collectBusiness(
         description: String?,
         placeId: String,

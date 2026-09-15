@@ -74,12 +74,15 @@ final class AppContainer {
         self.businessTypeModule = businessTypeModule
         let businessModule = BusinessModule(apiClient: apiClient)
         self.businessModule = businessModule
+        let servieDomainModule = ServiceDomainModule(apiClient: apiClient)
+        self.servieDomainModule = servieDomainModule
         self.onboardingModule = OnboardingModule(
             apiClient: apiClient,
             getUserInfoUseCase: userInfoModule.getUserInfoUseCase,
             searchUsernameUseCase: userProfileModule.searchUsernameUseCase,
             getAllPaginatedBusinessTypesUseCase: businessTypeModule.getAllPaginatedBusinessTypesUseCase,
-            searchBusinessAddressUseCase: businessModule.searchBusinessAddressUseCase
+            searchBusinessAddressUseCase: businessModule.searchBusinessAddressUseCase,
+            getSelectedDomainsByBusinessUseCase: servieDomainModule.getSelectedDomainsByBusinessUseCase
         )
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
@@ -95,7 +98,6 @@ final class AppContainer {
         self.searchModule = SearchModule(apiClient: apiClient)
         self.employeesModule = EmployeesModule(apiClient: apiClient)
         self.employmentRequestModule = EmploymentRequestModule(apiClient: apiClient)
-        self.servieDomainModule = ServiceDomainModule(apiClient: apiClient)
         self.reviewModule = ReviewModule(apiClient: apiClient)
         self.appointmentModule = AppointmentModule(apiClient: apiClient)
         self.notificationModule = NotificationModule(apiClient: apiClient)

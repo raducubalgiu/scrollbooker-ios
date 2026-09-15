@@ -11,6 +11,7 @@ protocol OnboardingApiService: Sendable {
     func collectUserUsername(request: UpdateUsernameRequest) async throws -> AuthStateDTO
     func collectBusiness(request: BusinessCreateRequestDTO) async throws -> BusinessCreateResponseDTO
     func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthStateDTO
+    func collectBusinessServices(request: ServiceIdsUpdateRequestDTO) async throws -> AuthStateDTO
 }
 
 final class OnboardingAPIImpl: OnboardingApiService {
@@ -43,6 +44,14 @@ final class OnboardingAPIImpl: OnboardingApiService {
             query: ["skip_update_gallery": skipUpdateGallery ? "true" : "false"],
             fields: [:],
             files: MultipartFile.compressedJPEGs(photos)
+        )
+    }
+
+    func collectBusinessServices(request: ServiceIdsUpdateRequestDTO) async throws -> AuthStateDTO {
+        try await client.request(
+            "onboarding/collect-business-services",
+            method: .patch,
+            body: request
         )
     }
 }

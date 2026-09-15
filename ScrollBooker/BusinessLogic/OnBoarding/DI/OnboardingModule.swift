@@ -14,19 +14,22 @@ final class OnboardingModule {
     private let searchUsernameUseCase: SearchUsernameUseCase
     private let getAllPaginatedBusinessTypesUseCase: GetAllPaginatedBusinessTypesUseCase
     private let searchBusinessAddressUseCase: SearchBusinessAddressUseCase
+    private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
 
     init(
         apiClient: APIClient,
         getUserInfoUseCase: GetUserInfoUseCase,
         searchUsernameUseCase: SearchUsernameUseCase,
         getAllPaginatedBusinessTypesUseCase: GetAllPaginatedBusinessTypesUseCase,
-        searchBusinessAddressUseCase: SearchBusinessAddressUseCase
+        searchBusinessAddressUseCase: SearchBusinessAddressUseCase,
+        getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
     ) {
         self.apiClient = apiClient
         self.getUserInfoUseCase = getUserInfoUseCase
         self.searchUsernameUseCase = searchUsernameUseCase
         self.getAllPaginatedBusinessTypesUseCase = getAllPaginatedBusinessTypesUseCase
         self.searchBusinessAddressUseCase = searchBusinessAddressUseCase
+        self.getSelectedDomainsByBusinessUseCase = getSelectedDomainsByBusinessUseCase
     }
 
     private lazy var apiService: OnboardingApiService = {
@@ -47,6 +50,10 @@ final class OnboardingModule {
 
     lazy var collectBusinessGalleryUseCase: CollectBusinessGalleryUseCase = {
         CollectBusinessGalleryUseCase(repository: repository)
+    }()
+
+    lazy var collectBusinessServicesUseCase: CollectBusinessServicesUseCase = {
+        CollectBusinessServicesUseCase(repository: repository)
     }()
 
     func makeCollectUsernameViewModel(session: SessionManager) -> CollectUsernameViewModel {
@@ -72,6 +79,14 @@ final class OnboardingModule {
         CollectBusinessGalleryViewModel(
             session: session,
             collectBusinessGalleryUseCase: collectBusinessGalleryUseCase
+        )
+    }
+
+    func makeCollectBusinessServicesViewModel(session: SessionManager) -> CollectBusinessServicesViewModel {
+        CollectBusinessServicesViewModel(
+            session: session,
+            getSelectedDomainsByBusinessUseCase: getSelectedDomainsByBusinessUseCase,
+            collectBusinessServicesUseCase: collectBusinessServicesUseCase
         )
     }
 }

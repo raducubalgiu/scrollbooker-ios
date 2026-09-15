@@ -8,23 +8,43 @@
 import SwiftUI
 
 struct CollectBusinessServicesScreen: View {
+    @Bindable var viewModel: CollectBusinessServicesViewModel
+    let onBack: () -> Void
+
     var body: some View {
         FormLayout(
-            headline: "Servicii",
-            subHeadline: "Adauga serviciile pe care le desfasori la locatie",
-            buttonTitle: "Pasul urmator",
-            onBack: {}
+            headline: String(localized: "my_business_categories"),
+            subHeadline: String(localized: "my_business_categories_full_description"),
+            enableBack: true,
+            buttonTitle: String(localized: "nextStep"),
+            isDisabled: !viewModel.isSubmitEnabled,
+            isLoading: viewModel.isSaving,
+            onBack: onBack,
+            onClick: { Task { await viewModel.collectBusinessServices() } }
         ) {
-            
+            Group {
+                switch viewModel.viewState {
+                case .idle, .loading:
+                    LoadingView()
+
+                case .error(let message):
+                    ErrorView(message: message) {
+                        Task { await viewModel.loadServices() }
+                    }
+
+                case .success(let domains):
+                    MyServicesListView(
+                        data: domains,
+                        selectedServiceIds: viewModel.selectedServiceIds,
+                        onToggleService: { serviceId in
+                            viewModel.toggleService(serviceId: serviceId)
+                        }
+                    )
+                }
+            }
+        }
+        .task {
+            await viewModel.loadServices()
         }
     }
-}
-
-#Preview("Light") {
-    CollectBusinessServicesScreen()
-}
-
-#Preview("Dark") {
-    CollectBusinessServicesScreen()
-        .preferredColorScheme(.dark)
 }

@@ -16,4 +16,5 @@ protocol OnboardingRepository: Sendable {
         ownerFullName: String
     ) async throws -> BusinessCreateResponse
     func collectBusinessGallery(businessId: Int, photos: [Data], skipUpdateGallery: Bool) async throws -> AuthState
+    func collectBusinessServices(serviceIds: [Int]) async throws -> AuthState
 }

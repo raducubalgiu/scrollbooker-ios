@@ -43,4 +43,9 @@ final class OnboardingRepositoryImpl: OnboardingRepository {
         )
         return AuthState(dto: dto)
     }
+
+    func collectBusinessServices(serviceIds: [Int]) async throws -> AuthState {
+        let dto = try await api.collectBusinessServices(request: ServiceIdsUpdateRequestDTO(serviceIds: serviceIds))
+        return AuthState(dto: dto)
+    }
 }

@@ -19,7 +19,6 @@
 "nextStep" = "Pasul următor";
 "location" = "Locație";
 "services" = "Servicii";
-"addYourBusinessServices" = "Adaugă serviciile pe care le desfășori la locație";
 "schedule" = "Programul de lucru";
 "addYourBusinessSchedule" = "Adaugă programul de lucru pentru Business-ului tău";
 "forOthers" = "Pentru alții";
@@ -291,6 +290,7 @@
 "my_business_services_description" = "Detalii despre serviciile mele";
 "my_business_categories" = "Categorii";
 "my_business_categories_description" = "Detalii despre categoriile mele de servicii";
+"my_business_categories_full_description" = "Adaugă serviciile pe care le desfășori la locație";
 "my_business_calendar" = "Calendar";
 "my_business_calendar_description" = "Calendarul meu de programări";
 "my_business_employees" = "Angajați";

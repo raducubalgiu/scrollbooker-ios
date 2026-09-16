@@ -20,9 +20,6 @@ struct ProfileProductsSuccessView: View {
         return serviceGroups[selectedTab].products
     }
 
-    // Same heuristic as Android's ProfileProductsTab: each tab only previews a handful
-    // of products per service, so once the real total outgrows that preview, offer a
-    // way to see everything instead of silently truncating.
     private var shouldShowViewMore: Bool {
         (serviceGroups.count * 5) < products.totalCount
     }

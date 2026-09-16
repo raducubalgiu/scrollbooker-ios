@@ -19,6 +19,11 @@ struct ProductCardActionsView: View {
     var onDeleteProduct: ((Int) -> Void)? = nil
     var onNavigateToBooking: ((Product) -> Void)? = nil
 
+    @Environment(SessionManager.self) private var session
+
+    private var hasEditPermission: Bool { session.hasPermission(.productEdit) }
+    private var hasDeletePermission: Bool { session.hasPermission(.productDelete) }
+
     var body: some View {
         let isSingle = product.type == .single
         let canBook = product.canBeBooked
@@ -44,43 +49,50 @@ struct ProductCardActionsView: View {
                         )
                 }
             } else if showAddSingleButtonNotSelectable {
-                Button(action: { onNavigateToBooking?(product) }) {
-                    Text(String(localized: "book"))
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 50)
-                                .stroke(Color.dividerSB, lineWidth: 1)
-                        )
+                Protected(permission: .bookButtonView) {
+                    Button(action: { onNavigateToBooking?(product) }) {
+                        Text(String(localized: "book"))
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 50)
+                                    .stroke(Color.dividerSB, lineWidth: 1)
+                            )
+                    }
                 }
             } else if showBuyPackButton {
-                Button(action: { onSelect?(product) }) {
-                    Text("Cumpără")
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.white)
-                        .padding(.vertical, 8)
-                        .padding(.horizontal, 16)
-                        .background(Color.accentColor)
-                        .cornerRadius(8)
-                }
-            } else if displayEditableActions {
-                Menu {
-                    Button(action: { onNavigateToEdit?(product.id) }) {
-                        Label("Editează", systemImage: "pencil")
+                Protected(permission: .bookButtonView) {
+                    Button(action: { onSelect?(product) }) {
+                        Text(String(localized: "buy"))
+                            .font(.body)
+                            .fontWeight(.semibold)
+                            .foregroundColor(.white)
+                            .padding(.vertical, 8)
+                            .padding(.horizontal, 16)
+                            .background(Color.accentColor)
+                            .cornerRadius(8)
                     }
-                    
-                    Button(role: .destructive, action: { onDeleteProduct?(product.id) }) {
-                        if isLoadingDelete {
-                            Text("Se șterge...")
-                        } else {
-                            Label("Șterge", systemImage: "trash")
+                }
+            } else if displayEditableActions && (hasEditPermission || hasDeletePermission) {
+                Menu {
+                    if hasEditPermission {
+                        Button(action: { onNavigateToEdit?(product.id) }) {
+                            Label(String(localized: "edit"), systemImage: "pencil")
                         }
                     }
-                    .disabled(isLoadingDelete)
-                    
+
+                    if hasDeletePermission {
+                        Button(role: .destructive, action: { onDeleteProduct?(product.id) }) {
+                            if isLoadingDelete {
+                                Text(String(localized: "deleting"))
+                            } else {
+                                Label(String(localized: "delete"), systemImage: "trash")
+                            }
+                        }
+                        .disabled(isLoadingDelete)
+                    }
                 } label: {
                     Image(systemName: "ellipsis")
                         .font(.title3)

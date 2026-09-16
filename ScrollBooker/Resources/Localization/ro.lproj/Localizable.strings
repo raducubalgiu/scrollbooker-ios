@@ -35,6 +35,8 @@
 "cancel" = "Anulează";
 "book" = "Rezervă";
 "bookAgain" = "Rezervă din nou";
+"buy" = "Cumpără";
+"from" = "de la";
 "asEmployee" = "Ca angajat";
 "asClient" = "Ca și client";
 "add" = "Adaugă";
@@ -64,6 +66,7 @@
 "chooseYourGender" = "Alege genul tău";
 "genderLabelDescription" = "Ne ajută să îți oferim servicii relevante pentru tine";
 "delete" = "Șterge";
+"deleting" = "Se șterge...";
 "aboutYou" = "Despre tine";
 "dontHaveAppointmentsYet" = "Nu ai nici o proramare momentan";
 "reviews" = "Recenzii";

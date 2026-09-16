@@ -57,6 +57,7 @@ struct ProductCardView: View {
                     Spacer().frame(height: 6)
                     
                     ProductCardRowPriceView(
+                        hasDifferentOfferings: product.hasDifferentPrices,
                         price: product.startingOffering.price,
                         priceWithDiscount: product.startingOffering.priceWithDiscount,
                         discount: product.startingOffering.discount

@@ -24,10 +24,12 @@ struct ProfilePostsTabView: View {
             case .success(let posts):
                 if posts.isEmpty {
                     NoDataView(
-                        title: String(localized: "posts"),
+                        title: String(localized: "title_posts"),
                         message: String(localized: "message_empty_posts"),
-                        maxHeight: 500
+                        maxHeight: 500,
+                        systemImage: "video.circle"
                     )
+                    .padding(.top, .xxl)
                 } else {
                     ProfilePostsSuccessView(
                         posts: posts,

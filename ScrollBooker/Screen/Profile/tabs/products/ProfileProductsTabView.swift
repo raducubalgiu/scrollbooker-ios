@@ -37,8 +37,10 @@ struct ProfileProductsTabView: View {
                 NoDataView(
                     title: "No data", 
                     message: "No data",
-                    maxHeight: 500
+                    maxHeight: 500,
+                    systemImage: "bag.circle"
                 )
+                .padding(.top, .xxl)
             }
         }
         .task(id: businessId) {

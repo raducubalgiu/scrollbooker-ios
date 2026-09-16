@@ -48,6 +48,9 @@ struct MyProfileScreen: View {
                         }
                         activeSheet = .openingHours
                     },
+                    // Own profile is always isOwnProfile == true, so the employees tab's
+                    // "Pick"/booking button never renders here — nothing to wire.
+                    onNavigateToBooking: { _ in },
                     onRefresh: {
                         await viewModel.refresh()
                     },

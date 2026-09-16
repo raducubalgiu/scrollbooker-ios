@@ -14,6 +14,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
     let onNavigateToUserSocial: (SocialNavigationParams) -> Void
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onShowOpeningHours: () -> Void
+    let onNavigateToBooking: (BookingNavigationParams) -> Void
     let onRefresh: () async -> Void
 
     @ViewBuilder var header: () -> Header
@@ -162,8 +163,28 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                 employeeId: employeeId
             )
         case .employees:
-            ProfileEmployeesTabView()
-            
+            ProfileEmployeesTabView(
+                controller: profileController,
+                businessOwnerId: user.id,
+                isOwnProfile: user.isOwnProfile,
+                onNavigateToUserProfile: onNavigateToUserProfile,
+                onNavigateToBooking: { employee in
+                    guard let businessId = user.businessId,
+                          let businessOwnerId = user.businessOwner?.id else { return }
+
+                    onNavigateToBooking(
+                        BookingNavigationParams(
+                            businessId: businessId,
+                            userId: employee.id,
+                            businessOwnerId: businessOwnerId,
+                            source: .profile,
+                            selectedProductId: nil
+                        )
+                    )
+                }
+            )
+
+
         case .bookmarks:
             ProfileBookmarksTabView(
                 controller: profileController,

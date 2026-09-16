@@ -60,13 +60,15 @@ final class UserProfileModule {
         getUserPostsUseCase: GetUserPostsUseCase,
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
     ) -> MyProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
             getUserProfileAboutUseCase: getUserProfileAboutUseCase,
             getUserPostsUseCase: getUserPostsUseCase,
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
-            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase
+            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
+            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase
         )
         
         return MyProfileViewModel(
@@ -86,13 +88,15 @@ final class UserProfileModule {
         getUserPostsUseCase: GetUserPostsUseCase,
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
     ) -> UserProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
             getUserProfileAboutUseCase: getUserProfileAboutUseCase,
             getUserPostsUseCase: getUserPostsUseCase,
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
-            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase
+            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
+            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase
         )
         
         return UserProfileViewModel(

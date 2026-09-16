@@ -45,24 +45,30 @@ final class ProfileController {
     // --- ABOUT ---
     private(set) var aboutState: FeatureState<UserProfileAbout> = .idle
 
+    // --- EMPLOYEES ---
+    private(set) var employeesState: FeatureState<[Employee]> = .idle
+
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let getUserProfileAboutUseCase: GetUserProfileAboutUseCase
     private let getUserPostsUseCase: GetUserPostsUseCase
     private let getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
     private let getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
+    private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
 
     init(
         getUserProfileUseCase: GetUserProfileUseCase,
         getUserProfileAboutUseCase: GetUserProfileAboutUseCase,
         getUserPostsUseCase: GetUserPostsUseCase,
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
-        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
+        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.getUserProfileAboutUseCase = getUserProfileAboutUseCase
         self.getUserPostsUseCase = getUserPostsUseCase
         self.getUserBookmarkedPostsUseCase = getUserBookmarkedPostsUseCase
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
+        self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
     }
 
     // MARK: - Profile (initial load, once)
@@ -261,6 +267,29 @@ final class ProfileController {
         }
     }
 
+    // MARK: - Employees
+    func loadInitialEmployees(businessOwnerId: Int) async {
+        guard employeesState == .idle else { return }
+        await loadEmployeesData(businessOwnerId: businessOwnerId)
+    }
+
+    private func refreshEmployees(businessOwnerId: Int) async {
+        await loadEmployeesData(businessOwnerId: businessOwnerId)
+    }
+
+    private func loadEmployeesData(businessOwnerId: Int) async {
+        if !isRefreshing { employeesState = .loading }
+
+        do {
+            let response = try await withLoading {
+                try await getEmployeesByOwnerUseCase(businessOwnerId: businessOwnerId)
+            }
+            employeesState = .success(response)
+        } catch {
+            employeesState = .error(logger.userMessage(for: error, context: "Loading Employees"))
+        }
+    }
+
     // MARK: - Tab orchestration
     private func employeeId(for userId: Int) -> Int? {
         guard let profile else { return nil }
@@ -279,7 +308,7 @@ final class ProfileController {
         case .bookmarks:
             await loadInitialBookmarks(userId: userId)
         case .employees:
-            break
+            await loadInitialEmployees(businessOwnerId: userId)
         }
     }
 
@@ -294,7 +323,7 @@ final class ProfileController {
         case .bookmarks:
             await refreshBookmarks(userId: userId)
         case .employees:
-            break
+            await refreshEmployees(businessOwnerId: userId)
         }
     }
 
@@ -318,6 +347,7 @@ final class ProfileController {
         bookmarksState = .idle; bookmarksPage = 1; bookmarksTotalCount = 0
         productsState = .idle
         aboutState = .idle
+        employeesState = .idle
     }
 }
 

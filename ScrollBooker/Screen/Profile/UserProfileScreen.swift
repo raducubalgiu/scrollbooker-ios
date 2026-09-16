@@ -48,6 +48,7 @@ struct UserProfileScreen: View {
                         }
                         activeSheet = .openingHours
                     },
+                    onNavigateToBooking: onNavigateToBooking,
                     onRefresh: {
                         await viewModel.refresh()
                     },

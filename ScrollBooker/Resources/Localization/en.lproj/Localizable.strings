@@ -54,6 +54,7 @@
 "biography" = "Biografie";
 "userNotLoggedIn" = "User-ul nu este logat";
 "edit" = "Editează";
+"pick" = "Alege";
 "save" = "Salvează";
 "closed" = "Închis";
 "youSuccesfullyEditedSchedules" = "Ți-ai editat cu succes programul";
@@ -302,6 +303,7 @@
 "message_empty_bookmarks" = "Încă nu ai salvat nici o postare";
 "message_empty_reposts" = "Încă nu ai repostat nimic";
 "message_empty_comments" = "Încă nu au fost găsite comentarii";
+"message_empty_employees" = "Nu au fost găsiți angajați";
 "message_empty_results" = "Nu a fost găsit nici un rezultat";
 "message_error_title" = "A apărut o eroare";
 "message_error_something_went_wrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";

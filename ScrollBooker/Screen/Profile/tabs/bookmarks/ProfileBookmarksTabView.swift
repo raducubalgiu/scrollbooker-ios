@@ -26,8 +26,10 @@ struct ProfileBookmarksTabView: View {
                 NoDataView(
                     title: String(localized: "title_posts"),
                     message: String(localized: "message_empty_bookmarks"),
-                    maxHeight: 500
+                    maxHeight: 500,
+                    systemImage: "video.circle"
                 )
+                .padding(.top, .xxl)
             } else {
                 ProfileBookmarksSuccessView(
                     posts: posts,

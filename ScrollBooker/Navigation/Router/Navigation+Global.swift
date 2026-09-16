@@ -55,6 +55,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     getUserPostsUseCase: container.postModule.getUserPostsUseCase,
                     getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
                     getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
+                    getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
                 ),
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },

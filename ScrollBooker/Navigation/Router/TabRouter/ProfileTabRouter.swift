@@ -182,7 +182,8 @@ struct ProfileTabRouter: View {
             session: session,
             getUserPostsUseCase: container.postModule.getUserPostsUseCase,
             getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-            getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
+            getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
+            getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner
         )
     }
 }

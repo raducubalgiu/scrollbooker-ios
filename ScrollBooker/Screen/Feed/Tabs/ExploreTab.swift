@@ -35,7 +35,7 @@ struct ExploreTab: View {
 
                 case .empty:
                     NoDataView(
-                        title: "Postari",
+                        title: String(localized: "title_posts"),
                         message: "Nu există postări",
                         systemImage: "video.slash"
                     )

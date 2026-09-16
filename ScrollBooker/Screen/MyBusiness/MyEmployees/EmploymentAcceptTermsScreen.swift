@@ -49,7 +49,7 @@ struct EmploymentAcceptTermsScreen: View {
                     LoadingView()
                     
                 case .error:
-                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                    ErrorView(message: String(localized: "message_error_something_went_wrong")) {
                         Task { await viewModel.getConsentTerms() }
                     }
                     
@@ -73,7 +73,7 @@ struct EmploymentAcceptTermsScreen: View {
         .task {
             await viewModel.getConsentTerms()
         }
-        .alert(String(localized: "somethingWentWrong"), isPresented: $showFailureAlert) {
+        .alert(String(localized: "message_error_something_went_wrong"), isPresented: $showFailureAlert) {
             Button(String(localized: "ok"), role: .cancel) { }
         } message: {
             Text(String(localized: "failedToCreateEmploymentRequestDescription"))

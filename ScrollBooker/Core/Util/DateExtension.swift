@@ -26,6 +26,42 @@ extension Date {
         formatter.dateFormat = "HH:mm"
         return formatter.string(from: self)
     }
+
+    /// "Mar, 23 mai 2025 14:30" — aceeași compunere pe bucăți ca pe Android
+    /// (`ZonedDateTime.display()`), nu un singur pattern, ca să putem controla
+    /// separat capitalizarea zilei și eliminarea punctului final pe care
+    /// abrevierile românești de zi/lună îl au uneori.
+    func display(locale: Locale = Locale(identifier: "ro_RO")) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = locale
+
+        formatter.dateFormat = "EEE"
+        let dayOfWeek = formatter.string(from: self)
+            .capitalized(with: locale)
+            .removingTrailingDot()
+
+        formatter.dateFormat = "d"
+        let day = formatter.string(from: self).removingTrailingDot()
+
+        formatter.dateFormat = "yyyy"
+        let year = formatter.string(from: self)
+
+        formatter.dateFormat = "MMM"
+        let month = formatter.string(from: self)
+            .lowercased(with: locale)
+            .removingTrailingDot()
+
+        formatter.dateFormat = "HH:mm"
+        let time = formatter.string(from: self)
+
+        return "\(dayOfWeek), \(day) \(month) \(year) \(time)"
+    }
+}
+
+private extension String {
+    func removingTrailingDot() -> String {
+        hasSuffix(".") ? String(dropLast()) : self
+    }
 }
 
 private let ymdFormatter: DateFormatter = {

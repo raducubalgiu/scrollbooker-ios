@@ -29,7 +29,7 @@ struct MyProfileScreen: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                 
             case .error:
-                ErrorView(message: String(localized: "errorOccurred")) {
+                ErrorView(message: String(localized: "message_error_something_went_wrong")) {
                     Task { await viewModel.loadProfile() }
                 }
 

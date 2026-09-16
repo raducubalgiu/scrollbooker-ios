@@ -26,7 +26,7 @@ struct AppointmentDetailsHeader: View {
             Spacer().frame(height: 16)
             
             VStack(alignment: .leading, spacing: 8) {
-                Text("2025-05-23")
+                Text(appointment.startDate.display())
                     .font(.title2)
                     .fontWeight(.semibold)
                 

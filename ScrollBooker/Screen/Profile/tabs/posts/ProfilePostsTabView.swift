@@ -25,7 +25,7 @@ struct ProfilePostsTabView: View {
                 if posts.isEmpty {
                     NoDataView(
                         title: String(localized: "posts"),
-                        message: String(localized: "notFoundPosts"),
+                        message: String(localized: "message_empty_posts"),
                         maxHeight: 500
                     )
                 } else {

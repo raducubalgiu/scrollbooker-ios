@@ -130,7 +130,7 @@ final class CollectBusinessViewModel {
     func createBusiness() async -> Bool {
         guard let placeId = selectedAddress?.placeId, let businessTypeId = selectedBusinessType?.id else {
             logger.error("ERROR: on Creating Business: place id or business type id is missing")
-            saveError = String(localized: "somethingWentWrong")
+            saveError = String(localized: "message_error_something_went_wrong")
             return false
         }
 

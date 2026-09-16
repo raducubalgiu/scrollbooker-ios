@@ -35,7 +35,7 @@ struct CollectBusinessTypeScreen: View {
                     if businessTypes.isEmpty {
                         NoDataView(
                             title: String(localized: "onboarding_business_type_title"),
-                            message: String(localized: "somethingWentWrong"),
+                            message: String(localized: "message_error_something_went_wrong"),
                             systemImage: "square.grid.2x2"
                         )
                     } else {

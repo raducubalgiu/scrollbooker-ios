@@ -24,15 +24,15 @@ struct LoginScreen: View {
     var body: some View {
         FormLayout(
             headline: String(localized: "login"),
-            subHeadline: String(localized: "loginMessage"),
+            subHeadline: String(localized: "auth_description_login"),
             enableBottomButton: false,
             onBack: {}
         ) {
             VStack(alignment: .leading, spacing: AppSize.s.rawValue) {
                 Input(
-                    label: String(localized: "usernameOrEmail"),
+                    label: String(localized: "auth_label_username_or_email"),
                     text: lowercasedUsername,
-                    placeholder: String(localized: "usernameOrEmail"),
+                    placeholder: String(localized: "auth_label_username_or_email"),
                 )
                 .textInputAutocapitalization(.never)
 
@@ -59,8 +59,8 @@ struct LoginScreen: View {
                 .padding(.top, .xs)
 
                 HStack {
-                    Text("dontHaveAnAccount")
-                    NavigationLink("register") {
+                    Text(String(localized: "auth_description_dont_have_account"))
+                    NavigationLink(String(localized: "register")) {
                         RegisterScreen(authViewModel: authViewModel)
                     }
                     .foregroundColor(.primarySB)
@@ -72,7 +72,7 @@ struct LoginScreen: View {
 
                     Divider()
 
-                    Text("doYouHaveABusinessWhichReceivesAppointments")
+                    Text(String(localized: "auth_description_have_business"))
 
                     MainButtonOutlined(
                         title: String(localized: "registerNow"),

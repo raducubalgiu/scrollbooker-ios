@@ -14,7 +14,7 @@ struct SectionMap: View {
     var displayDirectionsButton: Bool = true
     
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
+        VStack(alignment: .leading, spacing: AppSize.base.rawValue) {
             ZStack {
                 AsyncImage(url: URL(string: mapUrl)) { phase in
                     switch phase {

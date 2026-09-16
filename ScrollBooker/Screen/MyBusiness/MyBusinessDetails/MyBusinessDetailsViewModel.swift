@@ -91,7 +91,7 @@ final class MyBusinessDetailsViewModel {
     func saveGallery() async -> Bool {
         guard let businessId = session.userInfo?.businessId else {
             logger.error("ERROR: on Updating Business Gallery: businessId is missing")
-            galleryError = String(localized: "somethingWentWrong")
+            galleryError = String(localized: "message_error_something_went_wrong")
             return false
         }
 

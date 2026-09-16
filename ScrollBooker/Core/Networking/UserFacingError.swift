@@ -18,7 +18,7 @@ extension Logger {
         self.error("ERROR: on \(context, privacy: .public): \(error.localizedDescription, privacy: .public)")
 
         guard !AppEnvironment.isProduction else {
-            return String(localized: "somethingWentWrong")
+            return String(localized: "message_error_something_went_wrong")
         }
 
         return (error as? LocalizedError)?.errorDescription ?? error.localizedDescription

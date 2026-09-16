@@ -15,8 +15,8 @@ struct RegisterBusinessScreen: View {
 
     var body: some View {
         FormLayout(
-            headline: String(localized: "registerBusiness"),
-            subHeadline: String(localized: "registerBusinessDescription"),
+            headline: String(localized: "auth_title_register_business"),
+            subHeadline: String(localized: "auth_description_register_business"),
             enableBottomButton: false,
             onBack: {}
         ) {

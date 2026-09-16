@@ -48,7 +48,7 @@ struct CollectBusinessLocationScreen: View {
                         if addresses.isEmpty {
                             NoDataView(
                                 title: String(localized: "onboarding_business_location_title"),
-                                message: String(localized: "notFoundAnyResult"),
+                                message: String(localized: "message_empty_results"),
                                 systemImage: "mappin.and.ellipse"
                             )
                         } else {

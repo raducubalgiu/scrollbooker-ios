@@ -24,8 +24,8 @@ struct ProfileBookmarksTabView: View {
         case .success(let posts):
             if posts.isEmpty {
                 NoDataView(
-                    title: String(localized: "posts"),
-                    message: String(localized: "notFoundPosts"),
+                    title: String(localized: "title_posts"),
+                    message: String(localized: "message_empty_bookmarks"),
                     maxHeight: 500
                 )
             } else {

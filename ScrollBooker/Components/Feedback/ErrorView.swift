@@ -15,7 +15,7 @@ struct ErrorView: View {
     var body: some View {
         ContentUnavailableView {
             Label(
-                String(localized: "errorOccurred"),
+                String(localized: "message_error_title"),
                 systemImage: "wifi.exclamationmark"
             )
             .foregroundColor(.errorSB)
@@ -24,7 +24,7 @@ struct ErrorView: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         } actions: {
-            Button(String(localized: "retry")) {
+            Button(String(localized: "message_error_retry")) {
                 retryAction()
             }
             .buttonStyle(.borderedProminent)

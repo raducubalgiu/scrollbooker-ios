@@ -17,7 +17,7 @@ struct RegisterScreen: View {
     var body: some View {
         FormLayout(
             headline: String(localized: "register"),
-            subHeadline: String(localized: "registerMessage"),
+            subHeadline: String(localized: "auth_description_register"),
             enableBottomButton: false,
             onBack: {}
         ) {
@@ -54,8 +54,8 @@ struct RegisterScreen: View {
                 .padding(.top, .xs)
 
                 HStack {
-                    Text("alreadyHaveAnAccount")
-                    NavigationLink("register") {
+                    Text(String(localized: "auth_description_already_have_account"))
+                    NavigationLink(String(localized: "register")) {
                         LoginScreen(authViewModel: authViewModel)
                     }
                     .foregroundColor(.primarySB)
@@ -67,7 +67,7 @@ struct RegisterScreen: View {
 
                     Divider()
 
-                    Text("doYouHaveABusinessWhichReceivesAppointments")
+                    Text(String(localized: "auth_description_have_business"))
 
                     MainButtonOutlined(
                         title: String(localized: "registerNow"),

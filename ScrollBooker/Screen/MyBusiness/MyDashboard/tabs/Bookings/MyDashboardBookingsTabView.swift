@@ -22,7 +22,7 @@ struct MyDashboardBookingsTabView: View {
                 LoadingView()
 
             case .error:
-                ErrorView(message: String(localized: "somethingWentWrong")) {
+                ErrorView(message: String(localized: "message_error_something_went_wrong")) {
                     Task { await viewModel.loadDashboardBooking() }
                 }
 

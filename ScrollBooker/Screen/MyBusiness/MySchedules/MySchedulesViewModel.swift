@@ -39,7 +39,7 @@ final class MySchedulesViewModel {
         
         guard let userId = session.userInfo?.id else {
             logger.error("ERROR: User ID not found in session")
-            viewState = .error(String(localized: "somethingWentWrong"))
+            viewState = .error(String(localized: "message_error_something_went_wrong"))
             return
         }
         

@@ -21,7 +21,7 @@ struct UnapprovedBusinessesScreen: View {
                     LoadingView()
 
                 case .error:
-                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                    ErrorView(message: String(localized: "message_error_something_went_wrong")) {
                         Task { await viewModel.refresh() }
                     }
 
@@ -58,7 +58,7 @@ struct UnapprovedBusinessesScreen: View {
             await viewModel.initialLoadIfNeeded()
         }
         .alert(
-            String(localized: "somethingWentWrong"),
+            String(localized: "message_error_something_went_wrong"),
             isPresented: Binding(
                 get: { viewModel.errorMessage != nil },
                 set: { if !$0 { viewModel.errorMessage = nil } }

@@ -34,7 +34,7 @@ final class MyProductsViewModel {
         
         guard let businessId = session.userInfo?.businessId else {
             logger.error("ERROR: Business ID not found in session")
-            viewState = .error(String(localized: "somethingWentWrong"))
+            viewState = .error(String(localized: "message_error_something_went_wrong"))
             return
         }
         

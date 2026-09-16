@@ -34,7 +34,7 @@ struct FeedDrawerView: View {
                 VStack(alignment: .leading, spacing: AppSize.base.rawValue) {
                     FeedDrawerHeaderView()
 
-                    Text(String(localized: "somethingWentWrong"))
+                    Text(String(localized: "message_error_something_went_wrong"))
                         .foregroundColor(Color(white: 0.67))
                 }
                 .padding(.horizontal, .base)

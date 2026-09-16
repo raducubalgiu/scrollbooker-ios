@@ -16,7 +16,7 @@ enum MyDashboardTab: CaseIterable, Identifiable {
     var title: String {
         switch self {
         case .appointments: return String(localized: "appointments")
-        case .posts: return String(localized: "posts")
+        case .posts: return String(localized: "title_posts")
         }
     }
 }

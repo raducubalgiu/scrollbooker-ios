@@ -22,7 +22,7 @@ struct EmploymentRequestsTab: View {
                     LoadingView()
                     
                 case .error:
-                    ErrorView(message: String(localized: "somethingWentWrong")) {
+                    ErrorView(message: String(localized: "message_error_something_went_wrong")) {
                         Task { await viewModel.getUserEmploymentRequests() }
                     }
                     
@@ -30,7 +30,7 @@ struct EmploymentRequestsTab: View {
                     if requests.isEmpty {
                         NoDataView(
                             title: String(localized: "employmentRequests"),
-                            message: String(localized: "notFoundEmploymentRequests"),
+                            message: String(localized: "message_empty_employment_requests"),
                             systemImage: "briefcase"
                         )
                     } else {

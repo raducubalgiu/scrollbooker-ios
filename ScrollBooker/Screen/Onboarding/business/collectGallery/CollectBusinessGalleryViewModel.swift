@@ -45,7 +45,7 @@ final class CollectBusinessGalleryViewModel {
     func collectBusinessGallery() async -> Bool {
         guard let businessId = session.userInfo?.businessId else {
             logger.error("ERROR: on Collecting Business Gallery: businessId is missing")
-            saveError = String(localized: "somethingWentWrong")
+            saveError = String(localized: "message_error_something_went_wrong")
             return false
         }
 

@@ -82,7 +82,7 @@ final class MyEmployeesViewModel {
         
         guard let businessOwnerId = session.userInfo?.businessOwnerId else {
             logger.error("ERROR: Business Owner ID not found in session")
-            employeesState = .error(String(localized: "somethingWentWrong"))
+            employeesState = .error(String(localized: "message_error_something_went_wrong"))
             return
         }
         
@@ -104,7 +104,7 @@ final class MyEmployeesViewModel {
         
         guard let userId = session.userInfo?.id else {
             logger.error("ERROR: User ID not found in session")
-            requestsState = .error(String(localized: "somethingWentWrong"))
+            requestsState = .error(String(localized: "message_error_something_went_wrong"))
             return
         }
         
@@ -185,7 +185,7 @@ final class MyEmployeesViewModel {
         
         guard let businessTypeId = session.userInfo?.businessTypeId else {
             logger.error("ERROR: Business Type ID not found in session")
-            professionsState = .error(String(localized: "somethingWentWrong"))
+            professionsState = .error(String(localized: "message_error_something_went_wrong"))
             return
         }
         

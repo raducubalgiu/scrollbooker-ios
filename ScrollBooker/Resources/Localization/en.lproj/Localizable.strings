@@ -1,18 +1,14 @@
 /* --- STATIC --- */
 
-"feed" = "Acasă";
+"login" = "Logare";
+"register" = "Înregistrare";
+"registerNow" = "Înregistrează";
+"email" = "Email";
+"password" = "Parolă";
 "inbox" = "Inbox";
 "search" = "Caută";
 "appointments" = "Comenzi";
 "profile" = "Profil";
-"login" = "Logare";
-"loginMessage" = "Please login to continue";
-"register" = "Înregistrare";
-"registerNow" = "Înregistrează";
-"registerMessage" = "Te rugăm să te înregistrezi pentru a continua";
-"alreadyHaveAnAccount" = "Ai deja un cont?";
-"dontHaveAnAccount" = "Nu ai încă un cont?";
-"doYouHaveABusinessWhichReceivesAppointments" = "Ai un business care primeste programari?";
 "dateOfBirth" = "Data de naștere";
 "dateOfBirthLabelDescription" = "Folosim această informație doar pentru a-ți personaliza experiența";
 "omit" = "Omite";
@@ -50,10 +46,7 @@
 "myBusiness" = "Afacerea mea";
 "mySchedule" = "Programul meu de lucru";
 "name" = "Nume";
-"somethingWentWrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";
 "noInternetConnection" = "Fără conexiune la internet";
-"errorOccurred" = "A apărut o eroare";
-"retry" = "Încearcă din nou";
 "videoReview" = "Recenzie video";
 "leftReviewForPrefix" = "a lăsat o recenzie pentru ";
 "yourBio" = "Biografia ta";
@@ -96,7 +89,6 @@
 "dismissal" = "Concediere";
 "hireDate" = "Data angajării";
 "sendAnEmploymentRequest" = "Trimite o cerere de angajare";
-"notFoundEmploymentRequests" = "Nu au fost găsite cereri de angajare";
 "sendTheRequest" = "Trimite cererea";
 "assignJob" = "Atribuie o funcție";
 "chooseProfessionsFromTheList" = "Alege funcția potriviă pentru acest angajat din lista de profesii disponibile";
@@ -105,6 +97,16 @@
 "deviceSettings" = "Setările dispozitivului";
 "report" = "Raportează";
 "details" = "Vezi detalii";
+"bookedServices" = "Servicii rezervate";
+"total" = "Total";
+"navigationDirections" = "Direcții de navigare";
+"recommendedServices" = "Servicii recomandate";
+"selectedServices" = "Servicii selectate";
+"checkDetails" = "Verifică detaliile";
+"confirmReservationDetails" = "Ești la un pas de a finaliza programarea. Asigură-te că toate datele sunt corecte.";
+"cancellationPolicy" = "cancellationPolicy";
+"cancellationPolicyDescription" = "Anularea gratuită este disponibilă cu până la 24 de ore înainte de ora programată. Ulterior, se pot aplica taxe conform regulamentului afacerii.";
+"dateAndTime" = "Data și ora";
 "tellUsWhatWentWrong" = "Spune-ne ce nu a funcționat corect sau ce ar trebui îmbunătățit.";
 "allMessagesAreComingToOurTeam" = "Toate mesajele ajung direct la echipa noastră și ne ajută să facem aplicația mai bună.";
 "pleaseGiveUseAllTheDetails" = "Te rugăm să oferi cât mai multe detalii (ex. ce acțiune făceai, ce s-a intamplat, pe ce ecran erai).";
@@ -130,26 +132,19 @@
 "rating_3" = "A fost ok";
 "rating_4" = "Mi-a plăcut";
 "rating_5" = "Mi-a plăcut foarte mult";
-"notFoundPosts" = "Nu au fost găsite postări";
-"notFoundBookmarks" = "Încă nu ai salvat nici o postare";
-"notFoundReposts" = "Încă nu ai repostat nimic";
 "businessLocationDetails" = "Detalii despre locația business-ului meu";
 "userProductsDetails" = "Detalii despre produsele mele";
 "paymentMethods" = "Modalități de plată";
 "paymentMethodsDetails" = "Alege valutele acceptate pentru plată";
 "scheduleSubheaderDescription" = "Adaugă intervalele orare în care locația ta este deschisă pentru clienți";
 "comments" = "Comentarii";
-"notFoundComments" = "Încă nu au fost găsite comentarii";
 "chooseDesiredCurrencies" = "Alege in ce valute dorești să primești plăți din partea clienților";
 "acceptedCurrencies" = "Valute acceptate pentru plăți";
-"password" = "Parolă";
-"email" = "Email";
 "passwordShouldContainMinimumEightCharacters" = "Parola trebuie să conțină minim 8 caractere";
 "passwordShouldContainMaximumTwentyCharacters" = "Parola trebuie să conțină maxim 20 de caractere";
 "passwordShouldContainAtLeastOneBigLetter" = "Parola trebuie sa conțină cel puțin o literă mare";
 "passwordShouldContainAtLeastOneDigit" = "Parola trebuie sa conțină cel puțin o cifră";
 "username" = "Utilizator";
-"usernameOrEmail" = "Username sau Email";
 "addUniqueUsername" = "Introdu un nume de utilizator unic";
 "preferNotToSay" = "Prefer să nu spun";
 "day" = "Ziua";
@@ -157,8 +152,6 @@
 "year" = "Anul";
 "male" = "Bărbați";
 "female" = "Femei";
-"registerBusiness" = "Înregistrare business";
-"registerBusinessDescription" = "Creează un cont pentru a-ți înregistra afacerea și a incepe procesul de configurare";
 "back" = "Înapoi";
 "next" = "Înainte";
 "addDescription" = "Adaugă o descriere";
@@ -233,7 +226,6 @@
 "cancelReason" = "Motivul anulării";
 "writeCancelReason" = "Scrie motivul anulării";
 "logout" = "Delogare";
-"notFoundAnyResult" = "Nu a fost găsit nici un rezultat";
 "youDidntSearchedInListYet" = "Incă nu ai căutat in listă";
 "cancelRequest" = "Anulează cererea";
 "date" = "Data";
@@ -265,7 +257,6 @@
 "bookingDetails" = "Detalii rezervare";
 "myCalendar" = "Calendarul meu";
 "send" = "Trimite";
-"posts" = "Postări";
 "finished" = "Finalizat";
 "canceled" = "Anulat";
 "earnings" = "Încasări";
@@ -299,6 +290,33 @@
 "onboarding_business_gallery_description" = "Încarcă cateva imagini de la locație - o prezentare vizuală bună atrage mai mulți clienți";
 "onboarding_business_gallery_skip_hint" = "Poți sări peste acest pas acum și adăugi imagini mai târziu din setările business-ului tău.";
 
+/* --- TITLES --- */
+"title_feed" = "Acasă";
+"title_posts" = "Postări";
+
+/* --- MESSAGES --- */
+"message_empty_posts" = "Nu au fost găsite postări";
+"message_empty_employment_requests" = "Nu au fost găsite cereri de angajare";
+"message_empty_bookmarks" = "Încă nu ai salvat nici o postare";
+"message_empty_reposts" = "Încă nu ai repostat nimic";
+"message_empty_comments" = "Încă nu au fost găsite comentarii";
+"message_empty_results" = "Nu a fost găsit nici un rezultat";
+"message_error_title" = "A apărut o eroare";
+"message_error_something_went_wrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";
+"message_error_retry" = "Încearcă din nou";
+
+/* --- AUTH --- */
+"auth_description_login" = "Te rugăm să te autentifici pentru a continua";
+"auth_label_username_or_email" = "Username sau Email";
+"auth_description_register" = "Te rugăm să te înregistrezi pentru a continua";
+"auth_title_register_business" = "Înregistrare business";
+"auth_description_register_business" = "Creează un cont pentru a-ți înregistra afacerea și a incepe procesul de configurare";
+"auth_description_dont_have_account" = "Nu ai încă un cont?";
+"auth_description_already_have_account" = "Ai deja un cont?";
+"auth_description_have_business" = "Ai un business care primeste programari?";
+"auth_title_email_verification" = "Confirmă adresa de email";
+"auth_description_email_verification" = "Ți-am trimis un link de confirmare pe adresa de email. Apasă pe el, apoi revino aici și apasă butonul de mai jos.";
+"auth_button_verify_email" = "Am confirmat";
 
 /* --- DASHBOARD --- */
 "dashboard" = "Dashboard";

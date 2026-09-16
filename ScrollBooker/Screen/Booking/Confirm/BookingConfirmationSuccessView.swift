@@ -60,7 +60,7 @@ struct BookingConfirmationSuccessView: View {
                         .fontWeight(.black)
                         .foregroundColor(.onBackgroundSB)
                     
-                    Text(String(localized: "checkAppointmentDetailsDescriptiom"))
+                    Text(String(localized: "confirmReservationDetails"))
                         .font(.body)
                         .foregroundColor(.gray)
                 }

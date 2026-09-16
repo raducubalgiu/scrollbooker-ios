@@ -33,29 +33,33 @@ struct ProfileUserInfoView: View {
                         .font(.footnote)
                         .foregroundColor(.gray)
                     
-                    Image(systemName: "star.fill")
-                        .foregroundColor(.ratingSB)
-                    
-                    Text("\(ratingsAverage.formatRating())")
-                        .font(.headline.bold())
-                }
-                
-                Button {
-                    onShowOpeningHoursSheet()
-                } label: {
-                    HStack {
-                        Image(systemName: "clock")
-                            .foregroundColor(.onBackgroundSB)
+                    if(isBusinessOrEmployee) {
+                        Image(systemName: "star.fill")
+                            .foregroundColor(.ratingSB)
                         
-                        Text(openingHours.formattedStatus)
-                            .font(.footnote.bold())
-                            .foregroundColor(.onBackgroundSB)
-                        
-                        Image(systemName: "chevron.down")
-                            .foregroundColor(.onBackgroundSB)
+                        Text("\(ratingsAverage.formatRating())")
+                            .font(.headline.bold())
                     }
                 }
-                .padding(.top, .xxs)
+                
+                if(isBusinessOrEmployee) {
+                    Button {
+                        onShowOpeningHoursSheet()
+                    } label: {
+                        HStack {
+                            Image(systemName: "clock")
+                                .foregroundColor(.onBackgroundSB)
+                            
+                            Text(openingHours.formattedStatus)
+                                .font(.footnote.bold())
+                                .foregroundColor(.onBackgroundSB)
+                            
+                            Image(systemName: "chevron.down")
+                                .foregroundColor(.onBackgroundSB)
+                        }
+                    }
+                    .padding(.top, .xxs)
+                }
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

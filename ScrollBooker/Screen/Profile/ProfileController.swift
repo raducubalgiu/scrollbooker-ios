@@ -240,6 +240,8 @@ final class ProfileController {
             }
             productsState = .success(response)
         } catch {
+            guard !error.isCancellation else { return }
+
             productsState = .error(logger.userMessage(for: error, context: "Loading Products"))
         }
     }
@@ -263,6 +265,8 @@ final class ProfileController {
             }
             aboutState = .success(response)
         } catch {
+            guard !error.isCancellation else { return }
+
             aboutState = .error(logger.userMessage(for: error, context: "Loading About"))
         }
     }
@@ -286,6 +290,8 @@ final class ProfileController {
             }
             employeesState = .success(response)
         } catch {
+            guard !error.isCancellation else { return }
+
             employeesState = .error(logger.userMessage(for: error, context: "Loading Employees"))
         }
     }
@@ -302,7 +308,8 @@ final class ProfileController {
         case .posts:
             await loadInitialPosts(userId: userId)
         case .products:
-            await loadInitialProducts(businessId: userId, employeeId: employeeId(for: userId))
+            guard let businessId = profile?.businessId else { return }
+            await loadInitialProducts(businessId: businessId, employeeId: employeeId(for: userId))
         case .about:
             await loadInitialAbout(userId: userId)
         case .bookmarks:
@@ -317,7 +324,8 @@ final class ProfileController {
         case .posts:
             await refreshPosts(userId: userId)
         case .products:
-            await refreshProducts(businessId: userId, employeeId: employeeId(for: userId))
+            guard let businessId = profile?.businessId else { return }
+            await refreshProducts(businessId: businessId, employeeId: employeeId(for: userId))
         case .about:
             await refreshAbout(userId: userId)
         case .bookmarks:

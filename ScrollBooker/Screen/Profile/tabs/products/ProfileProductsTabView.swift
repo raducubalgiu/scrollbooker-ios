@@ -11,6 +11,7 @@ struct ProfileProductsTabView: View {
     let controller: ProfileController
     let businessId: Int?
     let employeeId: Int?
+    let onNavigateToBookingFromProduct: (Product) -> Void
 
     var body: some View {
         Group {
@@ -30,22 +31,30 @@ struct ProfileProductsTabView: View {
                         }
 
                     case .success(let products):
-                        ProfileProductsSuccessView(products: products)
+                        if products.data.isEmpty {
+                            NoDataView(
+                                title: String(localized: "services"),
+                                message: String(localized: "message_empty_services"),
+                                maxHeight: 500,
+                                systemImage: "bag.circle"
+                            )
+                        } else {
+                            ProfileProductsSuccessView(
+                                products: products,
+                                onNavigateToBookingFromProduct: onNavigateToBookingFromProduct
+                            )
+                        }
                     }
-                
+
             } else {
                 NoDataView(
-                    title: "No data", 
-                    message: "No data",
+                    title: String(localized: "services"),
+                    message: String(localized: "message_empty_services"),
                     maxHeight: 500,
                     systemImage: "bag.circle"
                 )
                 .padding(.top, .xxl)
             }
-        }
-        .task(id: businessId) {
-            guard let businessId else { return }
-            await controller.loadInitialProducts(businessId: businessId, employeeId: employeeId)
         }
     }
 }

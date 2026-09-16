@@ -160,7 +160,18 @@ struct ProfileLayout<Header: View, Actions: View>: View {
             ProfileProductsTabView(
                 controller: profileController,
                 businessId: user.businessId,
-                employeeId: employeeId
+                employeeId: employeeId,
+                onNavigateToBookingFromProduct: { product in
+                    onNavigateToBooking(
+                        BookingNavigationParams(
+                            businessId: product.businessId,
+                            userId: product.targetUserId,
+                            businessOwnerId: product.businessOwnerId,
+                            source: .profile,
+                            selectedProductId: product.id
+                        )
+                    )
+                }
             )
         case .employees:
             ProfileEmployeesTabView(

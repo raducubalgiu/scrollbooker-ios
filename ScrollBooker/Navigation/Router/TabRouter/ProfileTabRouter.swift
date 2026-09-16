@@ -92,7 +92,13 @@ struct ProfileTabRouter: View {
                             return EditBirthdateScreen(viewModel: viewModel, onBack: { router.pop() })
                         }
                         return nil
-                        
+
+                    case .editAvatarCrop:
+                        if let viewModel = viewModel {
+                            return EditAvatarCropScreen(viewModel: viewModel, onBack: { router.pop() })
+                        }
+                        return nil
+
                     // MARK: - My Business Flow
                     case .myBusiness:
                         return MyBusinessScreen(

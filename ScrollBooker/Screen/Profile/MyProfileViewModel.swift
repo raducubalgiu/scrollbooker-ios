@@ -33,11 +33,13 @@ final class MyProfileViewModel {
     }
 
     var selectedBirthdate: Date = Date()
+    var pickedAvatarData: Data?
 
     let updateUserFullNameUseCase: UpdateUserFullNameUseCase
     let updateUserGenderUseCase: UpdateUserGenderUseCase
     let updateUserBirthdateUseCase: UpdateUserBirthdateUseCase
     let updateUserBioUseCase: UpdateUserBioUseCase
+    let updateUserAvatarUseCase: UpdateUserAvatarUseCase
 
     init(
         session: SessionManager,
@@ -45,7 +47,8 @@ final class MyProfileViewModel {
         updateUserFullNameUseCase: UpdateUserFullNameUseCase,
         updateUserGenderUseCase: UpdateUserGenderUseCase,
         updateUserBirthdateUseCase: UpdateUserBirthdateUseCase,
-        updateUserBioUseCase: UpdateUserBioUseCase
+        updateUserBioUseCase: UpdateUserBioUseCase,
+        updateUserAvatarUseCase: UpdateUserAvatarUseCase
     ) {
         self.session = session
         self.profileController = profileController
@@ -53,6 +56,7 @@ final class MyProfileViewModel {
         self.updateUserGenderUseCase = updateUserGenderUseCase
         self.updateUserBirthdateUseCase = updateUserBirthdateUseCase
         self.updateUserBioUseCase = updateUserBioUseCase
+        self.updateUserAvatarUseCase = updateUserAvatarUseCase
     }
 
     func loadProfile() async {
@@ -162,6 +166,31 @@ final class MyProfileViewModel {
             isSaved = true
         } catch {
             errorMessage = logger.userMessage(for: error, context: "Updating Bio")
+        }
+
+        isLoading = false
+    }
+
+    func updateAvatar(photo: Data) async {
+        guard !isLoading else { return }
+
+        isLoading = true
+        errorMessage = nil
+
+        do {
+            let avatarURL = try await withLoading {
+                try await updateUserAvatarUseCase(photo: photo)
+            }
+
+            if let currentProfile = profileController.profile {
+                profileController.updateProfile(currentProfile.copy(avatar: avatarURL))
+            }
+
+            session.updateAvatar(avatarURL)
+            pickedAvatarData = nil
+            isSaved = true
+        } catch {
+            errorMessage = logger.userMessage(for: error, context: "Updating Avatar")
         }
 
         isLoading = false

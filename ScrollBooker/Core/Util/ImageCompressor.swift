@@ -37,12 +37,17 @@ enum ImageCompressor {
 }
 
 extension MultipartFile {
-    static func compressedJPEGs(_ photos: [Data], fieldName: String = "photos") -> [MultipartFile] {
+    static func compressedJPEGs(
+        _ photos: [Data],
+        fieldName: String = "photos",
+        maxDimension: CGFloat = ImageCompressor.defaultMaxDimension,
+        quality: CGFloat = ImageCompressor.defaultJPEGQuality
+    ) -> [MultipartFile] {
         photos.enumerated().map { index, data in
             MultipartFile(
                 name: fieldName,
                 filename: "photo_\(index).jpg",
-                data: ImageCompressor.compressJPEG(data),
+                data: ImageCompressor.compressJPEG(data, maxDimension: maxDimension, quality: quality),
                 mimeType: "image/jpeg"
             )
         }

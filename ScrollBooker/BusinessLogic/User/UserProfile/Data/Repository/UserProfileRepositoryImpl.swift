@@ -59,6 +59,11 @@ final class UserProfileRepositoryImpl: UserProfileRepository {
         return UserProfileUpdate(dto: dtoResponse)
     }
 
+    func updateAvatar(photo: Data) async throws -> String {
+        let dtoResponse = try await api.updateAvatar(photo: photo)
+        return dtoResponse.avatar
+    }
+
     func searchUsername(username: String) async throws -> SearchUsername {
         let dto = try await api.searchUsername(username: username)
         return SearchUsername(dto: dto, username: username)

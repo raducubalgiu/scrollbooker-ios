@@ -5,6 +5,8 @@
 //  Created by Raducu Balgiu on 07.07.2026.
 //
 
+import Foundation
+
 protocol UserProfileRepository: Sendable {
     func getUserProfile(username: String) async throws -> UserProfile
     func getUserProfileAbout(userId: Int) async throws -> UserProfileAbout
@@ -15,5 +17,6 @@ protocol UserProfileRepository: Sendable {
     func updateBio(request: UpdateBioRequest) async throws -> UserProfileUpdate
     func updateWebsite(request: UpdateWebsiteRequest) async throws -> UserProfileUpdate
     func updatePublicEmail(request: UpdatePublicEmailRequest) async throws -> UserProfileUpdate
+    func updateAvatar(photo: Data) async throws -> String
     func searchUsername(username: String) async throws -> SearchUsername
 }

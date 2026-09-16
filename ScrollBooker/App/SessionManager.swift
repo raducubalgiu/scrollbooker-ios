@@ -78,6 +78,24 @@ final class SessionManager {
         self.isAuthenticated = false
     }
 
+    func updateAvatar(_ avatarURL: String) {
+        guard let currentUserInfo = userInfo else { return }
+
+        userInfo = UserInfo(
+            id: currentUserInfo.id,
+            username: currentUserInfo.username,
+            fullName: currentUserInfo.fullName,
+            profession: currentUserInfo.profession,
+            avatar: avatarURL,
+            businessId: currentUserInfo.businessId,
+            businessOwnerId: currentUserInfo.businessOwnerId,
+            businessTypeId: currentUserInfo.businessTypeId,
+            hasEmployees: currentUserInfo.hasEmployees,
+            isValidated: currentUserInfo.isValidated,
+            registrationStep: currentUserInfo.registrationStep
+        )
+    }
+
     func updateAuthState(_ authState: AuthState) {
         guard let currentUserInfo = userInfo else { return }
 

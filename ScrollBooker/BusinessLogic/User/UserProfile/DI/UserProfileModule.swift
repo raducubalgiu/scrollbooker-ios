@@ -47,6 +47,10 @@ final class UserProfileModule {
         UpdateUserBioUseCase(repository: repository)
     }()
 
+    private lazy var updateUserAvatarUseCase: UpdateUserAvatarUseCase = {
+        UpdateUserAvatarUseCase(repository: repository)
+    }()
+
     lazy var searchUsernameUseCase: SearchUsernameUseCase = {
         SearchUsernameUseCase(repository: repository)
     }()
@@ -71,7 +75,8 @@ final class UserProfileModule {
             updateUserFullNameUseCase: updateUserFullNameUseCase,
             updateUserGenderUseCase: updateUserGenderUseCase,
             updateUserBirthdateUseCase: updateUserBirthdateUseCase,
-            updateUserBioUseCase: updateUserBioUseCase
+            updateUserBioUseCase: updateUserBioUseCase,
+            updateUserAvatarUseCase: updateUserAvatarUseCase
         )
     }
 

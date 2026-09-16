@@ -37,6 +37,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     func copy(
         fullName: String? = nil,
         username: String? = nil,
+        avatar: String? = nil,
         gender: String? = nil,
         dateOfBirth: String? = nil,
         bio: String? = nil,
@@ -46,7 +47,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
             id: self.id,
             username: username ?? self.username,
             fullName: fullName ?? self.fullName,
-            avatar: self.avatar,
+            avatar: avatar ?? self.avatar,
             gender: self.gender,
             dateOfBirth: self.dateOfBirth,
             bio: bio ?? self.bio,

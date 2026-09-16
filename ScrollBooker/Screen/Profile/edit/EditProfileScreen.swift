@@ -11,20 +11,27 @@ struct EditProfileScreen: View {
     let viewModel: MyProfileViewModel
     var onNavigate: (Route) -> Void
     var onBack: () -> Void
-    
+
+    @State private var showChoosePhotoSheet = false
+
     var body: some View {
         VStack {
             HeaderView(
                 title: String(localized: "editProfile"),
                 onBack: onBack
             )
-            
+
+            EditProfileAvatarView(
+                avatarURL: viewModel.profileController.profile?.avatarURL,
+                onClick: { showChoosePhotoSheet = true }
+            )
+
             VStack(alignment: .leading) {
                 Text(String(localized: "aboutYou"))
                     .font(.subheadline.bold())
                     .foregroundColor(.gray)
                     .padding(.top, .base)
-                
+
                 Button {
                     onNavigate(.editFullName)
                 } label: {
@@ -140,6 +147,13 @@ struct EditProfileScreen: View {
                 Spacer()
             }
             .padding(.horizontal)
+        }
+        .sheet(isPresented: $showChoosePhotoSheet) {
+            ChoosePhotoSheetView(onPickImage: { data in
+                showChoosePhotoSheet = false
+                viewModel.pickedAvatarData = data
+                onNavigate(.editAvatarCrop)
+            })
         }
     }
 }

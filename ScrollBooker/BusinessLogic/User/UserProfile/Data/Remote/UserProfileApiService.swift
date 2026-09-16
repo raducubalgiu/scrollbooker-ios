@@ -17,6 +17,7 @@ protocol UserProfileApiService: Sendable {
     func updateBio(request: UpdateBioRequest) async throws -> UserProfileUpdateDto
     func updateWebsite(request: UpdateWebsiteRequest) async throws -> UserProfileUpdateDto
     func updatePublicEmail(request: UpdatePublicEmailRequest) async throws -> UserProfileUpdateDto
+    func updateAvatar(photo: Data) async throws -> UpdateAvatarResponseDto
     func searchUsername(username: String) async throws -> SearchUsernameDTO
 }
 
@@ -94,6 +95,15 @@ final class UserProfileApiImpl: UserProfileApiService {
             "users/user-info/public-email",
             method: .patch,
             body: request
+        )
+    }
+
+    func updateAvatar(photo: Data) async throws -> UpdateAvatarResponseDto {
+        try await client.multiPartRequest(
+            "users/user-info/avatar",
+            method: .patch,
+            fields: [:],
+            files: MultipartFile.compressedJPEGs([photo], fieldName: "avatar", maxDimension: 640)
         )
     }
 

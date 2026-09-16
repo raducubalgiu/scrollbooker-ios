@@ -276,6 +276,8 @@
 /* --- EDIT PROFILE --- */
 "editProfile" = "Editează profilul";
 "edit_bio_placeholder" = "Scrie ceva despre tine..";
+"changePhoto" = "Schimbă poza";
+"chooseFromGallery" = "Alege din galerie";
 
 /* --- ONBOARDING --- */
 "onboarding_username_title" = "Nume de utilizator";

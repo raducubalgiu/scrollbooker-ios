@@ -44,6 +44,22 @@ extension Schedule {
             default:          return dayOfWeek
         }
     }
+
+    var formattedStartTime: String? { Self.formattedTime(startTime) }
+    var formattedEndTime: String? { Self.formattedTime(endTime) }
+
+    var isClosed: Bool { formattedStartTime == nil || formattedEndTime == nil }
+    var timeRangeDisplay: String {
+        guard let start = formattedStartTime, let end = formattedEndTime else {
+            return String(localized: "closed")
+        }
+        return "\(start) - \(end)"
+    }
+
+    private static func formattedTime(_ value: String?) -> String? {
+        guard let value, value != "null", !value.isEmpty else { return nil }
+        return String(value.prefix(5))
+    }
 }
 
 

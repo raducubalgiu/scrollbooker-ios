@@ -28,6 +28,7 @@ struct ProfileTabRouter: View {
                         onNavigateToUserSocial: { router.push(.userSocial($0)) },
                         onNavigateToMyCalendar: { router.push(.myCalendar) },
                         onNavigateToCamera: { router.push(.camera) },
+                        makeOpeningHoursViewModel: { container.scheduleModule.makeOpeningHoursViewModel() },
                     )
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         CustomTabBar(backgroundColor: .backgroundSB)

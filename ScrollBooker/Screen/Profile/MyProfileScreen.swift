@@ -17,8 +17,10 @@ struct MyProfileScreen: View {
     var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     var onNavigateToMyCalendar: () -> Void
     var onNavigateToCamera: () -> Void
+    let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
 
     @State private var activeSheet: ProfileSheet?
+    @State private var openingHoursViewModel: OpeningHoursViewModel?
     
     var body: some View {
         VStack(spacing: 0) {
@@ -40,7 +42,12 @@ struct MyProfileScreen: View {
                     selectedTab: $viewModel.selectedTab,
                     onNavigateToUserSocial: onNavigateToUserSocial,
                     onNavigateToUserProfile: onNavigateToUserProfile,
-                    onShowOpeningHours: { activeSheet = .openingHours },
+                    onShowOpeningHours: {
+                        if openingHoursViewModel == nil {
+                            openingHoursViewModel = makeOpeningHoursViewModel()
+                        }
+                        activeSheet = .openingHours
+                    },
                     onRefresh: {
                         await viewModel.refresh()
                     },
@@ -79,7 +86,13 @@ struct MyProfileScreen: View {
                         onNavigateToSettings: onNavigateToSettings
                     )
                 case .openingHours:
-                    OpeningHoursSheetView()
+                    if let userId = viewModel.profileController.profile?.id,
+                       let openingHoursViewModel {
+                        OpeningHoursSheetView(
+                            viewModel: openingHoursViewModel,
+                            userId: userId
+                        )
+                    }
                 }
         }
     }

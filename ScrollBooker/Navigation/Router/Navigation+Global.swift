@@ -62,9 +62,10 @@ struct GlobalNavigationModifier: ViewModifier {
                 onNavigateToUserProfile: { router.push(.userProfile($0)) },
                 onNavigateToUserSocial: { router.push(.userSocial($0)) },
                 onNavigateToBooking: { router.push(.bookingServices($0)) },
-                onBack: { router.pop() }
+                onBack: { router.pop() },
+                makeOpeningHoursViewModel: { container.scheduleModule.makeOpeningHoursViewModel() }
             )
-            
+
         case .userSocial(let params):
             SocialScreen(
                 viewModel: container.followModule.makeSocialViewModel(userId: params.userId),

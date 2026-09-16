@@ -17,8 +17,10 @@ struct UserProfileScreen: View {
     var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     var onNavigateToBooking: (BookingNavigationParams) -> Void
     var onBack: () -> Void
+    let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
 
     @State private var activeSheet: ProfileSheet?
+    @State private var openingHoursViewModel: OpeningHoursViewModel?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -41,6 +43,9 @@ struct UserProfileScreen: View {
                     onNavigateToUserSocial: onNavigateToUserSocial,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onShowOpeningHours: {
+                        if openingHoursViewModel == nil {
+                            openingHoursViewModel = makeOpeningHoursViewModel()
+                        }
                         activeSheet = .openingHours
                     },
                     onRefresh: {
@@ -100,8 +105,13 @@ struct UserProfileScreen: View {
                     onNavigateToSettings: onNavigateToSettings
                 )
             case .openingHours:
-                OpeningHoursSheetView()
-                    .presentationDetents([.medium, .large])
+                if let userId = viewModel.profileController.profile?.id,
+                   let openingHoursViewModel {
+                    OpeningHoursSheetView(
+                        viewModel: openingHoursViewModel,
+                        userId: userId
+                    )
+                }
             }
         }
     }

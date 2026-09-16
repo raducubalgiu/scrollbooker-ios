@@ -7,61 +7,112 @@
 
 import SwiftUI
 
-struct ViewHeightKey: PreferenceKey {
-    static var defaultValue: CGFloat = 0
-    static func reduce(value: inout CGFloat, nextValue: () -> CGFloat) {
-        value = max(value, nextValue())
-    }
-}
-
 struct OpeningHoursSheetView: View {
+    let viewModel: OpeningHoursViewModel
+    let userId: Int
+
     @Environment(\.dismiss) private var dismiss
-    @State private var contentHeight: CGFloat = 300
-    
+    @State private var measuredHeight: CGFloat = 0
+
     var body: some View {
-        VStack(spacing: 16) {
+        VStack(spacing: 0) {
             SheetHeaderView(
                 onDismiss: { dismiss() },
-                title: String(localized: "schedule")
+                title: String(localized: "schedule"),
+                showDivider: false
             )
-            
-            VStack {
-                ForEach(["Luni", "Marți", "Miercuri", "Joi", "Vineri", "Sâmbătă", "Duminică"], id: \.self) { zi in
-                    HStack {
-                        HStack {
-                            Circle().fill(Color.green).frame(width: 10, height: 10)
-                            Text(zi).font(.headline)
-                        }
-                        Spacer()
-                        Text("09:00 - 18:00").font(.headline)
-                    }
-                }
-            }.padding()
+
+            content
         }
-        .fixedSize(horizontal: false, vertical: true)
         .background(
             GeometryReader { geo in
                 Color.clear
-                    .preference(key: ViewHeightKey.self, value: geo.size.height)
+                    .onAppear { measuredHeight = geo.size.height }
+                    .onChange(of: geo.size.height) { _, new in
+                        measuredHeight = new
+                    }
             }
         )
-        .onPreferenceChange(ViewHeightKey.self) { newValue in
-            if newValue > 0 {
-                contentHeight = newValue
-            }
-        }
-        .presentationDetents([.height(contentHeight + 16)])
+        .presentationDetents([.height(max(100, measuredHeight + 16))])
+        .presentationContentInteraction(.resizes)
         .presentationDragIndicator(.hidden)
         .presentationCornerRadius(25)
+        .task {
+            await viewModel.loadSchedules(userId: userId)
+        }
+    }
+
+    @ViewBuilder
+    private var content: some View {
+        switch viewModel.viewState {
+        case .idle, .loading:
+            VStack(spacing: 0) {
+                ForEach(0..<7, id: \.self) { _ in
+                    OpeningHoursSkeletonRowView()
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, .s)
+
+        case .error(let message):
+            ErrorView(message: message, maxHeight: 220) {
+                Task { await viewModel.loadSchedules(userId: userId) }
+            }
+
+        case .success(let schedules):
+            VStack(spacing: 0) {
+                ForEach(schedules) { schedule in
+                    OpeningHoursRowView(schedule: schedule)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.bottom, .s)
+        }
     }
 }
 
-#Preview("Light") {
-    OpeningHoursSheetView()
+private struct OpeningHoursRowView: View {
+    let schedule: Schedule
+
+    var body: some View {
+        HStack {
+            HStack(spacing: AppSize.s.rawValue) {
+                Circle()
+                    .fill(schedule.isClosed ? Color.gray : Color.green)
+                    .frame(width: 8, height: 8)
+
+                Text(schedule.localizedDayOfWeek)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.onBackgroundSB)
+            }
+
+            Spacer()
+
+            Text(schedule.timeRangeDisplay)
+                .font(.subheadline)
+                .fontWeight(.semibold)
+                .foregroundColor(.gray)
+        }
+        .padding(.vertical, .s)
+    }
 }
 
-#Preview("Dark") {
-    OpeningHoursSheetView()
-        .preferredColorScheme(.dark)
-}
+private struct OpeningHoursSkeletonRowView: View {
+    var body: some View {
+        HStack {
+            HStack(spacing: AppSize.s.rawValue) {
+                Circle()
+                    .fill(Color.primary.opacity(0.07))
+                    .frame(width: 8, height: 8)
 
+                SkeletonBar(width: 70, height: 14)
+            }
+
+            Spacer()
+
+            SkeletonBar(width: 90, height: 14)
+        }
+        .padding(.vertical, .s)
+    }
+}

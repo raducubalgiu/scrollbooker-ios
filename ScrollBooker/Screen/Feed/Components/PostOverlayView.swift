@@ -9,7 +9,8 @@ import SwiftUI
 
 struct PostOverlayView: View {
     var post: Post
-    
+    var showBookButton: Bool = true
+
     @Environment(\.feedActions) private var actions
 
     var body: some View {
@@ -40,9 +41,11 @@ struct PostOverlayView: View {
                         PostDescriptionView(description: description)
                     }
                     
-                    PostMainActionView(
-                        onClick: { actions.onOpenLinkedProductsSheet(post.id) }
-                    )
+                    if showBookButton {
+                        PostMainActionView(
+                            onClick: { actions.onOpenLinkedProductsSheet(post.id) }
+                        )
+                    }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding(.trailing, .base)

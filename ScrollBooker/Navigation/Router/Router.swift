@@ -20,6 +20,7 @@ final class Router {
     var selectedTab: MainTab = .feed
     var activeBookingViewModel: BookingViewModel?
     var activeCameraViewModel: CameraViewModel?
+    var activeProfilePostDetailViewModel: ProfilePostDetailViewModel?
 
     // Numărul din badge-urile bottom bar-ului (Appointments/Inbox). Încărcate o singură
     // dată la pornirea sesiunii (vezi MainRouter) — nu sunt polled. Actualizarea optimistă
@@ -65,7 +66,11 @@ final class Router {
     func clearCameraSession() {
         activeCameraViewModel = nil
     }
-    
+
+    func clearProfilePostDetailSession() {
+        activeProfilePostDetailViewModel = nil
+    }
+
     func resetAll() {
         feedPath = .init()
         inboxPath = .init()
@@ -74,6 +79,7 @@ final class Router {
         profilePath = .init()
         activeBookingViewModel = nil
         activeCameraViewModel = nil
+        activeProfilePostDetailViewModel = nil
     }
 }
 

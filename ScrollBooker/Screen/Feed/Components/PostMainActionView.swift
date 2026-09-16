@@ -14,7 +14,7 @@ struct PostMainActionView: View {
         Button {
             onClick()
         } label: {
-            Text("Rezervă acum")
+            Text(String(localized: "bookNow"))
                 .font(.subheadline.bold())
                 .foregroundColor(.white)
                 .padding(.vertical, 11)

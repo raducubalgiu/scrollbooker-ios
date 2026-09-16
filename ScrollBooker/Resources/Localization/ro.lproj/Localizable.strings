@@ -34,6 +34,7 @@
 "termsAndConditions" = "Termeni și condiții";
 "cancel" = "Anulează";
 "book" = "Rezervă";
+"bookNow" = "Rezervă acum";
 "bookAgain" = "Rezervă din nou";
 "buy" = "Cumpără";
 "from" = "de la";
@@ -301,6 +302,7 @@
 /* --- TITLES --- */
 "title_feed" = "Acasă";
 "title_posts" = "Postări";
+"title_bookmarks" = "Salvate";
 
 /* --- MESSAGES --- */
 "message_empty_posts" = "Nu au fost găsite postări";

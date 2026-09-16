@@ -191,6 +191,15 @@ class BaseFeedViewModel {
         }
     }
     
+    /// Lets a subclass whose `posts` come from an already-loaded, externally-owned source
+    /// (e.g. `ProfileController.postsState`/`.bookmarksState`, for the profile post-detail
+    /// screen) push a fresh snapshot in, instead of self-paginating via `load(fetchBlock:)`.
+    @MainActor
+    func syncExternalPosts(_ newPosts: [Post]) {
+        posts = newPosts
+        viewState = posts.isEmpty ? .empty : .success(posts)
+    }
+
     func updateWindow(at index: Int) {
         guard !posts.isEmpty else { return }
         

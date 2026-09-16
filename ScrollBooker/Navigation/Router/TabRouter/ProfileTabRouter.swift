@@ -29,6 +29,17 @@ struct ProfileTabRouter: View {
                         onNavigateToMyCalendar: { router.push(.myCalendar) },
                         onNavigateToCamera: { router.push(.camera) },
                         makeOpeningHoursViewModel: { container.scheduleModule.makeOpeningHoursViewModel() },
+                        onNavigateToPost: { source, postId in
+                            guard let userId = session.userInfo?.id else { return }
+
+                            router.activeProfilePostDetailViewModel = container.postModule.makeProfilePostDetailViewModel(
+                                profileController: stableViewModel.profileController,
+                                source: source,
+                                userId: userId,
+                                startPostId: postId
+                            )
+                            router.push(.profilePostDetail)
+                        },
                     )
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         CustomTabBar(backgroundColor: .backgroundSB)

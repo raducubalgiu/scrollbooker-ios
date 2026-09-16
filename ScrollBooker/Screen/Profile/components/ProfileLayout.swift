@@ -15,6 +15,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onShowOpeningHours: () -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
+    let onNavigateToPost: (ProfilePostSource, Int) -> Void
     let onRefresh: () async -> Void
 
     @ViewBuilder var header: () -> Header
@@ -154,7 +155,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
         case .posts:
             ProfilePostsTabView(
                 controller: profileController,
-                userId: user.id
+                userId: user.id,
+                onNavigateToPost: { postId in onNavigateToPost(.posts, postId) }
             )
         case .products:
             ProfileProductsTabView(
@@ -199,7 +201,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
         case .bookmarks:
             ProfileBookmarksTabView(
                 controller: profileController,
-                userId: user.id
+                userId: user.id,
+                onNavigateToPost: { postId in onNavigateToPost(.bookmarks, postId) }
             )
         case .about:
             ProfileAboutTabView(

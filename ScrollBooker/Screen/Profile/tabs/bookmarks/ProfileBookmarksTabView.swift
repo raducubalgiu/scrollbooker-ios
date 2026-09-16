@@ -10,6 +10,7 @@ import SwiftUI
 struct ProfileBookmarksTabView: View {
     let controller: ProfileController
     let userId: Int
+    let onNavigateToPost: (Int) -> Void
 
     var body: some View {
         switch controller.bookmarksState {
@@ -42,7 +43,7 @@ struct ProfileBookmarksTabView: View {
                             )
                         }
                     },
-                    onNavigateToPost: { postId in }
+                    onNavigateToPost: onNavigateToPost
                 )
             }
         }

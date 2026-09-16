@@ -48,15 +48,17 @@ struct GlobalNavigationModifier: ViewModifier {
             )
             
         case .userProfile(let params):
+            let userProfileViewModel = container.userProfileModule.makeUserProfileViewModel(
+                userId: params.userId,
+                username: params.username,
+                getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+                getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
+                getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
+                getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+            )
+
             UserProfileScreen(
-                viewModel: container.userProfileModule.makeUserProfileViewModel(
-                    userId: params.userId,
-                    username: params.username,
-                    getUserPostsUseCase: container.postModule.getUserPostsUseCase,
-                    getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
-                    getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
-                    getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
-                ),
+                viewModel: userProfileViewModel,
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
@@ -64,8 +66,41 @@ struct GlobalNavigationModifier: ViewModifier {
                 onNavigateToUserSocial: { router.push(.userSocial($0)) },
                 onNavigateToBooking: { router.push(.bookingServices($0)) },
                 onBack: { router.pop() },
-                makeOpeningHoursViewModel: { container.scheduleModule.makeOpeningHoursViewModel() }
+                makeOpeningHoursViewModel: { container.scheduleModule.makeOpeningHoursViewModel() },
+                onNavigateToPost: { source, postId in
+                    router.activeProfilePostDetailViewModel = container.postModule.makeProfilePostDetailViewModel(
+                        profileController: userProfileViewModel.profileController,
+                        source: source,
+                        userId: params.userId,
+                        startPostId: postId
+                    )
+                    router.push(.profilePostDetail)
+                }
             )
+
+        case .profilePostDetail:
+            if let viewModel = router.activeProfilePostDetailViewModel {
+                ProfilePostDetailScreen(
+                    viewModel: viewModel,
+                    source: viewModel.source,
+                    makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
+                    makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
+                    makeReviewsVM: {
+                        container.reviewModule.makeReviewsViewModel(
+                            userId: $0,
+                            getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+                        )
+                    },
+                    onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                    onNavigateToBooking: { router.push(.bookingServices($0)) },
+                    onBack: {
+                        router.clearProfilePostDetailSession()
+                        router.pop()
+                    }
+                )
+            } else {
+                LoadingView()
+            }
 
         case .userSocial(let params):
             SocialScreen(

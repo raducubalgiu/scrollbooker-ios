@@ -10,7 +10,8 @@ import SwiftUI
 struct ProfilePostsTabView: View {
     let controller: ProfileController
     let userId: Int
-    
+    let onNavigateToPost: (Int) -> Void
+
     var body: some View {
         switch controller.postsState {
             case .idle, .loading:
@@ -39,7 +40,7 @@ struct ProfilePostsTabView: View {
                                 await controller.loadMorePostsIfNeeded(userId: userId, currentPost: currentPost)
                             }
                         },
-                        onNavigateToPost: { postId in }
+                        onNavigateToPost: onNavigateToPost
                     )
                 }
             }

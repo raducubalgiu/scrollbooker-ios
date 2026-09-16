@@ -82,6 +82,24 @@ final class PostModule {
         )
     }
     
+    func makeProfilePostDetailViewModel(
+        profileController: ProfileController,
+        source: ProfilePostSource,
+        userId: Int,
+        startPostId: Int
+    ) -> ProfilePostDetailViewModel {
+        ProfilePostDetailViewModel(
+            profileController: profileController,
+            source: source,
+            userId: userId,
+            startPostId: startPostId,
+            likePostUseCase: likePostUseCase,
+            unlikePostUseCase: unlikePostUseCase,
+            bookmarkPostUseCase: bookmarkPostUseCase,
+            unbookmarkPostUseCase: unbookmarkPostUseCase
+        )
+    }
+
     func makeFeedViewModel() -> FeedViewModel {
         FeedViewModel(
             exploreViewModel: makeExploreTabViewModel(),

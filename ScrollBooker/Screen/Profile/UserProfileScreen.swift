@@ -18,9 +18,14 @@ struct UserProfileScreen: View {
     var onNavigateToBooking: (BookingNavigationParams) -> Void
     var onBack: () -> Void
     let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
+    let onNavigateToPost: (ProfilePostSource, Int) -> Void
 
     @State private var activeSheet: ProfileSheet?
     @State private var openingHoursViewModel: OpeningHoursViewModel?
+    // Set by a sheet's own action (e.g. tapping a link in ProfileMenuSheetView), then run
+    // from .sheet's onDismiss — guarantees the sheet has fully closed before we navigate,
+    // instead of the two animations racing each other.
+    @State private var pendingSheetAction: (() -> Void)?
 
     var body: some View {
         VStack(spacing: 0) {
@@ -49,6 +54,7 @@ struct UserProfileScreen: View {
                         activeSheet = .openingHours
                     },
                     onNavigateToBooking: onNavigateToBooking,
+                    onNavigateToPost: onNavigateToPost,
                     onRefresh: {
                         await viewModel.refresh()
                     },
@@ -93,7 +99,10 @@ struct UserProfileScreen: View {
         .task {
             await viewModel.loadProfile()
         }
-        .sheet(item: $activeSheet) { sheet in
+        .sheet(item: $activeSheet, onDismiss: {
+            pendingSheetAction?()
+            pendingSheetAction = nil
+        }) { sheet in
             switch sheet {
             case .menu:
                 ProfileMenuSheetView(
@@ -102,8 +111,8 @@ struct UserProfileScreen: View {
                         set: { if !$0 { activeSheet = nil } }
                     ),
                     onCreatePost: {},
-                    onNavigateToMyBusiness: onNavigateToMyBusiness,
-                    onNavigateToSettings: onNavigateToSettings
+                    onNavigateToMyBusiness: { pendingSheetAction = onNavigateToMyBusiness },
+                    onNavigateToSettings: { pendingSheetAction = onNavigateToSettings }
                 )
             case .openingHours:
                 if let userId = viewModel.profileController.profile?.id,

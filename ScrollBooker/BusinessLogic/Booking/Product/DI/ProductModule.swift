@@ -38,10 +38,18 @@ final class ProductModule {
         )
     }
     
-    func makeLinkedProductsViewModel(postId: Int) -> LinkedProductsViewModel {
+    func makeLinkedProductsViewModel(
+        postId: Int,
+        postUserId: Int,
+        isVideoReview: Bool,
+        getAppointmentByUserAndPostUseCase: GetAppointmentByUserAndPostUseCase
+    ) -> LinkedProductsViewModel {
         LinkedProductsViewModel(
             postId: postId,
-            getPostLinkedProductsUseCase: getPostLinkedProductsUseCase
+            postUserId: postUserId,
+            isVideoReview: isVideoReview,
+            getPostLinkedProductsUseCase: getPostLinkedProductsUseCase,
+            getAppointmentByUserAndPostUseCase: getAppointmentByUserAndPostUseCase
         )
     }
     

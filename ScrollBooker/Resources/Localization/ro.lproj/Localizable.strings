@@ -35,6 +35,7 @@
 "cancel" = "Anulează";
 "book" = "Rezervă";
 "bookNow" = "Rezervă acum";
+"bookYours" = "Rezervă și tu";
 "bookAgain" = "Rezervă din nou";
 "buy" = "Cumpără";
 "from" = "de la";
@@ -71,6 +72,10 @@
 "aboutYou" = "Despre tine";
 "dontHaveAppointmentsYet" = "Nu ai nici o proramare momentan";
 "reviews" = "Recenzii";
+"review" = "Recenzie";
+"reviewFor" = "Recenzie pentru";
+"videoReviewDetails" = "Detalii recenzie";
+"from5" = "din 5";
 "followers" = "Urmăritori";
 "dontFoundResults" = "Nu au fost găsite rezultate";
 "price" = "Preț";
@@ -106,6 +111,8 @@
 "total" = "Total";
 "navigationDirections" = "Direcții de navigare";
 "recommendedServices" = "Servicii recomandate";
+"bookSameServices" = "Rezervă aceleași servicii";
+"seeAllServicesFrom" = "Vezi toate serviciile de la %1$@";
 "selectedServices" = "Servicii selectate";
 "checkDetails" = "Verifică detaliile";
 "confirmReservationDetails" = "Ești la un pas de a finaliza programarea. Asigură-te că toate datele sunt corecte.";

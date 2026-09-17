@@ -43,7 +43,8 @@ struct PostOverlayView: View {
                     
                     if showBookButton {
                         PostMainActionView(
-                            onClick: { actions.onOpenLinkedProductsSheet(post.id) }
+                            isVideoReview: post.isVideoReview,
+                            onClick: { actions.onOpenLinkedProductsSheet(post) }
                         )
                     }
                 }

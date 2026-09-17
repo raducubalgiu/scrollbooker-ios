@@ -18,7 +18,7 @@ struct FeedScreen: View {
     let onOpenDrawer: () -> Void
 
     let makeCommentsVM: (Int) -> CommentsViewModel
-    let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
+    let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
     let makeReviewsVM: (Int) -> ReviewsViewModel
 
     init(
@@ -28,7 +28,7 @@ struct FeedScreen: View {
         onNavigateToBooking: @escaping (BookingNavigationParams) -> Void,
         onOpenDrawer: @escaping () -> Void,
         makeCommentsVM: @escaping (Int) -> CommentsViewModel,
-        makeLinkedProductsVM: @escaping (Int) -> LinkedProductsViewModel,
+        makeLinkedProductsVM: @escaping (Post) -> LinkedProductsViewModel,
         makeReviewsVM: @escaping (Int) -> ReviewsViewModel
     ) {
         self.viewModel = viewModel

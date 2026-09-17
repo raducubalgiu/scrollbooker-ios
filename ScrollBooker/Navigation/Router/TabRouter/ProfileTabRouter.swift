@@ -38,7 +38,7 @@ struct ProfileTabRouter: View {
                                 userId: userId,
                                 startPostId: postId
                             )
-                            router.push(.profilePostDetail)
+                            router.pushWithoutAnimation(.profilePostDetail)
                         },
                     )
                     .safeAreaInset(edge: .bottom, spacing: 0) {

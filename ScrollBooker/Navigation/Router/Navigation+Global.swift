@@ -74,7 +74,7 @@ struct GlobalNavigationModifier: ViewModifier {
                         userId: params.userId,
                         startPostId: postId
                     )
-                    router.push(.profilePostDetail)
+                    router.pushWithoutAnimation(.profilePostDetail)
                 }
             )
 
@@ -84,7 +84,14 @@ struct GlobalNavigationModifier: ViewModifier {
                     viewModel: viewModel,
                     source: viewModel.source,
                     makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
-                    makeLinkedProductsVM: { container.productModule.makeLinkedProductsViewModel(postId: $0) },
+                    makeLinkedProductsVM: { post in
+                        container.productModule.makeLinkedProductsViewModel(
+                            postId: post.id,
+                            postUserId: post.user.id,
+                            isVideoReview: post.isVideoReview,
+                            getAppointmentByUserAndPostUseCase: container.appointmentModule.getAppointmentByUserAndPostUseCase
+                        )
+                    },
                     makeReviewsVM: {
                         container.reviewModule.makeReviewsViewModel(
                             userId: $0,
@@ -95,7 +102,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     onNavigateToBooking: { router.push(.bookingServices($0)) },
                     onBack: {
                         router.clearProfilePostDetailSession()
-                        router.pop()
+                        router.popWithoutAnimation()
                     }
                 )
             } else {

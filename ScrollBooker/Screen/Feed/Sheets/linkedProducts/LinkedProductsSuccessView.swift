@@ -9,10 +9,11 @@ import SwiftUI
 
 struct LinkedProductsSuccessView: View {
     let products: [Product]
+    let bookingSource: BookingSourceEnum
     let onNavigateToBooking: (BookingNavigationParams) -> Void
-    
+
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         if products.isEmpty {
             NoDataView(
@@ -29,13 +30,13 @@ struct LinkedProductsSuccessView: View {
                             onOpenProductDetail: { _ in },
                             onNavigateToBooking: { clickedProduct in
                                 dismiss()
-                                
+
                                 onNavigateToBooking(
                                     BookingNavigationParams(
                                         businessId: clickedProduct.businessId,
                                         userId: clickedProduct.targetUserId,
                                         businessOwnerId: clickedProduct.businessOwnerId,
-                                        source: BookingSourceEnum.exploreFeed,
+                                        source: bookingSource,
                                         selectedProductId: clickedProduct.id
                                     )
                                 )

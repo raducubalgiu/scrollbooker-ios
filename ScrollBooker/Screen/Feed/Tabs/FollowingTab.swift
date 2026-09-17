@@ -10,7 +10,7 @@ import SwiftUI
 struct FollowingTab: View {
     var viewModel: FollowingTabViewModel
     let makeCommentsVM: (Int) -> CommentsViewModel
-    let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
+    let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
     let makeReviewsVM: (Int) -> ReviewsViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
@@ -53,7 +53,7 @@ struct FollowingTab: View {
             onNavigateToUserProfile: onNavigateToUserProfile,
             onNavigateToBooking: onNavigateToBooking,
             onOpenReviewsSheet: { activeSheet = .reviews(userId: $0) },
-            onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(postId: $0) },
+            onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(post: $0) },
             onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
@@ -75,9 +75,12 @@ struct FollowingTab: View {
                 .presentationDetents([.fraction(0.7), .large])
                     .presentationDragIndicator(.visible)
 
-            case .linkedProducts(let postId):
+            case .linkedProducts(let post):
                 LinkedProductsSheetView(
-                    viewModel: linkedProductsCache.viewModel(for: postId, make: makeLinkedProductsVM),
+                    viewModel: linkedProductsCache.viewModel(for: post.id, make: { _ in makeLinkedProductsVM(post) }),
+                    post: post,
+                    bookingSource: .followingFeed,
+                    onNavigateToUserProfile: onNavigateToUserProfile,
                     onNavigateToBooking: onNavigateToBooking
                 )
                 .presentationDetents([.fraction(0.7), .large])

@@ -9,34 +9,58 @@ import SwiftUI
 
 struct LinkedProductsSheetView: View {
     let viewModel: LinkedProductsViewModel
+    let post: Post
+    let bookingSource: BookingSourceEnum
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
-    
+
+    private var title: String {
+        viewModel.isVideoReview
+            ? String(localized: "videoReviewDetails")
+            : String(localized: "recommendedServices")
+    }
+
     var body: some View {
         NavigationStack {
             ZStack {
                 Color(.systemBackground)
                     .ignoresSafeArea()
-                
-                switch viewModel.viewState {
-                case .idle, .loading:
-                    LoadingView()
-                        
-                case .error:
-                    ErrorView(message: String(localized: "message_error_something_went_wrong")) {
-                        Task { await viewModel.loadLinkedProducts() }
-                    }
-                        
-                case .success(let products):
-                    LinkedProductsSuccessView(
-                        products: products,
-                        onNavigateToBooking: onNavigateToBooking
+
+                if viewModel.isVideoReview {
+                    VideoReviewSectionView(
+                        viewModel: viewModel,
+                        post: post,
+                        onNavigateToUserProfile: onNavigateToUserProfile,
+                        onNavigateToBooking: onNavigateToBooking,
+                        bookingSource: bookingSource
                     )
+                } else {
+                    switch viewModel.viewState {
+                    case .idle, .loading:
+                        LoadingView()
+
+                    case .error:
+                        ErrorView(message: String(localized: "message_error_something_went_wrong")) {
+                            Task { await viewModel.loadLinkedProducts() }
+                        }
+
+                    case .success(let products):
+                        LinkedProductsSuccessView(
+                            products: products,
+                            bookingSource: bookingSource,
+                            onNavigateToBooking: onNavigateToBooking
+                        )
+                    }
                 }
             }
-            .navigationTitle(String(localized: "recommendedServices"))
+            .navigationTitle(title)
             .navigationBarTitleDisplayMode(.inline)
             .task {
-                await viewModel.loadLinkedProducts()
+                if viewModel.isVideoReview {
+                    await viewModel.loadReviewAppointment()
+                } else {
+                    await viewModel.loadLinkedProducts()
+                }
             }
         }
     }

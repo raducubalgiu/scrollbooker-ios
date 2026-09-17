@@ -34,6 +34,10 @@ final class AppointmentModule {
     private lazy var getAppointmentByIdUseCase: GetAppointmentByIdUseCase = {
         GetAppointmentByIdUseCase(repository: repository)
     }()
+
+    lazy var getAppointmentByUserAndPostUseCase: GetAppointmentByUserAndPostUseCase = {
+        GetAppointmentByUserAndPostUseCase(repository: repository)
+    }()
     
     private lazy var cancelAppointment: CancelAppointmentUseCase = {
         CancelAppointmentUseCase(repository: repository)

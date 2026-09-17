@@ -49,6 +49,27 @@ final class Router {
         }
     }
     
+    /// Same as `push(_:)`, but without the NavigationStack's implicit slide-in transition —
+    /// for destinations meant to feel like an instant cut rather than another step deeper in
+    /// the stack (e.g. ProfilePostDetailScreen, opened from a grid tap).
+    func pushWithoutAnimation(_ route: Route) {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            push(route)
+        }
+    }
+
+    /// Same as `pop()`, without the slide-out transition — pairs with `pushWithoutAnimation(_:)`
+    /// so entering and leaving that same destination are both instant.
+    func popWithoutAnimation() {
+        var transaction = Transaction()
+        transaction.disablesAnimations = true
+        withTransaction(transaction) {
+            pop()
+        }
+    }
+
     func popToRoot() {
         switch selectedTab {
         case .feed: feedPath = .init()

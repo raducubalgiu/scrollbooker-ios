@@ -11,7 +11,7 @@ struct ExploreTab: View {
     var viewModel: ExploreTabViewModel
     
     let makeCommentsVM: (Int) -> CommentsViewModel
-    let makeLinkedProductsVM: (Int) -> LinkedProductsViewModel
+    let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
     let makeReviewsVM: (Int) -> ReviewsViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
@@ -54,7 +54,7 @@ struct ExploreTab: View {
             onNavigateToUserProfile: onNavigateToUserProfile,
             onNavigateToBooking: onNavigateToBooking,
             onOpenReviewsSheet: { userId in activeSheet = .reviews(userId: userId) },
-            onOpenLinkedProductsSheet: { postId in activeSheet = .linkedProducts(postId: postId) },
+            onOpenLinkedProductsSheet: { post in activeSheet = .linkedProducts(post: post) },
             onOpenCommentsSheet: { postId in activeSheet = .comments(postId: postId) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
@@ -78,9 +78,12 @@ struct ExploreTab: View {
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
 
-                case .linkedProducts(let postId):
+                case .linkedProducts(let post):
                     LinkedProductsSheetView(
-                        viewModel: linkedProductsCache.viewModel(for: postId, make: makeLinkedProductsVM),
+                        viewModel: linkedProductsCache.viewModel(for: post.id, make: { _ in makeLinkedProductsVM(post) }),
+                        post: post,
+                        bookingSource: .exploreFeed,
+                        onNavigateToUserProfile: onNavigateToUserProfile,
                         onNavigateToBooking: onNavigateToBooking
                     )
                     .presentationDetents([.fraction(0.7), .fraction(0.999)])

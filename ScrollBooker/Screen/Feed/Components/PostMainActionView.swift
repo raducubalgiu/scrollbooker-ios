@@ -8,13 +8,22 @@
 import SwiftUI
 
 struct PostMainActionView: View {
+    var isVideoReview: Bool = false
     var onClick: () -> Void
-    
+
+    // A video review is someone else's booking being shown off, so the CTA invites the viewer to
+    // book one for themselves rather than to book "this" — same split as Android's PostOverlay.
+    private var title: String {
+        isVideoReview
+            ? String(localized: "bookYours")
+            : String(localized: "bookNow")
+    }
+
     var body: some View {
         Button {
             onClick()
         } label: {
-            Text(String(localized: "bookNow"))
+            Text(title)
                 .font(.subheadline.bold())
                 .foregroundColor(.white)
                 .padding(.vertical, 11)

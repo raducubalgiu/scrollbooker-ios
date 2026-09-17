@@ -32,11 +32,16 @@ final class FeedViewModel {
             }
     }
 
-    func handleScenePhase(_ phase: ScenePhase) {
+    /// `isFeedVisible` — whether the Feed tab is actually what's on screen right now (selected
+    /// tab AND at the root of its own NavigationStack, not pushed into some other screen reached
+    /// from Feed). Backgrounding/foregrounding says nothing about that on its own, so without this
+    /// check, returning from the background always resumed Explore/Following's video regardless of
+    /// what the user was actually looking at.
+    func handleScenePhase(_ phase: ScenePhase, isFeedVisible: Bool) {
         if phase != .active {
             exploreViewModel.pauseAll()
             followingViewModel.pauseAll()
-        } else {
+        } else if isFeedVisible {
             switch selectedTab {
                 case .explore: exploreViewModel.playCurrent()
                 case .following: followingViewModel.playCurrent()

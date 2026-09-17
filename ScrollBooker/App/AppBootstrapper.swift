@@ -16,7 +16,18 @@ final class AppBootstrapper: NSObject, UIApplicationDelegate {
         configureAudioSession()
         return true
     }
-    
+
+    // Belt-and-suspenders alongside Info.plist's UISupportedInterfaceOrientations: the app is
+    // portrait-only everywhere (the video feed has no landscape layout at all), and since iOS 13
+    // this delegate method is the actual authority — Info.plist only sets the initial/declared
+    // baseline — so both need to agree or a stray landscape rotation can still slip through.
+    func application(
+        _ application: UIApplication,
+        supportedInterfaceOrientationsFor window: UIWindow?
+    ) -> UIInterfaceOrientationMask {
+        .portrait
+    }
+
     private func configureAudioSession() {
         do {
             try AVAudioSession.sharedInstance().setCategory(.playback, mode: .default, options: [])

@@ -84,7 +84,8 @@ struct FeedScreen: View {
             viewModel.handleTabChange(to: newTab)
         }
         .onChange(of: scenePhase) { _, phase in
-            viewModel.handleScenePhase(phase)
+            let isFeedVisible = router.selectedTab == .feed && router.feedPath.isEmpty
+            viewModel.handleScenePhase(phase, isFeedVisible: isFeedVisible)
         }
         .onChange(of: router.selectedTab) { oldValue, newValue in
             if newValue == .feed {

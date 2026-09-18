@@ -55,6 +55,7 @@ struct FollowingTab: View {
             onOpenReviewsSheet: { activeSheet = .reviews(post: $0) },
             onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(post: $0) },
             onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
+            onOpenMoreOptions: { activeSheet = .moreOptions(postId: $0) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
         ))
@@ -88,8 +89,6 @@ struct FollowingTab: View {
 
             case .moreOptions(let postId):
                 MoreOptionsSheetView(postId: postId)
-                    .presentationDetents([.fraction(0.7)])
-                    .presentationDragIndicator(.visible)
             }
         }
         .task {

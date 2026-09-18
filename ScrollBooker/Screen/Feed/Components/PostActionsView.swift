@@ -124,6 +124,18 @@ struct PostActionsView: View {
                 }
             }
             .buttonStyle(.plain)
+
+            if post.isOwnPost {
+                Button {
+                    actions.onOpenMoreOptions(post.id)
+                } label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 27))
+                        .foregroundColor(.white)
+                        .actionIconShadow()
+                }
+                .buttonStyle(.plain)
+            }
         }
     }
 }

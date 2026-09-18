@@ -94,6 +94,7 @@ struct ProfilePostDetailScreen: View {
             onOpenReviewsSheet: { post in activeSheet = .reviews(post: post) },
             onOpenLinkedProductsSheet: { post in activeSheet = .linkedProducts(post: post) },
             onOpenCommentsSheet: { postId in activeSheet = .comments(postId: postId) },
+            onOpenMoreOptions: { postId in activeSheet = .moreOptions(postId: postId) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
         ))
@@ -130,8 +131,6 @@ struct ProfilePostDetailScreen: View {
 
                 case .moreOptions(let postId):
                     MoreOptionsSheetView(postId: postId)
-                        .presentationDetents([.fraction(0.7)])
-                        .presentationDragIndicator(.visible)
                 }
         }
         .onChange(of: currentIndex) { _, newIndex in

@@ -27,21 +27,30 @@ struct MoreOptionsSheetView: View {
                 ListItemView(
                     title: String(localized: "statistics"),
                     leadingIcon: "chart.bar",
-                    onClick: { onOpenStatistics(postId) },
+                    onClick: {
+                        onOpenStatistics(postId)
+                        dismiss()
+                    },
                     showTrailingIcon: false
                 )
 
                 ListItemView(
                     title: String(localized: "edit"),
                     leadingIcon: "pencil",
-                    onClick: { onNavigateToEditPost(postId) },
+                    onClick: {
+                        onNavigateToEditPost(postId)
+                        dismiss()
+                    },
                     showTrailingIcon: false
                 )
 
                 ListItemView(
                     title: String(localized: "delete"),
                     leadingIcon: "trash",
-                    onClick: { onOpenDeleteConfirm(postId) },
+                    onClick: {
+                        onOpenDeleteConfirm(postId)
+                        dismiss()
+                    },
                     showTrailingIcon: false,
                     color: .errorSB
                 )

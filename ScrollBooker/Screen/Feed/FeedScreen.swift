@@ -20,6 +20,7 @@ struct FeedScreen: View {
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
     let makeReviewsVM: (Post) -> ReviewsViewModel
+    let makeStatisticsVM: (Int) -> PostStatisticsViewModel
 
     init(
         viewModel: FeedViewModel,
@@ -29,7 +30,8 @@ struct FeedScreen: View {
         onOpenDrawer: @escaping () -> Void,
         makeCommentsVM: @escaping (Int) -> CommentsViewModel,
         makeLinkedProductsVM: @escaping (Post) -> LinkedProductsViewModel,
-        makeReviewsVM: @escaping (Post) -> ReviewsViewModel
+        makeReviewsVM: @escaping (Post) -> ReviewsViewModel,
+        makeStatisticsVM: @escaping (Int) -> PostStatisticsViewModel
     ) {
         self.viewModel = viewModel
         self.onNavigateToFeedSearch = onNavigateToFeedSearch
@@ -39,6 +41,7 @@ struct FeedScreen: View {
         self.makeCommentsVM = makeCommentsVM
         self.makeLinkedProductsVM = makeLinkedProductsVM
         self.makeReviewsVM = makeReviewsVM
+        self.makeStatisticsVM = makeStatisticsVM
     }
 
     var body: some View {
@@ -51,16 +54,18 @@ struct FeedScreen: View {
                     makeCommentsVM: makeCommentsVM,
                     makeLinkedProductsVM: makeLinkedProductsVM,
                     makeReviewsVM: makeReviewsVM,
+                    makeStatisticsVM: makeStatisticsVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onNavigateToBooking: onNavigateToBooking
                 )
                 .tag(FeedTab.explore)
-                
+
                 FollowingTab(
                     viewModel: viewModel.followingViewModel,
                     makeCommentsVM: makeCommentsVM,
                     makeLinkedProductsVM: makeLinkedProductsVM,
                     makeReviewsVM: makeReviewsVM,
+                    makeStatisticsVM: makeStatisticsVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onNavigateToBooking: onNavigateToBooking
                 )

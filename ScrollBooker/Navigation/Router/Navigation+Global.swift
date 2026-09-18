@@ -100,6 +100,9 @@ struct GlobalNavigationModifier: ViewModifier {
                             getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
                         )
                     },
+                    makeStatisticsVM: { postId in
+                        container.postModule.makePostStatisticsViewModel(postId: postId)
+                    },
                     onNavigateToUserProfile: { router.push(.userProfile($0)) },
                     onNavigateToBooking: { router.push(.bookingServices($0)) },
                     onBack: {

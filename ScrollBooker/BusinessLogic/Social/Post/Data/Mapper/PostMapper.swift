@@ -146,6 +146,25 @@ extension Hashtag {
     }
 }
 
+extension PostAnalyticsSummary {
+    init(from dto: PostAnalyticsSummaryDto) {
+        self.postId = dto.postId
+        self.viewsCount = dto.viewsCount
+        self.uniqueViewersCount = dto.uniqueViewersCount
+        self.watchTimeMs = dto.watchTimeMs
+        self.averageWatchTimeMs = dto.averageWatchTimeMs
+        self.completionsCount = dto.completionsCount
+        self.sourceBreakdown = dto.sourceBreakdown.map { PostAnalyticsSourceBreakdownItem(from: $0) }
+    }
+}
+
+extension PostAnalyticsSourceBreakdownItem {
+    init(from dto: PostAnalyticsSourceBreakdownItemDto) {
+        self.source = PostViewSourceEnum.fromKey(dto.source)
+        self.viewsCount = dto.viewsCount
+    }
+}
+
 extension PostCounters {
     init(from dto: PostCountersDto) {
         self.commentCount = dto.commentCount

@@ -13,11 +13,14 @@ struct ExploreTab: View {
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
     let makeReviewsVM: (Post) -> ReviewsViewModel
+    let makeStatisticsVM: (Int) -> PostStatisticsViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
 
     @State private var currentIndex: Int? = 0
     @State private var activeSheet: FeedSheetType? = nil
+    @State private var pendingSheetAction: (() -> Void)?
+    @State private var statisticsPostId: Int?
 
     @State private var commentsCache = ViewModelCache<Int, CommentsViewModel>()
     @State private var linkedProductsCache = ViewModelCache<Int, LinkedProductsViewModel>()
@@ -60,7 +63,10 @@ struct ExploreTab: View {
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
         ))
-        .sheet(item: $activeSheet) { sheetType in
+        .sheet(item: $activeSheet, onDismiss: {
+            pendingSheetAction?()
+            pendingSheetAction = nil
+        }) { sheetType in
             switch sheetType {
                 case .comments(let postId):
                     CommentsSheetView(
@@ -92,8 +98,22 @@ struct ExploreTab: View {
                     .presentationCornerRadius(25)
 
                 case .moreOptions(let postId):
-                    MoreOptionsSheetView(postId: postId)
+                    MoreOptionsSheetView(
+                        postId: postId,
+                        onOpenStatistics: { id in pendingSheetAction = { statisticsPostId = id } }
+                    )
                 }
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { statisticsPostId != nil },
+            set: { if !$0 { statisticsPostId = nil } }
+        )) {
+            if let statisticsPostId {
+                PostStatisticsScreen(
+                    viewModel: makeStatisticsVM(statisticsPostId),
+                    onBack: { self.statisticsPostId = nil }
+                )
+            }
         }
         .task {
             async let postsTask: () = viewModel.initialLoad()

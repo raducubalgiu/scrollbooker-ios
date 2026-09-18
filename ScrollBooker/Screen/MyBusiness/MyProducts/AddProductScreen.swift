@@ -10,67 +10,49 @@ import SwiftUI
 struct AddProductScreen: View {
     @State var viewModel: AddProductViewModel
     let onBack: () -> Void
-    
+    let onCreated: () -> Void
+
+    @State private var showErrors = false
+
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(
-                title: "Adaugă Produs",
-                onBack: onBack
-            )
-            
-            ScrollView {
-                VStack(alignment: .leading, spacing: 16) {
-                    InputSelectView(
-                        placeholder: "Categorie",
-                        options: viewModel.categories,
-                        selectedOption: viewModel.selectedCategoryId,
-                        onValueChange: { newValue in
-                            viewModel.selectedCategoryId = newValue
-                        }
-                    )
+            HeaderView(title: "Adaugă Produs", onBack: onBack)
 
-                    InputSelectView(
-                        placeholder: "Serviciu",
-                        options: viewModel.filteredServices,
-                        selectedOption: viewModel.selectedServiceId,
-                        onValueChange: { newValue in
-                            viewModel.selectedServiceId = newValue
-                        }
-                    )
-                    
-                    Input(
-                        label: "Nume",
-                        text: $viewModel.name,
-                        placeholder: "Adaugă numele produsului",
-                    )
-                    
-                    Input(
-                        label: "Descriere",
-                        text: $viewModel.description,
-                        placeholder: "Adauga o descriere"
-                    )
+            ScrollView {
+                ProductFormView(
+                    form: viewModel.form,
+                    showErrors: showErrors,
+                    onAddVariant: { viewModel.form.addVariant($0) },
+                    onUpdateVariant: { viewModel.form.updateVariant($0) },
+                    onDeleteVariant: { viewModel.form.removeVariant(id: $0.id) }
+                )
+
+                if let errorMessage = viewModel.errorMessage {
+                    Text(errorMessage)
+                        .font(.footnote)
+                        .foregroundColor(.errorSB)
+                        .padding(.horizontal, .base)
+                        .padding(.bottom, .base)
                 }
-                .padding()
             }
-            .safeAreaInset(edge: .bottom, spacing: 0) {
-                MainButton(
-                    title: "Salveaza",
-                    onClick: {
-                        // Logica de salvare
+
+            Divider()
+
+            MainButton(
+                title: "Creează Produs",
+                isLoading: viewModel.isSaving
+            ) {
+                showErrors = true
+                Task {
+                    if await viewModel.createProduct() {
+                        onCreated()
                     }
-                )
-                .padding(.horizontal, 16)
-                .padding(.top, 12)
-                .padding(.bottom, 8)
-                .background(
-                    Color.backgroundSB
-                        .ignoresSafeArea(edges: .bottom)
-                )
+                }
             }
+            .padding(.base)
+        }
+        .task {
+            await viewModel.loadInitialData()
         }
     }
 }
-
-
-
-

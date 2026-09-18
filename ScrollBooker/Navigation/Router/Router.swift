@@ -21,6 +21,7 @@ final class Router {
     var activeBookingViewModel: BookingViewModel?
     var activeCameraViewModel: CameraViewModel?
     var activeProfilePostDetailViewModel: ProfilePostDetailViewModel?
+    var myProductsViewModel: MyProductsViewModel?
 
     // Session-wide singleton (no clearXSession()), unlike the flow slots above — resolved
     // lazily by whichever router needs it first.
@@ -96,6 +97,10 @@ final class Router {
         activeProfilePostDetailViewModel = nil
     }
 
+    func clearMyProductsSession() {
+        myProductsViewModel = nil
+    }
+
     func resetAll() {
         feedPath = .init()
         inboxPath = .init()
@@ -106,6 +111,7 @@ final class Router {
         activeCameraViewModel = nil
         activeProfilePostDetailViewModel = nil
         myProfileViewModel = nil
+        myProductsViewModel = nil
     }
 }
 

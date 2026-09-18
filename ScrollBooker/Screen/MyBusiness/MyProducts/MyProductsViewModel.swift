@@ -29,9 +29,17 @@ final class MyProductsViewModel {
     func loadProducts() async {
         guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
-        
+
+        await fetchProducts()
+    }
+
+    func refreshProducts() async {
+        await fetchProducts()
+    }
+
+    private func fetchProducts() async {
         viewState = .loading
-        
+
         guard let businessId = session.userInfo?.businessId else {
             logger.error("ERROR: Business ID not found in session")
             viewState = .error(String(localized: "message_error_something_went_wrong"))

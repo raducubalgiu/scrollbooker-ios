@@ -14,4 +14,16 @@ protocol ProductRepository: Sendable {
     ) async throws -> UserProducts
     
     func getLinkedProductsByPostId(postId: Int) async throws -> [Product]
+
+    func createProduct(_ request: ProductCreateWithFiltersRequestDTO) async throws -> Product
+
+    func getProductById(productId: Int) async throws -> Product
+
+    func updateProductBaseInfo(productId: Int, request: ProductBaseInfoUpdateRequestDTO) async throws -> Product
+
+    func createProductVariant(productId: Int, request: ProductVariantCreateRequestDTO) async throws -> Product
+
+    func updateProductVariant(productId: Int, variantId: Int, request: ProductVariantCreateRequestDTO) async throws -> Product
+
+    func deleteProductVariant(productId: Int, variantId: Int) async throws
 }

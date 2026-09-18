@@ -326,10 +326,13 @@ struct GlobalNavigationModifier: ViewModifier {
 
         case .myProducts:
             MyProductsScreen(
-                viewModel: container.productModule.makeMyProductsViewModel(session: session),
-                onBack: { router.pop() },
+                viewModel: resolveMyProductsViewModel(),
+                onBack: {
+                    router.clearMyProductsSession()
+                    router.pop()
+                },
                 onNavigateAddProduct: { router.push(.addProduct) },
-                onNavigateEditProduct: { _, _ in }
+                onNavigateEditProduct: { _, productId in router.push(.editProduct(productId: productId)) }
             )
 
         case .addProduct:
@@ -337,9 +340,33 @@ struct GlobalNavigationModifier: ViewModifier {
                 viewModel: container.productModule.makeAddProductViewModel(
                     session: session,
                     getSelectedDomainsByBusinessUseCase: container.servieDomainModule.getSelectedDomainsByBusinessUseCase,
-                    getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner
+                    getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+                    getFiltersByServiceUseCase: container.filterModule.getFiltersByServiceUseCase
                 ),
-                onBack: { router.pop() }
+                onBack: { router.pop() },
+                onCreated: {
+                    Task { await resolveMyProductsViewModel().refreshProducts() }
+                    router.pop()
+                }
+            )
+
+        case .editProduct(let productId):
+            EditProductScreen(
+                viewModel: container.productModule.makeEditProductViewModel(
+                    productId: productId,
+                    session: session,
+                    getSelectedDomainsByBusinessUseCase: container.servieDomainModule.getSelectedDomainsByBusinessUseCase,
+                    getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+                    getFiltersByServiceUseCase: container.filterModule.getFiltersByServiceUseCase
+                ),
+                onBack: { router.pop() },
+                onSaved: {
+                    Task { await resolveMyProductsViewModel().refreshProducts() }
+                    router.pop()
+                },
+                onVariantsChanged: {
+                    Task { await resolveMyProductsViewModel().refreshProducts() }
+                }
             )
 
         case .myServices:
@@ -383,6 +410,16 @@ struct GlobalNavigationModifier: ViewModifier {
             getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase
         )
         router.myProfileViewModel = newViewModel
+        return newViewModel
+    }
+
+    private func resolveMyProductsViewModel() -> MyProductsViewModel {
+        if let existing = router.myProductsViewModel {
+            return existing
+        }
+
+        let newViewModel = container.productModule.makeMyProductsViewModel(session: session)
+        router.myProductsViewModel = newViewModel
         return newViewModel
     }
 }

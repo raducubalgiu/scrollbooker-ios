@@ -21,7 +21,7 @@ struct MyBusinessCardView: View {
                     .foregroundColor(.onSurfaceSB)
                 
                 Text(title)
-                    .font(.subheadline.bold())
+                    .font(.headline.bold())
                     .foregroundColor(.onBackgroundSB)
                     .lineLimit(1)
                     .truncationMode(.tail)

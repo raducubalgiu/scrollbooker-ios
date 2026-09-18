@@ -41,6 +41,7 @@ final class AppContainer {
     let problemModule: ProblemModule
     let followModule: FollowModule
     let dashboardModule: DashboardModule
+    let filterModule: FilterModule
 
     init() {
         // Interceptor-ul e construit ÎNAINTE de APIClient și legat direct în init-ul lui,
@@ -112,6 +113,7 @@ final class AppContainer {
         self.problemModule = ProblemModule(apiClient: apiClient)
         self.followModule = FollowModule(apiClient: apiClient)
         self.dashboardModule = DashboardModule(apiClient: apiClient)
+        self.filterModule = FilterModule(apiClient: apiClient)
     }
 }
 

@@ -87,7 +87,7 @@ enum Route: Hashable {
     
     case myProducts
     case addProduct
-    case editProducts
+    case editProduct(productId: Int)
     
     // Settings
     case mySettings

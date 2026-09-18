@@ -17,7 +17,15 @@ extension Review {
         self.likeCount = dto.likeCount
         self.isLiked = dto.isLiked
         self.isLikedByProductOwner = dto.isLikedByProductOwner
+        self.videoReview = dto.videoReview.map { ReviewVideoReview(dto: $0) }
         self.createdAt = dto.createdAt
+    }
+}
+
+extension ReviewVideoReview {
+    init(dto: ReviewVideoReviewDto) {
+        self.id = dto.id
+        self.mediaFiles = dto.mediaFiles.map { PostMediaFile(from: $0) }
     }
 }
 

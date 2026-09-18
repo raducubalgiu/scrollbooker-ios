@@ -93,7 +93,7 @@ struct MyProfileScreen: View {
                             get: { activeSheet == .menu },
                             set: { if !$0 { activeSheet = nil } }
                         ),
-                        onCreatePost: {},
+                        onCreatePost: { pendingSheetAction = onNavigateToCamera },
                         onNavigateToMyBusiness: { pendingSheetAction = onNavigateToMyBusiness },
                         onNavigateToSettings: { pendingSheetAction = onNavigateToSettings }
                     )

@@ -31,10 +31,11 @@ struct AllReviewsTabView: View {
                             isLikedByProductOwner: review.isLikedByProductOwner
                         )
 
-                        WrittenReviewCard(
+                        ReviewCardView(
                             review: review,
                             reviewUi: uiState,
                             onNavigateToReviewDetail: {},
+                            onNavigateToVideoReview: {},
                             onLike: {
                                 Task {
                                     await viewModel.toggleLikeWrittenReview(id: review.id)

@@ -9,16 +9,15 @@ import SwiftUI
 
 struct RecordButtonView: View {
     var onTap: () -> Void
-    
+
     var body: some View {
         Button(action: onTap) {
             Circle()
                 .strokeBorder(Color.white, lineWidth: 4)
-                .background(Circle().fill(Color.red.opacity(0.3)))
                 .frame(width: 74, height: 74)
                 .overlay(
                     Circle()
-                        .fill(Color.white)
+                        .fill(Color.errorSB)
                         .frame(width: 60, height: 60)
                 )
         }

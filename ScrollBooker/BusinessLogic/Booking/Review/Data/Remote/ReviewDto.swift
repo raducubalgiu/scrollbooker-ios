@@ -31,6 +31,16 @@ struct ReviewCustomerDto: Decodable {
     }
 }
 
+struct ReviewVideoReviewDto: Decodable {
+    let id: Int
+    let mediaFiles: [PostMediaFileDto]
+
+    enum CodingKeys: String, CodingKey {
+        case id
+        case mediaFiles = "media_files"
+    }
+}
+
 struct ReviewDto: Decodable {
     let id: Int
     let rating: Int
@@ -40,6 +50,7 @@ struct ReviewDto: Decodable {
     let likeCount: Int
     let isLiked: Bool
     let isLikedByProductOwner: Bool
+    let videoReview: ReviewVideoReviewDto?
     let createdAt: String
 
     enum CodingKeys: String, CodingKey {
@@ -48,6 +59,7 @@ struct ReviewDto: Decodable {
         case likeCount = "like_count"
         case isLiked = "is_liked"
         case isLikedByProductOwner = "is_liked_by_product_owner"
+        case videoReview = "video_review"
         case createdAt = "created_at"
     }
 }

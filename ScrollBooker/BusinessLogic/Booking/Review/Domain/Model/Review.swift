@@ -16,7 +16,13 @@ struct Review: Identifiable, Equatable, Hashable, Sendable {
     let likeCount: Int
     let isLiked: Bool
     let isLikedByProductOwner: Bool
+    let videoReview: ReviewVideoReview?
     let createdAt: String
+}
+
+struct ReviewVideoReview: Identifiable, Equatable, Hashable, Sendable {
+    let id: Int
+    let mediaFiles: [PostMediaFile]
 }
 
 struct ReviewProductBusinessOwner: Identifiable, Equatable, Hashable, Sendable {
@@ -47,6 +53,7 @@ extension Review {
         likeCount: Int? = nil,
         isLiked: Bool? = nil,
         isLikedByProductOwner: Bool? = nil,
+        videoReview: ReviewVideoReview?? = nil,
         createdAt: String? = nil
     ) -> Review {
         Review(
@@ -58,6 +65,7 @@ extension Review {
             likeCount: likeCount ?? self.likeCount,
             isLiked: isLiked ?? self.isLiked,
             isLikedByProductOwner: isLikedByProductOwner ?? self.isLikedByProductOwner,
+            videoReview: videoReview ?? self.videoReview,
             createdAt: createdAt ?? self.createdAt
         )
     }

@@ -40,6 +40,8 @@ struct CameraActionsView: View {
                 Spacer()
                 
                 RecordButtonView(onTap: onRecord)
+                    .disabled(true)
+                    .opacity(0.5)
                 
                 Spacer()
                 

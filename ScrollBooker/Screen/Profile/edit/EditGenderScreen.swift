@@ -69,5 +69,6 @@ struct EditGenderScreen: View {
             }
         }
         .cornerRadius(12)
+        .padding()
     }
 }

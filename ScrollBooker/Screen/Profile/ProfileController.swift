@@ -48,12 +48,17 @@ final class ProfileController {
     // --- EMPLOYEES ---
     private(set) var employeesState: FeatureState<[Employee]> = .idle
 
+    // --- SCHEDULE (opening hours) ---
+    private(set) var scheduleState: FeatureState<[Schedule]> = .idle
+    private var scheduleLoadedUserId: Int?
+
     private let getUserProfileUseCase: GetUserProfileUseCase
     private let getUserProfileAboutUseCase: GetUserProfileAboutUseCase
     private let getUserPostsUseCase: GetUserPostsUseCase
     private let getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase
     private let getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
+    private let getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
 
     init(
         getUserProfileUseCase: GetUserProfileUseCase,
@@ -61,7 +66,8 @@ final class ProfileController {
         getUserPostsUseCase: GetUserPostsUseCase,
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
-        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.getUserProfileAboutUseCase = getUserProfileAboutUseCase
@@ -69,6 +75,7 @@ final class ProfileController {
         self.getUserBookmarkedPostsUseCase = getUserBookmarkedPostsUseCase
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
         self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
+        self.getSchedulesByUserIdUseCase = getSchedulesByUserIdUseCase
     }
 
     // MARK: - Profile (initial load, once)
@@ -296,6 +303,22 @@ final class ProfileController {
         }
     }
 
+    // MARK: - Schedule (opening hours)
+    func loadScheduleIfNeeded(userId: Int) async {
+        guard scheduleLoadedUserId != userId else { return }
+        scheduleState = .loading
+
+        do {
+            let schedules = try await withLoading {
+                try await getSchedulesByUserIdUseCase(userId: userId)
+            }
+            scheduleLoadedUserId = userId
+            scheduleState = .success(schedules)
+        } catch {
+            scheduleState = .error(logger.userMessage(for: error, context: "Loading Opening Hours"))
+        }
+    }
+
     // MARK: - Tab orchestration
     private func employeeId(for userId: Int) -> Int? {
         guard let profile else { return nil }
@@ -356,6 +379,8 @@ final class ProfileController {
         productsState = .idle
         aboutState = .idle
         employeesState = .idle
+        scheduleState = .idle
+        scheduleLoadedUserId = nil
     }
 }
 

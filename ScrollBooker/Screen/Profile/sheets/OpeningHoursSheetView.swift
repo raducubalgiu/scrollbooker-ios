@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct OpeningHoursSheetView: View {
-    let viewModel: OpeningHoursViewModel
+    let profileController: ProfileController
     let userId: Int
 
     @Environment(\.dismiss) private var dismiss
@@ -38,13 +38,13 @@ struct OpeningHoursSheetView: View {
         .presentationDragIndicator(.hidden)
         .presentationCornerRadius(25)
         .task {
-            await viewModel.loadSchedules(userId: userId)
+            await profileController.loadScheduleIfNeeded(userId: userId)
         }
     }
 
     @ViewBuilder
     private var content: some View {
-        switch viewModel.viewState {
+        switch profileController.scheduleState {
         case .idle, .loading:
             VStack(spacing: 0) {
                 ForEach(0..<7, id: \.self) { _ in
@@ -56,7 +56,7 @@ struct OpeningHoursSheetView: View {
 
         case .error(let message):
             ErrorView(message: message, maxHeight: 220) {
-                Task { await viewModel.loadSchedules(userId: userId) }
+                Task { await profileController.loadScheduleIfNeeded(userId: userId) }
             }
 
         case .success(let schedules):

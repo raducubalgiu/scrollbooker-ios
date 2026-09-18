@@ -38,8 +38,4 @@ final class ScheduleModule {
             updateSchedulesUseCase: updateSchedulesUseCase
         )
     }
-
-    func makeOpeningHoursViewModel() -> OpeningHoursViewModel {
-        OpeningHoursViewModel(getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase)
-    }
 }

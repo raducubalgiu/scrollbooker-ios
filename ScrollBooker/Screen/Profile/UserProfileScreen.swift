@@ -14,14 +14,13 @@ struct UserProfileScreen: View {
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
+    var onNavigateToMyCalendar: () -> Void
     let onNavigateToPost: (ProfilePostSource, Int) -> Void
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     var onNavigateToBooking: (BookingNavigationParams) -> Void
-    let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
 
     @State private var activeSheet: ProfileSheet?
-    @State private var openingHoursViewModel: OpeningHoursViewModel?
     @State private var pendingSheetAction: (() -> Void)?
 
     var body: some View {
@@ -45,9 +44,6 @@ struct UserProfileScreen: View {
                     onNavigateToUserSocial: onNavigateToUserSocial,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onShowOpeningHours: {
-                        if openingHoursViewModel == nil {
-                            openingHoursViewModel = makeOpeningHoursViewModel()
-                        }
                         activeSheet = .openingHours
                     },
                     onNavigateToBooking: onNavigateToBooking,
@@ -64,31 +60,40 @@ struct UserProfileScreen: View {
                         .padding(.horizontal)
                     },
                     actions: {
-                        UserProfileActions(
-                            isBusinessOrEmployee: user.isBusinessOrEmployee,
-                            isFollow: user.isFollow,
-                            isFollowEnabled: true,
-                            onFollow: {
-                                Task { await viewModel.toggleFollow() }
-                            },
-                            onNavigateToBooking: {
-                                guard let businessId = user.businessId,
-                                      let businessOwnerId = user.businessOwner?.id else {
-                                    print("⚠️ Navigarea la Booking a fost anulată: businessId sau businessOwnerId este NULL.")
-                                    return
-                                }
+                        if user.isOwnProfile {
+                            MyProfileActionsView(
+                                isBusinessOrEmployee: user.isBusinessOrEmployee,
+                                onNavigateToEditProfile: onNavigateToEditProfile,
+                                onNavigateToMyCalendar: onNavigateToMyCalendar,
+                                onShareProfile: {}
+                            )
+                        } else {
+                            UserProfileActions(
+                                isBusinessOrEmployee: user.isBusinessOrEmployee,
+                                isFollow: user.isFollow,
+                                isFollowEnabled: true,
+                                onFollow: {
+                                    Task { await viewModel.toggleFollow() }
+                                },
+                                onNavigateToBooking: {
+                                    guard let businessId = user.businessId,
+                                          let businessOwnerId = user.businessOwner?.id else {
+                                        print("⚠️ Navigarea la Booking a fost anulată: businessId sau businessOwnerId este NULL.")
+                                        return
+                                    }
 
-                                onNavigateToBooking(
-                                    BookingNavigationParams(
-                                        businessId: businessId,
-                                        userId: user.id,
-                                        businessOwnerId: businessOwnerId,
-                                        source: .profile,
-                                        selectedProductId: nil
+                                    onNavigateToBooking(
+                                        BookingNavigationParams(
+                                            businessId: businessId,
+                                            userId: user.id,
+                                            businessOwnerId: businessOwnerId,
+                                            source: .profile,
+                                            selectedProductId: nil
+                                        )
                                     )
-                                )
-                            }
-                        )
+                                }
+                            )
+                        }
                     }
                 )
             }
@@ -112,13 +117,10 @@ struct UserProfileScreen: View {
                     onNavigateToSettings: { pendingSheetAction = onNavigateToSettings }
                 )
             case .openingHours:
-                if let userId = viewModel.profileController.profile?.id,
-                   let openingHoursViewModel {
-                    OpeningHoursSheetView(
-                        viewModel: openingHoursViewModel,
-                        userId: userId
-                    )
-                }
+                OpeningHoursSheetView(
+                    profileController: viewModel.profileController,
+                    userId: viewModel.userId
+                )
             }
         }
     }

@@ -9,7 +9,7 @@ import SwiftUI
 
 struct MyProfileScreen: View {
     @Bindable var viewModel: MyProfileViewModel
-        
+
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
@@ -18,15 +18,10 @@ struct MyProfileScreen: View {
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     let onNavigateToPost: (ProfilePostSource, Int) -> Void
-    let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
 
     @State private var activeSheet: ProfileSheet?
-    @State private var openingHoursViewModel: OpeningHoursViewModel?
-    // Set by a sheet's own action (e.g. tapping a link in ProfileMenuSheetView), then run
-    // from .sheet's onDismiss — guarantees the sheet has fully closed before we navigate,
-    // instead of the two animations racing each other.
     @State private var pendingSheetAction: (() -> Void)?
-    
+
     var body: some View {
         VStack(spacing: 0) {
             switch viewModel.profileController.viewState {
@@ -34,7 +29,7 @@ struct MyProfileScreen: View {
                 ProgressView()
                     .tint(.primarySB)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
-                
+
             case .error:
                 ErrorView(message: String(localized: "message_error_something_went_wrong")) {
                     Task { await viewModel.loadProfile() }
@@ -48,13 +43,8 @@ struct MyProfileScreen: View {
                     onNavigateToUserSocial: onNavigateToUserSocial,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onShowOpeningHours: {
-                        if openingHoursViewModel == nil {
-                            openingHoursViewModel = makeOpeningHoursViewModel()
-                        }
                         activeSheet = .openingHours
                     },
-                    // Own profile is always isOwnProfile == true, so the employees tab's
-                    // "Pick"/booking button never renders here — nothing to wire.
                     onNavigateToBooking: { _ in },
                     onNavigateToPost: onNavigateToPost,
                     onRefresh: {
@@ -98,10 +88,9 @@ struct MyProfileScreen: View {
                         onNavigateToSettings: { pendingSheetAction = onNavigateToSettings }
                     )
                 case .openingHours:
-                    if let userId = viewModel.profileController.profile?.id,
-                       let openingHoursViewModel {
+                    if let userId = viewModel.profileController.profile?.id {
                         OpeningHoursSheetView(
-                            viewModel: openingHoursViewModel,
+                            profileController: viewModel.profileController,
                             userId: userId
                         )
                     }

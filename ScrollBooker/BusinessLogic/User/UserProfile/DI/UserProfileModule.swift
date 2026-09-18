@@ -61,6 +61,7 @@ final class UserProfileModule {
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
     ) -> MyProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
@@ -68,9 +69,10 @@ final class UserProfileModule {
             getUserPostsUseCase: getUserPostsUseCase,
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
-            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase
+            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
+            getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase
         )
-        
+
         return MyProfileViewModel(
             session: session,
             profileController: combinedController,
@@ -89,6 +91,7 @@ final class UserProfileModule {
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
     ) -> UserProfileViewModel {
@@ -98,7 +101,8 @@ final class UserProfileModule {
             getUserPostsUseCase: getUserPostsUseCase,
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
-            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase
+            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
+            getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase
         )
 
         return UserProfileViewModel(

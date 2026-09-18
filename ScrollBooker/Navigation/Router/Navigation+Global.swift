@@ -55,20 +55,18 @@ struct GlobalNavigationModifier: ViewModifier {
                 getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
                 getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
                 getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+                getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase,
                 followUserUseCase: container.followModule.followUserUseCase,
                 unfollowUserUseCase: container.followModule.unfollowUserUseCase,
             )
 
             UserProfileScreen(
                 viewModel: userProfileViewModel,
+                onBack: { router.pop() },
                 onNavigateToEditProfile: { router.push(.editProfile) },
                 onNavigateToSettings: { router.push(.mySettings) },
                 onNavigateToMyBusiness: { router.push(.myBusiness) },
-                onNavigateToUserProfile: { router.push(.userProfile($0)) },
-                onNavigateToUserSocial: { router.push(.userSocial($0)) },
-                onNavigateToBooking: { router.push(.bookingServices($0)) },
-                onBack: { router.pop() },
-                makeOpeningHoursViewModel: { container.scheduleModule.makeOpeningHoursViewModel() },
+                onNavigateToMyCalendar: { router.push(.myCalendar) },
                 onNavigateToPost: { source, postId in
                     router.activeProfilePostDetailViewModel = container.postModule.makeProfilePostDetailViewModel(
                         profileController: userProfileViewModel.profileController,
@@ -77,7 +75,10 @@ struct GlobalNavigationModifier: ViewModifier {
                         startPostId: postId
                     )
                     router.pushWithoutAnimation(.profilePostDetail)
-                }
+                },
+                onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                onNavigateToUserSocial: { router.push(.userSocial($0)) },
+                onNavigateToBooking: { router.push(.bookingServices($0)) }
             )
 
         case .profilePostDetail:
@@ -257,10 +258,132 @@ struct GlobalNavigationModifier: ViewModifier {
                 } else {
                     LoadingView()
                 }
-            
+
+        // MARK: - My Account (reachable from any tab, e.g. UserProfileScreen when isOwnProfile)
+        case .mySettings:
+            SettingsScreen(
+                onNavigate: { r in router.push(r) },
+                onBack: { router.pop() }
+            )
+
+        case .display:
+            DisplayScreen(onBack: { router.pop() })
+
+        case .reportProblem:
+            ReportProblemScreen(
+                viewModel: container.problemModule.makeProblemViewModel(userId: session.userInfo?.id ?? 0),
+                onBack: { router.pop() }
+            )
+
+        case .editProfile:
+            EditProfileScreen(
+                viewModel: resolveMyProfileViewModel(),
+                onNavigate: { r in router.push(r) },
+                onBack: { router.pop() }
+            )
+
+        case .editFullName:
+            EditNameScreen(viewModel: resolveMyProfileViewModel(), onBack: { router.pop() })
+
+        case .editUsername:
+            EditUsernameScreen(viewModel: resolveMyProfileViewModel(), onBack: { router.pop() })
+
+        case .editBio:
+            EditBioScreen(viewModel: resolveMyProfileViewModel(), onBack: { router.pop() })
+
+        case .editGender:
+            EditGenderScreen(viewModel: resolveMyProfileViewModel(), onBack: { router.pop() })
+
+        case .editBirthdate:
+            EditBirthdateScreen(viewModel: resolveMyProfileViewModel(), onBack: { router.pop() })
+
+        case .editAvatarCrop:
+            EditAvatarCropScreen(viewModel: resolveMyProfileViewModel(), onBack: { router.pop() })
+
+        case .myBusiness:
+            MyBusinessScreen(
+                onNavigate: { r in router.push(r) },
+                onBack: { router.pop() }
+            )
+
+        case .myBusinessDetails:
+            MyBusinessDetailsScreen(
+                viewModel: container.businessModule.makeMyBusinessDetailsViewModel(session: session),
+                onBack: { router.pop() }
+            )
+
+        case .unapprovedBusinesses:
+            UnapprovedBusinessesScreen(
+                viewModel: container.businessModule.makeUnapprovedBusinessesViewModel(),
+                onBack: { router.pop() }
+            )
+
+        case .mySchedules:
+            MySchedulesScreen(
+                viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session),
+                onBack: { router.pop() }
+            )
+
+        case .myProducts:
+            MyProductsScreen(
+                viewModel: container.productModule.makeMyProductsViewModel(session: session),
+                onBack: { router.pop() },
+                onNavigateAddProduct: { router.push(.addProduct) },
+                onNavigateEditProduct: { _, _ in }
+            )
+
+        case .addProduct:
+            AddProductScreen(
+                viewModel: container.productModule.makeAddProductViewModel(
+                    session: session,
+                    getSelectedDomainsByBusinessUseCase: container.servieDomainModule.getSelectedDomainsByBusinessUseCase,
+                    getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner
+                ),
+                onBack: { router.pop() }
+            )
+
+        case .myServices:
+            MyServicesScreen(
+                viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session),
+                onBack: { router.pop() }
+            )
+
+        case .myCalendar:
+            MyCalendarScreen(onBack: { router.pop() })
+
+        case .myDashboard:
+            MyDashboardScreen(
+                viewModel: container.dashboardModule.makeDashboardViewModel(),
+                onBack: { router.pop() }
+            )
+
+        case .myEmployees:
+            EmployeesFlowContainer(
+                container: container,
+                onBack: { router.pop() },
+                session: session
+            )
+
         default:
             Text("Route \(String(describing: route)) not implemented globally")
         }
+    }
+
+    private func resolveMyProfileViewModel() -> MyProfileViewModel {
+        if let existing = router.myProfileViewModel {
+            return existing
+        }
+
+        let newViewModel = container.userProfileModule.makeMyProfileViewModel(
+            session: session,
+            getUserPostsUseCase: container.postModule.getUserPostsUseCase,
+            getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
+            getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
+            getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+            getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase
+        )
+        router.myProfileViewModel = newViewModel
+        return newViewModel
     }
 }
 

@@ -22,6 +22,10 @@ final class Router {
     var activeCameraViewModel: CameraViewModel?
     var activeProfilePostDetailViewModel: ProfilePostDetailViewModel?
 
+    // Session-wide singleton (no clearXSession()), unlike the flow slots above — resolved
+    // lazily by whichever router needs it first.
+    var myProfileViewModel: MyProfileViewModel?
+
     // Numărul din badge-urile bottom bar-ului (Appointments/Inbox). Încărcate o singură
     // dată la pornirea sesiunii (vezi MainRouter) — nu sunt polled. Actualizarea optimistă
     // locală (increment la crearea unei programări, decrement la marcarea ca citit) e
@@ -101,6 +105,7 @@ final class Router {
         activeBookingViewModel = nil
         activeCameraViewModel = nil
         activeProfilePostDetailViewModel = nil
+        myProfileViewModel = nil
     }
 }
 

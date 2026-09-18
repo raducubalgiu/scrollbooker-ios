@@ -59,6 +59,15 @@ final class PostRepositoryImpl: PostRepository {
         }
     }
     
+    func getPostAnalyticsSummary(postId: Int) async throws -> PostAnalyticsSummary {
+        let dto = try await api.getPostAnalyticsSummary(postId: postId)
+        return PostAnalyticsSummary(from: dto)
+    }
+
+    func deletePost(id: Int) async throws -> NoContent {
+        return try await api.deletePost(id: id)
+    }
+
     func likePost(id: Int) async throws -> NoContent {
         return try await api.likePost(id: id)
     }

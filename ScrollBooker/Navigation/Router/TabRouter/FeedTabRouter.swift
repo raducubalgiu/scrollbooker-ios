@@ -49,6 +49,12 @@ struct FeedTabRouter: View {
                                         employeeId: isEmployee ? post.user.id : nil,
                                         getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
                                     )
+                                },
+                                makeStatisticsVM: { postId in
+                                    container.postModule.makePostStatisticsViewModel(postId: postId)
+                                },
+                                makeDeletePostVM: {
+                                    container.postModule.makeDeletePostViewModel()
                                 }
                             )
                             .safeAreaInset(edge: .bottom, spacing: 0) {

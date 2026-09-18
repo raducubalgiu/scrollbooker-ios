@@ -221,6 +221,36 @@ struct HashtagDto: Decodable {
     }
 }
 
+struct PostAnalyticsSummaryDto: Decodable {
+    let postId: Int
+    let viewsCount: Int
+    let uniqueViewersCount: Int
+    let watchTimeMs: Int
+    let averageWatchTimeMs: Int
+    let completionsCount: Int
+    let sourceBreakdown: [PostAnalyticsSourceBreakdownItemDto]
+
+    enum CodingKeys: String, CodingKey {
+        case postId = "post_id"
+        case viewsCount = "views_count"
+        case uniqueViewersCount = "unique_viewers_count"
+        case watchTimeMs = "watch_time_ms"
+        case averageWatchTimeMs = "average_watch_time_ms"
+        case completionsCount = "completions_count"
+        case sourceBreakdown = "source_breakdown"
+    }
+}
+
+struct PostAnalyticsSourceBreakdownItemDto: Decodable {
+    let source: String
+    let viewsCount: Int
+
+    enum CodingKeys: String, CodingKey {
+        case source
+        case viewsCount = "views_count"
+    }
+}
+
 struct PostCountersDto: Decodable {
     let commentCount: Int
     let likeCount: Int

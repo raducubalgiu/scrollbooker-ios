@@ -60,7 +60,26 @@ final class PostModule {
     lazy var getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase = {
         GetUserBookmarkedPostsUseCase(repository: repository)
     }()
-    
+
+    lazy var getPostAnalyticsSummaryUseCase: GetPostAnalyticsSummaryUseCase = {
+        GetPostAnalyticsSummaryUseCase(repository: repository)
+    }()
+
+    lazy var deletePostUseCase: DeletePostUseCase = {
+        DeletePostUseCase(repository: repository)
+    }()
+
+    func makePostStatisticsViewModel(postId: Int) -> PostStatisticsViewModel {
+        PostStatisticsViewModel(
+            postId: postId,
+            getPostAnalyticsSummaryUseCase: getPostAnalyticsSummaryUseCase
+        )
+    }
+
+    func makeDeletePostViewModel() -> DeletePostViewModel {
+        DeletePostViewModel(deletePostUseCase: deletePostUseCase)
+    }
+
     func makeExploreTabViewModel() -> ExploreTabViewModel {
         ExploreTabViewModel(
             getExplorePostsUseCase: getExplorePostsUseCase,

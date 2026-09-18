@@ -12,6 +12,7 @@ enum FeedSheetType: Identifiable {
     case reviews(post: Post)
     case linkedProducts(post: Post)
     case moreOptions(postId: Int)
+    case deletePost(postId: Int)
 
     var id: String {
         switch self {
@@ -23,6 +24,8 @@ enum FeedSheetType: Identifiable {
             return "products-\(post.id)"
         case .moreOptions(let postId):
             return "more-\(postId)"
+        case .deletePost(let postId):
+            return "delete-\(postId)"
         }
     }
 }

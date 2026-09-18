@@ -9,7 +9,7 @@ import Foundation
 
 extension EmploymentRequest {
     init(dto: EmploymentRequestDto) throws {
-        guard let parsedDate = DateParser.parseISO8601UTC(dto.created_at) else {
+        guard let parsedDate = dto.created_at.asISO8601Date() else {
             throw MappingError.invalidDate(dto.created_at)
         }
         

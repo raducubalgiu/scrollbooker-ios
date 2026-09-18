@@ -28,13 +28,13 @@ struct AppointmentCardView: View {
                     VStack(alignment: .leading, spacing: 10) {
                         HStack(spacing: 15) {
                             AvatarView(
-                                imageURL: appointment.user.avatarURL,
+                                imageURL: appointment.displayedPerson.avatarURL,
                                 size: .l
                             )
                             VStack(alignment: .leading, spacing: 2) {
-                                Text(appointment.user.fullName)
+                                Text(appointment.displayedPerson.fullName)
                                     .font(.headline)
-                                Text(appointment.user.profession ?? "-")
+                                Text(appointment.displayedPerson.profession ?? "-")
                                     .font(.subheadline)
                                     .foregroundColor(.gray)
                             }

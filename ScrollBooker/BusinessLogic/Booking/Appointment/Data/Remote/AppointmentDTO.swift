@@ -114,6 +114,7 @@ struct AppointmentUserDto: Decodable {
 struct AppointmentBusinessDto: Decodable {
     let id: Int
     let businessOwnerId: Int
+    let businessOwnerAvatar: String?
     let address: String
     let formattedAddress: String
     let coordinates: BusinessCoordinatesDto
@@ -122,6 +123,7 @@ struct AppointmentBusinessDto: Decodable {
     enum CodingKeys: String, CodingKey {
         case id
         case businessOwnerId = "business_owner_id"
+        case businessOwnerAvatar = "business_owner_avatar"
         case address
         case formattedAddress = "formatted_address"
         case coordinates

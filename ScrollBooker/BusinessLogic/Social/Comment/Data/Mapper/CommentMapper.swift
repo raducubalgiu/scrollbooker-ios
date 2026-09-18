@@ -9,7 +9,7 @@ import Foundation
 
 extension Comment {
     init(dto: CommentDto) throws {
-        guard let parsedDate = DateParser.parseISO8601UTC(dto.createdAt) else {
+        guard let parsedDate = dto.createdAt.asISO8601Date() else {
             throw MappingError.invalidDate(dto.createdAt)
         }
         

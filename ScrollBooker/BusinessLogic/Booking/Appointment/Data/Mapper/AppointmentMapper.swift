@@ -9,11 +9,11 @@ import Foundation
 
 extension Appointment {
     init(dto: AppointmentDto) throws {
-        guard let start = DateParser.parseISO8601UTC(dto.startDate) else {
+        guard let start = dto.startDate.asISO8601Date() else {
             throw MappingError.invalidDate(dto.startDate)
         }
-        
-        guard let end = DateParser.parseISO8601UTC(dto.endDate) else {
+
+        guard let end = dto.endDate.asISO8601Date() else {
             throw MappingError.invalidDate(dto.endDate)
         }
         
@@ -104,6 +104,7 @@ extension AppointmentBusiness {
     init(dto: AppointmentBusinessDto) {
         self.id = dto.id
         self.businessOwnerId = dto.businessOwnerId
+        self.businessOwnerAvatar = dto.businessOwnerAvatar
         self.address = dto.address
         self.formattedAddress = dto.formattedAddress
         self.coordinates = BusinessCoordinates(dto: dto.coordinates)

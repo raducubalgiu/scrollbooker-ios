@@ -30,6 +30,12 @@ struct Appointment: Identifiable, Equatable, Hashable, Sendable {
     let writtenReview: AppointmentWrittenReview?
 }
 
+extension Appointment {
+    var displayedPerson: AppointmentUser {
+        isCustomer ? user : customer
+    }
+}
+
 struct AppointmentWrittenReview: Codable, Hashable, Identifiable {
     let id: Int
     let review: String?
@@ -65,10 +71,13 @@ struct AppointmentUser: Identifiable, Equatable, Hashable, Sendable {
 struct AppointmentBusiness: Equatable, Hashable, Sendable {
     let id: Int
     let businessOwnerId: Int
+    let businessOwnerAvatar: String?
     let address: String
     let formattedAddress: String
     let coordinates: BusinessCoordinates
     let mapUrl: String?
+
+    var businessOwnerAvatarURL: URL? { businessOwnerAvatar.flatMap(URL.init(string:)) }
 }
 
 extension Appointment {

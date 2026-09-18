@@ -42,10 +42,11 @@ struct PostActionsView: View {
                 actions.onLike(post.id)
             } label: {
                 VStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "heart.fill")
-                        .font(.system(size: 29))
+                    Image(systemName: post.userActions.isLiked ? "heart.fill" : "heart")
+                        .font(.system(size: 27))
                         .foregroundColor(post.userActions.isLiked ? .errorSB : .white)
-                    
+                        .actionIconShadow()
+
                     Text("\(post.counters.likeCount)")
                         .font(.footnote)
                         .fontWeight(.semibold)
@@ -53,16 +54,17 @@ struct PostActionsView: View {
                 }
             }
             .buttonStyle(.plain)
-            
+
             if !post.isVideoReview {
                 Button {
                     actions.onOpenReviewsSheet(post.user.id)
                 } label: {
                     VStack(alignment: .center, spacing: 2) {
-                        Image(systemName: "clipboard.fill")
-                            .font(.system(size: 29))
+                        Image(systemName: "list.clipboard")
+                            .font(.system(size: 27))
                             .foregroundColor(.white)
-                        
+                            .actionIconShadow()
+
                         Text("\(post.user.ratingsCount)")
                             .font(.footnote)
                             .fontWeight(.semibold)
@@ -71,15 +73,16 @@ struct PostActionsView: View {
                 }
                 .buttonStyle(.plain)
             }
-            
+
             Button {
                 actions.onOpenCommentsSheet(post.id)
             } label: {
                 VStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "ellipsis.message.fill")
-                        .font(.system(size: 29))
+                    Image(systemName: "ellipsis.message")
+                        .font(.system(size: 27))
                         .foregroundColor(.white)
-                    
+                        .actionIconShadow()
+
                     Text("\(post.counters.commentCount)")
                         .font(.footnote)
                         .fontWeight(.semibold)
@@ -87,15 +90,16 @@ struct PostActionsView: View {
                 }
             }
             .buttonStyle(.plain)
-            
+
             Button {
                 actions.onBookmark(post.id)
             } label: {
                 VStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "bookmark.fill")
-                        .font(.system(size: 29))
+                    Image(systemName: post.userActions.isBookmarked ? "bookmark.fill" : "bookmark")
+                        .font(.system(size: 27))
                         .foregroundColor(post.userActions.isBookmarked ? .ratingSB : .white)
-                    
+                        .actionIconShadow()
+
                     Text("\(post.counters.bookmarkCount)")
                         .font(.footnote)
                         .fontWeight(.semibold)
@@ -103,15 +107,16 @@ struct PostActionsView: View {
                 }
             }
             .buttonStyle(.plain)
-            
+
             Button {
-                
+
             } label: {
                 VStack(alignment: .center, spacing: 2) {
-                    Image(systemName: "arrowshape.turn.up.right.fill")
-                        .font(.system(size: 29))
+                    Image(systemName: "arrowshape.turn.up.right")
+                        .font(.system(size: 27))
                         .foregroundColor(.white)
-                    
+                        .actionIconShadow()
+
                     Text("\(10)")
                         .font(.footnote)
                         .fontWeight(.semibold)
@@ -120,5 +125,11 @@ struct PostActionsView: View {
             }
             .buttonStyle(.plain)
         }
+    }
+}
+
+private extension View {
+    func actionIconShadow() -> some View {
+        self.shadow(color: .black.opacity(0.4), radius: 3, x: 0, y: 1)
     }
 }

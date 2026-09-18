@@ -16,14 +16,15 @@ struct PostOverlayView: View {
     var body: some View {
         ZStack(alignment: .bottom) {
             LinearGradient(
-                gradient: Gradient(colors: [
-                    Color.black.opacity(0.0),
-                    Color.black.opacity(0.6)
+                gradient: Gradient(stops: [
+                    .init(color: Color.black.opacity(0.0), location: 0.0),
+                    .init(color: Color.black.opacity(0.25), location: 0.55),
+                    .init(color: Color.black.opacity(0.75), location: 1.0)
                 ]),
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 200)
+            .frame(height: 240)
             .ignoresSafeArea(edges: .bottom)
             
             HStack(alignment: .bottom, spacing: 0) {

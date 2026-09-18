@@ -14,9 +14,28 @@ struct FeedHeaderView: View {
     var onOpenDrawer: () -> Void
     var activeFiltersCount: Int = 0
 
+    @Namespace private var underlineNS
+
     var body: some View {
-        HStack {
-            HStack(spacing: 12) {
+        ZStack {
+            HStack(spacing: 8) {
+                FeedTabButton(
+                    title: "Explore",
+                    tab: .explore,
+                    selectedTab: selectedTab,
+                    underlineNS: underlineNS,
+                    onClick: onChangeTab
+                )
+                FeedTabButton(
+                    title: "Following",
+                    tab: .following,
+                    selectedTab: selectedTab,
+                    underlineNS: underlineNS,
+                    onClick: onChangeTab
+                )
+            }
+
+            HStack {
                 Button {
                     onOpenDrawer()
                 } label: {
@@ -36,31 +55,17 @@ struct FeedHeaderView: View {
                         }
                     }
                 }
-                
-                HStack(spacing: 8) {
-                    FeedTabButton(
-                        title: "Explore",
-                        tab: .explore,
-                        selectedTab: selectedTab,
-                        onClick: onChangeTab
-                    )
-                    FeedTabButton(
-                        title: "Following",
-                        tab: .following,
-                        selectedTab: selectedTab,
-                        onClick: onChangeTab
-                    )
-                }         }
-            
-            Spacer()
-            
-            Button {
-                onNavigateToFeedSearch()
-            } label: {
-                Image(systemName: "magnifyingglass")
-                    .font(.system(size: 25, weight: .semibold))
-                    .foregroundColor(.white)
-                    .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
+
+                Spacer()
+
+                Button {
+                    onNavigateToFeedSearch()
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                        .font(.system(size: 25, weight: .semibold))
+                        .foregroundColor(.white)
+                        .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
+                }
             }
         }
         .padding(.horizontal)

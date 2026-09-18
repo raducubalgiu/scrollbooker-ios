@@ -41,7 +41,8 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
         gender: String? = nil,
         dateOfBirth: String? = nil,
         bio: String? = nil,
-        isFollow: Bool? = nil
+        isFollow: Bool? = nil,
+        counters: UserCounters? = nil
     ) -> UserProfile {
         UserProfile(
             id: self.id,
@@ -58,7 +59,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
             tiktok: self.tiktok,
             businessId: self.businessId,
             businessTypeId: self.businessTypeId,
-            counters: self.counters,
+            counters: counters ?? self.counters,
             profession: self.profession,
             openingHours: self.openingHours,
             isFollow: isFollow ?? self.isFollow,
@@ -89,6 +90,18 @@ struct UserCounters: Codable, Hashable, Sendable {
     let postsCount: Int
     let ratingsCount: Int
     let ratingsAverage: Float
+
+    func copy(followersCount: Int? = nil) -> UserCounters {
+        UserCounters(
+            userId: self.userId,
+            followingsCount: self.followingsCount,
+            followersCount: followersCount ?? self.followersCount,
+            productsCount: self.productsCount,
+            postsCount: self.postsCount,
+            ratingsCount: self.ratingsCount,
+            ratingsAverage: self.ratingsAverage
+        )
+    }
 }
 
 struct OpeningHours: Codable, Hashable, Sendable {

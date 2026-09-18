@@ -89,6 +89,8 @@ final class UserProfileModule {
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        followUserUseCase: FollowUserUseCase,
+        unfollowUserUseCase: UnfollowUserUseCase,
     ) -> UserProfileViewModel {
         let combinedController = ProfileController(
             getUserProfileUseCase: getUserProfileUseCase,
@@ -98,11 +100,13 @@ final class UserProfileModule {
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
             getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase
         )
-        
+
         return UserProfileViewModel(
             userId: userId,
             username: username,
-            profileController: combinedController
+            profileController: combinedController,
+            followUserUseCase: followUserUseCase,
+            unfollowUserUseCase: unfollowUserUseCase
         )
     }
 }

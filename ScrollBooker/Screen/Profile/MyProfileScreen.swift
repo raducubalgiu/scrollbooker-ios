@@ -13,12 +13,12 @@ struct MyProfileScreen: View {
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
-    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
-    var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     var onNavigateToMyCalendar: () -> Void
     var onNavigateToCamera: () -> Void
-    let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
+    var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     let onNavigateToPost: (ProfilePostSource, Int) -> Void
+    let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
 
     @State private var activeSheet: ProfileSheet?
     @State private var openingHoursViewModel: OpeningHoursViewModel?

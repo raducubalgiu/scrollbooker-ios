@@ -32,11 +32,11 @@ final class FollowModule {
         GetUserFollowingsUseCase(repository: repository)
     }()
     
-    private lazy var followUserUseCase: FollowUserUseCase = {
+    lazy var followUserUseCase: FollowUserUseCase = {
         FollowUserUseCase(repository: repository)
     }()
-    
-    private lazy var unfollowUserUseCase: UnfollowUserUseCase = {
+
+    lazy var unfollowUserUseCase: UnfollowUserUseCase = {
         UnfollowUserUseCase(repository: repository)
     }()
     

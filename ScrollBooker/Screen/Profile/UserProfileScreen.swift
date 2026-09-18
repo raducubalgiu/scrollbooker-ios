@@ -10,21 +10,18 @@ import SwiftUI
 struct UserProfileScreen: View {
     @Bindable var viewModel: UserProfileViewModel
 
+    var onBack: () -> Void
     var onNavigateToEditProfile: () -> Void
     var onNavigateToSettings: () -> Void
     var onNavigateToMyBusiness: () -> Void
+    let onNavigateToPost: (ProfilePostSource, Int) -> Void
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onNavigateToUserSocial: (SocialNavigationParams) -> Void
     var onNavigateToBooking: (BookingNavigationParams) -> Void
-    var onBack: () -> Void
     let makeOpeningHoursViewModel: () -> OpeningHoursViewModel
-    let onNavigateToPost: (ProfilePostSource, Int) -> Void
 
     @State private var activeSheet: ProfileSheet?
     @State private var openingHoursViewModel: OpeningHoursViewModel?
-    // Set by a sheet's own action (e.g. tapping a link in ProfileMenuSheetView), then run
-    // from .sheet's onDismiss — guarantees the sheet has fully closed before we navigate,
-    // instead of the two animations racing each other.
     @State private var pendingSheetAction: (() -> Void)?
 
     var body: some View {

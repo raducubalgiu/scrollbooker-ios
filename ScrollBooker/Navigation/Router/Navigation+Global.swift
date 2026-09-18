@@ -55,6 +55,8 @@ struct GlobalNavigationModifier: ViewModifier {
                 getUserBookmarkedPostsUseCase: container.postModule.getUserBookmarkedPostsUseCase,
                 getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
                 getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+                followUserUseCase: container.followModule.followUserUseCase,
+                unfollowUserUseCase: container.followModule.unfollowUserUseCase,
             )
 
             UserProfileScreen(

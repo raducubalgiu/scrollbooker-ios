@@ -1,5 +1,5 @@
 //
-//  WrittenReviewsTabView.swift
+//  AllReviewsTabView.swift
 //  ScrollBooker
 //
 //  Created by Raducu Balgiu on 25.07.2026.
@@ -7,15 +7,18 @@
 
 import SwiftUI
 
-struct WrittenReviewsTabView: View {
+struct AllReviewsTabView: View {
     let viewModel: ReviewsViewModel
-    
+
     var body: some View {
         Group {
-            if viewModel.writtenReviews.isEmpty && !viewModel.isSaving {
+            if viewModel.isSaving {
+                LoadingView()
+                    .frame(height: 300)
+            } else if viewModel.writtenReviews.isEmpty {
                 NoDataView(
-                    title: String(localized: "notFoundWrittenReviews"),
-                    message: String(localized: "notFoundWrittenReviewsDescription"),
+                    title: String(localized: "reviews"),
+                    message: String(localized: "message_empty_results"),
                     systemImage: "doc.text.magnifyingglass"
                 )
                 .padding(.top, 40)
@@ -27,7 +30,7 @@ struct WrittenReviewsTabView: View {
                             isLiked: review.isLiked,
                             isLikedByProductOwner: review.isLikedByProductOwner
                         )
-                        
+
                         WrittenReviewCard(
                             review: review,
                             reviewUi: uiState,
@@ -43,10 +46,10 @@ struct WrittenReviewsTabView: View {
                                 await viewModel.loadMoreWrittenReviews(currentReview: review)
                             }
                         }
-                        
+
                         Divider().padding(.horizontal, 16)
                     }
-                    
+
                     if viewModel.isPaging && viewModel.canLoadMoreWritten {
                         ProgressView()
                             .frame(maxWidth: .infinity)
@@ -57,6 +60,3 @@ struct WrittenReviewsTabView: View {
         }
     }
 }
-            
-    
-

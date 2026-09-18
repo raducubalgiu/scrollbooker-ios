@@ -18,10 +18,13 @@ struct VideoReviewsTabView: View {
     
     var body: some View {
         Group {
-            if viewModel.videoReviews.isEmpty && !viewModel.isSaving {
+            if viewModel.isSaving {
+                LoadingView()
+                    .frame(height: 300)
+            } else if viewModel.videoReviews.isEmpty {
                 NoDataView(
-                    title: String(localized: "notFoundVideoReviews"),
-                    message: String(localized: "notFoundVideoReviewsDescription"),
+                    title: String(localized: "reviews"),
+                    message: String(localized: "message_empty_video_reviews"),
                     systemImage: "video.slash"
                 )
                 .padding(.top, 40)
@@ -33,6 +36,7 @@ struct VideoReviewsTabView: View {
                                 postId: post.id,
                                 mediaFiles: post.mediaFiles,
                                 viewsCount: post.counters.viewsCount,
+                                rating: post.review?.rating,
                                 onNavigateToPost: { postId in }
                             )
                             .onAppear {

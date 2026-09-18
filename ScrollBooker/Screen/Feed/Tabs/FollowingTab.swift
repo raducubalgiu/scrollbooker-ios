@@ -11,7 +11,7 @@ struct FollowingTab: View {
     var viewModel: FollowingTabViewModel
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
-    let makeReviewsVM: (Int) -> ReviewsViewModel
+    let makeReviewsVM: (Post) -> ReviewsViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
     
@@ -52,7 +52,7 @@ struct FollowingTab: View {
         .environment(\.feedActions, FeedActions(
             onNavigateToUserProfile: onNavigateToUserProfile,
             onNavigateToBooking: onNavigateToBooking,
-            onOpenReviewsSheet: { activeSheet = .reviews(userId: $0) },
+            onOpenReviewsSheet: { activeSheet = .reviews(post: $0) },
             onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(post: $0) },
             onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
@@ -68,9 +68,9 @@ struct FollowingTab: View {
                 .presentationDetents([.fraction(0.7), .large])
                 .presentationDragIndicator(.visible)
 
-            case .reviews(let userId):
+            case .reviews(let post):
                 ReviewsSheetView(
-                    viewModel: reviewsCache.viewModel(for: userId, make: makeReviewsVM)
+                    viewModel: reviewsCache.viewModel(for: post.id, make: { _ in makeReviewsVM(post) })
                 )
                 .presentationDetents([.fraction(0.7), .large])
                     .presentationDragIndicator(.visible)

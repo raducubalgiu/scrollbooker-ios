@@ -19,7 +19,7 @@ struct FeedScreen: View {
 
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
-    let makeReviewsVM: (Int) -> ReviewsViewModel
+    let makeReviewsVM: (Post) -> ReviewsViewModel
 
     init(
         viewModel: FeedViewModel,
@@ -29,7 +29,7 @@ struct FeedScreen: View {
         onOpenDrawer: @escaping () -> Void,
         makeCommentsVM: @escaping (Int) -> CommentsViewModel,
         makeLinkedProductsVM: @escaping (Post) -> LinkedProductsViewModel,
-        makeReviewsVM: @escaping (Int) -> ReviewsViewModel
+        makeReviewsVM: @escaping (Post) -> ReviewsViewModel
     ) {
         self.viewModel = viewModel
         self.onNavigateToFeedSearch = onNavigateToFeedSearch

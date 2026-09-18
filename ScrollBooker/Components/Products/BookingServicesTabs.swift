@@ -12,7 +12,6 @@ struct BookingServicesTabs: View {
     let serviceGroups: [BusinessServicesWithProducts]
     let onTabSelect: (Int) -> Void
     
-    // Spațiu de nume pentru animația de alunecare
     @Namespace private var tabAnimation
     
     var body: some View {
@@ -20,7 +19,6 @@ struct BookingServicesTabs: View {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(spacing: 8) {
                     ForEach(serviceGroups, id: \.service.id) { group in
-                        // Extragem fiecare tab individual într-o sub-componentă dedicată
                         ServiceTabItemView(
                             group: group,
                             isSelected: group.service.id == activeSectionId,

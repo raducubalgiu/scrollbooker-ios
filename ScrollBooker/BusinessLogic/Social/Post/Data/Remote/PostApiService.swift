@@ -10,7 +10,7 @@ import Foundation
 protocol PostApiService: Sendable {
     func getExplorePosts(page: Int, limit: Int, serviceIds: [Int], onlyVideoReviews: Bool) async throws -> PaginatedResponseDTO<PostDto>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
-    func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
+    func getVideoReviews(businessId: Int, employeeId: Int?, ratings: [Int]?, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getUserPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getUserBookmarkedPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func likePost(id: Int) async throws -> NoContent
@@ -56,14 +56,27 @@ final class PostAPIImpl: PostApiService {
         )
     }
     
-    func getVideoReviews(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto> {
-        let query: [String: String] = [
+    func getVideoReviews(businessId: Int, employeeId: Int?, ratings: [Int]?, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto> {
+        var query: [String: String] = [
             "page": "\(page)",
             "limit": "\(limit)"
         ]
-        
+
+        if let employeeId {
+            query["employee_id"] = "\(employeeId)"
+        }
+
+        if let ratings {
+            for (index, rating) in ratings.enumerated() {
+                let invisiblePadding = String(repeating: "\u{200B}", count: index)
+                let uniqueKey = "ratings" + invisiblePadding
+
+                query[uniqueKey] = "\(rating)"
+            }
+        }
+
         return try await client.request(
-            "users/\(userId)/posts/video-reviews",
+            "businesses/\(businessId)/posts/video-reviews",
             method: .get,
             query: query
         )

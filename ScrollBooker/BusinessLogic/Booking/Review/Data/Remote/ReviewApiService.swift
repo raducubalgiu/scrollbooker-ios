@@ -8,8 +8,8 @@
 import Foundation
 
 protocol ReviewApiService: Sendable {
-    func getWrittenReviews(userId: Int, page: Int, limit: Int, ratings: [Int]?) async throws -> PaginatedResponseDTO<ReviewDto>
-    func getReviewSummary(userId: Int) async throws -> ReviewSummaryDto
+    func getWrittenReviews(businessId: Int, employeeId: Int?, page: Int, limit: Int, ratings: [Int]?) async throws -> PaginatedResponseDTO<ReviewDto>
+    func getReviewSummary(businessId: Int, employeeId: Int?) async throws -> ReviewSummaryDto
     func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewDto
     func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewDto
     func likeReview(id: Int) async throws -> NoContent
@@ -18,47 +18,59 @@ protocol ReviewApiService: Sendable {
 
 final class ReviewAPIImpl: ReviewApiService {
     private let client: APIClient
-    
+
     init(client: APIClient) {
         self.client = client
     }
-    
+
     func getWrittenReviews(
-        userId: Int,
+        businessId: Int,
+        employeeId: Int?,
         page: Int,
         limit: Int,
         ratings: [Int]?
     ) async throws -> PaginatedResponseDTO<ReviewDto> {
-        
+
         var query: [String: String] = [
             "page": "\(page)",
             "limit": "\(limit)"
         ]
-        
+
+        if let employeeId {
+            query["employee_id"] = "\(employeeId)"
+        }
+
         if let ratings = ratings {
             for (index, rating) in ratings.enumerated() {
                 let invisiblePadding = String(repeating: "\u{200B}", count: index)
                 let uniqueKey = "ratings" + invisiblePadding
-                
+
                 query[uniqueKey] = "\(rating)"
             }
         }
-        
+
         return try await client.request(
-            "users/\(userId)/reviews",
+            "businesses/\(businessId)/reviews",
             method: .get,
             query: query
         )
     }
-    
-    func getReviewSummary(userId: Int) async throws -> ReviewSummaryDto {
+
+    func getReviewSummary(businessId: Int, employeeId: Int?) async throws -> ReviewSummaryDto {
+        var query: [String: String] = [:]
+
+        if let employeeId {
+            query["employee_id"] = "\(employeeId)"
+        }
+
         return try await client.request(
-            "users/\(userId)/reviews-summary",
-            method: .get
+            "businesses/\(businessId)/reviews-summary",
+            method: .get,
+            query: query
         )
     }
-    
-    
+
+
     func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewDto {
         return try await client.request(
             "appointments/\(id)/create-review",
@@ -66,7 +78,7 @@ final class ReviewAPIImpl: ReviewApiService {
             body: request
         )
     }
-    
+
     func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewDto {
         return try await client.request(
             "reviews/\(id)",
@@ -74,14 +86,14 @@ final class ReviewAPIImpl: ReviewApiService {
             body: request
         )
     }
-    
+
     func likeReview(id: Int) async throws -> NoContent {
         return try await client.request(
             "reviews/\(id)/likes",
             method: .post
         )
     }
-    
+
     func unlikeReview(id: Int) async throws -> NoContent {
         return try await client.request(
             "reviews/\(id)/likes",

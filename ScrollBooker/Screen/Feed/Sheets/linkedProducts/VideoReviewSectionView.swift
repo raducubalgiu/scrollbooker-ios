@@ -187,7 +187,7 @@ private struct PostReviewCardView: View {
             }
 
             HStack(spacing: AppSize.s.rawValue) {
-                StarRatingView(rating: review.rating, imageScale: .small)
+                StarRatingView(rating: Double(review.rating), imageScale: .small)
 
                 Text("\(Float(review.rating).formatRating()) \(String(localized: "from5"))")
                     .font(.subheadline)

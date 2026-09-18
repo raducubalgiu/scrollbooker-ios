@@ -42,9 +42,11 @@ struct FeedTabRouter: View {
                                         getAppointmentByUserAndPostUseCase: container.appointmentModule.getAppointmentByUserAndPostUseCase
                                     )
                                 },
-                                makeReviewsVM: {
-                                    container.reviewModule.makeReviewsViewModel(
-                                        userId: $0,
+                                makeReviewsVM: { post in
+                                    let isEmployee = post.user.id != post.businessOwner.id
+                                    return container.reviewModule.makeReviewsViewModel(
+                                        businessId: post.businessId ?? post.businessOwner.id,
+                                        employeeId: isEmployee ? post.user.id : nil,
                                         getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
                                     )
                                 }

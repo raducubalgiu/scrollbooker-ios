@@ -7,40 +7,47 @@
 
 import Foundation
 
-struct ReviewProductBusinessOwnerDto: Codable {
+struct ReviewProductBusinessOwnerDto: Decodable {
     let id: Int
     let username: String
-    let fullname: String
+    let fullName: String
     let avatar: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, username, avatar
+        case fullName = "fullname"
+    }
 }
 
-struct ReviewCustomerDto: Codable {
+struct ReviewCustomerDto: Decodable {
     let id: Int
     let username: String
-    let fullname: String
+    let fullName: String
     let avatar: String?
+
+    enum CodingKeys: String, CodingKey {
+        case id, username, avatar
+        case fullName = "fullname"
+    }
 }
 
-struct ReviewServiceDto: Codable {
-    let id: Int
-    let name: String
-}
-
-struct ReviewProductDto: Codable {
-    let id: Int
-    let name: String
-}
-
-struct ReviewDto: Codable {
+struct ReviewDto: Decodable {
     let id: Int
     let rating: Int
     let review: String
-    let product_business_owner: ReviewProductBusinessOwnerDto
+    let productBusinessOwner: ReviewProductBusinessOwnerDto
     let customer: ReviewCustomerDto
-    let service: ReviewServiceDto
-    let product: ReviewProductDto?
-    let like_count: Int
-    let is_liked: Bool
-    let is_liked_by_product_owner: Bool
-    let created_at: String 
+    let likeCount: Int
+    let isLiked: Bool
+    let isLikedByProductOwner: Bool
+    let createdAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, rating, review, customer
+        case productBusinessOwner = "product_business_owner"
+        case likeCount = "like_count"
+        case isLiked = "is_liked"
+        case isLikedByProductOwner = "is_liked_by_product_owner"
+        case createdAt = "created_at"
+    }
 }

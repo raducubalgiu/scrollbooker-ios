@@ -6,7 +6,7 @@
 //
 
 enum ReviewTab: String, CaseIterable, Identifiable {
-    case written = "Scrise"
+    case all = "Toate"
     case video = "Video"
 
     var id: String { rawValue }

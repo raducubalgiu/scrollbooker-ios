@@ -14,11 +14,12 @@ final class GetWrittenReviewsUseCase {
     }
 
     func callAsFunction(
-        userId: Int, page: Int, limit: Int, ratings: [Int]?
+        businessId: Int, employeeId: Int?, page: Int, limit: Int, ratings: [Int]?
     ) async throws -> PaginatedResponse<Review> {
 
         try await repository.getWrittenReviews(
-            userId: userId,
+            businessId: businessId,
+            employeeId: employeeId,
             page: page,
             limit: limit,
             ratings: ratings

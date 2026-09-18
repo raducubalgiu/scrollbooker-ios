@@ -13,13 +13,17 @@ final class GetVideoReviewsUseCase {
     }
 
     func callAsFunction(
-        userId: Int,
+        businessId: Int,
+        employeeId: Int?,
+        ratings: [Int]?,
         page: Int,
         limit: Int
     ) async throws -> PaginatedResponse<Post> {
 
         try await repository.getVideoReviews(
-            userId: userId,
+            businessId: businessId,
+            employeeId: employeeId,
+            ratings: ratings,
             page: page,
             limit: limit
         )

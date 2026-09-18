@@ -57,7 +57,7 @@ struct PostActionsView: View {
 
             if !post.isVideoReview {
                 Button {
-                    actions.onOpenReviewsSheet(post.user.id)
+                    actions.onOpenReviewsSheet(post)
                 } label: {
                     VStack(alignment: .center, spacing: 2) {
                         Image(systemName: "list.clipboard")

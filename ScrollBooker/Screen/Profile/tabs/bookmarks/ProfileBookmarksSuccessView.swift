@@ -28,6 +28,7 @@ struct ProfileBookmarksSuccessView: View {
                         postId: post.id,
                         mediaFiles: post.mediaFiles,
                         viewsCount: post.counters.viewsCount,
+                        rating: post.review?.rating,
                         onNavigateToPost: onNavigateToPost
                     )
                     .onAppear {

@@ -20,7 +20,7 @@ final class ReviewsViewModel {
     var isRefreshing: Bool = false
     private(set) var isPaging: Bool = false
     
-    var selectedTab: ReviewTab = .written {
+    var selectedTab: ReviewTab = .all {
         didSet {
             Task { await handleTabSelection() }
         }
@@ -36,22 +36,25 @@ final class ReviewsViewModel {
     
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Reviews")
     
-    private let userId: Int
+    private let businessId: Int
+    private let employeeId: Int?
     private let getWrittenReviewsUseCase: GetWrittenReviewsUseCase
     private let getReviewSummaryUseCase: GetReviewSummaryUseCase
     private let getVideoReviewsUseCase: GetVideoReviewsUseCase
     private let likeReviewUseCase: LikeReviewUseCase
     private let unlikeReviewUseCase: UnlikeReviewUseCase
-    
+
     init(
-        userId: Int,
+        businessId: Int,
+        employeeId: Int?,
         getWrittenReviewsUseCase: GetWrittenReviewsUseCase,
         getReviewSummaryUseCase: GetReviewSummaryUseCase,
         getVideoReviewsUseCase: GetVideoReviewsUseCase,
         likeReviewUseCase: LikeReviewUseCase,
         unlikeReviewUseCase: UnlikeReviewUseCase
     ) {
-        self.userId = userId
+        self.businessId = businessId
+        self.employeeId = employeeId
         self.getWrittenReviewsUseCase = getWrittenReviewsUseCase
         self.getReviewSummaryUseCase = getReviewSummaryUseCase
         self.getVideoReviewsUseCase = getVideoReviewsUseCase
@@ -67,7 +70,7 @@ final class ReviewsViewModel {
         
         do {
             let summary = try await withLoading {
-                try await getReviewSummaryUseCase(userId: userId)
+                try await getReviewSummaryUseCase(businessId: businessId, employeeId: employeeId)
             }
             viewState = .success(summary)
             
@@ -78,8 +81,8 @@ final class ReviewsViewModel {
     }
 
     private func handleTabSelection() async {
-        if selectedTab == .written && writtenReviews.isEmpty && canLoadMoreWritten {
-            await fetchTabContent(for: .written, isFirstPage: true, isInitialFetchForTab: true)
+        if selectedTab == .all && writtenReviews.isEmpty && canLoadMoreWritten {
+            await fetchTabContent(for: .all, isFirstPage: true, isInitialFetchForTab: true)
         } else if selectedTab == .video && videoReviews.isEmpty && canLoadMoreVideo {
             await fetchTabContent(for: .video, isFirstPage: true, isInitialFetchForTab: true)
         }
@@ -92,7 +95,7 @@ final class ReviewsViewModel {
             selectedRatings.insert(rating)
         }
         
-        if selectedTab == .written {
+        if selectedTab == .all {
             currentWrittenPage = 1
             canLoadMoreWritten = true
             writtenReviews.removeAll()
@@ -110,7 +113,7 @@ final class ReviewsViewModel {
         guard currentReview?.id == writtenReviews.last?.id else { return }
         
         isPaging = true
-        await fetchTabContent(for: .written, isFirstPage: false)
+        await fetchTabContent(for: .all, isFirstPage: false)
         isPaging = false
     }
 
@@ -136,7 +139,7 @@ final class ReviewsViewModel {
         videoReviews.removeAll()
         
         do {
-            let summary = try await getReviewSummaryUseCase(userId: userId)
+            let summary = try await getReviewSummaryUseCase(businessId: businessId, employeeId: employeeId)
             viewState = .success(summary)
 
             await fetchTabContent(for: selectedTab, isFirstPage: true, isInitialFetchForTab: true)
@@ -158,14 +161,17 @@ final class ReviewsViewModel {
         
         do {
             switch tab {
-            case .written:
-                let response = try await getWrittenReviewsUseCase(
-                    userId: userId,
-                    page: currentWrittenPage,
-                    limit: limit,
-                    ratings: ratingsFilter
-                )
-                
+            case .all:
+                let response = try await runFetch(withMinLoading: isInitialFetchForTab) {
+                    try await getWrittenReviewsUseCase(
+                        businessId: businessId,
+                        employeeId: employeeId,
+                        page: currentWrittenPage,
+                        limit: limit,
+                        ratings: ratingsFilter
+                    )
+                }
+
                 if isFirstPage {
                     self.writtenReviews = response.results
                 } else {
@@ -180,12 +186,16 @@ final class ReviewsViewModel {
                 if canLoadMoreWritten { currentWrittenPage += 1 }
                 
             case .video:
-                let response = try await getVideoReviewsUseCase(
-                    userId: userId,
-                    page: currentVideoPage,
-                    limit: limit
-                )
-                
+                let response = try await runFetch(withMinLoading: isInitialFetchForTab) {
+                    try await getVideoReviewsUseCase(
+                        businessId: businessId,
+                        employeeId: employeeId,
+                        ratings: ratingsFilter,
+                        page: currentVideoPage,
+                        limit: limit
+                    )
+                }
+
                 if isFirstPage {
                     self.videoReviews = response.results
                 } else {
@@ -200,12 +210,19 @@ final class ReviewsViewModel {
                 if canLoadMoreVideo { currentVideoPage += 1 }
             }
         } catch {
-            logger.error("ERROR: on Fetching \(tab == .written ? "Written" : "Video") Reviews page: \(error.localizedDescription)")
+            logger.error("ERROR: on Fetching \(tab == .all ? "All" : "Video") Reviews page: \(error.localizedDescription)")
         }
         
         isSaving = false
     }
-    
+
+    private func runFetch<T>(withMinLoading: Bool, _ block: () async throws -> T) async throws -> T {
+        if withMinLoading {
+            return try await withLoading { try await block() }
+        }
+        return try await block()
+    }
+
     func toggleLikeWrittenReview(id: Int) async {
         guard let index = writtenReviews.firstIndex(where: { $0.id == id }) else { return }
         

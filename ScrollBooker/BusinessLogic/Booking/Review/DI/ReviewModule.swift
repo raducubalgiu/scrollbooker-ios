@@ -48,11 +48,13 @@ final class ReviewModule {
     }()
     
     func makeReviewsViewModel(
-        userId: Int,
+        businessId: Int,
+        employeeId: Int?,
         getVideoReviewsUseCase: GetVideoReviewsUseCase
     ) -> ReviewsViewModel {
         ReviewsViewModel(
-            userId: userId,
+            businessId: businessId,
+            employeeId: employeeId,
             getWrittenReviewsUseCase: getWrittenReviewsUseCase,
             getReviewSummaryUseCase: getReviewSummaryUseCase,
             getVideoReviewsUseCase: getVideoReviewsUseCase,

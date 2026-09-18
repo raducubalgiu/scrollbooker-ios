@@ -18,7 +18,7 @@ struct ProfilePostDetailScreen: View {
 
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
-    let makeReviewsVM: (Int) -> ReviewsViewModel
+    let makeReviewsVM: (Post) -> ReviewsViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
     var onBack: () -> Void
@@ -35,7 +35,7 @@ struct ProfilePostDetailScreen: View {
         source: ProfilePostSource,
         makeCommentsVM: @escaping (Int) -> CommentsViewModel,
         makeLinkedProductsVM: @escaping (Post) -> LinkedProductsViewModel,
-        makeReviewsVM: @escaping (Int) -> ReviewsViewModel,
+        makeReviewsVM: @escaping (Post) -> ReviewsViewModel,
         onNavigateToUserProfile: @escaping (ProfileNavigationParams) -> Void,
         onNavigateToBooking: @escaping (BookingNavigationParams) -> Void,
         onBack: @escaping () -> Void
@@ -91,7 +91,7 @@ struct ProfilePostDetailScreen: View {
         .environment(\.feedActions, FeedActions(
             onNavigateToUserProfile: onNavigateToUserProfile,
             onNavigateToBooking: onNavigateToBooking,
-            onOpenReviewsSheet: { userId in activeSheet = .reviews(userId: userId) },
+            onOpenReviewsSheet: { post in activeSheet = .reviews(post: post) },
             onOpenLinkedProductsSheet: { post in activeSheet = .linkedProducts(post: post) },
             onOpenCommentsSheet: { postId in activeSheet = .comments(postId: postId) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
@@ -108,9 +108,9 @@ struct ProfilePostDetailScreen: View {
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
 
-                case .reviews(let userId):
+                case .reviews(let post):
                     ReviewsSheetView(
-                        viewModel: reviewsCache.viewModel(for: userId, make: makeReviewsVM)
+                        viewModel: reviewsCache.viewModel(for: post.id, make: { _ in makeReviewsVM(post) })
                     )
                     .presentationDetents([.fraction(0.7), .fraction(0.999)])
                     .presentationDragIndicator(.visible)

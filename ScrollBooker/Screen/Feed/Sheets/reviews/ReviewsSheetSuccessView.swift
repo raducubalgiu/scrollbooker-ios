@@ -17,8 +17,8 @@ struct ReviewsSheetSuccessView: View {
     var body: some View {
         if summary.ratingsCount == 0 {
             NoDataView(
-                title: String(localized: "notFoundReviews"),
-                message: String(localized: "notFoundReviewsDescription"),
+                title: String(localized: "reviews"),
+                message: String(localized: "message_empty_reviews"),
                 systemImage: "star.bubble"
             )
             .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -56,8 +56,8 @@ struct ReviewsSheetSuccessView: View {
     @ViewBuilder
     private func getTabContent(for tab: ReviewTab) -> some View {
         switch tab {
-        case .written:
-            WrittenReviewsTabView(viewModel: viewModel)
+        case .all:
+            AllReviewsTabView(viewModel: viewModel)
                 .animation(.default, value: viewModel.writtenReviews)
         case .video:
             VideoReviewsTabView(viewModel: viewModel)

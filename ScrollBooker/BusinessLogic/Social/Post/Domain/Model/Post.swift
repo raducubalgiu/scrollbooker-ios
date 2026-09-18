@@ -74,7 +74,7 @@ struct PostBusinessLocation: Equatable, Hashable, Sendable {
 struct PostReview: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let review: String?
-    let rating: Double
+    let rating: Int
     let createdAt: String
 }
 

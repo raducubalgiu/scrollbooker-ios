@@ -12,7 +12,7 @@ final class GetReviewSummaryUseCase {
         self.repository = repository
     }
 
-    func callAsFunction(userId: Int) async throws -> ReviewSummary {
-        try await repository.getReviewSummary(userId: userId)
+    func callAsFunction(businessId: Int, employeeId: Int?) async throws -> ReviewSummary {
+        try await repository.getReviewSummary(businessId: businessId, employeeId: employeeId)
     }
 }

@@ -11,6 +11,7 @@ struct PostGridView: View {
     let postId: Int
     let mediaFiles: [PostMediaFile]
     let viewsCount: Int
+    var rating: Int? = nil
     let onNavigateToPost: (Int) -> Void
 
     var body: some View {
@@ -56,10 +57,36 @@ struct PostGridView: View {
             .foregroundColor(.white)
             .padding(.horizontal, 6)
             .padding(.vertical, 4)
+
+            if let rating {
+                PostGridRatingBadge(rating: rating)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding(8)
+            }
         }
         .contentShape(Rectangle())
         .onTapGesture {
             onNavigateToPost(postId)
         }
+    }
+}
+
+private struct PostGridRatingBadge: View {
+    let rating: Int
+
+    var body: some View {
+        HStack(spacing: 2) {
+            Image(systemName: "star.fill")
+                .font(.system(size: 11))
+                .foregroundColor(.ratingSB)
+
+            Text("\(rating)")
+                .font(.system(size: 12, weight: .semibold))
+                .foregroundColor(.white)
+        }
+        .padding(.horizontal, 6)
+        .padding(.vertical, 3)
+        .background(Color.black.opacity(0.45))
+        .clipShape(Capsule())
     }
 }

@@ -126,7 +126,7 @@ struct PostBusinessLocationDto: Decodable {
 struct PostReviewDto: Decodable {
     let id: Int
     let review: String?
-    let rating: Double
+    let rating: Int
     let createdAt: String
 
     enum CodingKeys: String, CodingKey {

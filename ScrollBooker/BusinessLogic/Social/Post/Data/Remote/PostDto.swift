@@ -223,20 +223,30 @@ struct HashtagDto: Decodable {
 
 struct PostAnalyticsSummaryDto: Decodable {
     let postId: Int
+    let thumbnailUrl: String?
     let viewsCount: Int
     let uniqueViewersCount: Int
     let watchTimeMs: Int
     let averageWatchTimeMs: Int
     let completionsCount: Int
+    let likeCount: Int
+    let commentCount: Int
+    let shareCount: Int
+    let bookmarkCount: Int
     let sourceBreakdown: [PostAnalyticsSourceBreakdownItemDto]
 
     enum CodingKeys: String, CodingKey {
         case postId = "post_id"
+        case thumbnailUrl = "thumbnail_url"
         case viewsCount = "views_count"
         case uniqueViewersCount = "unique_viewers_count"
         case watchTimeMs = "watch_time_ms"
         case averageWatchTimeMs = "average_watch_time_ms"
         case completionsCount = "completions_count"
+        case likeCount = "like_count"
+        case commentCount = "comment_count"
+        case shareCount = "share_count"
+        case bookmarkCount = "bookmark_count"
         case sourceBreakdown = "source_breakdown"
     }
 }

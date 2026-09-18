@@ -10,6 +10,8 @@ import SwiftUI
 struct StatCardView: View {
     let label: String
     let value: String
+    var labelFont: Font = .subheadline.bold()
+    var valueFont: Font = .title3.bold()
     var containerColor: Color = .surfaceSB
     var contentColor: Color = .onSurfaceSB
     var borderColor: Color? = nil
@@ -18,13 +20,13 @@ struct StatCardView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label)
-                .font(.subheadline.bold())
+                .font(labelFont)
                 .foregroundColor(contentColor)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
             Text(value)
-                .font(.title3.bold())
+                .font(valueFont)
                 .foregroundColor(contentColor)
         }
         .frame(maxWidth: .infinity, alignment: .leading)

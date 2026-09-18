@@ -149,11 +149,16 @@ extension Hashtag {
 extension PostAnalyticsSummary {
     init(from dto: PostAnalyticsSummaryDto) {
         self.postId = dto.postId
+        self.thumbnailUrl = dto.thumbnailUrl
         self.viewsCount = dto.viewsCount
         self.uniqueViewersCount = dto.uniqueViewersCount
         self.watchTimeMs = dto.watchTimeMs
         self.averageWatchTimeMs = dto.averageWatchTimeMs
         self.completionsCount = dto.completionsCount
+        self.likeCount = dto.likeCount
+        self.commentCount = dto.commentCount
+        self.shareCount = dto.shareCount
+        self.bookmarkCount = dto.bookmarkCount
         self.sourceBreakdown = dto.sourceBreakdown.map { PostAnalyticsSourceBreakdownItem(from: $0) }
     }
 }

@@ -75,11 +75,16 @@
 "myPost" = "Postarea mea";
 "statistics" = "Statistici";
 "postStatistics" = "Statistici postare";
+"postStatisticsSummary" = "Rezumat";
 "views" = "Vizualizări";
 "uniqueViewers" = "Vizitatori unici";
 "watchTime" = "Timp total";
 "averageWatchTime" = "Medie vizualizare";
 "trafficSources" = "Surse de trafic";
+"totalViews" = "Vizualizări";
+"likes" = "Aprecieri";
+"shares" = "Distribuiri";
+"saves" = "Salvări";
 "analytics_source_search" = "Căutare";
 "analytics_source_explore" = "Explorează";
 "analytics_source_following" = "Urmărești";

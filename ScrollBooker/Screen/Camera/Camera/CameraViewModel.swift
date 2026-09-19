@@ -260,8 +260,7 @@ final class CameraViewModel {
         self.createVideoPostUseCase = createVideoPostUseCase
         self.getSelectedDomainsByBusinessUseCase = getSelectedDomainsByBusinessUseCase
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
-
-        checkPhotoLibraryPermissions()
+        // Not called here — its synchronous Photos I/O would block init; CameraScreen.onAppear calls it once mounted.
     }
     
     func checkPhotoLibraryPermissions() {

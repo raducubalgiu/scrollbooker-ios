@@ -18,7 +18,7 @@ struct LinkedProductRowView: View {
         HStack(alignment: .center, spacing: AppSize.s.rawValue) {
             VStack(alignment: .leading, spacing: 0) {
                 Text(product.name)
-                    .font(.subheadline)
+                    .font(.headline)
                     .fontWeight(.semibold)
                     .foregroundColor(.onBackgroundSB)
                     .lineLimit(2)

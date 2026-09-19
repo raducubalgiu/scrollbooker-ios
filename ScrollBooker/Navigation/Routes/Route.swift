@@ -101,12 +101,9 @@ enum Route: Hashable {
     case display
     case reportProblem
     
-    // Camera
+    // Camera — CameraPreview/CreatePost/CreatePostPreview/CreatePostCover are local steps
+    // owned by CameraFlowContainer, not separate global routes (see Navigation+Global.swift).
     case camera(CameraParams)
-    case cameraPreview
-    case createPost
-    case createPostPreview
-    case createPostCover
     
     // Booking
     case bookingServices(BookingNavigationParams)

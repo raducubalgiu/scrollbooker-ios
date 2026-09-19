@@ -18,7 +18,7 @@ struct LinkedProductsSuccessView: View {
         if products.isEmpty {
             NoDataView(
                 title: String(localized: "services"),
-                message: String(localized: "postNoLinkedProducts"),
+                message: String(localized: "message_empty_services"),
                 systemImage: "bag.badge.questionmark"
             )
         } else {

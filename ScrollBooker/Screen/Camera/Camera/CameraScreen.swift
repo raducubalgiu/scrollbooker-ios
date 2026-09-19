@@ -10,18 +10,17 @@ import SwiftUI
 struct CameraScreen: View {
     @Bindable var viewModel: CameraViewModel
     var onBack: () -> Void
-    var onNext: () -> Void
-    
+
     var body: some View {
         ZStack {
             Color.black.ignoresSafeArea()
-            
+
             CameraContentView(
                 showSettingsCta: viewModel.showSettingsCta,
                 onBack: onBack,
                 openAppSettings: { viewModel.openAppSettings() }
             )
-            
+
             CameraActionsView(
                 mediaThumbnail: viewModel.mediaThumbnail,
                 onMediaThumbClick: {
@@ -40,21 +39,5 @@ struct CameraScreen: View {
         .onAppear {
             viewModel.checkPhotoLibraryPermissions()
         }
-        .sheet(isPresented: $viewModel.isGalleryPresented) {
-            CameraGallerySheet(
-                viewModel: viewModel,
-                onVideoSelected: { selectedAsset in
-                    viewModel.isGalleryPresented = false
-                    viewModel.setSelectedVideo(selectedAsset)
-                    onNext()
-                }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.hidden)
-            .presentationCornerRadius(25)
-        }
-
     }
 }
-
-

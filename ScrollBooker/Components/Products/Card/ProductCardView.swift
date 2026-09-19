@@ -37,7 +37,7 @@ struct ProductCardView: View {
             HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(product.name)
-                        .font(.subheadline)
+                        .font(.headline)
                         .fontWeight(.semibold)
                         .foregroundColor(.onBackgroundSB)
                         .lineLimit(2)

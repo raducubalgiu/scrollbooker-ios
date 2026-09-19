@@ -10,6 +10,7 @@ import AVKit
 
 struct CameraPreviewScreen: View {
     let viewModel: CameraViewModel
+    var isActive: Bool
     var onBack: () -> Void
     var onNext: () -> Void
     
@@ -17,6 +18,25 @@ struct CameraPreviewScreen: View {
         GeometryReader { geometry in
             ZStack {
                 Color.black.ignoresSafeArea()
+
+                // Shown underneath the player so re-mounting VideoPlayer (e.g. navigating
+                // CreatePost -> back to this preview) never flashes black while the video
+                // layer re-attaches — the already-generated cover just stays visible until
+                // the video paints its own first frame over it.
+                if let poster = viewModel.coverImage ?? viewModel.selectedVideo?.thumbnail {
+                    Image(uiImage: poster)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                        .frame(width: geometry.size.width, height: geometry.size.height)
+                        .clipShape(
+                            UnevenRoundedRectangle(
+                                topLeadingRadius: 25,
+                                bottomLeadingRadius: 0,
+                                bottomTrailingRadius: 0,
+                                topTrailingRadius: 25
+                            )
+                        )
+                }
 
                 if let player = viewModel.player {
                     VideoPlayer(player: player)
@@ -80,6 +100,16 @@ struct CameraPreviewScreen: View {
             viewModel.resumeOrCreatePreview()
             await viewModel.loadPostComposerData()
             await viewModel.generateCoverIfNeeded()
+        }
+        // This screen stays mounted (opacity-hidden, not torn down) once you navigate
+        // forward from it — .task only fires once, so resuming/pausing playback on every
+        // re-entry has to be driven by isActive rather than appear/disappear lifecycle.
+        .onChange(of: isActive) { _, active in
+            if active {
+                viewModel.resumeOrCreatePreview()
+            } else {
+                viewModel.pauseActivePlayer()
+            }
         }
         .onDisappear {
             viewModel.pauseActivePlayer()

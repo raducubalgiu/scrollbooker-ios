@@ -214,82 +214,17 @@ struct GlobalNavigationModifier: ViewModifier {
             }
             
             case .camera(let params):
-                let viewModel: CameraViewModel = {
-                    if let existingVM = router.activeCameraViewModel {
-                        return existingVM
-                    } else {
-                        let newVM = container.postModule.makeCameraViewModel(
-                            session: session,
-                            appointmentId: params.appointmentId,
-                            businessOrEmployeeId: params.businessOrEmployeeId,
-                            cloudflareRepository: container.cloudflareModuke.repository,
-                            getSelectedDomainsByBusinessUseCase: container.servieDomainModule.getSelectedDomainsByBusinessUseCase,
-                            getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase
-                        )
-                        router.activeCameraViewModel = newVM
-                        return newVM
-                    }
-                }()
-
-                CameraScreen(
-                    viewModel: viewModel,
-                    onBack: {
-                        router.clearCameraSession()
-                        router.pop()
+                CameraFlowContainer(
+                    container: container,
+                    session: session,
+                    params: params,
+                    onPostCreated: {
+                        router.popToRoot()
+                        Task { await router.myProfileViewModel?.refresh() }
                     },
-                    onNext: {
-                        router.push(.cameraPreview)
-                    }
+                    onNavigateToEditProduct: { router.push(.editProduct(productId: $0)) },
+                    onBack: { router.pop() }
                 )
-
-            case .cameraPreview:
-                if let viewModel = router.activeCameraViewModel {
-                    CameraPreviewScreen(
-                        viewModel: viewModel,
-                        onBack: { router.pop() },
-                        onNext: { router.push(.createPost) }
-                    )
-                } else {
-                    LoadingView()
-                }
-
-            case .createPost:
-                if let viewModel = router.activeCameraViewModel {
-                    CreatePostScreen(
-                        viewModel: viewModel,
-                        onBack: { router.pop() },
-                        onPostCreated: {
-                            router.clearCameraSession()
-                            router.popToRoot()
-                            Task { await router.myProfileViewModel?.refresh() }
-                        },
-                        onNavigateToPreview: { router.push(.createPostPreview) },
-                        onNavigateToCover: { router.push(.createPostCover) },
-                        onNavigateToEditProduct: { router.push(.editProduct(productId: $0)) }
-                    )
-                } else {
-                    LoadingView()
-                }
-
-            case .createPostPreview:
-                if let viewModel = router.activeCameraViewModel {
-                    CreatePostPreviewScreen(
-                        viewModel: viewModel,
-                        onBack: { router.pop() }
-                    )
-                } else {
-                    LoadingView()
-                }
-
-            case .createPostCover:
-                if let viewModel = router.activeCameraViewModel {
-                    CreatePostCoverScreen(
-                        viewModel: viewModel,
-                        onBack: { router.pop() }
-                    )
-                } else {
-                    LoadingView()
-                }
 
         // MARK: - My Account (reachable from any tab, e.g. UserProfileScreen when isOwnProfile)
         case .mySettings:

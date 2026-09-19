@@ -22,7 +22,7 @@ struct ProductCardRowPriceView: View {
             }
 
             Text("\(priceWithDiscount.toTwoDecimals()) RON")
-                .font(.subheadline)
+                .font(.headline)
                 .fontWeight(.semibold)
                 .foregroundColor(Color.onBackgroundSB)
 

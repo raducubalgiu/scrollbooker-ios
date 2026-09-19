@@ -19,7 +19,6 @@ final class Router {
     
     var selectedTab: MainTab = .feed
     var activeBookingViewModel: BookingViewModel?
-    var activeCameraViewModel: CameraViewModel?
     var activeProfilePostDetailViewModel: ProfilePostDetailViewModel?
     var myProductsViewModel: MyProductsViewModel?
 
@@ -89,10 +88,6 @@ final class Router {
         activeBookingViewModel = nil
     }
     
-    func clearCameraSession() {
-        activeCameraViewModel = nil
-    }
-
     func clearProfilePostDetailSession() {
         activeProfilePostDetailViewModel = nil
     }
@@ -108,7 +103,6 @@ final class Router {
         appointmentsPath = .init()
         profilePath = .init()
         activeBookingViewModel = nil
-        activeCameraViewModel = nil
         activeProfilePostDetailViewModel = nil
         myProfileViewModel = nil
         myProductsViewModel = nil

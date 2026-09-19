@@ -20,49 +20,62 @@ struct CameraGallerySheet: View {
     ]
     
     var body: some View {
-        NavigationStack {
-            SheetHeaderView(
-                onDismiss: { dismiss() },
-                title: "Galerie video"
-            )
-            
-            ScrollView {
-                LazyVGrid(columns: columns, spacing: 1) {
-                    ForEach(viewModel.videos) { videoAsset in
-                        ZStack(alignment: .bottomTrailing) {
-                            Group {
-                                if let thumbnail = videoAsset.thumbnail {
-                                    Image(uiImage: thumbnail)
-                                        .resizable()
-                                        .scaledToFill()
-                                } else {
-                                    Color.gray.opacity(0.2)
+        ZStack(alignment: .top) {
+            Color.black.ignoresSafeArea()
+
+            VStack(spacing: 0) {
+                SheetHeaderView(
+                    onDismiss: { dismiss() },
+                    title: "Galerie video"
+                )
+
+                ScrollView {
+                    LazyVGrid(columns: columns, spacing: 1) {
+                        ForEach(viewModel.videos) { videoAsset in
+                            ZStack(alignment: .bottomTrailing) {
+                                Group {
+                                    if let thumbnail = videoAsset.thumbnail {
+                                        Image(uiImage: thumbnail)
+                                            .resizable()
+                                            .scaledToFill()
+                                    } else {
+                                        Color.gray.opacity(0.2)
+                                    }
                                 }
+                                .frame(minWidth: 0, maxWidth: .infinity)
+                                .frame(height: 140)
+                                .clipped()
+                                .contentShape(Rectangle())
+                                .onTapGesture {
+                                    onVideoSelected(videoAsset)
+                                }
+
+                                Text(formatDuration(videoAsset.asset.duration))
+                                    .font(.caption2.bold())
+                                    .foregroundColor(.white)
+                                    .padding(.horizontal, 6)
+                                    .padding(.vertical, 2)
+                                    .background(Color.black.opacity(0.6))
+                                    .cornerRadius(4)
+                                    .padding(6)
                             }
-                            .frame(minWidth: 0, maxWidth: .infinity)
-                            .frame(height: 140)
-                            .clipped()
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                dismiss()
-                                onVideoSelected(videoAsset)
+                            .onAppear {
+                                viewModel.loadMoreVideosIfNeeded(currentVideo: videoAsset)
                             }
-                            
-                            Text(formatDuration(videoAsset.asset.duration))
-                                .font(.caption2.bold())
-                                .foregroundColor(.white)
-                                .padding(.horizontal, 6)
-                                .padding(.vertical, 2)
-                                .background(Color.black.opacity(0.6))
-                                .cornerRadius(4)
-                                .padding(6)
-                        }
-                        .onAppear {
-                            viewModel.loadMoreVideosIfNeeded(currentVideo: videoAsset)
                         }
                     }
                 }
             }
+            .background(Color.backgroundSB)
+            .clipShape(
+                UnevenRoundedRectangle(
+                    topLeadingRadius: 25,
+                    bottomLeadingRadius: 0,
+                    bottomTrailingRadius: 0,
+                    topTrailingRadius: 25
+                )
+            )
+            .ignoresSafeArea(edges: .bottom)
         }
     }
     

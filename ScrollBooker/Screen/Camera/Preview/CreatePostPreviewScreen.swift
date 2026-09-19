@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CreatePostPreviewScreen: View {
     let viewModel: CameraViewModel
+    var isActive: Bool
     var onBack: () -> Void
 
     @Environment(SessionManager.self) private var session
@@ -72,6 +73,15 @@ struct CreatePostPreviewScreen: View {
             ZStack {
                 Color.black
 
+                // Shown underneath the player so re-mounting PlayerView (e.g. navigating
+                // back into CreatePostScreen and re-opening this preview) never flashes
+                // black while the video layer re-attaches.
+                if let poster = viewModel.coverImage ?? viewModel.selectedVideo?.thumbnail {
+                    Image(uiImage: poster)
+                        .resizable()
+                        .aspectRatio(contentMode: .fill)
+                }
+
                 if let player = viewModel.player {
                     PlayerView(player: player)
                         .allowsHitTesting(false)
@@ -81,6 +91,11 @@ struct CreatePostPreviewScreen: View {
                     PostOverlayView(post: previewPost, showBookButton: false)
                 }
             }
+            // Without an explicit size, this ZStack (and PostOverlayView's bottom-pinned
+            // actions inside it) sizes against the full screen instead of the region above
+            // the pinned bottom bar below — same fix as PostsSuccessView's per-cell frame.
+            .containerRelativeFrame(.horizontal)
+            .containerRelativeFrame(.vertical)
             .ignoresSafeArea(edges: .top)
 
             header
@@ -94,6 +109,16 @@ struct CreatePostPreviewScreen: View {
         .navigationBarHidden(true)
         .task {
             viewModel.resumeOrCreatePreview()
+        }
+        // This screen stays mounted (opacity-hidden, not torn down) once you navigate
+        // back into CreatePostScreen — .task only fires once, so resuming/pausing playback
+        // on every re-entry has to be driven by isActive rather than appear/disappear.
+        .onChange(of: isActive) { _, active in
+            if active {
+                viewModel.resumeOrCreatePreview()
+            } else {
+                viewModel.pauseActivePlayer()
+            }
         }
         .onDisappear {
             viewModel.pauseActivePlayer()

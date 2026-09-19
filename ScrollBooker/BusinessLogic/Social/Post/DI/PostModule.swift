@@ -126,11 +126,25 @@ final class PostModule {
         )
     }
     
-    func makeCameraViewModel(cloudflareRepository: CloudflareRepository) -> CameraViewModel {
+    func makeCameraViewModel(
+        session: SessionManager,
+        appointmentId: Int?,
+        businessOrEmployeeId: Int?,
+        cloudflareRepository: CloudflareRepository,
+        getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase,
+        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
+    ) -> CameraViewModel {
         let useCase = CreateVideoPostUseCase(
             cloudflareRepository: cloudflareRepository,
             postsRepository: self.repository
         )
-        return CameraViewModel(createVideoPostUseCase: useCase)
+        return CameraViewModel(
+            session: session,
+            appointmentId: appointmentId,
+            businessOrEmployeeId: businessOrEmployeeId,
+            createVideoPostUseCase: useCase,
+            getSelectedDomainsByBusinessUseCase: getSelectedDomainsByBusinessUseCase,
+            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase
+        )
     }
 }

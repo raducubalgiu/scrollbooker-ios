@@ -14,7 +14,6 @@ struct CameraContentView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            // CustomIconButton de închidere (Close)
             Button(action: onBack) {
                 Image(systemName: "xmark")
                     .font(.system(size: 24, weight: .medium))
@@ -25,18 +24,17 @@ struct CameraContentView: View {
             
             Spacer()
             
-            // Column cu mesajul de cameră dezactivată
             VStack(spacing: 16) {
-                Image(systemName: "video.slash") // ic_video_slash_outline
+                Image(systemName: "video.slash")
                     .font(.system(size: 50))
                     .foregroundColor(.white)
                 
-                Text("Camera is deactivated") // R.string.cameraIsDeactivated
+                Text("Camera is deactivated")
                     .font(.title2)
                     .fontWeight(.semibold)
                     .foregroundColor(.white)
                 
-                Text("For the moment camera is deactivated, choose from gallery.") // R.string.forTheMomentCameraIsDeactivatedChooseFromGallery
+                Text("For the moment camera is deactivated, choose from gallery.")
                     .font(.body)
                     .foregroundColor(.gray)
                     .multilineTextAlignment(.center)
@@ -44,7 +42,7 @@ struct CameraContentView: View {
                 
                 if showSettingsCta {
                     Button(action: openAppSettings) {
-                        Text("Open Settings") // R.string.openSettings
+                        Text("Open Settings")
                             .font(.body)
                             .fontWeight(.medium)
                             .foregroundColor(.white)
@@ -59,7 +57,7 @@ struct CameraContentView: View {
             .frame(maxWidth: .infinity, alignment: .center)
             
             Spacer()
-            Spacer() // Împinge conținutul ușor în sus, exact ca padding-ul top 100.dp din Android
+            Spacer()
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
     }

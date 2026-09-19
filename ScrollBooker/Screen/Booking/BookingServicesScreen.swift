@@ -32,7 +32,7 @@ public struct BookingServicesScreen: View {
                         userProducts: bookingFlow.products,
                         activeSectionId: $activeSectionId,
                         isSelectable: true,
-                        selectedBookingItems: viewModel.selectedBookingItems,
+                        selectedProductIds: Set(viewModel.selectedBookingItems.map(\.productId)),
                         onOpenProductDetail: { product in selectedProductForVariants = product },
                         onSelect: { product in
                             withAnimation(.easeInOut(duration: 0.25)) {

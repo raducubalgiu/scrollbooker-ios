@@ -10,7 +10,7 @@ import Photos
 
 struct CameraGallerySheet: View {
     var viewModel: CameraViewModel
-    var onVideoSelected: (PHAsset) -> Void
+    var onVideoSelected: (LocalVideoAsset) -> Void
     @Environment(\.dismiss) private var dismiss
     
     private let columns = [
@@ -45,7 +45,7 @@ struct CameraGallerySheet: View {
                             .contentShape(Rectangle())
                             .onTapGesture {
                                 dismiss()
-                                onVideoSelected(videoAsset.asset)
+                                onVideoSelected(videoAsset)
                             }
                             
                             Text(formatDuration(videoAsset.asset.duration))

@@ -30,9 +30,16 @@ struct SocialNavigationParams: Hashable, Identifiable {
 
 struct ProfileNavigationParams: Hashable, Identifiable {
     let id = UUID()
-    
+
     let userId: Int
     let username: String
+}
+
+// appointmentId/businessOrEmployeeId are only set when Camera is entered from an
+// appointment's "leave a video review" CTA (not built yet) — nil for a normal post.
+struct CameraParams: Hashable {
+    var appointmentId: Int? = nil
+    var businessOrEmployeeId: Int? = nil
 }
 
 
@@ -95,9 +102,11 @@ enum Route: Hashable {
     case reportProblem
     
     // Camera
-    case camera
+    case camera(CameraParams)
     case cameraPreview
     case createPost
+    case createPostPreview
+    case createPostCover
     
     // Booking
     case bookingServices(BookingNavigationParams)

@@ -30,6 +30,7 @@ struct MainButtonMini: View {
     var color: Color
     var backgroundColor: Color
     var borderColor: Color
+    var isDisabled: Bool = false
     var onClick: () -> Void
 
     init(
@@ -37,24 +38,28 @@ struct MainButtonMini: View {
         color: Color = .onPrimarySB,
         backgroundColor: Color = .primarySB,
         borderColor: Color = .primarySB,
+        isDisabled: Bool = false,
         onClick: @escaping () -> Void
     ) {
         self.title = title
         self.color = color
         self.backgroundColor = backgroundColor
         self.borderColor = borderColor
+        self.isDisabled = isDisabled
         self.onClick = onClick
     }
 
     init(
         title: String,
         style: MainButtonMiniStyle,
+        isDisabled: Bool = false,
         onClick: @escaping () -> Void
     ) {
         self.title = title
         self.color = style.color
         self.backgroundColor = style.backgroundColor
         self.borderColor = style.borderColor
+        self.isDisabled = isDisabled
         self.onClick = onClick
     }
 
@@ -75,7 +80,9 @@ struct MainButtonMini: View {
                 .fill(backgroundColor)
                 .stroke(borderColor, lineWidth: 1)
         )
+        .opacity(isDisabled ? 0.4 : 1)
         .buttonStyle(.plain)
+        .disabled(isDisabled)
     }
 }
 

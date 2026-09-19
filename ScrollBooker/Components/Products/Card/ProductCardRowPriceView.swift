@@ -14,26 +14,26 @@ struct ProductCardRowPriceView: View {
     let discount: Decimal
 
     var body: some View {
-        HStack(alignment: .center, spacing: 8) {
+        HStack(alignment: .center, spacing: AppSize.xs.rawValue) {
             if hasDifferentOfferings {
                 Text(String(localized: "from"))
-                    .font(.subheadline)
+                    .font(.footnote)
                     .foregroundColor(Color.onBackgroundSB)
             }
 
             Text("\(priceWithDiscount.toTwoDecimals()) RON")
-                .font(.headline)
+                .font(.subheadline)
                 .fontWeight(.semibold)
                 .foregroundColor(Color.onBackgroundSB)
 
             if discount > 0 {
                 Text(price.toTwoDecimals())
-                    .font(.subheadline)
+                    .font(.footnote)
                     .strikethrough()
                     .foregroundColor(.gray)
 
                 Text("(-\(discount.toTwoDecimals())%)")
-                    .font(.subheadline)
+                    .font(.footnote)
                     .foregroundColor(.errorSB)
             }
 

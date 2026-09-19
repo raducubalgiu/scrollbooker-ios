@@ -24,7 +24,7 @@ struct ProfileTabRouter: View {
                         onNavigateToSettings: { router.push(.mySettings) },
                         onNavigateToMyBusiness: { router.push(.myBusiness) },
                         onNavigateToMyCalendar: { router.push(.myCalendar) },
-                        onNavigateToCamera: { router.push(.camera) },
+                        onNavigateToCamera: { router.push(.camera(CameraParams())) },
                         onNavigateToUserProfile: { router.push(.userProfile($0)) },
                         onNavigateToUserSocial: { router.push(.userSocial($0)) },
                         onNavigateToPost: { source, postId in

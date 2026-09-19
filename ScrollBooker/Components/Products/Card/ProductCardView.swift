@@ -34,23 +34,18 @@ struct ProductCardView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            if !product.filters.isEmpty && product.type == .pack && product.sessionsCount != nil {
-                //ProductPackageBadge(sessionsCount = product.sessionsCount)
-                Spacer().frame(height: 16)
-            }
-            
             HStack(alignment: .center, spacing: 8) {
                 VStack(alignment: .leading, spacing: 0) {
                     Text(product.name)
-                        .font(.headline)
+                        .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(.onBackgroundSB)
                         .lineLimit(2)
-                    
+
                     Spacer().frame(height: 4)
-                    
+
                     Text(productSummaryText)
-                        .font(.subheadline)
+                        .font(.footnote)
                         .foregroundColor(.gray)
                         .lineLimit(2)
                     
@@ -84,14 +79,6 @@ struct ProductCardView: View {
                     .font(.footnote)
                     .foregroundColor(.gray)
                     .lineLimit(2)
-            }
-            
-            if !product.canBeBooked {
-                Spacer().frame(height: 16)
-                
-                Text("Acest serviciu poate fi rezervat doar în urma unei discuții telefonice")
-                    .font(.footnote)
-                    .foregroundColor(.errorSB)
             }
         }
         .padding(.vertical, .base)

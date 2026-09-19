@@ -78,6 +78,8 @@ struct CameraPreviewScreen: View {
         }
         .task {
             viewModel.resumeOrCreatePreview()
+            await viewModel.loadPostComposerData()
+            await viewModel.generateCoverIfNeeded()
         }
         .onDisappear {
             viewModel.pauseActivePlayer()

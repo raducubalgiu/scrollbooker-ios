@@ -1,13 +1,13 @@
 //
-//  FeedDrawerServiceChipView.swift
+//  CategoryTagView.swift
 //  ScrollBooker
 //
-//  Created by Raducu Balgiu on 15.09.2026.
+//  Created by Raducu Balgiu on 19.09.2026.
 //
 
 import SwiftUI
 
-struct FeedDrawerServiceChipView: View {
+struct CategoryTagView: View {
     let label: String
     let isSelected: Bool
     let onClick: () -> Void
@@ -22,17 +22,17 @@ struct FeedDrawerServiceChipView: View {
                 }
 
                 Text(label)
-                    .font(.subheadline)
+                    .font(.footnote)
                     .fontWeight(isSelected ? .semibold : .regular)
             }
-            .foregroundColor(isSelected ? .onPrimarySB : Color(white: 0.78))
+            .foregroundColor(isSelected ? .onPrimarySB : .onBackgroundSB)
             .padding(.horizontal, AppSize.m.rawValue)
             .padding(.vertical, AppSize.s.rawValue)
-            .background(isSelected ? Color.primarySB : Color(white: 0.11))
-            .clipShape(Capsule())
+            .background(isSelected ? Color.primarySB : Color.surfaceSB)
+            .clipShape(RoundedRectangle(cornerRadius: 8))
             .overlay(
-                Capsule()
-                    .stroke(isSelected ? Color.primarySB : Color(white: 0.23), lineWidth: 1)
+                RoundedRectangle(cornerRadius: 8)
+                    .stroke(isSelected ? Color.primarySB : Color.dividerSB, lineWidth: 1)
             )
         }
         .buttonStyle(.plain)

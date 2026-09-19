@@ -11,10 +11,8 @@ struct CreatePostRequest: Encodable {
     let providerUid: String
     let orderIndex: Int
     let linkedProductIds: [Int]
-    let videoReviewMessage: String?
-    let isVideoReview: Bool
-    let rating: Int?
-    let businessOrEmployeeId: Int?
+    let customCover: String?
+    let serviceDomainId: Int?
 
     enum CodingKeys: String, CodingKey {
         case description
@@ -22,9 +20,7 @@ struct CreatePostRequest: Encodable {
         case providerUid = "provider_uid"
         case orderIndex = "order_index"
         case linkedProductIds = "linked_product_ids"
-        case videoReviewMessage = "video_review_message"
-        case isVideoReview = "is_video_review"
-        case rating
-        case businessOrEmployeeId = "business_or_employee_id"
+        case customCover = "custom_cover"
+        case serviceDomainId = "service_domain_id"
     }
 }

@@ -68,11 +68,11 @@ struct ServiceTabItemView: View {
     @ViewBuilder
     private var tabBackgroundView: some View {
         if isSelected {
-            RoundedRectangle(cornerRadius: 8)
+            Capsule()
                 .fill(Color.surfaceSB)
                 .matchedGeometryEffect(id: "activeTabBackground", in: animationNamespace)
         } else {
-            RoundedRectangle(cornerRadius: 8)
+            Capsule()
                 .fill(Color.clear)
         }
     }

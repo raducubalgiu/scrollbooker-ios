@@ -48,6 +48,7 @@ struct ProductCardActionsView: View {
                             y: isSelected ? 1 : 2
                         )
                 }
+                .sensoryFeedback(.selection, trigger: isSelected)
             } else if showAddSingleButtonNotSelectable {
                 Protected(permission: .bookButtonView) {
                     Button(action: { onNavigateToBooking?(product) }) {

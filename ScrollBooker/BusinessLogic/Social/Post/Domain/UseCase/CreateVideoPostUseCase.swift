@@ -23,10 +23,8 @@ final class CreateVideoPostUseCase {
         videoURL: URL,
         description: String?,
         linkedProductIds: [Int],
-        businessOrEmployeeId: Int?,
-        isVideoReview: Bool,
-        videoReviewMessage: String?,
-        rating: Int?,
+        serviceDomainId: Int?,
+        customCover: String?,
         onProgress: @Sendable @escaping (Double) -> Void
     ) async throws -> NoContent {
         let durationMs = try await getVideoDuration(from: videoURL)
@@ -60,10 +58,8 @@ final class CreateVideoPostUseCase {
             providerUid: directUpload.providerUid,
             orderIndex: 0,
             linkedProductIds: linkedProductIds,
-            videoReviewMessage: videoReviewMessage,
-            isVideoReview: isVideoReview,
-            rating: rating,
-            businessOrEmployeeId: businessOrEmployeeId
+            customCover: customCover,
+            serviceDomainId: serviceDomainId
         )
         
         return try await postsRepository.createPost(request: createPostRequest)

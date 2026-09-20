@@ -145,7 +145,10 @@ struct GlobalNavigationModifier: ViewModifier {
             
         case .bookingServices(let params):
             let viewModel: BookingViewModel = {
-                if let existingVM = router.activeBookingViewModel,
+                let hasDeepLinkSelection = params.appointmentId != nil || params.selectedProductId != nil
+
+                if !hasDeepLinkSelection,
+                   let existingVM = router.activeBookingViewModel,
                    existingVM.params.businessId == params.businessId {
                     return existingVM
                 } else {

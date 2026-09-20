@@ -123,14 +123,16 @@ final class BookingViewModel {
 
     func processInitialSelectionIfNeeded() async {
         guard !isInitialSelectionProcessed else { return }
-        defer { isInitialSelectionProcessed = true }
+        isInitialSelectionProcessed = true
 
         guard let bookingFlow = viewState.data else { return }
+
+        try? await Task.sleep(for: .milliseconds(350))
 
         if let appointmentId = params.appointmentId {
             await processAppointmentRebooking(appointmentId: appointmentId, bookingFlow: bookingFlow)
         } else if let selectedProductId = params.selectedProductId {
-            processSelectedProduct(id: selectedProductId, bookingFlow: bookingFlow)
+            await processSelectedProduct(id: selectedProductId, bookingFlow: bookingFlow)
         }
     }
 
@@ -173,18 +175,19 @@ final class BookingViewModel {
         }
     }
 
-    private func processSelectedProduct(id: Int, bookingFlow: BookingFlow) {
+    private func processSelectedProduct(id: Int, bookingFlow: BookingFlow) async {
         guard let targetProduct = bookingFlow.products.data
             .flatMap({ $0.products })
             .first(where: { $0.id == id }) else { return }
 
+        scrollToSectionId = sectionId(forProductId: targetProduct.id, in: bookingFlow)
+
         if targetProduct.variants.count > 1 {
+            try? await Task.sleep(for: .milliseconds(300))
             productPendingVariantSelection = targetProduct
         } else if let firstVariant = targetProduct.variants.first {
             selectBookingItem(firstVariant.toBookingItem(product: targetProduct))
         }
-
-        scrollToSectionId = sectionId(forProductId: targetProduct.id, in: bookingFlow)
     }
 
     private func sectionId(forProductId productId: Int, in bookingFlow: BookingFlow) -> Int? {

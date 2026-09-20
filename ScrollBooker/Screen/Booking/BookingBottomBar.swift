@@ -24,13 +24,13 @@ struct BookingBottomBar: View {
                     HStack(alignment: .center, spacing: 16) {
                         
                         VStack(alignment: .leading, spacing: 4) {
-                            Text(String(format: "%.2f RON", NSDecimalNumber(decimal: bookingTotals.totalPrice).doubleValue))
+                            Text("\(bookingTotals.totalPrice.toTwoDecimals()) RON")
                                 .font(.title3)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.onBackgroundSB)
                                 .lineLimit(1)
-                            
-                            Text("\(bookingTotals.totalDuration)min")
+
+                            Text(bookingTotals.totalDuration.formatDuration())
                                 .font(.subheadline)
                                 .foregroundColor(.gray)
                                 .lineLimit(1)
@@ -39,7 +39,7 @@ struct BookingBottomBar: View {
                         Spacer()
                         
                         Button(action: onNext) {
-                            Text("Înainte")
+                            Text(String(localized: "next"))
                                 .font(.body)
                                 .fontWeight(.semibold)
                                 .foregroundColor(.white)

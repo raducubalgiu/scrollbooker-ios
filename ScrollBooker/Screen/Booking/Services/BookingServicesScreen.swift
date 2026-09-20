@@ -98,14 +98,18 @@ public struct BookingServicesScreen: View {
             }
         }
         .sheet(item: $selectedProductForVariants) { product in
-            ProductDetailSheetView(product: product) { selectedVariant in
-                withAnimation(.easeInOut(duration: 0.25)) {
-                    let bookingItem = selectedVariant.toBookingItem(product: product)
-                    viewModel.selectBookingItem(bookingItem)
-                }
-                selectedProductForVariants = nil
-            }
-            .presentationDetents([.medium, .large])
+            ProductDetailSheetView(
+                product: product,
+                selectedBookingItems: viewModel.selectedBookingItems,
+                onAdd: { bookingItem in
+                    withAnimation(.easeInOut(duration: 0.25)) {
+                        viewModel.selectBookingItem(bookingItem)
+                    }
+                    selectedProductForVariants = nil
+                },
+                onClose: { selectedProductForVariants = nil }
+            )
+            .presentationDetents([.large])
             .presentationDragIndicator(.visible)
         }
     }

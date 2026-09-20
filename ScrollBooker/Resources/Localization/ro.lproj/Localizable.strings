@@ -56,6 +56,10 @@
 "asEmployee" = "Ca angajat";
 "asClient" = "Ca și client";
 "add" = "Adaugă";
+"added" = "Adăugat";
+"update" = "Actualizează";
+"selectAnOption" = "Selectează o opțiune";
+"serviceWithoutDescription" = "Acest serviciu nu are o descriere disponibilă";
 "products" = "Produse";
 "addNewProduct" = "Adaugă un produs nou";
 "myProducts" = "Produsele mele";

@@ -260,6 +260,10 @@
 "nextOpenDay" = "Următoarea zi disponibilă";
 "doesntHaveOpenSeatsThisDay" = "nu mai are locuri libere în această zi";
 "youArrivedToLate" = "Ai ajuns prea târziu";
+"bookingFullyBookedDayMessage" = "Toate intervalele orare pentru această zi au fost deja ocupate de alți clienți.";
+"pickHour" = "Alege Ora";
+"lastMinute" = "Last Minute";
+"message_error_loading_hours" = "Eroare la încărcarea orelor";
 "locationIsClosed" = "Locația este închisă";
 "thisDayDoesntBelongToSchedule" = "Această zi nu face parte din programul de lucru";
 "minNumberValidationMessage" = "Acest câmp trebuie să fie mai mare ca %1$d";

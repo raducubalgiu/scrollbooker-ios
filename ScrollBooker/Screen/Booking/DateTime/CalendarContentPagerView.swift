@@ -11,6 +11,7 @@ struct CalendarContentPagerView: View {
     @Binding var currentDayPage: Int
     let slotsState: FeatureState<[Slot]>
     let viewModel: BookingViewModel
+    var onNextOpenDayTap: (() -> Void)? = nil
     var onSlotSelected: (Slot) -> Void
     
     private let totalDays = 26 * 7
@@ -25,14 +26,14 @@ struct CalendarContentPagerView: View {
                                 SlotsShimmerView()
                                 
                             case .error:
-                                ErrorView(message: "Eroare la încărcarea orelor") {}
+                                ErrorView(message: String(localized: "message_error_loading_hours")) {}
                                 
                             case .success(let availableSlotsList):
                                 if availableSlotsList.isEmpty {
                                     FullyBookedDayMessageView(
-                                        onNextOpenDayTap: {}
+                                        onNextOpenDayTap: onNextOpenDayTap
                                     )
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
                                 } else {
                                     ScrollView {
                                         LazyVStack(spacing: 12) {

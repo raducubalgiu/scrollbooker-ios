@@ -8,8 +8,8 @@
 import SwiftUI
 
 struct FullyBookedDayMessageView: View {
-    var onNextOpenDayTap: () -> Void
-    
+    var onNextOpenDayTap: (() -> Void)? = nil
+
     var body: some View {
         VStack(alignment: .center, spacing: 0) {
             ZStack {
@@ -25,35 +25,35 @@ struct FullyBookedDayMessageView: View {
             
             Spacer().frame(height: 24)
             
-            Text("Ai ajuns prea târziu")
+            Text(String(localized: "youArrivedToLate"))
                 .font(.system(size: 19))
                 .fontWeight(.semibold)
                 .foregroundColor(.onBackgroundSB)
                 .multilineTextAlignment(.center)
-            
+
             Spacer().frame(height: 8)
-            
-            Text("Toate intervalele orare pentru această zi au fost deja ocupate de alți clienți.")
+
+            Text(String(localized: "bookingFullyBookedDayMessage"))
                 .font(.body)
                 .foregroundColor(.gray)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal, 32)
-            
-            Spacer().frame(height: 24)
-            
-            Button(action: {
-                onNextOpenDayTap()
-            }) {
-                Text("Următoarea zi disponibilă")
-                    .font(.body)
-                    .fontWeight(.semibold)
-                    .foregroundColor(.accentColor)
-                    .padding(.vertical, 12)
-                    .padding(.horizontal, 24)
-                    .overlay(
-                        RoundedRectangle(cornerRadius: 8)
-                            .stroke(Color.dividerSB, lineWidth: 1)
-                    )
+
+            if let onNextOpenDayTap {
+                Spacer().frame(height: 24)
+
+                Button(action: onNextOpenDayTap) {
+                    Text(String(localized: "nextOpenDay"))
+                        .font(.body)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.accentColor)
+                        .padding(.vertical, 12)
+                        .padding(.horizontal, 24)
+                        .overlay(
+                            RoundedRectangle(cornerRadius: 8)
+                                .stroke(Color.dividerSB, lineWidth: 1)
+                        )
+                }
             }
         }
         .frame(maxWidth: .infinity)

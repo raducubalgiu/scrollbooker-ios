@@ -53,7 +53,7 @@ struct SlotItemView: View {
             
             if slot.isLastMinute {
                 HStack(spacing: 6) {
-                    Text("Last Minute")
+                    Text(String(localized: "lastMinute"))
                         .font(.system(size: 13, weight: .semibold))
                         .foregroundColor(.white)
                     

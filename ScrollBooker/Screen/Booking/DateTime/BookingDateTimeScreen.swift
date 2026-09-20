@@ -16,7 +16,7 @@ public struct BookingDateTimeScreen: View {
         VStack(spacing: 0) {
             HeaderView(title: "", onBack: onBack)
             
-            Text("Alege Ora")
+            Text(String(localized: "pickHour"))
                 .font(.largeTitle)
                 .fontWeight(.black)
                 .foregroundColor(.onBackgroundSB)

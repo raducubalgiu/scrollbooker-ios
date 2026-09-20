@@ -18,7 +18,30 @@ struct CalendarSuccessView: View {
     
     @State private var isUpdatingFromWeek: Bool = false
     @State private var isUpdatingFromDay: Bool = false
-    
+
+    private static let isoFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    private var nextAvailableDate: Date? {
+        let calendar = Calendar.current
+        let startOfSelectedDay = calendar.startOfDay(for: viewModel.selectedDay)
+
+        return allCalendarDays
+            .filter { calendar.startOfDay(for: $0) > startOfSelectedDay && availableDays.contains(Self.isoFormatter.string(from: $0)) }
+            .min()
+    }
+
+    private func navigateToDay(_ date: Date) {
+        guard let targetIndex = allCalendarDays.firstIndex(where: { Calendar.current.isDate($0, inSameDayAs: date) }) else { return }
+        isUpdatingFromDay = true
+        withAnimation(.easeInOut(duration: 0.3)) {
+            currentDayPage = targetIndex
+        }
+    }
+
     var body: some View {
         let currentWeekIndex = currentWeekPage
         let firstDayOfWeek = allCalendarDays[safe: currentWeekIndex * 7] ?? Date()
@@ -68,6 +91,7 @@ struct CalendarSuccessView: View {
                 currentDayPage: $currentDayPage,
                 slotsState: viewModel.availableSlotsState,
                 viewModel: viewModel,
+                onNextOpenDayTap: nextAvailableDate.map { date in { navigateToDay(date) } },
                 onSlotSelected: { slot in
                     viewModel.onSlotSelected(slot: slot)
                     onNavigateToConfirmation()
@@ -80,13 +104,13 @@ struct CalendarSuccessView: View {
                 isUpdatingFromWeek = false
                 return
             }
-            isUpdatingFromDay = true
-            
+
             let targetWeekPage = newDayIndex / 7
             if currentWeekPage != targetWeekPage {
+                isUpdatingFromDay = true
                 currentWeekPage = targetWeekPage
             }
-            
+
             if let targetDate = allCalendarDays[safe: newDayIndex] {
                 Task {
                     await viewModel.onDaySelected(date: targetDate)
@@ -98,17 +122,17 @@ struct CalendarSuccessView: View {
                 isUpdatingFromDay = false
                 return
             }
-            isUpdatingFromWeek = true
-            
+
             let currentDayOfWeekComponent = Calendar.current.component(.weekday, from: viewModel.selectedDay)
             let dayOffset = (currentDayOfWeekComponent + 5) % 7
-            
+
             let targetDayIndex = (newWeekIndex * 7) + dayOffset
-            
+
             if currentDayPage != targetDayIndex {
+                isUpdatingFromWeek = true
                 currentDayPage = targetDayIndex
             }
-            
+
             if let targetDate = allCalendarDays[safe: targetDayIndex] {
                 Task {
                     await viewModel.onDaySelected(date: targetDate)

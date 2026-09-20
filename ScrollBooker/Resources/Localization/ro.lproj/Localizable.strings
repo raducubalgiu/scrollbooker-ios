@@ -82,6 +82,7 @@
 "youSuccesfullyEditedSchedules" = "Ți-ai editat cu succes programul";
 "createNewProduct" = "Creează un produs nou";
 "seeMore" = "Vezi mai mult";
+"seeLess" = "Vezi mai puțin";
 "gender" = "Gen";
 "chooseYourGender" = "Alege genul tău";
 "genderLabelDescription" = "Ne ajută să îți oferim servicii relevante pentru tine";
@@ -129,6 +130,12 @@
 "description" = "Descriere";
 "shareProfile" = "Distribuie profilul";
 "employees" = "Angajați";
+"chooseSpecialist" = "Alege specialistul";
+"chooseSpecialistDescription" = "Selectează un specialist din lista de mai sus pentru a verifica disponibilitatea serviciilor.";
+"employeePricesDiffer" = "Prețurile serviciului diferă în funcție de specialist";
+"availableAtSpecialist" = "Disponibil la specialist";
+"doesNotOfferThisService" = "Nu oferă acest serviciu";
+"selectedSuffix" = "selectat";
 "employmentRequests" = "Cereri de angajare";
 "selectOneService" = "Selectează un serviciu";
 "areYouSureYouWantDeleteService" = "Ești sigur că dorești să ștergi acest serviciu?";

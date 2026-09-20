@@ -79,7 +79,6 @@ struct BookingConfirmationSuccessView: View {
                     
                     ConfirmServicesView(
                         selectedBookingItems: viewModel.selectedBookingItems,
-                        selectedEmployeeId: viewModel.selectedEmployeeId,
                         totals: viewModel.bookingTotals
                     )
                 }

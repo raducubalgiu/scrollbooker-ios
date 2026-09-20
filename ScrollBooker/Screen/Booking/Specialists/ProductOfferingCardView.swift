@@ -28,7 +28,7 @@ struct ProductOfferingCardView: View {
     
     private var formattedPrice: String {
         if let offering = currentOffering {
-            return String(format: "%.2f RON", NSDecimalNumber(decimal: offering.priceWithDiscount).doubleValue)
+            return "\(offering.priceWithDiscount.toTwoDecimals()) RON"
         }
         return ""
     }
@@ -92,7 +92,7 @@ struct ProductOfferingCardView: View {
                             .frame(width: 18, height: 18)
                     )
                 
-                Text(hasOffering ? "Disponibil la specialist" : "Nu oferă acest serviciu")
+                Text(hasOffering ? String(localized: "availableAtSpecialist") : String(localized: "doesNotOfferThisService"))
                     .font(.system(size: 15))
                     .fontWeight(.semibold)
                     .foregroundColor(statusColor)

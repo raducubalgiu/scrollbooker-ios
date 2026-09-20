@@ -62,12 +62,11 @@ final class BookingViewModel {
 
     var bookingTotals: BookingTotals {
         let sumPrice = selectedBookingItems.reduce(Decimal(0)) { total, item in
-            if let employeeId = selectedEmployeeId {
-                let specificOffering = item.offerings.first(where: { $0.user.id == employeeId })
-                return total + (specificOffering?.priceWithDiscount ?? 0)
-            } else {
-                return total + (item.offerings.first?.priceWithDiscount ?? 0)
+            let employeeOffering = selectedEmployeeId.flatMap { employeeId in
+                item.offerings.first(where: { $0.user.id == employeeId })
             }
+            let price = employeeOffering?.priceWithDiscount ?? item.offerings.first?.priceWithDiscount ?? 0
+            return total + price
         }
 
         let sumDuration = selectedBookingItems.reduce(0) { total, item in

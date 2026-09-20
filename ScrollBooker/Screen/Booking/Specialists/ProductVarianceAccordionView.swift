@@ -16,7 +16,7 @@ struct PriceVarianceAccordionView: View {
     
     private var accordionHeader: some View {
         HStack {
-            Text("Prețurile serviciului diferă în funcție de specialist")
+            Text(String(localized: "employeePricesDiffer"))
                 .font(.system(size: 14))
                 .fontWeight(.semibold)
                 .foregroundColor(.secondary)

@@ -42,18 +42,10 @@ struct FullyBookedDayMessageView: View {
             if let onNextOpenDayTap {
                 Spacer().frame(height: 24)
 
-                Button(action: onNextOpenDayTap) {
-                    Text(String(localized: "nextOpenDay"))
-                        .font(.body)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.accentColor)
-                        .padding(.vertical, 12)
-                        .padding(.horizontal, 24)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.dividerSB, lineWidth: 1)
-                        )
-                }
+                MainButtonOutlined(
+                    title: String(localized: "nextOpenDay"),
+                    onClick: onNextOpenDayTap
+                )
             }
         }
         .frame(maxWidth: .infinity)

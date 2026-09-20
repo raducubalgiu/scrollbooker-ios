@@ -24,12 +24,14 @@ struct CalendarDayTabView: View {
     }
     
     private var textDayColor: Color {
-        if isLoading || isPastDay || !isDayAvailable {
+        if isLoading || isPastDay {
             return Color.gray.opacity(0.4)
         } else if isCurrentTab {
             return Color.white
-        } else {
+        } else if isDayAvailable {
             return .onBackgroundSB
+        } else {
+            return Color.gray.opacity(0.4)
         }
     }
     

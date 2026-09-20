@@ -76,18 +76,24 @@ struct ProductCardView: View {
             
             if let description = product.description, !description.isEmpty {
                 Spacer().frame(height: 16)
-                
-                Text(description)
-                    .font(.footnote)
-                    .foregroundColor(.gray)
-                    .lineLimit(shouldToggleDescription && isDescriptionExpanded ? nil : 2)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        guard shouldToggleDescription else { return }
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isDescriptionExpanded.toggle()
+
+                if shouldToggleDescription {
+                    Text(description)
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                        .lineLimit(isDescriptionExpanded ? nil : 2)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            withAnimation(.easeInOut(duration: 0.2)) {
+                                isDescriptionExpanded.toggle()
+                            }
                         }
-                    }
+                } else {
+                    Text(description)
+                        .font(.footnote)
+                        .foregroundColor(.gray)
+                        .lineLimit(2)
+                }
             }
         }
         .padding(.vertical, .base)

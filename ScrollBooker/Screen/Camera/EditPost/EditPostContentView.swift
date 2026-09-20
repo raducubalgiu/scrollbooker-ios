@@ -5,10 +5,6 @@
 
 import SwiftUI
 
-/// The editable-fields body shared by CreatePostScreen (a new, unpublished post) and
-/// EditPostScreen (an already-published post's metadata) — mirrors Android's
-/// `EditPostContent` composable. Owns its own linked-products picker sheet so neither
-/// caller has to redeclare that state.
 struct EditPostContentView: View {
     let isVideoReview: Bool
 

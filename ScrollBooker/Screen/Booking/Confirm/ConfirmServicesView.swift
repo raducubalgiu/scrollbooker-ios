@@ -9,19 +9,13 @@ import SwiftUI
 
 struct ConfirmServicesView: View {
     var selectedBookingItems: [SelectedBookingItem]
-    var selectedEmployeeId: Int?
     var totals: BookingTotals
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             VStack(spacing: 0) {
                 ForEach(selectedBookingItems) { item in
-                    let currentOffering = item.offerings.first { $0.user.id == selectedEmployeeId }
-                    
-                    ConfirmServiceRowView(
-                        item: item,
-                        offering: currentOffering
-                    )
+                    ConfirmServiceRowView(item: item)
 
                     if selectedBookingItems.last?.id != item.id {
                         Divider()
@@ -31,11 +25,11 @@ struct ConfirmServicesView: View {
             }
 
             Divider()
-            
-            let formattedTotalPrice = String(format: "%.2f RON", NSDecimalNumber(decimal: totals.totalPrice).doubleValue)
-            
+
+            let formattedTotalPrice = "\(totals.totalPrice.toTwoDecimals()) RON"
+
             HStack {
-                Text("Total")
+                Text(String(localized: "total"))
                     .font(.body)
                     .fontWeight(.bold)
                     .foregroundColor(.onBackgroundSB)

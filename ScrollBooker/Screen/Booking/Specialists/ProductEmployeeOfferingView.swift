@@ -21,22 +21,22 @@ struct ProductEmployeeOfferingView: View {
     }
     
     private var displayName: String {
-        isSelected ? "\(employee.fullName) (selectat)" : employee.fullName
+        isSelected ? "\(employee.fullName) (\(String(localized: "selectedSuffix")))" : employee.fullName
     }
     
     private var formattedPrice: String {
         if let price = offering?.priceWithDiscount {
-            return String(format: "%.2f RON", NSDecimalNumber(decimal: price).doubleValue)
+            return "\(price.toTwoDecimals()) RON"
         }
         return "N/A"
     }
-    
+
     var body: some View {
         HStack(alignment: .center) {
             HStack(spacing: 8) {
                 AvatarView(
                     imageURL: employee.avatarURL,
-                    size: .l
+                    size: .xs
                 )
                 
                 Text(displayName)

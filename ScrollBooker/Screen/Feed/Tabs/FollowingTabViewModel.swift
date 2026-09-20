@@ -16,19 +16,25 @@ final class FollowingTabViewModel: BaseFeedViewModel {
     private let unlikePostUseCase: UnlikePostUseCase
     private let bookmarkPostUseCase: BookmarkPostUseCase
     private let unbookmarkPostUseCase: UnbookmarkPostUseCase
+    private let followUserUseCase: FollowUserUseCase
+    private let unfollowUserUseCase: UnfollowUserUseCase
 
     init(
         getFollowingPostsUseCase: GetFollowingPostsUseCase,
         likePostUseCase: LikePostUseCase,
         unlikePostUseCase: UnlikePostUseCase,
         bookmarkPostUseCase: BookmarkPostUseCase,
-        unbookmarkPostUseCase: UnbookmarkPostUseCase
+        unbookmarkPostUseCase: UnbookmarkPostUseCase,
+        followUserUseCase: FollowUserUseCase,
+        unfollowUserUseCase: UnfollowUserUseCase
     ) {
         self.getFollowingPostsUseCase = getFollowingPostsUseCase
         self.likePostUseCase = likePostUseCase
         self.unlikePostUseCase = unlikePostUseCase
         self.bookmarkPostUseCase = bookmarkPostUseCase
         self.unbookmarkPostUseCase = unbookmarkPostUseCase
+        self.followUserUseCase = followUserUseCase
+        self.unfollowUserUseCase = unfollowUserUseCase
         super.init()
     }
 
@@ -74,6 +80,20 @@ final class FollowingTabViewModel: BaseFeedViewModel {
             unbookmarkAction: { [weak self] postId in
                 guard let self else { throw APIError.invalidResponse }
                 return try await self.unbookmarkPostUseCase(id: postId)
+            }
+        )
+    }
+
+    func toggleFollowPost(id: Int) async {
+        await toggleFollow(
+            postId: id,
+            followAction: { [weak self] followeeId in
+                guard let self else { throw APIError.invalidResponse }
+                return try await self.followUserUseCase(followeeId: followeeId)
+            },
+            unfollowAction: { [weak self] followeeId in
+                guard let self else { throw APIError.invalidResponse }
+                return try await self.unfollowUserUseCase(followeeId: followeeId)
             }
         )
     }

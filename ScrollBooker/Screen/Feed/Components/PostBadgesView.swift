@@ -16,8 +16,8 @@ struct PostBadgesView: View {
             if isVideoReview {
                 badge(
                     text: String(localized: "videoReview"),
-                    background: Color.white.opacity(0.1),
-                    foreground: .white
+                    background: Color.white.opacity(0.9),
+                    foreground: .black
                 )
             }
 

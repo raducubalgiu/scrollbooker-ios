@@ -12,6 +12,7 @@ struct PostOverlayView: View {
     var showBookButton: Bool = true
 
     @Environment(\.feedActions) private var actions
+    @State private var isDescriptionExpanded = false
 
     var body: some View {
         ZStack(alignment: .bottom) {
@@ -24,7 +25,7 @@ struct PostOverlayView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: 240)
+            .frame(height: isDescriptionExpanded ? 380 : 240)
             .ignoresSafeArea(edges: .bottom)
             
             HStack(alignment: .bottom, spacing: 0) {
@@ -39,7 +40,15 @@ struct PostOverlayView: View {
                     )
                     
                     if let description = post.description?.isEmpty == false ? post.description : nil {
-                        PostDescriptionView(description: description)
+                        PostDescriptionView(
+                            description: description,
+                            isExpanded: isDescriptionExpanded,
+                            onToggle: {
+                                withAnimation(.easeInOut(duration: 0.2)) {
+                                    isDescriptionExpanded.toggle()
+                                }
+                            }
+                        )
                     }
                     
                     if showBookButton {

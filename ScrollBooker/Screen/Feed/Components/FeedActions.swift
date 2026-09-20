@@ -16,6 +16,7 @@ struct FeedActions {
     var onOpenMoreOptions: (Int) -> Void = { _ in }
     var onLike: (Int) -> Void = { _ in }
     var onBookmark: (Int) -> Void = { _ in }
+    var onFollow: (Int) -> Void = { _ in }
 }
 
 struct FeedActionsKey: EnvironmentKey {

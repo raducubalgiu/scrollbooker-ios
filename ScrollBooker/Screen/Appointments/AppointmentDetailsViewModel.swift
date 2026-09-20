@@ -182,7 +182,9 @@ final class AppointmentDetailsViewModel {
         let appointmentReview = AppointmentWrittenReview(
             id: review.id,
             review: review.review,
-            rating: review.rating
+            rating: review.rating,
+            isEditable: true,
+            createdAt: review.createdAt
         )
 
         let updatedAppointment = current.copy(

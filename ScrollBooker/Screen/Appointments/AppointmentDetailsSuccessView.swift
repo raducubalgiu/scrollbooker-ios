@@ -94,6 +94,8 @@ struct AppointmentDetailsSuccessView: View {
                         isCustomer: appointment.isCustomer,
                         review: rev.review,
                         rating: rev.rating,
+                        isEditable: rev.isEditable,
+                        createdAt: rev.createdAt,
                         onOpenOptions: { onOpenReviewOptions(rev) }
                     )
                     .padding(.bottom, .base)

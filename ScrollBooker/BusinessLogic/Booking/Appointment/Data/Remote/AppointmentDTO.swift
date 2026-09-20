@@ -57,6 +57,14 @@ struct AppointmentWrittenReviewDto: Decodable {
     let id: Int
     let review: String?
     let rating: Int
+    let isEditable: Bool
+    let createdAt: String
+
+    enum CodingKeys: String, CodingKey {
+        case id, review, rating
+        case isEditable = "is_editable"
+        case createdAt = "created_at"
+    }
 }
 
 struct AppointmentProductDto: Decodable {

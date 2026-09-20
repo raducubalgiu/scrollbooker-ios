@@ -18,6 +18,8 @@ final class ExploreTabViewModel: BaseFeedViewModel {
     private let unlikePostUseCase: UnlikePostUseCase
     private let bookmarkPostUseCase: BookmarkPostUseCase
     private let unbookmarkPostUseCase: UnbookmarkPostUseCase
+    private let followUserUseCase: FollowUserUseCase
+    private let unfollowUserUseCase: UnfollowUserUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Feed")
 
     private(set) var serviceDomainsState: FeatureState<[ServiceDomain]> = .idle
@@ -34,7 +36,9 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         likePostUseCase: LikePostUseCase,
         unlikePostUseCase: UnlikePostUseCase,
         bookmarkPostUseCase: BookmarkPostUseCase,
-        unbookmarkPostUseCase: UnbookmarkPostUseCase
+        unbookmarkPostUseCase: UnbookmarkPostUseCase,
+        followUserUseCase: FollowUserUseCase,
+        unfollowUserUseCase: UnfollowUserUseCase
     ) {
         self.getExplorePostsUseCase = getExplorePostsUseCase
         self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
@@ -42,6 +46,8 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         self.unlikePostUseCase = unlikePostUseCase
         self.bookmarkPostUseCase = bookmarkPostUseCase
         self.unbookmarkPostUseCase = unbookmarkPostUseCase
+        self.followUserUseCase = followUserUseCase
+        self.unfollowUserUseCase = unfollowUserUseCase
         super.init()
     }
 
@@ -125,6 +131,20 @@ final class ExploreTabViewModel: BaseFeedViewModel {
             unbookmarkAction: { [weak self] postId in
                 guard let self else { throw APIError.invalidResponse }
                 return try await self.unbookmarkPostUseCase(id: postId)
+            }
+        )
+    }
+
+    func toggleFollowPost(id: Int) async {
+        await toggleFollow(
+            postId: id,
+            followAction: { [weak self] followeeId in
+                guard let self else { throw APIError.invalidResponse }
+                return try await self.followUserUseCase(followeeId: followeeId)
+            },
+            unfollowAction: { [weak self] followeeId in
+                guard let self else { throw APIError.invalidResponse }
+                return try await self.unfollowUserUseCase(followeeId: followeeId)
             }
         )
     }

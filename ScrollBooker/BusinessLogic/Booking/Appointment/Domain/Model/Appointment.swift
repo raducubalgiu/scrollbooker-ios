@@ -40,6 +40,8 @@ struct AppointmentWrittenReview: Codable, Hashable, Identifiable {
     let id: Int
     let review: String?
     let rating: Int
+    let isEditable: Bool
+    let createdAt: String
 }
 
 struct AppointmentProduct: Identifiable, Equatable, Hashable, Sendable {

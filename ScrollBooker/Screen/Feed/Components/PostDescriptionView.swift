@@ -9,13 +9,19 @@ import SwiftUI
 
 struct PostDescriptionView: View {
     var description: String = ""
-    
+    var isExpanded: Bool = false
+    var onToggle: () -> Void = {}
+
     var body: some View {
         Text(description)
             .font(.subheadline)
             .foregroundColor(.white)
-            .lineLimit(2)
+            .lineLimit(isExpanded ? nil : 2)
             .truncationMode(.tail)
+            .contentShape(Rectangle())
+            .onTapGesture {
+                onToggle()
+            }
     }
 }
 

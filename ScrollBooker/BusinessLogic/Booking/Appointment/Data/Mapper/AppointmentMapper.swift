@@ -69,6 +69,8 @@ extension AppointmentWrittenReview {
         self.id = dto.id
         self.review = dto.review
         self.rating = dto.rating
+        self.isEditable = dto.isEditable
+        self.createdAt = dto.createdAt
     }
 }
 

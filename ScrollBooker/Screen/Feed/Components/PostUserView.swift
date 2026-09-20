@@ -21,7 +21,7 @@ struct PostUserView: View {
 
             VStack(alignment: .leading, spacing: 5) {
                 Text(user.fullName)
-                    .font(.system(size: 16))
+                    .font(.subheadline)
                     .fontWeight(.bold)
                     .foregroundColor(.white)
 
@@ -33,15 +33,21 @@ struct PostUserView: View {
                     HStack(spacing: 2) {
                         PostSecondaryText(
                             text: String(localized: "leftReviewForPrefix"),
-                            color: .white,
-                            weight: .regular
+                            color: .white.opacity(0.8),
+                            weight: .regular,
+                            font: .caption
                         )
+                        .fixedSize(horizontal: true, vertical: false)
+                        .layoutPriority(1)
 
                         PostSecondaryText(
-                            text: reviewedFullName,
+                            text: "@\(reviewedFullName)",
                             color: .white,
-                            weight: .bold
+                            weight: .bold,
+                            font: .subheadline
                         )
+                        .lineLimit(1)
+                        .truncationMode(.tail)
                         .onTapGesture {
                             onNavigateToUser(ProfileNavigationParams(userId: reviewedId, username: reviewedUsername))
                         }
@@ -62,10 +68,11 @@ private struct PostSecondaryText: View {
     let text: String
     var color: Color = Color.primarySB.opacity(0.85)
     var weight: Font.Weight = .semibold
+    var font: Font = .footnote
 
     var body: some View {
         Text(text)
-            .font(.system(size: 13))
+            .font(font)
             .fontWeight(weight)
             .tracking(0.25)
             .foregroundColor(color)

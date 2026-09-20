@@ -63,7 +63,8 @@ struct FollowingTab: View {
             onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
             onOpenMoreOptions: { activeSheet = .moreOptions(postId: $0) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
-            onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
+            onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } },
+            onFollow: { id in Task { await viewModel.toggleFollowPost(id: id) } }
         ))
         .sheet(item: $activeSheet, onDismiss: {
             pendingSheetAction?()

@@ -108,7 +108,8 @@ struct ProfilePostDetailScreen: View {
             onOpenCommentsSheet: { postId in activeSheet = .comments(postId: postId) },
             onOpenMoreOptions: { postId in activeSheet = .moreOptions(postId: postId) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
-            onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } }
+            onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } },
+            onFollow: { id in Task { await viewModel.toggleFollowPost(id: id) } }
         ))
         .sheet(item: $activeSheet, onDismiss: {
             pendingSheetAction?()

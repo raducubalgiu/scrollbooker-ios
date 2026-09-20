@@ -22,9 +22,12 @@ struct PostActionsView: View {
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
             if post.isVideoReview {
-                AvatarView(
-                    imageURL: post.user.avatarURL,
-                    size: .l
+                AvatarWithFollowBadgeView(
+                    url: post.user.avatarURL,
+                    size: .l,
+                    isFollowing: post.user.isFollow,
+                    onAvatarTap: { actions.onNavigateToUserProfile(makeProfileNavigationParams()) },
+                    onFollowTap: { actions.onFollow(post.id) }
                 )
                 .padding(.bottom, .s)
             } else {

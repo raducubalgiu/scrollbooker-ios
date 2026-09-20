@@ -94,9 +94,13 @@ final class AppContainer {
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
         self.commentModule = CommentModule(apiClient: apiClient)
+        let followModule = FollowModule(apiClient: apiClient)
+        self.followModule = followModule
         self.postModule = PostModule(
             apiClient: apiClient,
-            getAllServiceDomainsUseCase: servieDomainModule.getAllServiceDomainsUseCase
+            getAllServiceDomainsUseCase: servieDomainModule.getAllServiceDomainsUseCase,
+            followUserUseCase: followModule.followUserUseCase,
+            unfollowUserUseCase: followModule.unfollowUserUseCase
         )
         self.availabilityModule = AvailabilityModule(apiClient: apiClient)
         self.bookingFlowModule = BookingFlowModule(apiClient: apiClient)
@@ -111,7 +115,6 @@ final class AppContainer {
         self.appointmentModule = AppointmentModule(apiClient: apiClient)
         self.notificationModule = NotificationModule(apiClient: apiClient)
         self.problemModule = ProblemModule(apiClient: apiClient)
-        self.followModule = FollowModule(apiClient: apiClient)
         self.dashboardModule = DashboardModule(apiClient: apiClient)
         self.filterModule = FilterModule(apiClient: apiClient)
     }

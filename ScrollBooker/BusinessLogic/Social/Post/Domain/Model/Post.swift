@@ -175,6 +175,21 @@ extension Post {
     }
 }
 
+extension PostUser {
+    func copy(isFollow: Bool? = nil) -> PostUser {
+        PostUser(
+            id: self.id,
+            fullName: self.fullName,
+            username: self.username,
+            avatar: self.avatar,
+            isFollow: isFollow ?? self.isFollow,
+            profession: self.profession,
+            ratingsAverage: self.ratingsAverage,
+            ratingsCount: self.ratingsCount
+        )
+    }
+}
+
 extension UserPostActions {
     func copy(
         isLiked: Bool? = nil,

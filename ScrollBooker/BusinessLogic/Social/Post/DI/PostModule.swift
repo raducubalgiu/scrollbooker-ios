@@ -11,10 +11,19 @@ import Foundation
 final class PostModule {
     private let apiClient: APIClient
     private let getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase
+    private let followUserUseCase: FollowUserUseCase
+    private let unfollowUserUseCase: UnfollowUserUseCase
 
-    init(apiClient: APIClient, getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase) {
+    init(
+        apiClient: APIClient,
+        getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase,
+        followUserUseCase: FollowUserUseCase,
+        unfollowUserUseCase: UnfollowUserUseCase
+    ) {
         self.apiClient = apiClient
         self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
+        self.followUserUseCase = followUserUseCase
+        self.unfollowUserUseCase = unfollowUserUseCase
     }
 
     private lazy var apiService: PostApiService = {
@@ -106,20 +115,24 @@ final class PostModule {
             likePostUseCase: likePostUseCase,
             unlikePostUseCase: unlikePostUseCase,
             bookmarkPostUseCase: bookmarkPostUseCase,
-            unbookmarkPostUseCase: unbookmarkPostUseCase
+            unbookmarkPostUseCase: unbookmarkPostUseCase,
+            followUserUseCase: followUserUseCase,
+            unfollowUserUseCase: unfollowUserUseCase
         )
     }
-    
+
     func makeFollowingTabViewModel() -> FollowingTabViewModel {
         FollowingTabViewModel(
             getFollowingPostsUseCase: getFollowingPostsUseCase,
             likePostUseCase: likePostUseCase,
             unlikePostUseCase: unlikePostUseCase,
             bookmarkPostUseCase: bookmarkPostUseCase,
-            unbookmarkPostUseCase: unbookmarkPostUseCase
+            unbookmarkPostUseCase: unbookmarkPostUseCase,
+            followUserUseCase: followUserUseCase,
+            unfollowUserUseCase: unfollowUserUseCase
         )
     }
-    
+
     func makeProfilePostDetailViewModel(
         profileController: ProfileController,
         source: ProfilePostSource,
@@ -134,7 +147,9 @@ final class PostModule {
             likePostUseCase: likePostUseCase,
             unlikePostUseCase: unlikePostUseCase,
             bookmarkPostUseCase: bookmarkPostUseCase,
-            unbookmarkPostUseCase: unbookmarkPostUseCase
+            unbookmarkPostUseCase: unbookmarkPostUseCase,
+            followUserUseCase: followUserUseCase,
+            unfollowUserUseCase: unfollowUserUseCase
         )
     }
 

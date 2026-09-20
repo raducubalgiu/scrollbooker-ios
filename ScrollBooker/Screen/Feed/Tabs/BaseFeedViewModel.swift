@@ -191,6 +191,41 @@ class BaseFeedViewModel {
         }
     }
     
+    @MainActor
+    func toggleFollow(
+        postId: Int,
+        followAction: (Int) async throws -> NoContent,
+        unfollowAction: (Int) async throws -> NoContent
+    ) async {
+        guard let originalPost = posts.first(where: { $0.id == postId }) else { return }
+
+        let followeeId = originalPost.user.id
+        let currentlyFollowing = originalPost.user.isFollow
+        let newIsFollow = !currentlyFollowing
+
+        let affectedIndices = posts.indices.filter { posts[$0].user.id == followeeId }
+        let originalPostsByIndex = Dictionary(uniqueKeysWithValues: affectedIndices.map { ($0, posts[$0]) })
+
+        for index in affectedIndices {
+            posts[index] = posts[index].copy(user: posts[index].user.copy(isFollow: newIsFollow))
+        }
+
+        operationErrorMessage = nil
+
+        do {
+            if currentlyFollowing {
+                _ = try await unfollowAction(followeeId)
+            } else {
+                _ = try await followAction(followeeId)
+            }
+        } catch {
+            for (index, originalPost) in originalPostsByIndex {
+                posts[index] = originalPost
+            }
+            operationErrorMessage = logger.userMessage(for: error, context: "Toggling Follow for user \(followeeId)")
+        }
+    }
+
     /// Lets a subclass whose `posts` come from an already-loaded, externally-owned source
     /// (e.g. `ProfileController.postsState`/`.bookmarksState`, for the profile post-detail
     /// screen) push a fresh snapshot in, instead of self-paginating via `load(fetchBlock:)`.

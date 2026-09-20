@@ -11,13 +11,12 @@ struct ProfileProductsSuccessView: View {
     let products: UserProducts
     let onNavigateToBookingFromProduct: (Product) -> Void
 
-    @State private var selectedTab: Int = 0
+    @State private var activeSectionId: Int? = nil
 
     private var serviceGroups: [BusinessServicesWithProducts] { products.data }
 
     private var selectedGroupProducts: [Product] {
-        guard serviceGroups.indices.contains(selectedTab) else { return [] }
-        return serviceGroups[selectedTab].products
+        serviceGroups.first { $0.service.id == (activeSectionId ?? serviceGroups.first?.service.id) }?.products ?? []
     }
 
     private var shouldShowViewMore: Bool {
@@ -26,9 +25,10 @@ struct ProfileProductsSuccessView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            PillTabBarView(
-                tabs: serviceGroups.map { $0.service.shortName },
-                selectedTab: $selectedTab
+            BookingServicesTabs(
+                activeSectionId: activeSectionId ?? serviceGroups.first?.service.id ?? 0,
+                serviceGroups: serviceGroups,
+                onTabSelect: { activeSectionId = $0 }
             )
 
             Divider()
@@ -37,6 +37,7 @@ struct ProfileProductsSuccessView: View {
                 ForEach(Array(selectedGroupProducts.enumerated()), id: \.element.id) { index, product in
                     ProductCardView(
                         product: product,
+                        shouldToggleDescription: true,
                         onOpenProductDetail: { _ in },
                         onNavigateToBooking: onNavigateToBookingFromProduct
                     )
@@ -57,7 +58,7 @@ struct ProfileProductsSuccessView: View {
                 }
             }
             .padding(.vertical, .base)
-            .id(selectedTab)
+            .id(activeSectionId)
         }
     }
 }

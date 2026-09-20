@@ -10,17 +10,19 @@ import SwiftUI
 struct ProductCardView: View {
     let product: Product
     var displayEditableActions: Bool = false
-    var displayDescription: Bool = true
+    var shouldToggleDescription: Bool = false
     var isSelected: Bool = false
     var isSelectable: Bool = false
     var isLoadingDelete: Bool = false
-    
+
     var onOpenProductDetail: (Product) -> Void
     var onSelect: ((Product) -> Void)? = nil
     var onNavigateToEdit: ((Int) -> Void)? = nil
     var onNavigateToBooking: ((Product) -> Void)? = nil
     var onDeleteProduct: ((Int) -> Void)? = nil
-    
+
+    @State private var isDescriptionExpanded = false
+
     private var productSummaryText: String {
         let duration = product.getDurationText(minutes: product.startingOffering.duration)
         let filters = product.getFiltersSummary()
@@ -72,13 +74,20 @@ struct ProductCardView: View {
                 )
             }
             
-            if let description = product.description, !description.isEmpty && displayDescription {
+            if let description = product.description, !description.isEmpty {
                 Spacer().frame(height: 16)
                 
                 Text(description)
                     .font(.footnote)
                     .foregroundColor(.gray)
-                    .lineLimit(2)
+                    .lineLimit(shouldToggleDescription && isDescriptionExpanded ? nil : 2)
+                    .contentShape(Rectangle())
+                    .onTapGesture {
+                        guard shouldToggleDescription else { return }
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isDescriptionExpanded.toggle()
+                        }
+                    }
             }
         }
         .padding(.vertical, .base)

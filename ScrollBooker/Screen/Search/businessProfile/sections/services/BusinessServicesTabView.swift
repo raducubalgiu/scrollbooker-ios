@@ -12,50 +12,29 @@ struct BusinessServicesTabView: View {
     let onNavigateToBookingFromProfile: () -> Void
     let onNavigateToBookingFromProduct: (Product) -> Void
 
-    @State private var currentPage: Int = 0
-    
+    @State private var activeSectionId: Int? = nil
+
     var body: some View {
         let serviceGroups = products.data
         let totalCount = products.totalCount
-        
+
         VStack(alignment: .leading, spacing: 0) {
             if !serviceGroups.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: AppSize.s.rawValue) {
-                        ForEach(Array(serviceGroups.enumerated()), id: \.element.service.id) { index, group in
-                            let isSelected = currentPage == index
-                            
-                            Button(action: {
-                                withAnimation(.easeInOut(duration: 0.2)) {
-                                    currentPage = index
-                                }
-                            }) {
-                                Text(group.service.shortName)
-                                    .font(.system(size: 16, weight: isSelected ? .bold : .medium))
-                                    .foregroundColor(isSelected ? .onSurfaceSB : .onBackgroundSB)
-                                    .padding(.horizontal, 12)
-                                    .padding(.vertical, 4)
-                                    .frame(height: 42)
-                                    .background(isSelected ? Color.surfaceSB : Color.clear)
-                                    .clipShape(RoundedRectangle(cornerRadius: 8))
-                            }
-                            .buttonStyle(.plain)
-                        }
-                    }
-                    .padding(.horizontal, .base)
-                }
-                .padding(.bottom, .s)
-                
+                BookingServicesTabs(
+                    activeSectionId: activeSectionId ?? serviceGroups.first?.service.id ?? 0,
+                    serviceGroups: serviceGroups,
+                    onTabSelect: { activeSectionId = $0 }
+                )
+
                 Divider().padding(.horizontal, .base)
-                
-                if currentPage < serviceGroups.count {
-                    let currentGroup = serviceGroups[currentPage]
-                    
+
+                if let currentGroup = serviceGroups.first(where: { $0.service.id == (activeSectionId ?? serviceGroups.first?.service.id) }) {
+
                     VStack(alignment: .leading, spacing: 0) {
                         ForEach(currentGroup.products) { product in
                             ProductCardView(
                                 product: product,
-                                displayDescription: false,
+                                shouldToggleDescription: true,
                                 onOpenProductDetail: { _ in },
                                 onNavigateToBooking: onNavigateToBookingFromProduct
                             )

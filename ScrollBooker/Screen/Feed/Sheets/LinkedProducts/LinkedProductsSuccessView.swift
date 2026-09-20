@@ -27,6 +27,7 @@ struct LinkedProductsSuccessView: View {
                     ForEach(products, id: \.id) { product in
                         ProductCardView(
                             product: product,
+                            shouldToggleDescription: true,
                             onOpenProductDetail: { _ in },
                             onNavigateToBooking: { clickedProduct in
                                 dismiss()

@@ -16,6 +16,7 @@ struct GlobalNavigationModifier: ViewModifier {
     @Environment(AppContainer.self) private var container
     @Environment(SessionManager.self) private var session
     @Environment(Router.self) private var router
+    @Environment(ToastCenter.self) private var toastCenter
 
     let localDestination: (Route) -> (any View)?
     
@@ -294,7 +295,7 @@ struct GlobalNavigationModifier: ViewModifier {
 
         case .myBusinessDetails:
             MyBusinessDetailsScreen(
-                viewModel: container.businessModule.makeMyBusinessDetailsViewModel(session: session),
+                viewModel: container.businessModule.makeMyBusinessDetailsViewModel(session: session, toastCenter: toastCenter),
                 onBack: { router.pop() }
             )
 
@@ -306,7 +307,7 @@ struct GlobalNavigationModifier: ViewModifier {
 
         case .mySchedules:
             MySchedulesScreen(
-                viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session),
+                viewModel: container.scheduleModule.makeMySchedulesViewModel(session: session, toastCenter: toastCenter),
                 onBack: { router.pop() }
             )
 
@@ -357,7 +358,7 @@ struct GlobalNavigationModifier: ViewModifier {
 
         case .myServices:
             MyServicesScreen(
-                viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session),
+                viewModel: container.servieDomainModule.makeMyServicesViewModel(session: session, toastCenter: toastCenter),
                 onBack: { router.pop() }
             )
 

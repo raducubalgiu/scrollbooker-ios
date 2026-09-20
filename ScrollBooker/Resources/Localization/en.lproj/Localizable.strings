@@ -418,6 +418,9 @@
 "my_business_details" = "Detalii business";
 "my_business_details_description" = "Detalii despre afacerea mea";
 "my_business_schedule" = "Programul de lucru";
+"scheduleSaved" = "Programul a fost salvat cu succes";
+"businessGalleryUpdatedSuccessfully" = "Galeria foto a fost editată cu success";
+"serviceCategorySaved" = "Categoriile de servicii au fost salvate cu succes";
 "my_business_schedule_description" = "Detalii despre programul meu";
 "my_business_schedule_full_description" = "Adaugă intervalele orare în care locația ta este deschisă pentru clienți";
 "my_business_services" = "Servicii";

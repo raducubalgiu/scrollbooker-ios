@@ -25,15 +25,18 @@ final class MyServicesViewModel {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Services")
     
     private let session: SessionManager
+    private let toastCenter: ToastCenter
     private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
     private let updateBusinessServicesUseCase: UpdateBusinessServicesUseCase
-    
+
     init(
         session: SessionManager,
+        toastCenter: ToastCenter,
         getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase,
         updateBusinessServicesUseCase: UpdateBusinessServicesUseCase
     ) {
         self.session = session
+        self.toastCenter = toastCenter
         self.getSelectedDomainsByBusinessUseCase = getSelectedDomainsByBusinessUseCase
         self.updateBusinessServicesUseCase = updateBusinessServicesUseCase
     }
@@ -103,10 +106,12 @@ final class MyServicesViewModel {
             
             self.defaultSelectedServiceIds = freshSelectedIds
             self.selectedServiceIds = freshSelectedIds
-            
+
             viewState = .success(updatedData)
+            toastCenter.show(String(localized: "serviceCategorySaved"))
         } catch {
             logger.error("ERROR: on Updating Business Services: \(error.localizedDescription)")
+            toastCenter.show(String(localized: "message_error_something_went_wrong"), type: .error)
         }
         
         isSaving = false

@@ -35,9 +35,10 @@ final class ServiceDomainModule {
         UpdateBusinessServicesUseCase(repository: repository)
     }()
 
-    func makeMyServicesViewModel(session: SessionManager) -> MyServicesViewModel {
+    func makeMyServicesViewModel(session: SessionManager, toastCenter: ToastCenter) -> MyServicesViewModel {
         MyServicesViewModel(
             session: session,
+            toastCenter: toastCenter,
             getSelectedDomainsByBusinessUseCase: getSelectedDomainsByBusinessUseCase,
             updateBusinessServicesUseCase: updateBusinessServicesUseCase
         )

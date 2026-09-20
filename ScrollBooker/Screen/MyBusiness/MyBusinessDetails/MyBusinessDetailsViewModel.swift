@@ -15,6 +15,7 @@ final class MyBusinessDetailsViewModel {
     static let slotCount = 5
 
     private let session: SessionManager
+    private let toastCenter: ToastCenter
     private let getMyBusinessDetailsUseCase: GetMyBusinessDetailsUseCase
     private let updateBusinessGalleryUseCase: UpdateBusinessGalleryUseCase
     private let updateSchedulesUseCase: UpdateSchedulesUseCase
@@ -40,11 +41,13 @@ final class MyBusinessDetailsViewModel {
 
     init(
         session: SessionManager,
+        toastCenter: ToastCenter,
         getMyBusinessDetailsUseCase: GetMyBusinessDetailsUseCase,
         updateBusinessGalleryUseCase: UpdateBusinessGalleryUseCase,
         updateSchedulesUseCase: UpdateSchedulesUseCase
     ) {
         self.session = session
+        self.toastCenter = toastCenter
         self.getMyBusinessDetailsUseCase = getMyBusinessDetailsUseCase
         self.updateBusinessGalleryUseCase = updateBusinessGalleryUseCase
         self.updateSchedulesUseCase = updateSchedulesUseCase
@@ -107,10 +110,12 @@ final class MyBusinessDetailsViewModel {
 
             initialGallerySlots = gallerySlots
             isSavingGallery = false
+            toastCenter.show(String(localized: "businessGalleryUpdatedSuccessfully"))
             return true
         } catch {
             galleryError = logger.userMessage(for: error, context: "Updating Business Gallery")
             isSavingGallery = false
+            toastCenter.show(String(localized: "message_error_something_went_wrong"), type: .error)
             return false
         }
     }
@@ -153,8 +158,10 @@ final class MyBusinessDetailsViewModel {
                 try await self.updateSchedulesUseCase(schedules: currentSchedules)
             }
             schedulesState = .success(updated)
+            toastCenter.show(String(localized: "scheduleSaved"))
         } catch {
             logger.error("ERROR: on Saving Business Schedules: \(error.localizedDescription, privacy: .public)")
+            toastCenter.show(String(localized: "message_error_something_went_wrong"), type: .error)
         }
 
         isSavingSchedules = false

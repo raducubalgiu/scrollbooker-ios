@@ -14,6 +14,7 @@ struct ScrollBookerApp: App {
     @State private var theme = ThemeManager()
     @State private var container = AppContainer()
     @State private var networkMonitor = NetworkMonitor()
+    @State private var toastCenter = ToastCenter()
 
     var body: some Scene {
         WindowGroup {
@@ -22,11 +23,15 @@ struct ScrollBookerApp: App {
                 .environment(container.session)
                 .environment(theme)
                 .environment(networkMonitor)
+                .environment(toastCenter)
                 .overlay(alignment: .top) {
                     if !networkMonitor.isConnected {
                         NetworkStatusBanner()
                             .transition(.move(edge: .top).combined(with: .opacity))
                     }
+                }
+                .overlay(alignment: .top) {
+                    ToastOverlayView(toast: toastCenter.currentToast)
                 }
                 .animation(.easeInOut(duration: 0.25), value: networkMonitor.isConnected)
                 .tint(.onBackgroundSB)

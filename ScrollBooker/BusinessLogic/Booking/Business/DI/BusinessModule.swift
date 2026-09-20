@@ -81,9 +81,10 @@ final class BusinessModule {
         )
     }
 
-    func makeMyBusinessDetailsViewModel(session: SessionManager) -> MyBusinessDetailsViewModel {
+    func makeMyBusinessDetailsViewModel(session: SessionManager, toastCenter: ToastCenter) -> MyBusinessDetailsViewModel {
         MyBusinessDetailsViewModel(
             session: session,
+            toastCenter: toastCenter,
             getMyBusinessDetailsUseCase: getMyBusinessDetailsUseCase,
             updateBusinessGalleryUseCase: updateBusinessGalleryUseCase,
             updateSchedulesUseCase: updateSchedulesUseCase

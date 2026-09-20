@@ -31,9 +31,10 @@ final class ScheduleModule {
         UpdateSchedulesUseCase(repository: repository)
     }()
     
-    func makeMySchedulesViewModel(session: SessionManager) -> MySchedulesViewModel {
+    func makeMySchedulesViewModel(session: SessionManager, toastCenter: ToastCenter) -> MySchedulesViewModel {
         MySchedulesViewModel(
             session: session,
+            toastCenter: toastCenter,
             getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
             updateSchedulesUseCase: updateSchedulesUseCase
         )

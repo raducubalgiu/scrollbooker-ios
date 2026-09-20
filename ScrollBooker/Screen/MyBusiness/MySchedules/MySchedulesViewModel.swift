@@ -18,15 +18,18 @@ final class MySchedulesViewModel {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Schedules")
     
     private let session: SessionManager
+    private let toastCenter: ToastCenter
     private let getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
     private let updateSchedulesUseCase: UpdateSchedulesUseCase
-    
+
     init(
         session: SessionManager,
+        toastCenter: ToastCenter,
         getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
         updateSchedulesUseCase: UpdateSchedulesUseCase
     ) {
         self.session = session
+        self.toastCenter = toastCenter
         self.getSchedulesByUserIdUseCase = getSchedulesByUserIdUseCase
         self.updateSchedulesUseCase = updateSchedulesUseCase
     }
@@ -73,10 +76,12 @@ final class MySchedulesViewModel {
                 try await updateSchedulesUseCase(schedules: currentSchedules)
             }
             viewState = .success(updatedData)
+            toastCenter.show(String(localized: "scheduleSaved"))
         } catch {
             logger.error("ERROR: on Saving Schedules: \(error.localizedDescription)")
+            toastCenter.show(String(localized: "message_error_something_went_wrong"), type: .error)
         }
-        
+
         isSaving = false
     }
 }

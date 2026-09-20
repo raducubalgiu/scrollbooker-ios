@@ -31,11 +31,16 @@ final class BookingViewModel {
     private let getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase
     private let getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase
     private let createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase
+    private let getAppointmentByIdUseCase: GetAppointmentByIdUseCase
 
     var isSaving: Bool = false
     var isRefreshing: Bool = false
     private(set) var operationErrorMessage: String? = nil
     private(set) var selectedBookingItems: [SelectedBookingItem] = []
+    private(set) var isInitialSelectionProcessed = false
+    private(set) var rebookingInfoMessage: String?
+    private(set) var scrollToSectionId: Int?
+    private(set) var productPendingVariantSelection: Product?
 
     private(set) var calendarHeaderState: FeatureState<CalendarHeaderData> = .idle
     private(set) var availableSlotsState: FeatureState<[Slot]> = .idle
@@ -77,13 +82,15 @@ final class BookingViewModel {
         getBookingFlowUseCase: GetBookingFlowUseCase,
         getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
         getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase,
-        createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase
+        createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase,
+        getAppointmentByIdUseCase: GetAppointmentByIdUseCase
     ) {
         self.params = params
         self.getBookingFlowUseCase = getBookingFlowUseCase
         self.getUserAvailableDaysUseCase = getUserAvailableDaysUseCase
         self.getUserAvailableTimeslotsUseCase = getUserAvailableTimeslotsUseCase
         self.createScrollBookerAppointmentUseCase = createScrollBookerAppointmentUseCase
+        self.getAppointmentByIdUseCase = getAppointmentByIdUseCase
 
         if params.userId != params.businessOwnerId {
             self.selectedEmployeeId = params.userId
@@ -112,6 +119,78 @@ final class BookingViewModel {
         } catch {
             viewState = .error(logger.userMessage(for: error, context: "Loading Booking Flow"))
         }
+    }
+
+    func processInitialSelectionIfNeeded() async {
+        guard !isInitialSelectionProcessed else { return }
+        defer { isInitialSelectionProcessed = true }
+
+        guard let bookingFlow = viewState.data else { return }
+
+        if let appointmentId = params.appointmentId {
+            await processAppointmentRebooking(appointmentId: appointmentId, bookingFlow: bookingFlow)
+        } else if let selectedProductId = params.selectedProductId {
+            processSelectedProduct(id: selectedProductId, bookingFlow: bookingFlow)
+        }
+    }
+
+    private func processAppointmentRebooking(appointmentId: Int, bookingFlow: BookingFlow) async {
+        do {
+            let appointment = try await getAppointmentByIdUseCase(id: appointmentId)
+
+            let variantsWithProduct: [(product: Product, variant: ProductVariant)] = bookingFlow.products.data
+                .flatMap { $0.products }
+                .flatMap { product in product.variants.map { (product, $0) } }
+
+            var unavailableCount = 0
+            var firstMatchedProductId: Int?
+
+            for appointmentProduct in appointment.products {
+                let match = appointmentProduct.productVariantId.flatMap { variantId in
+                    variantsWithProduct.first { $0.variant.id == variantId }
+                }
+                let isStillOffered = match?.variant.offerings.contains { $0.id == appointmentProduct.offeringId } ?? false
+
+                if let match, isStillOffered {
+                    selectBookingItem(match.variant.toBookingItem(product: match.product))
+                    if firstMatchedProductId == nil {
+                        firstMatchedProductId = match.product.id
+                    }
+                } else {
+                    unavailableCount += 1
+                }
+            }
+
+            if unavailableCount > 0 {
+                rebookingInfoMessage = String(localized: "message_info_some_services_unavailable")
+            }
+
+            if let firstMatchedProductId {
+                scrollToSectionId = sectionId(forProductId: firstMatchedProductId, in: bookingFlow)
+            }
+        } catch {
+            logger.error("ERROR: on Fetching Appointment for Book Again: \(error.localizedDescription)")
+        }
+    }
+
+    private func processSelectedProduct(id: Int, bookingFlow: BookingFlow) {
+        guard let targetProduct = bookingFlow.products.data
+            .flatMap({ $0.products })
+            .first(where: { $0.id == id }) else { return }
+
+        if targetProduct.variants.count > 1 {
+            productPendingVariantSelection = targetProduct
+        } else if let firstVariant = targetProduct.variants.first {
+            selectBookingItem(firstVariant.toBookingItem(product: targetProduct))
+        }
+
+        scrollToSectionId = sectionId(forProductId: targetProduct.id, in: bookingFlow)
+    }
+
+    private func sectionId(forProductId productId: Int, in bookingFlow: BookingFlow) -> Int? {
+        bookingFlow.products.data.first { group in
+            group.products.contains { $0.id == productId }
+        }?.service.id
     }
 
     func setSelectedEmployeeId(_ id: Int) {

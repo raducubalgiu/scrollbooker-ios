@@ -46,6 +46,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     deleteReviewUseCase: container.reviewModule.deleteReviewUseCase
                 ),
                 onNavigateToCamera: { router.push(.camera($0)) },
+                onNavigateToBooking: { router.push(.bookingServices($0)) },
                 onBack: { router.pop() }
             )
 
@@ -152,7 +153,8 @@ struct GlobalNavigationModifier: ViewModifier {
                         params: params,
                         getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
                         getUserAvailableTimeslotsUseCase: container.availabilityModule.getUserAvailableTimeslotsUseCase,
-                        createScrollBookerAppointmentUseCase: container.appointmentModule.createScrollBookerAppointmentUseCase
+                        createScrollBookerAppointmentUseCase: container.appointmentModule.createScrollBookerAppointmentUseCase,
+                        getAppointmentByIdUseCase: container.appointmentModule.getAppointmentByIdUseCase
                     )
                     router.activeBookingViewModel = newVM
                     return newVM

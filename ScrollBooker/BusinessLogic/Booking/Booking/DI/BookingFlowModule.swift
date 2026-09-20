@@ -31,14 +31,16 @@ final class BookingFlowModule {
         params: BookingNavigationParams,
         getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
         getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase,
-        createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase
+        createScrollBookerAppointmentUseCase: CreateScrollBookerAppointmentUseCase,
+        getAppointmentByIdUseCase: GetAppointmentByIdUseCase
     ) -> BookingViewModel {
         BookingViewModel(
             params: params,
             getBookingFlowUseCase: getBookingFlowUseCase,
             getUserAvailableDaysUseCase: getUserAvailableDaysUseCase,
             getUserAvailableTimeslotsUseCase: getUserAvailableTimeslotsUseCase,
-            createScrollBookerAppointmentUseCase: createScrollBookerAppointmentUseCase
+            createScrollBookerAppointmentUseCase: createScrollBookerAppointmentUseCase,
+            getAppointmentByIdUseCase: getAppointmentByIdUseCase
         )
     }
 }

@@ -18,6 +18,7 @@ struct BusinessProfileScreen: View {
     let viewModel: BusinessProfileViewModel
     let onBack: () -> Void
     let onNavigateToBusinessProfile: (String) -> Void
+    let onNavigateToBooking: (BookingNavigationParams) -> Void
 
     private let imageHeight: CGFloat = 250
     private let headerHeight: CGFloat = 56
@@ -169,7 +170,17 @@ struct BusinessProfileScreen: View {
                 onFollow: {},
                 onNavigateToOwnerProfile: {_ in},
                 onFlyToReviewsSection: {},
-                onNavigateToBooking: {}
+                onNavigateToBooking: {
+                    onNavigateToBooking(
+                        BookingNavigationParams(
+                            businessId: profile.id,
+                            userId: profile.owner.id,
+                            businessOwnerId: profile.owner.id,
+                            source: .searchBusinessProfile,
+                            selectedProductId: nil
+                        )
+                    )
+                }
             )
         }
     }
@@ -194,8 +205,28 @@ struct BusinessProfileScreen: View {
         sectionBlock(.services) {
             BusinessServicesTabView(
                 products: profile.userProducts,
-                onNavigateToBookingFromProfile: {},
-                onNavigateToBookingFromProduct: {_ in}
+                onNavigateToBookingFromProfile: {
+                    onNavigateToBooking(
+                        BookingNavigationParams(
+                            businessId: profile.id,
+                            userId: profile.owner.id,
+                            businessOwnerId: profile.owner.id,
+                            source: .searchBusinessProfile,
+                            selectedProductId: nil
+                        )
+                    )
+                },
+                onNavigateToBookingFromProduct: { product in
+                    onNavigateToBooking(
+                        BookingNavigationParams(
+                            businessId: product.businessId,
+                            userId: product.targetUserId,
+                            businessOwnerId: product.businessOwnerId,
+                            source: .searchBusinessProfile,
+                            selectedProductId: product.id
+                        )
+                    )
+                }
             )
         }
         sectionBlock(.posts) { BusinessPostsTabView(posts: profile.posts) }

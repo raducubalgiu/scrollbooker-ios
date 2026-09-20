@@ -377,6 +377,7 @@
 "message_error_title" = "A apărut o eroare";
 "message_error_something_went_wrong" = "Ceva nu a mers cum trebuie. Încearcă mai târziu";
 "message_error_retry" = "Încearcă din nou";
+"message_info_some_services_unavailable" = "Unele servicii din rezervarea anterioară nu mai sunt disponibile. Continuă selecția.";
 "message_placeholder_search_users" = "Caută utilizatori, afaceri, specialiști";
 
 /* --- AUTH --- */

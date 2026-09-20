@@ -40,7 +40,8 @@ struct SearchTabRouter: View {
                             onBack: { router.pop() },
                             onNavigateToBusinessProfile: { username in
                                 router.push(.businessProfile(username: username))
-                            }
+                            },
+                            onNavigateToBooking: { router.push(.bookingServices($0)) }
                         )
                         .toolbar(.hidden, for: .tabBar)
                     default:

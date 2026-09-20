@@ -12,6 +12,7 @@ struct AppointmentDetailsScreen: View {
     @State private var activeSheet: AppointmentDetailsSheet? = nil
     @State private var pendingSheetAction: (() -> Void)?
     var onNavigateToCamera: (CameraParams) -> Void
+    var onNavigateToBooking: (BookingNavigationParams) -> Void
     var onBack: () -> Void
     
     var body: some View {
@@ -46,6 +47,7 @@ struct AppointmentDetailsScreen: View {
                             self.activeSheet = .reviewOptions(review: review)
                         },
                         onNavigateToCamera: onNavigateToCamera,
+                        onNavigateToBooking: onNavigateToBooking,
                         onRefresh: {
                             await viewModel.refresh()
                         }

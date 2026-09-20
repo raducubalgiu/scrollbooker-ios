@@ -15,6 +15,7 @@ struct AppointmentDetailsSuccessView: View {
     let onOpenReviewSheet: (Int) -> Void
     let onOpenReviewOptions: (AppointmentWrittenReview) -> Void
     let onNavigateToCamera: (CameraParams) -> Void
+    let onNavigateToBooking: (BookingNavigationParams) -> Void
     let onRefresh: () async -> Void
     
     var body: some View {
@@ -66,6 +67,18 @@ struct AppointmentDetailsSuccessView: View {
                             isCustomer: appointment.isCustomer,
                             onOpenCancelSheet: { _ in
                                 onOpenCancelSheet()
+                            },
+                            onBookAgain: {
+                                onNavigateToBooking(
+                                    BookingNavigationParams(
+                                        businessId: appointment.business.id,
+                                        userId: appointment.user.id ?? appointment.business.businessOwnerId,
+                                        businessOwnerId: appointment.business.businessOwnerId,
+                                        source: .bookAgain,
+                                        selectedProductId: nil,
+                                        appointmentId: appointment.id
+                                    )
+                                )
                             }
                         )
                         .padding(.bottom, .base)

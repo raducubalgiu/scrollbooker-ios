@@ -12,7 +12,8 @@ struct AppointmentDetailsActions: View {
     let status: AppointmentStatusEnum
     let isCustomer: Bool
     var onOpenCancelSheet: (Int) -> Void
-    
+    var onBookAgain: () -> Void
+
     var body: some View {
         VStack {
             switch status {
@@ -28,7 +29,7 @@ struct AppointmentDetailsActions: View {
                 if isCustomer {
                     MainButton(
                         title: String(localized: "bookAgain"),
-                        onClick: {}
+                        onClick: onBookAgain
                     )
                 }
             default:

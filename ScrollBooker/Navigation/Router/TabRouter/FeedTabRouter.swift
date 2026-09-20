@@ -55,6 +55,14 @@ struct FeedTabRouter: View {
                                 },
                                 makeDeletePostVM: {
                                     container.postModule.makeDeletePostViewModel()
+                                },
+                                makeEditPostVM: { post in
+                                    container.postModule.makeEditPostViewModel(
+                                        post: post,
+                                        getSelectedDomainsByBusinessUseCase: container.servieDomainModule.getSelectedDomainsByBusinessUseCase,
+                                        getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
+                                        getPostLinkedProductsUseCase: container.productModule.getPostLinkedProductsUseCase
+                                    )
                                 }
                             )
                             .safeAreaInset(edge: .bottom, spacing: 0) {

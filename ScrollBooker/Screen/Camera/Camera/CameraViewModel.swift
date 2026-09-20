@@ -52,11 +52,28 @@ final class CameraViewModel {
         }
     }
 
-    // Set only when Camera is entered from an appointment's "leave a video review" CTA
-    // (not built yet) — always nil for a normal post.
+    // Set only when Camera is entered from an appointment's "leave a video review" CTA —
+    // always nil for a normal post.
     let appointmentId: Int?
     let businessOrEmployeeId: Int?
     var isVideoReview: Bool { appointmentId != nil && businessOrEmployeeId != nil }
+
+    var rating: Int = 0
+    var review: String = ""
+
+    func setRating(_ value: Int) {
+        rating = value
+    }
+
+    func setReview(_ text: String) {
+        let maxLength = 500
+        if text.count <= maxLength {
+            review = text
+        }
+    }
+
+    // A video review needs a rating to be postable — matches Android's isSaveDisabled check.
+    var canSubmitPost: Bool { !isSaving && (!isVideoReview || rating > 0) }
 
     var selectedServiceDomainId: String = ""
     private(set) var serviceDomainsViewState: FeatureState<[SelectedServiceDomainsWithServices]> = .idle
@@ -204,7 +221,10 @@ final class CameraViewModel {
     }
 
     func loadPostComposerData() async {
-        guard let businessId = session.userInfo?.businessId else { return }
+        // A video review is posted by the customer, who has no catalog to link — and
+        // even a customer who also happens to own a business shouldn't see it here,
+        // since CreatePostScreen hides those sections entirely for a video review.
+        guard !isVideoReview, let businessId = session.userInfo?.businessId else { return }
 
         async let domains: () = loadServiceDomains(businessId: businessId)
         async let products: () = loadUserProducts(businessId: businessId)
@@ -242,6 +262,7 @@ final class CameraViewModel {
 
     private let session: SessionManager
     private let createVideoPostUseCase: CreateVideoPostUseCase
+    private let createVideoReviewUseCase: CreateVideoReviewUseCase
     private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
     private let getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Camera")
@@ -251,6 +272,7 @@ final class CameraViewModel {
         appointmentId: Int?,
         businessOrEmployeeId: Int?,
         createVideoPostUseCase: CreateVideoPostUseCase,
+        createVideoReviewUseCase: CreateVideoReviewUseCase,
         getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
     ) {
@@ -258,6 +280,7 @@ final class CameraViewModel {
         self.appointmentId = appointmentId
         self.businessOrEmployeeId = businessOrEmployeeId
         self.createVideoPostUseCase = createVideoPostUseCase
+        self.createVideoReviewUseCase = createVideoReviewUseCase
         self.getSelectedDomainsByBusinessUseCase = getSelectedDomainsByBusinessUseCase
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
         // Not called here — its synchronous Photos I/O would block init; CameraScreen.onAppear calls it once mounted.
@@ -495,7 +518,7 @@ final class CameraViewModel {
 
     func createPost() async -> Bool {
         guard let selectedVideoAsset = selectedVideo else { return false }
-        guard !isSaving else { return false }
+        guard canSubmitPost else { return false }
 
         isSaving = true
         errorMessage = nil
@@ -505,14 +528,27 @@ final class CameraViewModel {
         do {
             let localVideoURL = try await extractURL(from: selectedVideoAsset.asset)
 
-            _ = try await createVideoPostUseCase(
-                videoURL: localVideoURL,
-                description: description,
-                linkedProductIds: linkedProducts.map(\.id),
-                serviceDomainId: Int(selectedServiceDomainId),
-                customCover: customCoverDataURI(),
-                onProgress: { _ in }
-            )
+            if isVideoReview, let appointmentId, let businessOrEmployeeId {
+                _ = try await createVideoReviewUseCase(
+                    videoURL: localVideoURL,
+                    appointmentId: appointmentId,
+                    businessOrEmployeeId: businessOrEmployeeId,
+                    rating: rating,
+                    review: review.isEmpty ? nil : review,
+                    description: description,
+                    customCover: customCoverDataURI(),
+                    onProgress: { _ in }
+                )
+            } else {
+                _ = try await createVideoPostUseCase(
+                    videoURL: localVideoURL,
+                    description: description,
+                    linkedProductIds: linkedProducts.map(\.id),
+                    serviceDomainId: Int(selectedServiceDomainId),
+                    customCover: customCoverDataURI(),
+                    onProgress: { _ in }
+                )
+            }
 
             return true
         } catch {

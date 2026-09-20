@@ -9,7 +9,7 @@ import SwiftUI
 
 struct LinkedProductRowView: View {
     let product: Product
-    var onEdit: (Product) -> Void
+    var onEdit: ((Product) -> Void)? = nil
     var onRemove: (Product) -> Void
 
     private var filtersSummary: String { product.getFiltersSummary() }
@@ -47,15 +47,17 @@ struct LinkedProductRowView: View {
             Spacer()
 
             VStack(spacing: AppSize.s.rawValue) {
-                Button {
-                    onEdit(product)
-                } label: {
-                    Image(systemName: "pencil")
-                        .font(.footnote)
-                        .foregroundColor(.onBackgroundSB)
-                        .frame(width: 28, height: 28)
-                        .background(Color.backgroundSB)
-                        .clipShape(Circle())
+                if let onEdit {
+                    Button {
+                        onEdit(product)
+                    } label: {
+                        Image(systemName: "pencil")
+                            .font(.footnote)
+                            .foregroundColor(.onBackgroundSB)
+                            .frame(width: 28, height: 28)
+                            .background(Color.backgroundSB)
+                            .clipShape(Circle())
+                    }
                 }
 
                 Button {

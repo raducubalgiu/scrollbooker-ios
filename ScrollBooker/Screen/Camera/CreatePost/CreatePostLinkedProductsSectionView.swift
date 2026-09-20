@@ -10,7 +10,7 @@ import SwiftUI
 struct CreatePostLinkedProductsSectionView: View {
     let linkedProducts: [Product]
     var onChangeSelection: () -> Void
-    var onEdit: (Product) -> Void
+    var onEdit: ((Product) -> Void)? = nil
     var onRemove: (Product) -> Void
 
     var body: some View {

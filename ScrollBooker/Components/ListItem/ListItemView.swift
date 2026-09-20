@@ -50,20 +50,3 @@ struct ListItemView: View {
         .buttonStyle(.plain)
     }
 }
-
-#Preview("Light") {
-    ListItemView(
-        title: "Some title",
-        leadingIcon: "",
-        onClick: {}
-    )
-}
-
-#Preview("Dark") {
-    ListItemView(
-        title: "Some Title",
-        leadingIcon: "",
-        onClick: {}
-    )
-        .preferredColorScheme(.dark)
-}

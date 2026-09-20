@@ -13,6 +13,7 @@ struct AppointmentDetailsSuccessView: View {
     let isFinished: Bool
     let onOpenCancelSheet: () -> Void
     let onOpenReviewSheet: (Int) -> Void
+    let onNavigateToCamera: (CameraParams) -> Void
     let onRefresh: () async -> Void
     
     var body: some View {
@@ -70,6 +71,15 @@ struct AppointmentDetailsSuccessView: View {
                     }
                 }
                 
+                if !appointment.hasVideoReview && isFinished && appointment.isCustomer, let businessOrEmployeeId = appointment.user.id {
+                    VideoReviewCTA {
+                        onNavigateToCamera(
+                            CameraParams(appointmentId: appointment.id, businessOrEmployeeId: businessOrEmployeeId)
+                        )
+                    }
+                    .padding(.bottom, .base)
+                }
+
                 if !appointment.hasWrittenReview && isFinished && appointment.isCustomer {
                     ReviewCTA { rating in
                         onOpenReviewSheet(rating)

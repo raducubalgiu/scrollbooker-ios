@@ -15,6 +15,7 @@ struct ExploreTab: View {
     let makeReviewsVM: (Post) -> ReviewsViewModel
     let makeStatisticsVM: (Int) -> PostStatisticsViewModel
     let makeDeletePostVM: () -> DeletePostViewModel
+    let makeEditPostVM: (Post) -> EditPostViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
 
@@ -22,6 +23,7 @@ struct ExploreTab: View {
     @State private var activeSheet: FeedSheetType? = nil
     @State private var pendingSheetAction: (() -> Void)?
     @State private var statisticsPostId: Int?
+    @State private var editPostId: Int?
 
     @State private var commentsCache = ViewModelCache<Int, CommentsViewModel>()
     @State private var linkedProductsCache = ViewModelCache<Int, LinkedProductsViewModel>()
@@ -102,6 +104,7 @@ struct ExploreTab: View {
                     MoreOptionsSheetView(
                         postId: postId,
                         onOpenStatistics: { id in pendingSheetAction = { statisticsPostId = id } },
+                        onNavigateToEditPost: { id in pendingSheetAction = { editPostId = id } },
                         onOpenDeleteConfirm: { id in pendingSheetAction = { activeSheet = .deletePost(postId: id) } }
                     )
 
@@ -121,6 +124,17 @@ struct ExploreTab: View {
                 PostStatisticsScreen(
                     viewModel: makeStatisticsVM(statisticsPostId),
                     onBack: { self.statisticsPostId = nil }
+                )
+            }
+        }
+        .fullScreenCover(isPresented: Binding(
+            get: { editPostId != nil },
+            set: { if !$0 { editPostId = nil } }
+        )) {
+            if let editPostId, let post = viewModel.posts.first(where: { $0.id == editPostId }) {
+                EditPostScreen(
+                    viewModel: makeEditPostVM(post),
+                    onBack: { self.editPostId = nil }
                 )
             }
         }

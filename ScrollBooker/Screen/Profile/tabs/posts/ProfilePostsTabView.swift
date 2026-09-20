@@ -28,7 +28,7 @@ struct ProfilePostsTabView: View {
                         title: String(localized: "title_posts"),
                         message: String(localized: "message_empty_posts"),
                         maxHeight: 500,
-                        systemImage: "video.circle"
+                        systemImage: "video"
                     )
                     .padding(.top, .xxl)
                 } else {

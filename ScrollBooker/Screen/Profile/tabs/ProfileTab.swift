@@ -19,7 +19,7 @@ enum ProfileTab: String, CaseIterable, Identifiable {
     var iconName: String {
         switch self {
         case .posts:
-            return "square.grid.3x3"
+            return "video"
         case .products:
             return "bag"
         case .employees:

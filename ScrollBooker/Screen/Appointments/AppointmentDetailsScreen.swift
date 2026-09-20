@@ -10,6 +10,7 @@ import SwiftUI
 struct AppointmentDetailsScreen: View {
     @Bindable var viewModel: AppointmentDetailsViewModel
     @State private var activeSheet: AppointmentDetailsSheet? = nil
+    var onNavigateToCamera: (CameraParams) -> Void
     var onBack: () -> Void
     
     var body: some View {
@@ -40,6 +41,7 @@ struct AppointmentDetailsScreen: View {
                         onOpenReviewSheet: { rating in
                             self.activeSheet = .writeReview(rating: rating)
                         },
+                        onNavigateToCamera: onNavigateToCamera,
                         onRefresh: {
                             await viewModel.refresh()
                         }

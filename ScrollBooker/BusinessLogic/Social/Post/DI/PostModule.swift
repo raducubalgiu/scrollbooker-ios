@@ -69,6 +69,10 @@ final class PostModule {
         DeletePostUseCase(repository: repository)
     }()
 
+    lazy var updatePostUseCase: UpdatePostUseCase = {
+        UpdatePostUseCase(postsRepository: repository)
+    }()
+
     func makePostStatisticsViewModel(postId: Int) -> PostStatisticsViewModel {
         PostStatisticsViewModel(
             postId: postId,
@@ -78,6 +82,21 @@ final class PostModule {
 
     func makeDeletePostViewModel() -> DeletePostViewModel {
         DeletePostViewModel(deletePostUseCase: deletePostUseCase)
+    }
+
+    func makeEditPostViewModel(
+        post: Post,
+        getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase,
+        getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
+        getPostLinkedProductsUseCase: GetPostLinkedProductsUseCase
+    ) -> EditPostViewModel {
+        EditPostViewModel(
+            post: post,
+            updatePostUseCase: updatePostUseCase,
+            getSelectedDomainsByBusinessUseCase: getSelectedDomainsByBusinessUseCase,
+            getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
+            getPostLinkedProductsUseCase: getPostLinkedProductsUseCase
+        )
     }
 
     func makeExploreTabViewModel() -> ExploreTabViewModel {
@@ -138,11 +157,16 @@ final class PostModule {
             cloudflareRepository: cloudflareRepository,
             postsRepository: self.repository
         )
+        let videoReviewUseCase = CreateVideoReviewUseCase(
+            cloudflareRepository: cloudflareRepository,
+            postsRepository: self.repository
+        )
         return CameraViewModel(
             session: session,
             appointmentId: appointmentId,
             businessOrEmployeeId: businessOrEmployeeId,
             createVideoPostUseCase: useCase,
+            createVideoReviewUseCase: videoReviewUseCase,
             getSelectedDomainsByBusinessUseCase: getSelectedDomainsByBusinessUseCase,
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase
         )

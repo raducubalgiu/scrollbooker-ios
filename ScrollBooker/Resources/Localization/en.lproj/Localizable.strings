@@ -43,6 +43,8 @@
 "categorySectionDescription" = "Care categorie se potrivește mai bine postării tale?";
 "linkedProductsPlaceholder" = "Niciun serviciu atașat. Adaugă servicii pentru a le permite utilizatorilor să rezerve direct din postare.";
 "linkedProductsSectionDescription" = "Serviciile atașate acestui videoclip vor apărea primele în lista afișată userilor atunci când doresc să facă o rezervare.";
+"createPostTitle" = "Postare nouă";
+"editPostTitle" = "Editează postarea";
 "createPostDescriptionPlaceholder" = "Adaugă o descriere...";
 "postNow" = "Postează acum";
 "book" = "Rezervă";
@@ -179,6 +181,9 @@
 "rating_3" = "A fost ok";
 "rating_4" = "Mi-a plăcut";
 "rating_5" = "Mi-a plăcut foarte mult";
+"shareSomeDetailsAboutYourExperience" = "Împărtășește câteva detalii despre experiența ta";
+"addVideoReview" = "Adaugă un video review";
+"addVideoReviewDescription" = "Distribuie experiența ta printr-un scurt videoclip";
 "businessLocationDetails" = "Detalii despre locația business-ului meu";
 "userProductsDetails" = "Detalii despre produsele mele";
 "paymentMethods" = "Modalități de plată";

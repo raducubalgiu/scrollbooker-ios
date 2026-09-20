@@ -15,8 +15,6 @@ struct CreatePostScreen: View {
     var onNavigateToCover: () -> Void
     var onNavigateToEditProduct: (Int) -> Void
 
-    @State private var showLinkedProductsSheet = false
-
     var body: some View {
         VStack(spacing: 0) {
             HeaderView(
@@ -32,17 +30,20 @@ struct CreatePostScreen: View {
                         onNavigateToCover: onNavigateToCover
                     )
 
-                    CreatePostCategorySectionView(
-                        options: viewModel.serviceDomainOptions,
-                        selectedOptionId: viewModel.selectedServiceDomainId,
-                        onSelect: { viewModel.toggleSelectedServiceDomain($0) }
-                    )
-
-                    CreatePostLinkedProductsSectionView(
+                    EditPostContentView(
+                        isVideoReview: viewModel.isVideoReview,
+                        rating: viewModel.rating,
+                        review: viewModel.review,
+                        onRatingChange: { viewModel.setRating($0) },
+                        onReviewChange: { viewModel.setReview($0) },
+                        serviceDomainOptions: viewModel.serviceDomainOptions,
+                        selectedServiceDomainId: viewModel.selectedServiceDomainId,
+                        onSelectServiceDomain: { viewModel.toggleSelectedServiceDomain($0) },
                         linkedProducts: viewModel.linkedProducts,
-                        onChangeSelection: { showLinkedProductsSheet = true },
-                        onEdit: { onNavigateToEditProduct($0.id) },
-                        onRemove: { viewModel.removeLinkedProduct($0) }
+                        userProductsViewState: viewModel.userProductsViewState,
+                        onConfirmLinkedProductsSelection: { viewModel.setLinkedProducts($0) },
+                        onEditLinkedProduct: { onNavigateToEditProduct($0.id) },
+                        onRemoveLinkedProduct: { viewModel.removeLinkedProduct($0) }
                     )
 
                     if let errorMessage = viewModel.errorMessage {
@@ -54,16 +55,20 @@ struct CreatePostScreen: View {
                 .padding(.top, .base)
                 .padding(.horizontal, .base)
             }
+            .scrollDismissesKeyboard(.interactively)
         }
         .navigationBarHidden(true)
         .background(Color.backgroundSB)
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 0) {
                 Divider()
 
                 MainButton(
                     title: String(localized: "postNow"),
-                    isDisabled: viewModel.isSaving,
+                    isDisabled: !viewModel.canSubmitPost,
                     isLoading: viewModel.isSaving,
                     onClick: {
                         Task {
@@ -76,14 +81,6 @@ struct CreatePostScreen: View {
                 .padding(.base)
             }
             .background(Color.backgroundSB)
-        }
-        .sheet(isPresented: $showLinkedProductsSheet) {
-            UserProductsSheetView(
-                linkedProducts: viewModel.linkedProducts,
-                userProductsViewState: viewModel.userProductsViewState,
-                onConfirmSelection: { viewModel.setLinkedProducts(Array($0)) },
-                onClose: { showLinkedProductsSheet = false }
-            )
         }
     }
 }

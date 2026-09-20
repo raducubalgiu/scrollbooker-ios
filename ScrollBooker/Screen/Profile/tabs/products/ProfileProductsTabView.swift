@@ -36,7 +36,7 @@ struct ProfileProductsTabView: View {
                                 title: String(localized: "services"),
                                 message: String(localized: "message_empty_services"),
                                 maxHeight: 500,
-                                systemImage: "bag.circle"
+                                systemImage: "bag"
                             )
                         } else {
                             ProfileProductsSuccessView(
@@ -51,7 +51,7 @@ struct ProfileProductsTabView: View {
                     title: String(localized: "services"),
                     message: String(localized: "message_empty_services"),
                     maxHeight: 500,
-                    systemImage: "bag.circle"
+                    systemImage: "bag"
                 )
                 .padding(.top, .xxl)
             }

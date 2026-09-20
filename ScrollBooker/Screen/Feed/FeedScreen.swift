@@ -22,6 +22,7 @@ struct FeedScreen: View {
     let makeReviewsVM: (Post) -> ReviewsViewModel
     let makeStatisticsVM: (Int) -> PostStatisticsViewModel
     let makeDeletePostVM: () -> DeletePostViewModel
+    let makeEditPostVM: (Post) -> EditPostViewModel
 
     init(
         viewModel: FeedViewModel,
@@ -33,7 +34,8 @@ struct FeedScreen: View {
         makeLinkedProductsVM: @escaping (Post) -> LinkedProductsViewModel,
         makeReviewsVM: @escaping (Post) -> ReviewsViewModel,
         makeStatisticsVM: @escaping (Int) -> PostStatisticsViewModel,
-        makeDeletePostVM: @escaping () -> DeletePostViewModel
+        makeDeletePostVM: @escaping () -> DeletePostViewModel,
+        makeEditPostVM: @escaping (Post) -> EditPostViewModel
     ) {
         self.viewModel = viewModel
         self.onNavigateToFeedSearch = onNavigateToFeedSearch
@@ -45,6 +47,7 @@ struct FeedScreen: View {
         self.makeReviewsVM = makeReviewsVM
         self.makeStatisticsVM = makeStatisticsVM
         self.makeDeletePostVM = makeDeletePostVM
+        self.makeEditPostVM = makeEditPostVM
     }
 
     var body: some View {
@@ -59,6 +62,7 @@ struct FeedScreen: View {
                     makeReviewsVM: makeReviewsVM,
                     makeStatisticsVM: makeStatisticsVM,
                     makeDeletePostVM: makeDeletePostVM,
+                    makeEditPostVM: makeEditPostVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onNavigateToBooking: onNavigateToBooking
                 )
@@ -71,6 +75,7 @@ struct FeedScreen: View {
                     makeReviewsVM: makeReviewsVM,
                     makeStatisticsVM: makeStatisticsVM,
                     makeDeletePostVM: makeDeletePostVM,
+                    makeEditPostVM: makeEditPostVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
                     onNavigateToBooking: onNavigateToBooking
                 )

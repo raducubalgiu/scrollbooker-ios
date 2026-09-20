@@ -18,4 +18,6 @@ protocol PostRepository: Sendable {
     func bookmarkPost(id: Int) async throws -> NoContent
     func unbookmarkPost(id: Int) async throws -> NoContent
     func createPost(request: CreatePostRequest) async throws -> NoContent
+    func createVideoReview(request: CreateVideoReviewRequest) async throws -> NoContent
+    func updatePost(id: Int, request: UpdatePostRequest) async throws -> Post
 }

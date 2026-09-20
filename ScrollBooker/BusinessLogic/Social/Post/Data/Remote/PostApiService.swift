@@ -20,6 +20,8 @@ protocol PostApiService: Sendable {
     func bookmarkPost(id: Int) async throws -> NoContent
     func unbookmarkPost(id: Int) async throws -> NoContent
     func createPost(request: CreatePostRequest) async throws -> NoContent
+    func createVideoReview(request: CreateVideoReviewRequest) async throws -> NoContent
+    func updatePost(id: Int, request: UpdatePostRequest) async throws -> PostDto
 }
 
 final class PostAPIImpl: PostApiService {
@@ -142,6 +144,22 @@ final class PostAPIImpl: PostApiService {
         return try await client.request(
             "posts",
             method: .post,
+            body: request
+        )
+    }
+
+    func createVideoReview(request: CreateVideoReviewRequest) async throws -> NoContent {
+        return try await client.request(
+            "posts/video-reviews",
+            method: .post,
+            body: request
+        )
+    }
+
+    func updatePost(id: Int, request: UpdatePostRequest) async throws -> PostDto {
+        return try await client.request(
+            "posts/\(id)",
+            method: .put,
             body: request
         )
     }

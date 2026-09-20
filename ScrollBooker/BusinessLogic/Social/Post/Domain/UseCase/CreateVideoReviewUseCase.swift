@@ -1,13 +1,11 @@
 //
-//  CreateVideoPostUseCase.swift
+//  CreateVideoReviewUseCase.swift
 //  ScrollBooker
-//
-//  Created by Raducu Balgiu on 01.08.2026.
 //
 
 import Foundation
 
-final class CreateVideoPostUseCase {
+final class CreateVideoReviewUseCase {
     private let uploader: VideoUploadCoordinator
     private let postsRepository: PostRepository
 
@@ -18,24 +16,28 @@ final class CreateVideoPostUseCase {
 
     func callAsFunction(
         videoURL: URL,
+        appointmentId: Int,
+        businessOrEmployeeId: Int,
+        rating: Int,
+        review: String?,
         description: String?,
-        linkedProductIds: [Int],
-        serviceDomainId: Int?,
         customCover: String?,
         onProgress: @Sendable @escaping (Double) -> Void
     ) async throws -> NoContent {
         let uploaded = try await uploader.upload(videoURL: videoURL, onProgress: onProgress)
 
-        let createPostRequest = CreatePostRequest(
+        let request = CreateVideoReviewRequest(
+            businessOrEmployeeId: businessOrEmployeeId,
+            appointmentId: appointmentId,
+            review: review,
+            rating: rating,
             description: description,
             provider: uploaded.provider,
             providerUid: uploaded.providerUid,
             orderIndex: 0,
-            linkedProductIds: linkedProductIds,
-            customCover: customCover,
-            serviceDomainId: serviceDomainId
+            customCover: customCover
         )
 
-        return try await postsRepository.createPost(request: createPostRequest)
+        return try await postsRepository.createVideoReview(request: request)
     }
 }

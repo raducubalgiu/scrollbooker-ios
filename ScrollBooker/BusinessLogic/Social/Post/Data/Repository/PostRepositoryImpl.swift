@@ -87,4 +87,13 @@ final class PostRepositoryImpl: PostRepository {
     func createPost(request: CreatePostRequest) async throws -> NoContent {
         return try await api.createPost(request: request)
     }
+
+    func createVideoReview(request: CreateVideoReviewRequest) async throws -> NoContent {
+        return try await api.createVideoReview(request: request)
+    }
+
+    func updatePost(id: Int, request: UpdatePostRequest) async throws -> Post {
+        let dto = try await api.updatePost(id: id, request: request)
+        return Post(from: dto)
+    }
 }

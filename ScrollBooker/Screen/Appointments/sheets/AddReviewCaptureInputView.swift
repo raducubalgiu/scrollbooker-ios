@@ -11,8 +11,7 @@ struct AddReviewCaptureInputView: View {
     let reviewText: String
     var onValueChange: (String) -> Void
     let isSaving: Bool
-    var onCreateReview: () -> Void
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(String(localized: "howWasYourExperience"))
@@ -45,15 +44,6 @@ struct AddReviewCaptureInputView: View {
                 .background(Color.surfaceSB)
                 .cornerRadius(12)
                 .disabled(isSaving)
-                
-                Spacer().frame(height: 16)
-                
-                MainButton(
-                    title: String(localized: "add"),
-                    isDisabled: isSaving,
-                    isLoading: isSaving,
-                    onClick: onCreateReview,
-                )
             }
             .frame(maxWidth: .infinity, alignment: .leading)
         }

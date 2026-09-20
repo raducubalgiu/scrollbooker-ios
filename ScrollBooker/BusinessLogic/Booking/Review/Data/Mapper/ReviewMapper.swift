@@ -46,3 +46,16 @@ extension ReviewCustomer {
         self.avatar = dto.avatar
     }
 }
+
+extension ReviewMutationResult {
+    init(dto: ReviewMutationResponseDto) {
+        self.id = dto.id
+        self.review = dto.review
+        self.rating = dto.rating
+        self.customerId = dto.customerId
+        self.userId = dto.userId
+        self.appointmentId = dto.appointmentId
+        self.parentId = dto.parentId
+        self.createdAt = dto.createdAt
+    }
+}

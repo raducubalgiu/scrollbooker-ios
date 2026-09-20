@@ -46,6 +46,10 @@ final class ReviewModule {
     lazy var unlikeReviewUseCase: UnlikeReviewUseCase = {
         UnlikeReviewUseCase(repository: repository)
     }()
+
+    lazy var deleteReviewUseCase: DeleteReviewUseCase = {
+        DeleteReviewUseCase(repository: repository)
+    }()
     
     func makeReviewsViewModel(
         businessId: Int,

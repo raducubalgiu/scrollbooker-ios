@@ -43,6 +43,17 @@ struct ReviewCustomer: Identifiable, Equatable, Hashable, Sendable {
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }
 
+struct ReviewMutationResult: Identifiable, Equatable, Hashable, Sendable {
+    let id: Int
+    let review: String
+    let rating: Int
+    let customerId: Int
+    let userId: Int
+    let appointmentId: Int
+    let parentId: Int?
+    let createdAt: String
+}
+
 extension Review {
     func copy(
         id: Int? = nil,

@@ -83,7 +83,7 @@ struct AppointmentBusiness: Equatable, Hashable, Sendable {
 extension Appointment {
     func copy(
         hasWrittenReview: Bool? = nil,
-        writtenReview: AppointmentWrittenReview? = nil
+        writtenReview: AppointmentWrittenReview?? = nil
     ) -> Appointment {
         Appointment(
             id: self.id,

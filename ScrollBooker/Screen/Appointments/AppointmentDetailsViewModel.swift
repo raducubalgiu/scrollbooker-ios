@@ -15,6 +15,7 @@ final class AppointmentDetailsViewModel {
     
     var isSaving: Bool = false
     var isRefreshing: Bool = false
+    var errorMessage: String?
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Appointments")
     
     private let session: SessionManager
@@ -23,18 +24,20 @@ final class AppointmentDetailsViewModel {
     private let cancelAppointment: CancelAppointmentUseCase
     private let createReviewUseCase: CreateReviewUseCase
     private let updateReviewUseCase: UpdateReviewUseCase
-    
+    private let deleteReviewUseCase: DeleteReviewUseCase
+
     var isFinished: Bool {
         viewState.data?.status == .finished
     }
-    
+
     init(
         session: SessionManager,
         appointmentId: Int,
         getAppointmentById: GetAppointmentByIdUseCase,
         cancelAppointment: CancelAppointmentUseCase,
         createReviewUseCase: CreateReviewUseCase,
-        updateReviewUseCase: UpdateReviewUseCase
+        updateReviewUseCase: UpdateReviewUseCase,
+        deleteReviewUseCase: DeleteReviewUseCase
     ) {
         self.session = session
         self.appointmentId = appointmentId
@@ -42,6 +45,7 @@ final class AppointmentDetailsViewModel {
         self.cancelAppointment = cancelAppointment
         self.createReviewUseCase = createReviewUseCase
         self.updateReviewUseCase = updateReviewUseCase
+        self.deleteReviewUseCase = deleteReviewUseCase
     }
     
     func loadAppointment() async {
@@ -111,7 +115,8 @@ final class AppointmentDetailsViewModel {
     func createReview(review: String, rating: Int, userId: Int, productId: Int) async {
         guard let currentAppointment = viewState.data else { return }
         isSaving = true
-        
+        errorMessage = nil
+
         let request = ReviewCreateRequest(
             review: review,
             rating: rating,
@@ -119,31 +124,72 @@ final class AppointmentDetailsViewModel {
             product_id: productId,
             parent_id: nil
         )
-        
+
         do {
             let newReview = try await withLoading {
                 try await createReviewUseCase(id: appointmentId, request: request)
             }
             updateStateWithNewReview(newReview, from: currentAppointment)
         } catch {
-            logger.error("ERROR: on Creating Review: \(error.localizedDescription)")
+            errorMessage = logger.userMessage(for: error, context: "Creating Review")
         }
-        
+
         isSaving = false
     }
 
-    private func updateStateWithNewReview(_ review: Review, from current: Appointment) {
+    func updateReview(reviewId: Int, review: String, rating: Int) async {
+        guard let currentAppointment = viewState.data else { return }
+        isSaving = true
+        errorMessage = nil
+
+        let request = ReviewUpdateRequest(review: review, rating: rating)
+
+        do {
+            let updatedReview = try await withLoading {
+                try await updateReviewUseCase(id: reviewId, request: request)
+            }
+            updateStateWithNewReview(updatedReview, from: currentAppointment)
+        } catch {
+            errorMessage = logger.userMessage(for: error, context: "Updating Review")
+        }
+
+        isSaving = false
+    }
+
+    func deleteReview(reviewId: Int) async -> Bool {
+        guard let currentAppointment = viewState.data else { return false }
+        isSaving = true
+        errorMessage = nil
+
+        do {
+            _ = try await withLoading {
+                try await deleteReviewUseCase(id: reviewId)
+            }
+
+            viewState = .success(
+                currentAppointment.copy(hasWrittenReview: false, writtenReview: .some(nil))
+            )
+            isSaving = false
+            return true
+        } catch {
+            errorMessage = logger.userMessage(for: error, context: "Deleting Review")
+            isSaving = false
+            return false
+        }
+    }
+
+    private func updateStateWithNewReview(_ review: ReviewMutationResult, from current: Appointment) {
         let appointmentReview = AppointmentWrittenReview(
             id: review.id,
             review: review.review,
             rating: review.rating
         )
-        
+
         let updatedAppointment = current.copy(
             hasWrittenReview: true,
             writtenReview: appointmentReview
         )
-        
+
         viewState = .success(updatedAppointment)
     }
 }

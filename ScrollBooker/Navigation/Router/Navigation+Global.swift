@@ -42,7 +42,8 @@ struct GlobalNavigationModifier: ViewModifier {
                     appointmentId: id,
                     session: session,
                     createReviewUseCase: container.reviewModule.createReviewUseCase,
-                    updateReviewUseCase: container.reviewModule.updateReviewUseCase
+                    updateReviewUseCase: container.reviewModule.updateReviewUseCase,
+                    deleteReviewUseCase: container.reviewModule.deleteReviewUseCase
                 ),
                 onNavigateToCamera: { router.push(.camera($0)) },
                 onBack: { router.pop() }

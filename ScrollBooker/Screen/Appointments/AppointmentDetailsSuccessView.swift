@@ -13,6 +13,7 @@ struct AppointmentDetailsSuccessView: View {
     let isFinished: Bool
     let onOpenCancelSheet: () -> Void
     let onOpenReviewSheet: (Int) -> Void
+    let onOpenReviewOptions: (AppointmentWrittenReview) -> Void
     let onNavigateToCamera: (CameraParams) -> Void
     let onRefresh: () async -> Void
     
@@ -93,7 +94,7 @@ struct AppointmentDetailsSuccessView: View {
                         isCustomer: appointment.isCustomer,
                         review: rev.review,
                         rating: rev.rating,
-                        onOpenCancelSheet: {}
+                        onOpenOptions: { onOpenReviewOptions(rev) }
                     )
                     .padding(.bottom, .base)
                 }

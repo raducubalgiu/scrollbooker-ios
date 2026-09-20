@@ -12,7 +12,7 @@ struct AppointmentDetailsWrittenReview: View {
     let isCustomer: Bool
     let review: String?
     let rating: Int
-    var onOpenCancelSheet: () -> Void
+    var onOpenOptions: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -38,7 +38,7 @@ struct AppointmentDetailsWrittenReview: View {
                 Spacer()
                 
                 if isCustomer {
-                    Button(action: onOpenCancelSheet) {
+                    Button(action: onOpenOptions) {
                         Image(systemName: "ellipsis")
                             .rotationEffect(.degrees(90))
                             .foregroundColor(.primary)

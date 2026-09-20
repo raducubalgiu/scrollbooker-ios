@@ -35,7 +35,7 @@ struct InboxScreen: View {
                     if notifications.isEmpty {
                         NoDataView(
                             title: String(localized: "notifications"),
-                            message: String(localized: "notFoundNotifications"),
+                            message: String(localized: "message_empty_notifications"),
                             systemImage: "bell.badge"
                         )
                     } else {

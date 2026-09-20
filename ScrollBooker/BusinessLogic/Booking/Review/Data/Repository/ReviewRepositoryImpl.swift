@@ -34,14 +34,14 @@ final class ReviewRepositoryImpl: ReviewRepository {
         return ReviewSummary(dto: dto)
     }
 
-    func createReview(id: Int, request: ReviewCreateRequest) async throws -> Review {
+    func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewMutationResult {
         let dto = try await api.createReview(id: id, request: request)
-        return Review(dto: dto)
+        return ReviewMutationResult(dto: dto)
     }
 
-    func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> Review {
+    func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewMutationResult {
         let dto = try await api.updateReview(id: id, request: request)
-        return Review(dto: dto)
+        return ReviewMutationResult(dto: dto)
     }
 
     func likeReview(id: Int) async throws -> NoContent {
@@ -50,5 +50,9 @@ final class ReviewRepositoryImpl: ReviewRepository {
 
     func unlikeReview(id: Int) async throws -> NoContent {
         return try await api.unlikeReview(id: id)
+    }
+
+    func deleteReview(id: Int) async throws -> NoContent {
+        return try await api.deleteReview(id: id)
     }
 }

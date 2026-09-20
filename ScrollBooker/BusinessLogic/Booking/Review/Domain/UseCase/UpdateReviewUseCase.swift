@@ -15,7 +15,7 @@ final class UpdateReviewUseCase {
     func callAsFunction(
         id: Int,
         request: ReviewUpdateRequest
-    ) async throws -> Review {
+    ) async throws -> ReviewMutationResult {
         return try await repository.updateReview(id: id, request: request)
     }
 }

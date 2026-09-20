@@ -26,7 +26,7 @@ struct FeedSearchScreen: View {
                 
                 SearchBarView(
                     text: $viewModel.searchText,
-                    placeholder: String(localized: "search"),
+                    placeholder: String(localized: "message_placeholder_search_users"),
                     onSubmit: { viewModel.performInstantSearch() },
                     onClear: { viewModel.clearSearchText() }
                 )
@@ -38,14 +38,8 @@ struct FeedSearchScreen: View {
             VStack {
                 switch viewModel.searchState {
                 case .idle:
-                    VStack {
-                        Spacer()
-                        Text(String(localized: "searchUsersInApp"))
-                            .font(.body)
-                            .foregroundColor(.gray)
-                        Spacer()
-                    }
-                    
+                    EmptyView()
+
                 case .loading:
                     LoadingView()
                     
@@ -58,7 +52,7 @@ struct FeedSearchScreen: View {
                     if users.isEmpty {
                         NoDataView(
                             title: String(localized: "search"),
-                            message: "Nu s-au găsit rezultate pentru \"\(viewModel.searchText)\"",
+                            message: String(format: String(localized: "message_empty_search_users"), viewModel.searchText),
                             systemImage: "magnifyingglass"
                         )
                     } else {

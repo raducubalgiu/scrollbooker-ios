@@ -32,9 +32,9 @@ struct AppointmentsScreen: View {
                 case .success(let appointments):
                     if appointments.isEmpty {
                         NoDataView(
-                            title: String(localized: "notifications"),
-                            message: String(localized: "notFoundNotifications"),
-                            systemImage: "bell.badge"
+                            title: String(localized: "bookings"),
+                            message: String(localized: "message_empty_appointments"),
+                            systemImage: "calendar.badge"
                         )
                     } else {
                         AppointmentsListView(

@@ -11,16 +11,24 @@ struct WriteReviewSheetView: View {
     @Environment(\.dismiss) private var dismiss
     
     let initialRating: Int
+    let isEditMode: Bool
     var onSubmitReview: (Int, String) async -> Void
-    
+
     @State private var selectedRating: Int?
-    @State private var reviewText: String = ""
+    @State private var reviewText: String
     @State private var isSaving: Bool = false
-    
-    init(rating: Int, onSubmitReview: @escaping (Int, String) async -> Void) {
+
+    init(
+        rating: Int,
+        review: String = "",
+        isEditMode: Bool = false,
+        onSubmitReview: @escaping (Int, String) async -> Void
+    ) {
         self.initialRating = rating
+        self.isEditMode = isEditMode
         self.onSubmitReview = onSubmitReview
         _selectedRating = State(initialValue: rating)
+        _reviewText = State(initialValue: review)
     }
     
     private var dynamicRatingLabel: String {
@@ -39,7 +47,7 @@ struct WriteReviewSheetView: View {
         VStack(spacing: 0) {
             SheetHeaderView(
                 onDismiss: { dismiss() },
-                title: String(localized: "writeAReview")
+                title: String(localized: isEditMode ? "editReview" : "writeAReview")
             )
             
             ScrollView {
@@ -60,24 +68,35 @@ struct WriteReviewSheetView: View {
                                 self.reviewText = newValue
                             }
                         },
-                        isSaving: isSaving,
-                        onCreateReview: {
-                            Task {
-                                isSaving = true
-            
-                                let finalRating = selectedRating ?? initialRating
-                                await onSubmitReview(finalRating, reviewText)
-                                
-                                isSaving = false
-                                dismiss()
-                            }
-                        }
+                        isSaving: isSaving
                     )
                 }
                 .padding(.horizontal, 24)
                 .padding(.vertical)
             }
+            .scrollDismissesKeyboard(.interactively)
         }
         .background(Color.backgroundSB)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            MainButton(
+                title: String(localized: isEditMode ? "save" : "add"),
+                isDisabled: isSaving,
+                isLoading: isSaving,
+                onClick: {
+                    Task {
+                        isSaving = true
+
+                        let finalRating = selectedRating ?? initialRating
+                        await onSubmitReview(finalRating, reviewText)
+
+                        isSaving = false
+                        dismiss()
+                    }
+                }
+            )
+            .padding(.horizontal, 24)
+            .padding(.vertical)
+            .background(Color.backgroundSB)
+        }
     }
 }

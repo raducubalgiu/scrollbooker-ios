@@ -10,6 +10,7 @@ import SwiftUI
 struct AppointmentDetailsScreen: View {
     @Bindable var viewModel: AppointmentDetailsViewModel
     @State private var activeSheet: AppointmentDetailsSheet? = nil
+    @State private var pendingSheetAction: (() -> Void)?
     var onNavigateToCamera: (CameraParams) -> Void
     var onBack: () -> Void
     
@@ -41,6 +42,9 @@ struct AppointmentDetailsScreen: View {
                         onOpenReviewSheet: { rating in
                             self.activeSheet = .writeReview(rating: rating)
                         },
+                        onOpenReviewOptions: { review in
+                            self.activeSheet = .reviewOptions(review: review)
+                        },
                         onNavigateToCamera: onNavigateToCamera,
                         onRefresh: {
                             await viewModel.refresh()
@@ -55,15 +59,17 @@ struct AppointmentDetailsScreen: View {
         .task {
             await viewModel.loadAppointment()
         }
-        .sheet(item: $activeSheet) { sheetType in
+        .sheet(item: $activeSheet, onDismiss: {
+            pendingSheetAction?()
+            pendingSheetAction = nil
+        }) { sheetType in
             if let appointmentData = viewModel.viewState.data {
                 switch sheetType {
                 case .writeReview(let rating):
                     WriteReviewSheetView(rating: rating) { selectedRating, message in
                         guard let userId = appointmentData.user.id else { return }
                         let productId = appointmentData.products.first?.id ?? 0
-                        
-                        self.activeSheet = nil
+
                         await viewModel.createReview(
                             review: message,
                             rating: selectedRating,
@@ -71,12 +77,29 @@ struct AppointmentDetailsScreen: View {
                             productId: productId
                         )
                     }
-                    
+
                 case .cancelAppointment:
                     CancelAppointmentSheetView { finalReason in
-                        self.activeSheet = nil
                         await viewModel.cancelCurrentAppointment(reason: finalReason)
                     }
+
+                case .reviewOptions(let review):
+                    WrittenReviewOptionsSheetView(
+                        onEditReview: { pendingSheetAction = { activeSheet = .editReview(review: review) } },
+                        onDeleteReview: { pendingSheetAction = { activeSheet = .deleteReviewConfirm(reviewId: review.id) } }
+                    )
+
+                case .editReview(let review):
+                    WriteReviewSheetView(
+                        rating: review.rating,
+                        review: review.review ?? "",
+                        isEditMode: true
+                    ) { selectedRating, message in
+                        await viewModel.updateReview(reviewId: review.id, review: message, rating: selectedRating)
+                    }
+
+                case .deleteReviewConfirm(let reviewId):
+                    DeleteReviewSheetView(reviewId: reviewId, viewModel: viewModel, onDeleted: {})
                 }
             }
         }

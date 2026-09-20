@@ -10,10 +10,11 @@ import Foundation
 protocol ReviewApiService: Sendable {
     func getWrittenReviews(businessId: Int, employeeId: Int?, page: Int, limit: Int, ratings: [Int]?) async throws -> PaginatedResponseDTO<ReviewDto>
     func getReviewSummary(businessId: Int, employeeId: Int?) async throws -> ReviewSummaryDto
-    func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewDto
-    func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewDto
+    func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewMutationResponseDto
+    func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewMutationResponseDto
     func likeReview(id: Int) async throws -> NoContent
     func unlikeReview(id: Int) async throws -> NoContent
+    func deleteReview(id: Int) async throws -> NoContent
 }
 
 final class ReviewAPIImpl: ReviewApiService {
@@ -71,7 +72,7 @@ final class ReviewAPIImpl: ReviewApiService {
     }
 
 
-    func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewDto {
+    func createReview(id: Int, request: ReviewCreateRequest) async throws -> ReviewMutationResponseDto {
         return try await client.request(
             "appointments/\(id)/create-review",
             method: .post,
@@ -79,7 +80,7 @@ final class ReviewAPIImpl: ReviewApiService {
         )
     }
 
-    func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewDto {
+    func updateReview(id: Int, request: ReviewUpdateRequest) async throws -> ReviewMutationResponseDto {
         return try await client.request(
             "reviews/\(id)",
             method: .put,
@@ -97,6 +98,13 @@ final class ReviewAPIImpl: ReviewApiService {
     func unlikeReview(id: Int) async throws -> NoContent {
         return try await client.request(
             "reviews/\(id)/likes",
+            method: .delete
+        )
+    }
+
+    func deleteReview(id: Int) async throws -> NoContent {
+        return try await client.request(
+            "reviews/\(id)",
             method: .delete
         )
     }

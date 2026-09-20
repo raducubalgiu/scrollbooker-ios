@@ -57,7 +57,8 @@ final class AppointmentModule {
         appointmentId: Int,
         session: SessionManager,
         createReviewUseCase: CreateReviewUseCase,
-        updateReviewUseCase: UpdateReviewUseCase
+        updateReviewUseCase: UpdateReviewUseCase,
+        deleteReviewUseCase: DeleteReviewUseCase
     ) -> AppointmentDetailsViewModel {
         AppointmentDetailsViewModel(
             session: session,
@@ -65,7 +66,8 @@ final class AppointmentModule {
             getAppointmentById: getAppointmentByIdUseCase,
             cancelAppointment: cancelAppointment,
             createReviewUseCase: createReviewUseCase,
-            updateReviewUseCase: updateReviewUseCase
+            updateReviewUseCase: updateReviewUseCase,
+            deleteReviewUseCase: deleteReviewUseCase
         )
     }
 }

@@ -127,6 +127,7 @@ struct AppointmentBusinessDto: Decodable {
     let formattedAddress: String
     let coordinates: BusinessCoordinatesDto
     let mapUrl: String?
+    let distanceKm: Double?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -136,5 +137,6 @@ struct AppointmentBusinessDto: Decodable {
         case formattedAddress = "formatted_address"
         case coordinates
         case mapUrl = "map_url"
+        case distanceKm = "distance_km"
     }
 }

@@ -89,14 +89,12 @@ final class LinkedProductsViewModel {
         reviewAppointmentState = .loading
 
         do {
+            let userLocation = await userLocationService.currentLocation()
             let result = try await withLoading {
-                try await getAppointmentByUserAndPostUseCase(userId: postUserId, postId: postId)
+                try await getAppointmentByUserAndPostUseCase(userId: postUserId, postId: postId, lat: userLocation?.lat, lng: userLocation?.lng)
             }
             reviewAppointmentState = .success(result)
-
-            if let userLocation = await userLocationService.currentLocation() {
-                reviewDistanceKm = userLocation.distanceKm(to: result.business.coordinates)
-            }
+            reviewDistanceKm = result.business.distanceKm
         } catch {
             reviewAppointmentState = .error(logger.userMessage(for: error, context: "Fetching Review Appointment for Post (\(self.postId))"))
         }

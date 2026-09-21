@@ -111,5 +111,6 @@ extension AppointmentBusiness {
         self.formattedAddress = dto.formattedAddress
         self.coordinates = BusinessCoordinates(dto: dto.coordinates)
         self.mapUrl = dto.mapUrl
+        self.distanceKm = dto.distanceKm
     }
 }

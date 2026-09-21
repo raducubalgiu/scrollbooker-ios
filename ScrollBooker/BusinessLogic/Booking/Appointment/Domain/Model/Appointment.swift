@@ -78,6 +78,7 @@ struct AppointmentBusiness: Equatable, Hashable, Sendable {
     let formattedAddress: String
     let coordinates: BusinessCoordinates
     let mapUrl: String?
+    let distanceKm: Double?
 
     var businessOwnerAvatarURL: URL? { businessOwnerAvatar.flatMap(URL.init(string:)) }
 }

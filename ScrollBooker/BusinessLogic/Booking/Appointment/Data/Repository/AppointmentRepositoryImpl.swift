@@ -33,8 +33,8 @@ final class AppointmentRepositoryImpl: AppointmentRepository {
         return try Appointment(dto: dto)
     }
     
-    func getAppointmentByUserAndPost(userId: Int, postId: Int) async throws -> Appointment {
-        let dto = try await api.getAppointmentByUserAndPost(userId: userId, postId: postId)
+    func getAppointmentByUserAndPost(userId: Int, postId: Int, lat: Double?, lng: Double?) async throws -> Appointment {
+        let dto = try await api.getAppointmentByUserAndPost(userId: userId, postId: postId, lat: lat, lng: lng)
         return try Appointment(dto: dto)
     }
 

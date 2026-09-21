@@ -9,7 +9,7 @@ protocol AppointmentRepository: Sendable {
     func getUserAppointments(page: Int, limit: Int) async throws -> PaginatedResponse<Appointment>
     func getUserAppointmentsNumber() async throws -> Int
     func getAppointmentById(id: Int) async throws -> Appointment
-    func getAppointmentByUserAndPost(userId: Int, postId: Int) async throws -> Appointment
+    func getAppointmentByUserAndPost(userId: Int, postId: Int, lat: Double?, lng: Double?) async throws -> Appointment
     func cancelAppointment(id: Int, request: AppointmentCancelRequest) async throws -> Appointment
     func createScrollBookerAppointment(request: AppointmentScrollBookerCreateRequest) async throws -> NoContent
 }

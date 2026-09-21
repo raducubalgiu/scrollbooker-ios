@@ -12,7 +12,7 @@ final class GetAppointmentByUserAndPostUseCase {
         self.repository = repository
     }
 
-    func callAsFunction(userId: Int, postId: Int) async throws -> Appointment {
-        try await repository.getAppointmentByUserAndPost(userId: userId, postId: postId)
+    func callAsFunction(userId: Int, postId: Int, lat: Double? = nil, lng: Double? = nil) async throws -> Appointment {
+        try await repository.getAppointmentByUserAndPost(userId: userId, postId: postId, lat: lat, lng: lng)
     }
 }

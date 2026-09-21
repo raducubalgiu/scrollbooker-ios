@@ -13,7 +13,7 @@ protocol AppointmentApiService: Sendable {
     func fetchUserAppointments(page: Int, limit: Int) async throws -> PaginatedResponseDTO<AppointmentDto>
     func getUserAppointmentsNumber() async throws -> Int
     func getAppointmentById(id: Int) async throws -> AppointmentDto
-    func getAppointmentByUserAndPost(userId: Int, postId: Int) async throws -> AppointmentDto
+    func getAppointmentByUserAndPost(userId: Int, postId: Int, lat: Double?, lng: Double?) async throws -> AppointmentDto
     func cancelAppointment(id: Int, request: AppointmentCancelRequest) async throws -> AppointmentDto
     func createScrollBookerAppointment(request: AppointmentScrollBookerCreateRequest) async throws -> NoContent
 }
@@ -52,10 +52,17 @@ final class AppointmentAPIImpl: AppointmentApiService {
         )
     }
     
-    func getAppointmentByUserAndPost(userId: Int, postId: Int) async throws -> AppointmentDto {
+    func getAppointmentByUserAndPost(userId: Int, postId: Int, lat: Double?, lng: Double?) async throws -> AppointmentDto {
+        var query: [String: String] = [:]
+        if let lat, let lng {
+            query["lat"] = "\(lat)"
+            query["lng"] = "\(lng)"
+        }
+
         return try await client.request(
             "appointments/users/\(userId)/post/\(postId)",
-            method: .get
+            method: .get,
+            query: query
         )
     }
 

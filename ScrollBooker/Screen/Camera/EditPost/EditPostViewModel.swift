@@ -109,7 +109,7 @@ final class EditPostViewModel {
 
     private func loadLinkedProducts() async {
         do {
-            linkedProducts = try await getPostLinkedProductsUseCase(postId: post.id)
+            linkedProducts = try await getPostLinkedProductsUseCase(postId: post.id).products
         } catch {
             errorMessage = logger.userMessage(for: error, context: "Fetching Linked Products for Post (\(self.post.id))")
         }

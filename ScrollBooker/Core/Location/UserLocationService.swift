@@ -34,17 +34,27 @@ final class UserLocationService: NSObject {
     /// Poziția curentă a userului, din cache dacă e suficient de recentă, altfel dintr-un
     /// singur fix nou (`requestLocation`, nu urmărire continuă). Întoarce `nil` rapid dacă
     /// permisiunea nu e acordată, în loc să blocheze ecranul apelant.
+    ///
+    /// Verificăm mereu `locationManager.authorizationStatus` (citire sincronă, mereu la zi),
+    /// nu doar copia cache-uită din `self.authorizationStatus` — dacă userul revocă permisiunea
+    /// din Settings cât aplicația e în background, delegate-ul poate ajunge cu întârziere, iar
+    /// fără verificarea asta am putea servi în continuare o locație veche din cache.
     func currentLocation() async -> BusinessCoordinates? {
+        let liveStatus = locationManager.authorizationStatus
+        authorizationStatus = liveStatus
+
+        guard liveStatus == .authorizedWhenInUse || liveStatus == .authorizedAlways else {
+            lastLocation = nil
+            lastFetchDate = nil
+            return nil
+        }
+
         if let lastLocation, let lastFetchDate, Date().timeIntervalSince(lastFetchDate) < cacheTTL {
             return lastLocation
         }
 
         if let inFlightTask {
             return await inFlightTask.value
-        }
-
-        guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
-            return nil
         }
 
         let task = Task { await self.fetchLocation() }
@@ -79,6 +89,11 @@ extension UserLocationService: CLLocationManagerDelegate {
         let status = manager.authorizationStatus
         Task { @MainActor in
             self.authorizationStatus = status
+
+            if status != .authorizedWhenInUse && status != .authorizedAlways {
+                self.lastLocation = nil
+                self.lastFetchDate = nil
+            }
         }
     }
 

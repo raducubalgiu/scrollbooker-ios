@@ -30,10 +30,10 @@ final class ProductRepositoryImpl: ProductRepository {
         return UserProducts(dto: dtoResponse)
     }
     
-    func getLinkedProductsByPostId(postId: Int) async throws -> [Product] {
-        let responseDto = try await api.getLinkedProductsByPostId(postId: postId)
+    func getLinkedProductsByPostId(postId: Int, lat: Double?, lng: Double?) async throws -> LinkedProducts {
+        let responseDto = try await api.getLinkedProductsByPostId(postId: postId, lat: lat, lng: lng)
 
-        return responseDto.map { Product(dto: $0) }
+        return LinkedProducts(dto: responseDto)
     }
 
     func createProduct(_ request: ProductCreateWithFiltersRequestDTO) async throws -> Product {

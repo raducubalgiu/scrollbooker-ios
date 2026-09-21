@@ -13,7 +13,7 @@ protocol ProductRepository: Sendable {
         productsLimitPerService: Int?
     ) async throws -> UserProducts
     
-    func getLinkedProductsByPostId(postId: Int) async throws -> [Product]
+    func getLinkedProductsByPostId(postId: Int, lat: Double?, lng: Double?) async throws -> LinkedProducts
 
     func createProduct(_ request: ProductCreateWithFiltersRequestDTO) async throws -> Product
 

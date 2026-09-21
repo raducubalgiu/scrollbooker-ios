@@ -110,7 +110,7 @@ final class AppContainer {
         self.availabilityModule = AvailabilityModule(apiClient: apiClient)
         self.bookingFlowModule = BookingFlowModule(apiClient: apiClient)
         self.businessDomainModule = BusinessDomainModule(apiClient: apiClient)
-        self.productModule = ProductModule(apiClient: apiClient)
+        self.productModule = ProductModule(apiClient: apiClient, userLocationService: userLocationService)
         self.consentModule = ConsentModule(apiClient: apiClient)
         self.professionModule = ProfessionModule(apiClient: apiClient)
         self.searchModule = SearchModule(apiClient: apiClient)

@@ -10,9 +10,11 @@ import Foundation
 @MainActor
 final class ProductModule {
     private let apiClient: APIClient
+    private let userLocationService: UserLocationService
 
-    init(apiClient: APIClient) {
+    init(apiClient: APIClient, userLocationService: UserLocationService) {
         self.apiClient = apiClient
+        self.userLocationService = userLocationService
     }
 
     private lazy var apiService: ProductApiService = {
@@ -74,7 +76,8 @@ final class ProductModule {
             postUserId: postUserId,
             isVideoReview: isVideoReview,
             getPostLinkedProductsUseCase: getPostLinkedProductsUseCase,
-            getAppointmentByUserAndPostUseCase: getAppointmentByUserAndPostUseCase
+            getAppointmentByUserAndPostUseCase: getAppointmentByUserAndPostUseCase,
+            userLocationService: userLocationService
         )
     }
     

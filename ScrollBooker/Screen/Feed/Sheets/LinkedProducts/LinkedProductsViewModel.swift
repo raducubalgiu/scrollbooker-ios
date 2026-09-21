@@ -12,8 +12,9 @@ import OSLog
 @Observable
 @MainActor
 final class LinkedProductsViewModel {
-    private(set) var viewState: FeatureState<[Product]> = .idle
+    private(set) var viewState: FeatureState<LinkedProducts> = .idle
     private(set) var reviewAppointmentState: FeatureState<Appointment> = .idle
+    private(set) var reviewDistanceKm: Double?
 
     var isSaving: Bool = false
     var isRefreshing: Bool = false
@@ -26,19 +27,22 @@ final class LinkedProductsViewModel {
 
     private let getPostLinkedProductsUseCase: GetPostLinkedProductsUseCase
     private let getAppointmentByUserAndPostUseCase: GetAppointmentByUserAndPostUseCase
+    private let userLocationService: UserLocationService
 
     init(
         postId: Int,
         postUserId: Int,
         isVideoReview: Bool,
         getPostLinkedProductsUseCase: GetPostLinkedProductsUseCase,
-        getAppointmentByUserAndPostUseCase: GetAppointmentByUserAndPostUseCase
+        getAppointmentByUserAndPostUseCase: GetAppointmentByUserAndPostUseCase,
+        userLocationService: UserLocationService
     ) {
         self.postId = postId
         self.postUserId = postUserId
         self.isVideoReview = isVideoReview
         self.getPostLinkedProductsUseCase = getPostLinkedProductsUseCase
         self.getAppointmentByUserAndPostUseCase = getAppointmentByUserAndPostUseCase
+        self.userLocationService = userLocationService
     }
 
     func loadLinkedProducts() async {
@@ -48,8 +52,9 @@ final class LinkedProductsViewModel {
         viewState = .loading
 
         do {
+            let userLocation = await userLocationService.currentLocation()
             let result = try await withLoading {
-                try await getPostLinkedProductsUseCase(postId: postId)
+                try await getPostLinkedProductsUseCase(postId: postId, lat: userLocation?.lat, lng: userLocation?.lng)
             }
             viewState = .success(result)
         } catch {
@@ -62,7 +67,8 @@ final class LinkedProductsViewModel {
         isRefreshing = true
 
         do {
-            let result = try await getPostLinkedProductsUseCase(postId: postId)
+            let userLocation = await userLocationService.currentLocation()
+            let result = try await getPostLinkedProductsUseCase(postId: postId, lat: userLocation?.lat, lng: userLocation?.lng)
             viewState = .success(result)
         } catch {
             let message = logger.userMessage(for: error, context: "Refreshing Linked Products")
@@ -87,6 +93,10 @@ final class LinkedProductsViewModel {
                 try await getAppointmentByUserAndPostUseCase(userId: postUserId, postId: postId)
             }
             reviewAppointmentState = .success(result)
+
+            if let userLocation = await userLocationService.currentLocation() {
+                reviewDistanceKm = userLocation.distanceKm(to: result.business.coordinates)
+            }
         } catch {
             reviewAppointmentState = .error(logger.userMessage(for: error, context: "Fetching Review Appointment for Post (\(self.postId))"))
         }

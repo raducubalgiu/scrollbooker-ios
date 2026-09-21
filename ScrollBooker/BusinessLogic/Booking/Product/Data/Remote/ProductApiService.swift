@@ -15,7 +15,7 @@ protocol ProductApiService: Sendable {
         productsLimitPerService: Int?
     ) async throws -> UserProductsDto
     
-    func getLinkedProductsByPostId(postId: Int) async throws -> [ProductDto]
+    func getLinkedProductsByPostId(postId: Int, lat: Double?, lng: Double?) async throws -> LinkedProductsResponseDto
 
     func createProduct(_ request: ProductCreateWithFiltersRequestDTO) async throws -> ProductDto
 
@@ -62,10 +62,17 @@ final class ProductAPIImpl: ProductApiService {
         )
     }
     
-    func getLinkedProductsByPostId(postId: Int) async throws -> [ProductDto] {
+    func getLinkedProductsByPostId(postId: Int, lat: Double?, lng: Double?) async throws -> LinkedProductsResponseDto {
+        var query: [String: String] = [:]
+        if let lat, let lng {
+            query["lat"] = "\(lat)"
+            query["lng"] = "\(lng)"
+        }
+
         return try await client.request(
             "posts/\(postId)/products",
-            method: .get
+            method: .get,
+            query: query
         )
     }
 

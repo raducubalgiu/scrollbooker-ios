@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct LinkedProductsSuccessView: View {
-    let products: [Product]
+    let linkedProducts: LinkedProducts
     let bookingSource: BookingSourceEnum
     let onNavigateToBooking: (BookingNavigationParams) -> Void
 
     @Environment(\.dismiss) private var dismiss
+
+    private var products: [Product] { linkedProducts.products }
 
     var body: some View {
         if products.isEmpty {
@@ -24,6 +26,15 @@ struct LinkedProductsSuccessView: View {
         } else {
             ScrollView(.vertical) {
                 LazyVStack(spacing: 16) {
+                    LinkedProductsBusinessHeaderView(business: linkedProducts.business)
+
+                    Text(String(localized: "recommendedServices"))
+                        .font(.headline)
+                        .fontWeight(.bold)
+                        .foregroundColor(.onBackgroundSB)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.horizontal)
+
                     ForEach(products, id: \.id) { product in
                         ProductCardView(
                             product: product,

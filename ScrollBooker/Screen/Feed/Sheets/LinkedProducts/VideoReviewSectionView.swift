@@ -40,6 +40,7 @@ struct VideoReviewSectionView: View {
                             ProviderCardView(
                                 provider: provider,
                                 address: post.businessLocation?.formattedAddress,
+                                distanceKm: viewModel.reviewDistanceKm,
                                 onNavigateToUserProfile: onNavigateToUserProfile
                             )
                             PostReviewCardView(review: review, reviewer: post.user)
@@ -120,7 +121,14 @@ private struct ReviewedProvider {
 private struct ProviderCardView: View {
     let provider: ReviewedProvider
     let address: String?
+    let distanceKm: Double?
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+
+    private var locationText: String? {
+        guard let address, !address.isEmpty else { return nil }
+        guard let distanceKm else { return address }
+        return "\(String(format: "%.1f", distanceKm))km • \(address)"
+    }
 
     var body: some View {
         SectionCardView {
@@ -152,14 +160,14 @@ private struct ProviderCardView: View {
                 }
             }
 
-            if let address, !address.isEmpty {
+            if let locationText {
                 Divider()
 
                 HStack(spacing: AppSize.s.rawValue) {
                     Image(systemName: "location")
                         .foregroundColor(.gray)
 
-                    Text(address)
+                    Text(locationText)
                         .font(.subheadline)
                         .foregroundColor(.gray)
                         .lineLimit(2)

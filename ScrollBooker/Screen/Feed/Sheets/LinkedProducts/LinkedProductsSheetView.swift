@@ -15,9 +15,7 @@ struct LinkedProductsSheetView: View {
     let onNavigateToBooking: (BookingNavigationParams) -> Void
 
     private var title: String {
-        viewModel.isVideoReview
-            ? String(localized: "videoReviewDetails")
-            : String(localized: "recommendedServices")
+        viewModel.isVideoReview ? String(localized: "videoReviewDetails") : ""
     }
 
     var body: some View {
@@ -44,9 +42,9 @@ struct LinkedProductsSheetView: View {
                             Task { await viewModel.loadLinkedProducts() }
                         }
 
-                    case .success(let products):
+                    case .success(let linkedProducts):
                         LinkedProductsSuccessView(
-                            products: products,
+                            linkedProducts: linkedProducts,
                             bookingSource: bookingSource,
                             onNavigateToBooking: onNavigateToBooking
                         )

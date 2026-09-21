@@ -16,7 +16,9 @@ final class GetPostLinkedProductsUseCase {
 
     func callAsFunction(
         postId: Int,
-    ) async throws -> [Product] {
-        try await repository.getLinkedProductsByPostId(postId: postId)
+        lat: Double? = nil,
+        lng: Double? = nil
+    ) async throws -> LinkedProducts {
+        try await repository.getLinkedProductsByPostId(postId: postId, lat: lat, lng: lng)
     }
 }

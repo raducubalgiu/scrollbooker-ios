@@ -122,6 +122,16 @@
 "followers" = "Urmăritori";
 "dontFoundResults" = "Nu au fost găsite rezultate";
 "price" = "Preț";
+"filters" = "Filtre";
+"options" = "Opțiuni";
+"deleteAll" = "Șterge tot";
+"showResults" = "Arată rezultatele";
+"recommended" = "Recomandat";
+"distance" = "Distanță";
+"rating" = "Rating";
+"offers" = "Oferte";
+"maxPrice" = "Preț maxim";
+"sortBy" = "Sortează după";
 "priceWithDiscount" = "Preț cu discount";
 "discount" = "Discount";
 "currency" = "Monedă";

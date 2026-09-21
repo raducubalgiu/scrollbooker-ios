@@ -13,15 +13,23 @@ struct SearchFiltersSheetState {
     var hasDiscount: Bool
     
     func hasChangesComparedTo(maxPrice: Decimal?, sort: String?, hasDiscount: Bool) -> Bool {
-        let currentSortRaw = sort ?? "recommended"
+        let currentSortRaw = sort ?? SearchSortEnum.recommended.rawValue
         return self.maxPrice != maxPrice ||
                self.sort.rawValue != currentSortRaw ||
                self.hasDiscount != hasDiscount
     }
-    
-    mutating func clear(defaultPrice: Decimal = 1500) {
-        self.maxPrice = defaultPrice
+
+    mutating func clear(defaultPrice: Decimal? = nil) {
+        self.maxPrice = defaultPrice ?? self.maxPrice
         self.sort = .recommended
         self.hasDiscount = false
+    }
+
+    func applyOn(_ base: SearchFilters) -> SearchFilters {
+        var updated = base
+        updated.maxPrice = maxPrice
+        updated.sort = sort.rawValue
+        updated.hasDiscount = hasDiscount
+        return updated
     }
 }

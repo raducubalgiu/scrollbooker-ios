@@ -11,10 +11,10 @@ struct SearchFiltersSheet: View {
     var viewModel: SearchViewModel
     var onClose: () -> Void
     var onFilter: (SearchFilters) -> Void
-    
-    @State private var localFilters: SearchFilters
+
+    @State private var localFilters: SearchFiltersSheetState
     private let defaultMaxPrice: Decimal = 1500
-    
+
     init(
         viewModel: SearchViewModel,
         onClose: @escaping () -> Void,
@@ -23,37 +23,49 @@ struct SearchFiltersSheet: View {
         self.viewModel = viewModel
         self.onClose = onClose
         self.onFilter = onFilter
-        
-        self._localFilters = State(initialValue: viewModel.filters)
+
+        self._localFilters = State(initialValue: SearchFiltersSheetState(
+            maxPrice: viewModel.filters.maxPrice,
+            sort: SearchSortEnum(rawValue: viewModel.filters.sort ?? SearchSortEnum.recommended.rawValue) ?? .recommended,
+            hasDiscount: viewModel.filters.hasDiscount
+        ))
     }
-    
+
+    private var defaultMaxPriceDouble: Double {
+        NSDecimalNumber(decimal: defaultMaxPrice).doubleValue
+    }
+
     private var isConfirmEnabled: Bool {
-        localFilters != viewModel.filters
+        localFilters.hasChangesComparedTo(
+            maxPrice: viewModel.filters.maxPrice,
+            sort: viewModel.filters.sort,
+            hasDiscount: viewModel.filters.hasDiscount
+        )
     }
-    
+
     private var isClearEnabled: Bool {
         localFilters.hasDiscount ||
         (localFilters.maxPrice ?? defaultMaxPrice) != defaultMaxPrice ||
-        localFilters.sort != "recommended"
+        localFilters.sort != .recommended
     }
-    
+
+    private var priceDisplay: String {
+        let price = localFilters.maxPrice ?? defaultMaxPrice
+        return "\(NSDecimalNumber(decimal: price).intValue) RON"
+    }
+
     private var sliderValueBinding: Binding<Double> {
         Binding(
-            get: {
-                if let decimal = localFilters.maxPrice {
-                    return (decimal as NSDecimalNumber).doubleValue
-                }
-                return 1500.0
-            },
+            get: { NSDecimalNumber(decimal: localFilters.maxPrice ?? defaultMaxPrice).doubleValue },
             set: { localFilters.maxPrice = Decimal($0) }
         )
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
                 Spacer()
-                
+
                 Button(action: onClose) {
                     Image(systemName: "xmark")
                         .font(.system(size: 16, weight: .bold))
@@ -64,13 +76,13 @@ struct SearchFiltersSheet: View {
             }
             .padding(.horizontal, 16)
             .padding(.top, 16)
-            
+
             Text(String(localized: "filters"))
                 .font(.largeTitle)
                 .bold()
                 .padding(.horizontal, 16)
                 .padding(.bottom, 16)
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: 24) {
                     VStack(alignment: .leading, spacing: 12) {
@@ -78,14 +90,14 @@ struct SearchFiltersSheet: View {
                             leftText: String(localized: "options"),
                             rightText: ""
                         )
-                        
+
                         Button(action: {
                             localFilters.hasDiscount.toggle()
                         }) {
                             HStack(spacing: 10) {
                                 Image(systemName: "percent")
                                     .font(.system(size: 16, weight: .semibold))
-                                Text("Oferte")
+                                Text(String(localized: "offers"))
                                     .font(.body)
                                     .fontWeight(.medium)
                             }
@@ -103,23 +115,22 @@ struct SearchFiltersSheet: View {
                             )
                         }
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 12) {
-                        let priceDisplay = localFilters.maxPrice != nil ? "\(Int((localFilters.maxPrice! as NSDecimalNumber).doubleValue)) RON" : "1500 RON"
-                        SearchSheetInfoRow(leftText: "Preț maxim", rightText: priceDisplay)
-                        
-                        Slider(value: sliderValueBinding, in: 0...1500, step: 10)
+                        SearchSheetInfoRow(leftText: String(localized: "maxPrice"), rightText: priceDisplay)
+
+                        Slider(value: sliderValueBinding, in: 0...defaultMaxPriceDouble, step: 10)
                             .accentColor(.primarySB)
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 14) {
-                        SearchSheetInfoRow(leftText: "Sortează după", rightText: "")
-                        
+                        SearchSheetInfoRow(leftText: String(localized: "sortBy"), rightText: "")
+
                         ForEach(SearchSortEnum.allCases) { option in
                             InputRadio(
                                 title: option.label,
-                                isSelected: localFilters.sort == option.rawValue,
-                                onClick: { localFilters.sort = option.rawValue }
+                                isSelected: localFilters.sort == option,
+                                onClick: { localFilters.sort = option }
                             )
                         }
                     }
@@ -127,14 +138,13 @@ struct SearchFiltersSheet: View {
                 .padding(.horizontal, 16)
                 .padding(.bottom, 24)
             }
-            
+
             VStack(spacing: 0) {
                 Divider()
-                
+
                 HStack(spacing: 16) {
                     Button(action: {
-                        localFilters.clear()
-                        localFilters.maxPrice = defaultMaxPrice
+                        localFilters.clear(defaultPrice: defaultMaxPrice)
                     }) {
                         Text(String(localized: "deleteAll"))
                             .font(.body)
@@ -142,11 +152,11 @@ struct SearchFiltersSheet: View {
                             .foregroundColor(isClearEnabled ? .primary : Color(.systemGray4))
                     }
                     .disabled(!isClearEnabled)
-                    
+
                     Spacer()
-                    
+
                     Button(action: {
-                        onFilter(localFilters)
+                        onFilter(localFilters.applyOn(viewModel.filters))
                     }) {
                         Text(String(localized: "showResults"))
                             .font(.body)

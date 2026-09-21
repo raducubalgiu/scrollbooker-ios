@@ -11,6 +11,7 @@ struct MainFiltersStep: View {
     var businessDomains: [BusinessDomain]
     var recentSearchesState: FeatureState<[RecentSearch]>
     var onSetServiceDomain: (ServiceDomain) -> Void
+    var onSelectRecentSearch: (RecentSearch) -> Void
     var onClose: () -> Void
 
     private var serviceDomains: [ServiceDomain] {
@@ -40,7 +41,10 @@ struct MainFiltersStep: View {
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: AppSize.xxl.rawValue) {
                     if case .success(let recentSearches) = recentSearchesState, !recentSearches.isEmpty {
-                        RecentSearchesListView(recentSearches: recentSearches)
+                        RecentSearchesListView(
+                            recentSearches: recentSearches,
+                            onSelect: onSelectRecentSearch
+                        )
                     }
 
                     ServiceDomainsListView(

@@ -27,6 +27,13 @@ struct SearchServicesSheet: View {
     @State private var localFilters: SearchFilters
     @State private var step: ServicesSheetStep
 
+    private var selectedServiceDomain: ServiceDomain? {
+        guard let serviceDomainId = localFilters.serviceDomainId else { return nil }
+        return viewModel.businessDomains
+            .flatMap { $0.serviceDomains }
+            .first { $0.id == serviceDomainId }
+    }
+
     init(
         viewModel: SearchViewModel,
         onClose: @escaping () -> Void,
@@ -61,6 +68,23 @@ struct SearchServicesSheet: View {
                                 localFilters.subFilterIds = nil
 
                                 withAnimation(.easeInOut(duration: 0.3)) { step = .service }
+
+                                Task {
+                                    await viewModel.loadServices(serviceDomainId: domain.id)
+                                }
+                            },
+                            onSelectRecentSearch: { recentSearch in
+                                var updatedFilters = localFilters
+                                updatedFilters.businessDomainId = recentSearch.businessDomainId
+                                updatedFilters.serviceDomainId = recentSearch.serviceDomain.id
+                                updatedFilters.serviceId = recentSearch.services.first?.id
+
+                                let subFilterIds = recentSearch.services.first?.filters
+                                    .flatMap { $0.subFilters }
+                                    .map { $0.id }
+                                updatedFilters.subFilterIds = (subFilterIds?.isEmpty ?? true) ? nil : subFilterIds
+
+                                onFilter(updatedFilters)
                             },
                             onClose: onClose
                         )
@@ -69,11 +93,11 @@ struct SearchServicesSheet: View {
 
                     case .service:
                         ServiceStep(
-                            selectedServiceDomain: nil,
-                            selectedServiceId: nil,
-                            services: [],
-                            isLoadingServices: false,
-                            selectedSubFilterIds: [],
+                            selectedServiceDomain: selectedServiceDomain,
+                            selectedServiceId: localFilters.serviceId,
+                            services: viewModel.servicesState.data,
+                            isLoadingServices: viewModel.servicesState == .loading,
+                            selectedSubFilterIds: localFilters.subFilterIds,
                             onChangeFilter: { subFilterId in
                                 var currentFilters = localFilters.subFilterIds ?? []
                                 if currentFilters.contains(subFilterId) {
@@ -91,6 +115,7 @@ struct SearchServicesSheet: View {
                                 localFilters.serviceDomainId = nil
                                 localFilters.serviceId = nil
                                 localFilters.subFilterIds = nil
+                                viewModel.resetServicesState()
 
                                 withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
                             }
@@ -129,6 +154,7 @@ struct SearchServicesSheet: View {
                     onConfirm: { onFilter(localFilters) },
                     onClear: {
                         localFilters.clear()
+                        viewModel.resetServicesState()
                         withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
                     },
                     onOpenDate: {
@@ -141,7 +167,7 @@ struct SearchServicesSheet: View {
                         localFilters.startTime = nil
                         localFilters.endTime = nil
                     },
-                    summary: "Selectează data",
+                    summary: localFilters.dateTimeSummary,
                     isActive: localFilters.startDate != nil
                 )
             }

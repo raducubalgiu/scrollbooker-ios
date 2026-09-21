@@ -137,6 +137,7 @@
 "currency" = "Monedă";
 "duration" = "Durată";
 "service" = "Serviciu";
+"chooseAService" = "Alege un serviciu";
 "description" = "Descriere";
 "shareProfile" = "Distribuie profilul";
 "employees" = "Angajați";

@@ -51,6 +51,9 @@ struct SearchScreen: View {
 
             VStack(spacing: 0) {
                 SearchHeaderView(
+                    headline: viewModel.selectedServicesText,
+                    subHeadline: viewModel.filters.dateTimeSummary,
+                    activeFiltersCount: viewModel.activeFiltersCount,
                     onServicesTap: { activeSheet = .services },
                     onFiltersTap: { activeSheet = .filters }
                 )
@@ -126,9 +129,9 @@ struct SearchScreen: View {
                     viewModel: viewModel,
                     onClose: { activeSheet = nil },
                     onFilter: { updatedFilters in
-                        viewModel.filters = updatedFilters
+                        viewModel.applyFilters(updatedFilters)
                         activeSheet = nil
-                        
+
                         if let bbox = viewModel.currentBBox {
                             Task {
                                 await viewModel.triggerSearch(
@@ -148,7 +151,7 @@ struct SearchScreen: View {
                     viewModel: viewModel,
                     onClose: { activeSheet = nil },
                     onFilter: { updatedFilters in
-                        viewModel.filters = updatedFilters
+                        viewModel.applyFilters(updatedFilters)
                         activeSheet = nil
                         
                         if let bbox = viewModel.currentBBox {

@@ -27,6 +27,36 @@ struct SearchFilters: Equatable {
     }
 }
 
+extension SearchFilters {
+    private static let isoDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    var dateTimeSummary: String {
+        let datePart: String? = startDate.flatMap { dateString in
+            Self.isoDateFormatter.date(from: dateString)?.formatted(.dateTime.day().month(.abbreviated))
+        }
+
+        let timePart: String? = {
+            guard let startTime, let endTime else { return nil }
+            return "\(startTime) – \(endTime)"
+        }()
+
+        switch (datePart, timePart) {
+        case (let date?, let time?):
+            return "\(date) • \(time)"
+        case (let date?, nil):
+            return date
+        case (nil, let time?):
+            return time
+        case (nil, nil):
+            return String(localized: "anytimeAnyHour")
+        }
+    }
+}
+
 @Observable
 @MainActor
 final class SearchViewModel {
@@ -37,6 +67,7 @@ final class SearchViewModel {
     private(set) var businessDomains: [BusinessDomain] = []
     private(set) var totalCount = 0
     private(set) var recentSearchesState: FeatureState<[RecentSearch]> = .idle
+    private(set) var servicesState: FeatureState<[ServiceWithFilters]> = .idle
 
     private(set) var isPaging: Bool = false
     private(set) var isRefreshing: Bool = false
@@ -48,6 +79,7 @@ final class SearchViewModel {
     private let getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase
     private let getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
     private let getRecentSearchesUseCase: GetRecentSearchesUseCase
+    private let getServicesByServiceDomainUseCase: GetServicesByServiceDomainUseCase
 
     private var page = 1
     private let limit = 20
@@ -78,12 +110,70 @@ final class SearchViewModel {
         getBusinessesSheetUseCase: GetBusinessesSheetUseCase,
         getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase,
         getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase,
-        getRecentSearchesUseCase: GetRecentSearchesUseCase
+        getRecentSearchesUseCase: GetRecentSearchesUseCase,
+        getServicesByServiceDomainUseCase: GetServicesByServiceDomainUseCase
     ) {
         self.getBusinessesSheetUseCase = getBusinessesSheetUseCase
         self.getBusinessesMarkersUseCase = getBusinessesMarkersUseCase
         self.getAllBusinessDomainsUseCase = getAllBusinessDomainsUseCase
         self.getRecentSearchesUseCase = getRecentSearchesUseCase
+        self.getServicesByServiceDomainUseCase = getServicesByServiceDomainUseCase
+    }
+
+    func loadServices(serviceDomainId: Int) async {
+        servicesState = .loading
+
+        do {
+            let services = try await withLoading {
+                try await getServicesByServiceDomainUseCase(serviceDomainId: serviceDomainId)
+            }
+            servicesState = .success(services)
+        } catch {
+            servicesState = .error(logger.userMessage(for: error, context: "Loading Services"))
+        }
+    }
+
+    func resetServicesState() {
+        servicesState = .idle
+    }
+
+    func applyFilters(_ newFilters: SearchFilters) {
+        filters = newFilters
+
+        if newFilters.serviceDomainId != nil {
+            recentSearchesState = .idle
+        }
+    }
+
+    private let defaultMaxPrice: Decimal = 1500
+
+    var activeFiltersCount: Int {
+        let sortValue = filters.sort ?? SearchSortEnum.recommended.rawValue
+
+        return [
+            filters.hasDiscount,
+            (filters.maxPrice ?? defaultMaxPrice) != defaultMaxPrice,
+            sortValue != SearchSortEnum.recommended.rawValue
+        ].filter { $0 }.count
+    }
+
+    var selectedServicesText: String {
+        if filters.serviceDomainId == nil && filters.serviceId == nil {
+            return String(localized: "allServices")
+        }
+
+        let domain = businessDomains
+            .flatMap { $0.serviceDomains }
+            .first { $0.id == filters.serviceDomainId }
+
+        let domainName = domain?.name ?? String(localized: "services")
+
+        if let serviceId = filters.serviceId,
+           let serviceName = servicesState.data?.first(where: { $0.id == serviceId })?.name {
+            return "\(domainName) – \(serviceName)"
+        }
+
+        return domainName
     }
 
     func loadRecentSearchesIfNeeded() async {

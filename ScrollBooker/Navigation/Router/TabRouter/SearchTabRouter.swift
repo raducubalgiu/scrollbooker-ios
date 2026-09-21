@@ -55,7 +55,8 @@ struct SearchTabRouter: View {
                     @MainActor in
                     viewModel = container.businessModule.makeSearchViewModel(
                         getAllBusinessDomainsUseCase: container.businessDomainModule.getAllBusinessDomainsUseCase,
-                        getRecentSearchesUseCase: container.searchModule.getRecentSearchesUseCase
+                        getRecentSearchesUseCase: container.searchModule.getRecentSearchesUseCase,
+                        getServicesByServiceDomainUseCase: container.serviceModule.getServicesByServiceDomainUseCase
                     )
                 }
             }

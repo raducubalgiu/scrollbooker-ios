@@ -46,4 +46,8 @@ final class AppointmentRepositoryImpl: AppointmentRepository {
     func createScrollBookerAppointment(request: AppointmentScrollBookerCreateRequest) async throws -> NoContent {
         return try await api.createScrollBookerAppointment(request: request)
     }
+
+    func createBlockAppointments(request: AppointmentBlockRequestDTO) async throws -> NoContent {
+        return try await api.createBlockAppointments(request: request)
+    }
 }

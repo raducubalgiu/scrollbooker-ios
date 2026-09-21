@@ -363,7 +363,25 @@ struct GlobalNavigationModifier: ViewModifier {
             )
 
         case .myCalendar:
-            MyCalendarScreen(onBack: { router.pop() })
+            if let userInfo = session.userInfo, let businessId = userInfo.businessId {
+                MyCalendarScreen(
+                    viewModel: container.myCalendarModule.makeMyCalendarViewModel(
+                        userId: userInfo.id,
+                        businessId: businessId,
+                        businessOwnerId: userInfo.businessOwnerId,
+                        hasEmployees: userInfo.hasEmployees,
+                        getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
+                        getUserCalendarEventsUseCase: container.availabilityModule.getUserCalendarEventsUseCase,
+                        getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase,
+                        getUserCalendarSettingsUseCase: container.userCalendarSettingsModule.getUserCalendarSettingsUseCase,
+                        updateSlotDurationUseCase: container.userCalendarSettingsModule.updateSlotDurationUseCase,
+                        updateAppointmentGapUseCase: container.userCalendarSettingsModule.updateAppointmentGapUseCase,
+                        createBlockAppointmentsUseCase: container.appointmentModule.createBlockAppointmentsUseCase,
+                        toastCenter: toastCenter
+                    ),
+                    onBack: { router.pop() }
+                )
+            }
 
         case .myDashboard:
             MyDashboardScreen(

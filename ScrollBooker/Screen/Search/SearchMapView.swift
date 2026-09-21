@@ -14,6 +14,7 @@ struct SearchMapView: View {
     var onRegionChange: (BusinessBoundingBox, Float) -> Void
 
     @State private var viewportWidth: CGFloat = 0
+    @State private var hasHandledInitialCamera = false
 
     private var primaryMarkers: [BusinessMarker] {
         markers.filter { $0.isPrimary }
@@ -55,6 +56,11 @@ struct SearchMapView: View {
     }
 
     private func handleCameraChange(_ context: MapCameraUpdateContext) {
+        guard hasHandledInitialCamera else {
+            hasHandledInitialCamera = true
+            return
+        }
+
         let region = context.region
         let bbox = BusinessBoundingBox(
             minLng: Float(region.center.longitude - region.span.longitudeDelta / 2),

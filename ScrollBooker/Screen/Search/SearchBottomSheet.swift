@@ -79,7 +79,10 @@ struct SearchBottomSheet: View {
         .clipShape(UnevenRoundedRectangle(topLeadingRadius: 28, topTrailingRadius: 28))
         .shadow(color: Color.black.opacity(0.06), radius: 10, x: 0, y: -4)
         .onChange(of: isLoading, initial: true) { _, newValue in
-            guard newValue else { return }
+            guard newValue else {
+                pulseSkeleton = false
+                return
+            }
             withAnimation(.easeInOut(duration: 1.1).repeatForever(autoreverses: true)) {
                 pulseSkeleton = true
             }

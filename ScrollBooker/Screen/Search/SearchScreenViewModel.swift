@@ -263,6 +263,11 @@ final class SearchViewModel {
 
         searchTask?.cancel()
         let task = Task {
+            if !force {
+                try? await Task.sleep(for: .milliseconds(300))
+                guard !Task.isCancelled else { return }
+            }
+
             self.page = 1
             await self.load(isFirstPage: true)
         }
@@ -326,11 +331,15 @@ final class SearchViewModel {
                     return try await (sheetTask, markersTask)
                 }
 
+                try Task.checkCancellation()
+
                 self.markers = markersResponse
                 totalCount = sheetResponse.count
                 viewState = .success(sheetResponse.results)
             } else {
                 let response = try await getBusinessesSheetUseCase(page: self.page, limit: self.limit, request: requestDto)
+
+                try Task.checkCancellation()
 
                 let existingIds = Set(businesses.map(\.id))
                 let unique = response.results.filter { !existingIds.contains($0.id) }
@@ -340,7 +349,12 @@ final class SearchViewModel {
 
             page += 1
 
+        } catch is CancellationError {
+            // O căutare mai nouă a preluat deja acest task — ignorăm rezultatul învechit.
+            return
         } catch {
+            guard !Task.isCancelled else { return }
+
             let message = logger.userMessage(for: error, context: "Loading Business Sheets page \(page) (FirstPage: \(isFirstPage))")
 
             if isFirstPage {

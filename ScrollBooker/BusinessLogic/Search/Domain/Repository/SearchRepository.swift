@@ -7,4 +7,5 @@
 
 protocol SearchRepository: Sendable {
     func searchUsers(query: String, roleClient: Bool?) async throws -> [SearchUser]
+    func getRecentSearches(limit: Int) async throws -> [RecentSearch]
 }

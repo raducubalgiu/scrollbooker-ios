@@ -9,6 +9,7 @@ import Foundation
 
 protocol SearchApiService: Sendable {
     func searchUsers(query: String, roleClient: Bool?) async throws -> [SearchUserDto]
+    func getRecentSearches(limit: Int) async throws -> [RecentSearchDto]
 }
 
 final class SearchAPIImpl: SearchApiService, @unchecked Sendable {
@@ -31,6 +32,14 @@ final class SearchAPIImpl: SearchApiService, @unchecked Sendable {
             "search/users",
             method: .get,
             query: queryParameters
+        )
+    }
+
+    func getRecentSearches(limit: Int) async throws -> [RecentSearchDto] {
+        try await client.request(
+            "search/recent-searches",
+            method: .get,
+            query: ["limit": String(limit)]
         )
     }
 }

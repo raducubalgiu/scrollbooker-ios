@@ -27,6 +27,10 @@ final class SearchModule {
         SearchUsersUseCase(repository: repository)
     }()
 
+    lazy var getRecentSearchesUseCase: GetRecentSearchesUseCase = {
+        GetRecentSearchesUseCase(repository: repository)
+    }()
+
     func makeFeedSearchViewModel() -> FeedSearchViewModel {
         FeedSearchViewModel(
             searchUsersUseCase: searchUsersUseCase

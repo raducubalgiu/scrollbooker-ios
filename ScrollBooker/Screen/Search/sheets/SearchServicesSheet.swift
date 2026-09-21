@@ -23,10 +23,10 @@ struct SearchServicesSheet: View {
     var viewModel: SearchViewModel
     var onClose: () -> Void
     var onFilter: (SearchFilters) -> Void
-    
+
     @State private var localFilters: SearchFilters
     @State private var step: ServicesSheetStep
-    
+
     init(
         viewModel: SearchViewModel,
         onClose: @escaping () -> Void,
@@ -35,10 +35,10 @@ struct SearchServicesSheet: View {
         self.viewModel = viewModel
         self.onClose = onClose
         self.onFilter = onFilter
-        
+
         let initialFilters = viewModel.filters
         self._localFilters = State(initialValue: initialFilters)
-        
+
         if initialFilters.serviceDomainId != nil &&
             initialFilters.serviceDomainId == viewModel.filters.serviceDomainId {
             self._step = State(initialValue: .service)
@@ -46,76 +46,94 @@ struct SearchServicesSheet: View {
             self._step = State(initialValue: .mainFilters)
         }
     }
-    
-    var body: some View {
-        ZStack {
-            VStack(spacing: 0) {
-                ZStack {
-                    switch step {
-                        case .mainFilters:
-                            MainFiltersStep(
-                                businessDomains: viewModel.businessDomains,
-                                selectedBusinessDomainId: localFilters.businessDomainId,
-                                onSetSelectedBusinessDomainId: { id in
-                                    localFilters.businessDomainId = id
-                                },
-                                onSetServiceDomain: { domain in
-                                    localFilters.serviceDomainId = domain.id
-                                    localFilters.serviceId = nil
-                                    localFilters.subFilterIds = nil
-                                    
-                                    withAnimation { step = .service }
-                                },
-                                onClose: onClose
-                            )
 
-                        case .service:
-                            ServiceStep(
-                                selectedServiceDomain: nil,
-                                selectedServiceId: nil,
-                                services: [],
-                                isLoadingServices: false,
-                                selectedSubFilterIds: [],
-                                onChangeFilter: { subFilterId in
-                                    var currentFilters = localFilters.subFilterIds ?? []
-                                    if currentFilters.contains(subFilterId) {
-                                        currentFilters.removeAll(where: { $0 == subFilterId })
-                                    } else {
-                                        currentFilters.append(subFilterId)
-                                    }
-                                    localFilters.subFilterIds = currentFilters.isEmpty ? nil : currentFilters
-                                },
-                                onChangeService: { newServiceId in
-                                    localFilters.serviceId = newServiceId
-                                    localFilters.subFilterIds = nil
-                                },
-                                onBack: {
-                                    localFilters.serviceDomainId = nil
-                                    localFilters.serviceId = nil
-                                    localFilters.subFilterIds = nil
-                                    
-                                    withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
+    var body: some View {
+        VStack(spacing: 0) {
+            ZStack {
+                switch step {
+                    case .mainFilters:
+                        MainFiltersStep(
+                            businessDomains: viewModel.businessDomains,
+                            recentSearchesState: viewModel.recentSearchesState,
+                            onSetServiceDomain: { domain in
+                                localFilters.serviceDomainId = domain.id
+                                localFilters.serviceId = nil
+                                localFilters.subFilterIds = nil
+
+                                withAnimation(.easeInOut(duration: 0.3)) { step = .service }
+                            },
+                            onClose: onClose
+                        )
+                        .background(Color(.systemBackground))
+                        .transition(.asymmetric(insertion: .move(edge: .leading), removal: .move(edge: .leading)))
+
+                    case .service:
+                        ServiceStep(
+                            selectedServiceDomain: nil,
+                            selectedServiceId: nil,
+                            services: [],
+                            isLoadingServices: false,
+                            selectedSubFilterIds: [],
+                            onChangeFilter: { subFilterId in
+                                var currentFilters = localFilters.subFilterIds ?? []
+                                if currentFilters.contains(subFilterId) {
+                                    currentFilters.removeAll(where: { $0 == subFilterId })
+                                } else {
+                                    currentFilters.append(subFilterId)
                                 }
-                            )
-                            .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
-                            
-                        case .dateTime:
-                            Spacer()
-                        }
-                }
-                .frame(maxHeight: .infinity)
-                
+                                localFilters.subFilterIds = currentFilters.isEmpty ? nil : currentFilters
+                            },
+                            onChangeService: { newServiceId in
+                                localFilters.serviceId = newServiceId
+                                localFilters.subFilterIds = nil
+                            },
+                            onBack: {
+                                localFilters.serviceDomainId = nil
+                                localFilters.serviceId = nil
+                                localFilters.subFilterIds = nil
+
+                                withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
+                            }
+                        )
+                        .background(Color(.systemBackground))
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+
+                    case .dateTime:
+                        DateTimeStep(
+                            state: DateTimeState(
+                                startDate: localFilters.startDate,
+                                startTime: localFilters.startTime,
+                                endTime: localFilters.endTime,
+                            ),
+                            onBack: {
+                                withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
+                            },
+                            onConfirm: { updatedState in
+                                localFilters.startDate = updatedState.startDate
+                                localFilters.startTime = updatedState.startTime
+                                localFilters.endTime = updatedState.endTime
+
+                                withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
+                            }
+                        )
+                        .background(Color(.systemBackground))
+                        .transition(.asymmetric(insertion: .move(edge: .trailing), removal: .move(edge: .trailing)))
+                    }
+            }
+            .frame(maxHeight: .infinity)
+
+            if step != .dateTime {
                 MainFiltersFooter(
                     isClearEnabled: true,
                     isConfirmEnabled: true,
                     onConfirm: { onFilter(localFilters) },
                     onClear: {
                         localFilters.clear()
-                        withAnimation { step = .mainFilters }
+                        withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
                     },
                     onOpenDate: {
                         if step != .dateTime {
-                            withAnimation { step = .dateTime }
+                            withAnimation(.easeInOut(duration: 0.3)) { step = .dateTime }
                         }
                     },
                     onClearDate: {
@@ -126,30 +144,11 @@ struct SearchServicesSheet: View {
                     summary: "Selectează data",
                     isActive: localFilters.startDate != nil
                 )
-
             }
-            
-            if step == .dateTime {
-                DateTimeStep(
-                    state: DateTimeState(
-                        startDate: localFilters.startDate,
-                        startTime: localFilters.startTime,
-                        endTime: localFilters.endTime,
-                    ),
-                    onBack: {
-                        withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
-                    },
-                    onConfirm: { updatedState in
-                        localFilters.startDate = updatedState.startDate
-                        localFilters.startTime = updatedState.startTime
-                        localFilters.endTime = updatedState.endTime
-                        
-                        withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
-                    }
-                )
-                .transition(.move(edge: .bottom))
-                .background(Color(.systemBackground))
-            }
+        }
+        .task {
+            await viewModel.loadBusinessDomainsIfNeeded()
+            await viewModel.loadRecentSearchesIfNeeded()
         }
     }
 }

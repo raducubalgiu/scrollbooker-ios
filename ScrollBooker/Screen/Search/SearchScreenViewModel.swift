@@ -36,6 +36,7 @@ final class SearchViewModel {
     private(set) var markers: [BusinessMarker] = []
     private(set) var businessDomains: [BusinessDomain] = []
     private(set) var totalCount = 0
+    private(set) var recentSearchesState: FeatureState<[RecentSearch]> = .idle
 
     private(set) var isPaging: Bool = false
     private(set) var isRefreshing: Bool = false
@@ -46,6 +47,7 @@ final class SearchViewModel {
     private let getBusinessesSheetUseCase: GetBusinessesSheetUseCase
     private let getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase
     private let getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
+    private let getRecentSearchesUseCase: GetRecentSearchesUseCase
 
     private var page = 1
     private let limit = 20
@@ -75,11 +77,37 @@ final class SearchViewModel {
     init(
         getBusinessesSheetUseCase: GetBusinessesSheetUseCase,
         getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase,
-        getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
+        getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase,
+        getRecentSearchesUseCase: GetRecentSearchesUseCase
     ) {
         self.getBusinessesSheetUseCase = getBusinessesSheetUseCase
         self.getBusinessesMarkersUseCase = getBusinessesMarkersUseCase
         self.getAllBusinessDomainsUseCase = getAllBusinessDomainsUseCase
+        self.getRecentSearchesUseCase = getRecentSearchesUseCase
+    }
+
+    func loadRecentSearchesIfNeeded() async {
+        guard recentSearchesState == .idle else { return }
+        recentSearchesState = .loading
+
+        do {
+            let searches = try await withLoading {
+                try await getRecentSearchesUseCase()
+            }
+            recentSearchesState = .success(searches)
+        } catch {
+            recentSearchesState = .error(logger.userMessage(for: error, context: "Loading Recent Searches"))
+        }
+    }
+
+    func loadBusinessDomainsIfNeeded() async {
+        guard businessDomains.isEmpty else { return }
+
+        do {
+            businessDomains = try await getAllBusinessDomainsUseCase()
+        } catch {
+            logger.error("ERROR: on Loading Business Domains: \(error.localizedDescription, privacy: .public)")
+        }
     }
 
     func initializeScreen(bbox: BusinessBoundingBox, zoom: Float) async {
@@ -101,6 +129,8 @@ final class SearchViewModel {
 
         let requestDto = createRequestDto(bbox: bbox, zoom: zoom)
 
+        async let recentSearchesPrefetch: Void = loadRecentSearchesIfNeeded()
+
         do {
             let (domainsResponse, sheetResponse, markersResponse) = try await withLoading {
                 async let domainsTask = getAllBusinessDomainsUseCase()
@@ -121,6 +151,8 @@ final class SearchViewModel {
             viewState = .error(logger.userMessage(for: error, context: "Initializing Search Screen"))
             self.markers = []
         }
+
+        await recentSearchesPrefetch
     }
 
     func triggerSearch(bbox: BusinessBoundingBox, zoom: Float, force: Bool = false) async {

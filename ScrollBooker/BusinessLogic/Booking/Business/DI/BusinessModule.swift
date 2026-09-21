@@ -58,12 +58,14 @@ final class BusinessModule {
     }()
 
     func makeSearchViewModel(
-        getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
+        getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase,
+        getRecentSearchesUseCase: GetRecentSearchesUseCase
     ) -> SearchViewModel {
         SearchViewModel(
             getBusinessesSheetUseCase: getBusinessesSheetUseCase,
             getBusinessesMarkersUseCase: getBusinessesMarkersUseCase,
-            getAllBusinessDomainsUseCase: getAllBusinessDomainsUseCase
+            getAllBusinessDomainsUseCase: getAllBusinessDomainsUseCase,
+            getRecentSearchesUseCase: getRecentSearchesUseCase
         )
     }
     

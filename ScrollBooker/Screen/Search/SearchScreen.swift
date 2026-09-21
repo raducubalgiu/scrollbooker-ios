@@ -142,7 +142,6 @@ struct SearchScreen: View {
                 )
                 .presentationDetents([.large])
                 .presentationBackgroundInteraction(.enabled(upThrough: .large))
-                .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
             case .filters:
                 SearchFiltersSheet(
@@ -165,7 +164,6 @@ struct SearchScreen: View {
                 )
                 .presentationDetents([.large])
                 .presentationBackgroundInteraction(.enabled(upThrough: .large))
-                .presentationDragIndicator(.visible)
                 .presentationCornerRadius(25)
             }
         }

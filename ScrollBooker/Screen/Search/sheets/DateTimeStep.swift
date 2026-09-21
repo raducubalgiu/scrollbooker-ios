@@ -56,25 +56,26 @@ struct DateTimeStep: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Spacer()
                 Button(action: onBack) {
-                    Image(systemName: "xmark")
+                    Image(systemName: "arrow.backward")
                         .font(.system(size: 16, weight: .bold))
                         .foregroundColor(.primary)
                         .padding(10)
                         .clipShape(Circle())
                 }
+
+                Spacer()
             }
             .padding()
-            
+
             ScrollView(.vertical, showsIndicators: false) {
                 VStack(alignment: .leading, spacing: 16) {
-                    
-                    Text("Dată și oră")
+
+                    Text(String(localized: "dateAndTime"))
                         .font(.largeTitle)
                         .bold()
                         .padding(.horizontal)
-                    
+
                     ServicesDateTimeDaySuggestions(
                         isTodaySelected: localState.startDate == todayString,
                         isTomorrowSelected: localState.startDate == tomorrowString,
@@ -97,6 +98,7 @@ struct DateTimeStep: View {
                     )
                     .datePickerStyle(.graphical)
                     .accentColor(.red)
+                    .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal)
                     .onChange(of: internalSelectedDate) { _, newValue in
                         let formatter = DateFormatter()
@@ -125,7 +127,6 @@ struct DateTimeStep: View {
                     },
                     isClearEnabled: isClearEnabled,
                     isConfirmEnabled: true,
-                    displayIcon: false,
                     primaryActionText: "Confirmă"
                 )
             }

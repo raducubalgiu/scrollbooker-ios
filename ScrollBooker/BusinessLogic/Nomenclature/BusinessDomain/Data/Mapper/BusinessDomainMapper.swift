@@ -9,11 +9,13 @@ import Foundation
 
 extension BusinessDomain {
     init(dto: BusinessDomainDto) {
-        self.id = dto.id
+        let domainId = dto.id
+
+        self.id = domainId
         self.name = dto.name
         self.shortName = dto.short_name
-        
+
         self.serviceDomains = dto.service_domains.map { ServiceDomain(dto: $0) }
-        self.businessTypes = dto.business_types.map { BusinessType(dto: $0) }
+        self.businessTypes = dto.business_types.map { BusinessType(dto: $0, fallbackBusinessDomainId: domainId) }
     }
 }

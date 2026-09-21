@@ -90,8 +90,7 @@ struct DateTimeButton: View {
             .padding(.horizontal, 24) // SpacingXL
             .padding(.vertical, 16)   // BasePadding
             .frame(maxWidth: .infinity)
-            // Schimbarea nuanței fundalului în funcție de starea activă
-            .background(isActive ? Color(.systemGray5).opacity(0.8) : Color(.systemGray6))
+            .background(Color.surfaceSB)
             .cornerRadius(16) // ShapeDefaults.ExtraLarge
         }
         .padding(.horizontal, 16) // BasePadding extern
@@ -104,7 +103,6 @@ struct SearchSheetActions: View {
     var onConfirm: () -> Void
     var isClearEnabled: Bool = true
     var isConfirmEnabled: Bool = true
-    var displayIcon: Bool = true
     var clearActionText: String = "Șterge" // R.string.delete
     var primaryActionText: String = "Caută" // R.string.search
     
@@ -114,29 +112,23 @@ struct SearchSheetActions: View {
             Button(action: onClear) {
                 Text(clearActionText)
                     .font(.body)
-                    .fontWeight(.medium)
-                    .foregroundColor(isClearEnabled ? .primary : .gray)
+                    .fontWeight(.semibold)
+                    .foregroundColor(isClearEnabled ? .primary : Color(.systemGray4))
             }
             .disabled(!isClearEnabled)
-            
+
             Spacer()
-            
+
             // Butonul principal (Button / Filled Button)
             Button(action: onConfirm) {
-                HStack(spacing: 4) { // SpacingXS
-                    if displayIcon {
-                        Image(systemName: "magnifyingglass")
-                            .font(.system(size: 16, weight: .bold))
-                    }
-                    
-                    Text(primaryActionText)
-                        .font(.system(size: 18, weight: .bold))
-                }
-                .padding(.vertical, 16)   // BasePadding
-                .padding(.horizontal, 32) // SpacingXXL
-                .foregroundColor(.white)
-                .background(isConfirmEnabled ? Color.accentColor : Color.gray.opacity(0.5))
-                .cornerRadius(100) // Pill shape standard pentru butoane mari
+                Text(primaryActionText)
+                    .font(.body)
+                    .fontWeight(.bold)
+                    .foregroundColor(.white)
+                    .padding(.vertical, 14)
+                    .padding(.horizontal, 24)
+                    .background(isConfirmEnabled ? Color.primarySB : Color(.systemGray4))
+                    .cornerRadius(50)
             }
             .disabled(!isConfirmEnabled)
         }

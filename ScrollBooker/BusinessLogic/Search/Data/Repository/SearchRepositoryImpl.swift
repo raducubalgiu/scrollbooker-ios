@@ -16,9 +16,17 @@ final class SearchRepositoryImpl: SearchRepository {
     
     func searchUsers(query: String, roleClient: Bool?) async throws -> [SearchUser] {
         let dtoResponse = try await api.searchUsers(query: query, roleClient: roleClient)
-        
+
         return dtoResponse.map { dto in
             SearchUser(dto: dto)
+        }
+    }
+
+    func getRecentSearches(limit: Int) async throws -> [RecentSearch] {
+        let dtoResponse = try await api.getRecentSearches(limit: limit)
+
+        return dtoResponse.map { dto in
+            RecentSearch(dto: dto)
         }
     }
 }

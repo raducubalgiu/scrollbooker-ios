@@ -8,11 +8,11 @@
 import Foundation
 
 extension BusinessType {
-    init(dto: BusinessTypeDto) {
+    init(dto: BusinessTypeDto, fallbackBusinessDomainId: Int? = nil) {
         self.id = dto.id
         self.name = dto.name
         self.plural = dto.plural
-        self.businessDomainId = dto.businessDomainId
+        self.businessDomainId = dto.businessDomainId ?? fallbackBusinessDomainId ?? 0
         self.url = dto.url
         self.thumbnailUrl = dto.thumbnailUrl
     }

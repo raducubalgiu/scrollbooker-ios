@@ -11,7 +11,7 @@ struct BusinessTypeDto: Decodable {
     let id: Int
     let name: String
     let plural: String
-    let businessDomainId: Int
+    let businessDomainId: Int?
     let url: String?
     let thumbnailUrl: String?
 

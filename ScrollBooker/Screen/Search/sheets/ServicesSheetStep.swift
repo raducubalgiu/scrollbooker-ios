@@ -1,0 +1,14 @@
+//
+//  ServicesSheetStep.swift
+//  ScrollBooker
+//
+//  Created by Raducu Balgiu on 19.07.2026.
+//
+
+import Foundation
+
+enum ServicesSheetStep {
+    case mainFilters
+    case service
+    case dateTime
+}

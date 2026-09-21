@@ -1,5 +1,5 @@
 //
-//  SheetFiltersState.swift
+//  SearchFiltersSheetState.swift
 //  ScrollBooker
 //
 //  Created by Raducu Balgiu on 19.07.2026.

@@ -149,25 +149,21 @@ struct SearchFiltersSheet: View {
                         Text(String(localized: "deleteAll"))
                             .font(.body)
                             .fontWeight(.semibold)
-                            .foregroundColor(isClearEnabled ? .primary : Color(.systemGray4))
+                            .foregroundColor(isClearEnabled ? .onBackgroundSB : .gray)
                     }
                     .disabled(!isClearEnabled)
 
                     Spacer()
 
-                    Button(action: {
-                        onFilter(localFilters.applyOn(viewModel.filters))
-                    }) {
-                        Text(String(localized: "showResults"))
-                            .font(.body)
-                            .fontWeight(.bold)
-                            .foregroundColor(.white)
-                            .padding(.vertical, 14)
-                            .padding(.horizontal, 24)
-                            .background(isConfirmEnabled ? Color.primarySB : Color(.systemGray4))
-                            .cornerRadius(50)
-                    }
-                    .disabled(!isConfirmEnabled)
+                    SheetActionButton(
+                        title: String(localized: "showResults"),
+                        style: .filled,
+                        isDisabled: !isConfirmEnabled,
+                        onClick: {
+                            onFilter(localFilters.applyOn(viewModel.filters))
+                        }
+                    )
+                    .frame(maxWidth: 160)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 16)

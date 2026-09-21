@@ -7,18 +7,6 @@
 
 import SwiftUI
 
-enum ServicesSheetStep {
-    case mainFilters
-    case service
-    case dateTime
-}
-
-struct DateTimeState {
-    var startDate: String? = nil
-    var startTime: String? = nil
-    var endTime: String? = nil
-}
-
 struct SearchServicesSheet: View {
     var viewModel: SearchViewModel
     var onClose: () -> Void
@@ -43,15 +31,39 @@ struct SearchServicesSheet: View {
         self.onClose = onClose
         self.onFilter = onFilter
 
-        let initialFilters = viewModel.filters
-        self._localFilters = State(initialValue: initialFilters)
+        self._localFilters = State(initialValue: viewModel.filters)
+        self._step = State(initialValue: .mainFilters)
+    }
 
-        if initialFilters.serviceDomainId != nil &&
-            initialFilters.serviceDomainId == viewModel.filters.serviceDomainId {
-            self._step = State(initialValue: .service)
-        } else {
-            self._step = State(initialValue: .mainFilters)
+    private var serviceSelectionSummary: String {
+        guard let domain = selectedServiceDomain else {
+            return String(localized: "chooseAService")
         }
+
+        if let serviceId = localFilters.serviceId,
+           let serviceName = viewModel.servicesState.data?.first(where: { $0.id == serviceId })?.name {
+            return "\(domain.name) – \(serviceName)"
+        }
+
+        return domain.name
+    }
+
+    private var isMainFiltersClearEnabled: Bool {
+        localFilters != SearchFilters()
+    }
+
+    private var isMainFiltersConfirmEnabled: Bool {
+        localFilters != viewModel.filters
+    }
+
+    private var isServiceClearEnabled: Bool {
+        localFilters.serviceDomainId != nil
+    }
+
+    private var isServiceConfirmEnabled: Bool {
+        localFilters.serviceDomainId != viewModel.filters.serviceDomainId ||
+        localFilters.serviceId != viewModel.filters.serviceId ||
+        localFilters.subFilterIds != viewModel.filters.subFilterIds
     }
 
     var body: some View {
@@ -112,11 +124,6 @@ struct SearchServicesSheet: View {
                                 localFilters.subFilterIds = nil
                             },
                             onBack: {
-                                localFilters.serviceDomainId = nil
-                                localFilters.serviceId = nil
-                                localFilters.subFilterIds = nil
-                                viewModel.resetServicesState()
-
                                 withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
                             }
                         )
@@ -147,29 +154,60 @@ struct SearchServicesSheet: View {
             }
             .frame(maxHeight: .infinity)
 
-            if step != .dateTime {
-                MainFiltersFooter(
-                    isClearEnabled: true,
-                    isConfirmEnabled: true,
-                    onConfirm: { onFilter(localFilters) },
-                    onClear: {
-                        localFilters.clear()
-                        viewModel.resetServicesState()
-                        withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
-                    },
-                    onOpenDate: {
-                        if step != .dateTime {
+            switch step {
+                case .mainFilters:
+                    MainFiltersFooter(
+                        isClearEnabled: isMainFiltersClearEnabled,
+                        isConfirmEnabled: isMainFiltersConfirmEnabled,
+                        onConfirm: { onFilter(localFilters) },
+                        onClear: {
+                            localFilters.clear()
+                            viewModel.resetServicesState()
+                            withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
+                        },
+                        serviceSummary: serviceSelectionSummary,
+                        isServiceActive: selectedServiceDomain != nil,
+                        onOpenService: {
+                            withAnimation(.easeInOut(duration: 0.3)) { step = .service }
+
+                            if let domainId = localFilters.serviceDomainId, viewModel.servicesState == .idle {
+                                Task { await viewModel.loadServices(serviceDomainId: domainId) }
+                            }
+                        },
+                        onClearService: {
+                            localFilters.serviceDomainId = nil
+                            localFilters.serviceId = nil
+                            localFilters.subFilterIds = nil
+                            viewModel.resetServicesState()
+                        },
+                        dateTimeSummary: localFilters.dateTimeSummary,
+                        isDateTimeActive: localFilters.startDate != nil,
+                        onOpenDateTime: {
                             withAnimation(.easeInOut(duration: 0.3)) { step = .dateTime }
+                        },
+                        onClearDateTime: {
+                            localFilters.startDate = nil
+                            localFilters.startTime = nil
+                            localFilters.endTime = nil
                         }
-                    },
-                    onClearDate: {
-                        localFilters.startDate = nil
-                        localFilters.startTime = nil
-                        localFilters.endTime = nil
-                    },
-                    summary: localFilters.dateTimeSummary,
-                    isActive: localFilters.startDate != nil
-                )
+                    )
+                case .service:
+                    ServiceStepFooter(
+                        isClearEnabled: isServiceClearEnabled,
+                        isConfirmEnabled: isServiceConfirmEnabled,
+                        onClear: {
+                            localFilters.serviceDomainId = nil
+                            localFilters.serviceId = nil
+                            localFilters.subFilterIds = nil
+                            viewModel.resetServicesState()
+                            withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
+                        },
+                        onConfirm: {
+                            withAnimation(.easeInOut(duration: 0.3)) { step = .mainFilters }
+                        }
+                    )
+                case .dateTime:
+                    EmptyView()
             }
         }
         .task {

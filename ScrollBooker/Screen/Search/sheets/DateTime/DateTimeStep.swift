@@ -11,13 +11,13 @@ struct DateTimeStep: View {
     var state: DateTimeState
     var onBack: () -> Void
     var onConfirm: (DateTimeState) -> Void
-    
+
     @State private var localState: DateTimeState
     @State private var internalSelectedDate = Date()
-    
+
     private let todayString: String
     private let tomorrowString: String
-    
+
     init(
         state: DateTimeState,
         onBack: @escaping () -> Void,
@@ -27,32 +27,38 @@ struct DateTimeStep: View {
         self.onBack = onBack
         self.onConfirm = onConfirm
         self._localState = State(initialValue: state)
-        
+
         let calendar = Calendar.current
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
-        
+
         let now = Date()
         self.todayString = formatter.string(from: now)
-        
+
         let tomorrow = calendar.date(byAdding: .day, value: 1, to: now) ?? now
         self.tomorrowString = formatter.string(from: tomorrow)
-        
+
         if let existingDateStr = state.startDate, let date = formatter.date(from: existingDateStr) {
             self._internalSelectedDate = State(initialValue: date)
         }
     }
-    
+
     var isClearEnabled: Bool {
         localState.startDate != nil || localState.startTime != nil || localState.endTime != nil
     }
-    
+
+    var isConfirmEnabled: Bool {
+        localState.startDate != state.startDate ||
+        localState.startTime != state.startTime ||
+        localState.endTime != state.endTime
+    }
+
     var dateRange: ClosedRange<Date> {
         let today = Date()
         let maxDate = Calendar.current.date(byAdding: .month, value: 12, to: today) ?? today
         return today...maxDate
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack {
@@ -89,7 +95,7 @@ struct DateTimeStep: View {
                         }
                     )
                     .padding(.horizontal)
-                    
+
                     DatePicker(
                         "",
                         selection: $internalSelectedDate,
@@ -105,17 +111,26 @@ struct DateTimeStep: View {
                         formatter.dateFormat = "yyyy-MM-dd"
                         localState.startDate = formatter.string(from: newValue)
                     }
-                    
+
+                    TimeSection(
+                        startTime: localState.startTime,
+                        endTime: localState.endTime,
+                        onTimeChange: { start, end in
+                            localState.startTime = start
+                            localState.endTime = end
+                        }
+                    )
+
                     Spacer().frame(height: 32)
                 }
             }
             .frame(maxHeight: .infinity)
-            
+
             VStack(spacing: 0) {
                 Rectangle()
                     .fill(Color(.systemGray4))
                     .frame(height: 0.55)
-                
+
                 SearchSheetActions(
                     onClear: {
                         localState.startDate = nil
@@ -126,50 +141,19 @@ struct DateTimeStep: View {
                         onConfirm(localState)
                     },
                     isClearEnabled: isClearEnabled,
-                    isConfirmEnabled: true,
-                    primaryActionText: "Confirmă"
+                    isConfirmEnabled: isConfirmEnabled,
+                    primaryActionText: String(localized: "confirm")
                 )
             }
         }
         .background(Color(.systemBackground))
     }
-    
+
     private func updateInternalDate(from dateString: String) {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
         if let date = formatter.date(from: dateString) {
             internalSelectedDate = date
-        }
-    }
-}
-
-struct ServicesDateTimeDaySuggestions: View {
-    let isTodaySelected: Bool
-    let isTomorrowSelected: Bool
-    var onTodayClick: () -> Void
-    var onTomorrowClick: () -> Void
-    
-    var body: some View {
-        HStack(spacing: 12) {
-            Button(action: onTodayClick) {
-                Text("Azi")
-                    .font(.system(size: 16, weight: .semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(isTodaySelected ? Color.primarySB : Color(.systemGray6))
-                    .foregroundColor(isTodaySelected ? .white : .primary)
-                    .cornerRadius(12)
-            }
-            
-            Button(action: onTomorrowClick) {
-                Text("Mâine")
-                    .font(.system(size: 16, weight: .semibold))
-                    .frame(maxWidth: .infinity)
-                    .padding(.vertical, 12)
-                    .background(isTomorrowSelected ? Color.primarySB : Color(.systemGray6))
-                    .foregroundColor(isTomorrowSelected ? .white : .primary)
-                    .cornerRadius(12)
-            }
         }
     }
 }

@@ -314,6 +314,15 @@
 "clearFilters" = "Elimină filtrele";
 "categories" = "Categorii";
 "recentSearches" = "Căutări recente";
+"anytime" = "Oricând";
+"morning" = "Dimineață";
+"afternoon" = "La prânz";
+"evening" = "Seara";
+"custom" = "Custom";
+"until" = "Până la";
+"timeInterval" = "Interval orar";
+"today" = "Azi";
+"tomorrow" = "Mâine";
 "onlyVideoReviews" = "Doar recenzii video";
 "filterVideoContentAccordingToYouPreferences" = "Filtrează conținutul video în funcție de preferințele tale";
 "close" = "Închide";

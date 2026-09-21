@@ -10,9 +10,11 @@ import Foundation
 @MainActor
 final class UserProfileModule {
     private let apiClient: APIClient
+    private let userLocationService: UserLocationService
 
-    init(apiClient: APIClient) {
+    init(apiClient: APIClient, userLocationService: UserLocationService) {
         self.apiClient = apiClient
+        self.userLocationService = userLocationService
     }
 
     private lazy var apiService: UserProfileApiService = {
@@ -70,7 +72,8 @@ final class UserProfileModule {
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
             getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
-            getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase
+            getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
+            userLocationService: userLocationService
         )
 
         return MyProfileViewModel(
@@ -102,7 +105,8 @@ final class UserProfileModule {
             getUserBookmarkedPostsUseCase: getUserBookmarkedPostsUseCase,
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
             getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
-            getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase
+            getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
+            userLocationService: userLocationService
         )
 
         return UserProfileViewModel(

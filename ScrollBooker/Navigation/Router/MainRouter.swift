@@ -43,5 +43,8 @@ struct MainRouter: View {
             router.appointmentsCount = appointmentsCount ?? 0
             router.notificationsCount = notificationsCount ?? 0
         }
+        .task {
+            _ = await container.userLocationService.currentLocation()
+        }
     }
 }

@@ -21,37 +21,42 @@ final class BusinessProfileViewModel {
     
     private let username: String
     private let getBusinessProfileUseCase: GetBusinessProfileUseCase
-    
+    private let userLocationService: UserLocationService
+
     init(
         username: String,
-        getBusinessProfileUseCase: GetBusinessProfileUseCase
+        getBusinessProfileUseCase: GetBusinessProfileUseCase,
+        userLocationService: UserLocationService
     ) {
         self.username = username
         self.getBusinessProfileUseCase = getBusinessProfileUseCase
+        self.userLocationService = userLocationService
     }
-    
+
     func loadBusinessProfile() async {
         guard viewState.data == nil else { return }
         guard viewState != .loading else { return }
-        
+
         viewState = .loading
-        
+
         do {
+            let userLocation = await userLocationService.currentLocation()
             let result = try await withLoading {
-                try await getBusinessProfileUseCase(username: username)
+                try await getBusinessProfileUseCase(username: username, lat: userLocation?.lat, lng: userLocation?.lng)
             }
             viewState = .success(result)
         } catch {
             viewState = .error(logger.userMessage(for: error, context: "Fetching Business Profile (\(self.username))"))
         }
     }
-    
+
     func refresh() async {
         guard !isRefreshing else { return }
         isRefreshing = true
-        
+
         do {
-            let result = try await getBusinessProfileUseCase(username: username)
+            let userLocation = await userLocationService.currentLocation()
+            let result = try await getBusinessProfileUseCase(username: username, lat: userLocation?.lat, lng: userLocation?.lng)
             viewState = .success(result)
         } catch {
             let message = logger.userMessage(for: error, context: "Refreshing Business Profile")

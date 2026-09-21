@@ -59,6 +59,7 @@ final class ProfileController {
     private let getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
     private let getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
+    private let userLocationService: UserLocationService
 
     init(
         getUserProfileUseCase: GetUserProfileUseCase,
@@ -67,7 +68,8 @@ final class ProfileController {
         getUserBookmarkedPostsUseCase: GetUserBookmarkedPostsUseCase,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
-        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
+        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
+        userLocationService: UserLocationService
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
         self.getUserProfileAboutUseCase = getUserProfileAboutUseCase
@@ -76,6 +78,7 @@ final class ProfileController {
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
         self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
         self.getSchedulesByUserIdUseCase = getSchedulesByUserIdUseCase
+        self.userLocationService = userLocationService
     }
 
     // MARK: - Profile (initial load, once)
@@ -86,8 +89,9 @@ final class ProfileController {
         viewState = .loading
 
         do {
+            let userLocation = await userLocationService.currentLocation()
             let result = try await withLoading {
-                try await getUserProfileUseCase(username: username)
+                try await getUserProfileUseCase(username: username, lat: userLocation?.lat, lng: userLocation?.lng)
             }
             viewState = .success(result)
         } catch {
@@ -97,7 +101,8 @@ final class ProfileController {
 
     private func performProfileRefresh(username: String) async {
         do {
-            let result = try await getUserProfileUseCase(username: username)
+            let userLocation = await userLocationService.currentLocation()
+            let result = try await getUserProfileUseCase(username: username, lat: userLocation?.lat, lng: userLocation?.lng)
             viewState = .success(result)
         } catch {
             guard !error.isCancellation else { return }

@@ -8,7 +8,7 @@
 import Foundation
 
 protocol UserProfileApiService: Sendable {
-    func getUserProfile(username: String) async throws -> UserProfileDTO
+    func getUserProfile(username: String, lat: Double?, lng: Double?) async throws -> UserProfileDTO
     func getUserProfileAbout(userId: Int) async throws -> UserProfileAboutDto
     func updateFullName(request: UpdateFullNameRequest) async throws -> UserProfileUpdateDto
     func updateUsername(request: UpdateUsernameRequest) async throws -> UserProfileUpdateDto
@@ -28,10 +28,17 @@ final class UserProfileApiImpl: UserProfileApiService {
         self.client = client
     }
 
-    func getUserProfile(username: String) async throws -> UserProfileDTO {
-        try await client.request(
+    func getUserProfile(username: String, lat: Double?, lng: Double?) async throws -> UserProfileDTO {
+        var query: [String: String] = [:]
+        if let lat, let lng {
+            query["lat"] = "\(lat)"
+            query["lng"] = "\(lng)"
+        }
+
+        return try await client.request(
             "users/\(username)/user-profile",
-            method: .get
+            method: .get,
+            query: query
         )
     }
     

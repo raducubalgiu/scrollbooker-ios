@@ -11,10 +11,12 @@ import Foundation
 final class BusinessModule {
     private let apiClient: APIClient
     private let updateSchedulesUseCase: UpdateSchedulesUseCase
+    private let userLocationService: UserLocationService
 
-    init(apiClient: APIClient, updateSchedulesUseCase: UpdateSchedulesUseCase) {
+    init(apiClient: APIClient, updateSchedulesUseCase: UpdateSchedulesUseCase, userLocationService: UserLocationService) {
         self.apiClient = apiClient
         self.updateSchedulesUseCase = updateSchedulesUseCase
+        self.userLocationService = userLocationService
     }
 
     private lazy var apiService: BusinessApiService = {
@@ -67,14 +69,16 @@ final class BusinessModule {
             getBusinessesMarkersUseCase: getBusinessesMarkersUseCase,
             getAllBusinessDomainsUseCase: getAllBusinessDomainsUseCase,
             getRecentSearchesUseCase: getRecentSearchesUseCase,
-            getServicesByServiceDomainUseCase: getServicesByServiceDomainUseCase
+            getServicesByServiceDomainUseCase: getServicesByServiceDomainUseCase,
+            userLocationService: userLocationService
         )
     }
-    
+
     func makeBusinessProfileViewModel(username: String) -> BusinessProfileViewModel {
         BusinessProfileViewModel(
             username: username,
-            getBusinessProfileUseCase: getBusinessProfileUseCase
+            getBusinessProfileUseCase: getBusinessProfileUseCase,
+            userLocationService: userLocationService
         )
     }
 

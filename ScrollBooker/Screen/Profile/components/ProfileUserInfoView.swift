@@ -14,6 +14,8 @@ struct ProfileUserInfoView: View {
     var isBusinessOrEmployee: Bool
     var ratingsAverage: Float
     var openingHours: OpeningHours
+    var distanceKm: Double?
+    var address: String?
     var onShowOpeningHoursSheet: () -> Void
     
     var body: some View {
@@ -57,6 +59,26 @@ struct ProfileUserInfoView: View {
                             Image(systemName: "chevron.down")
                                 .foregroundColor(.onBackgroundSB)
                         }
+                    }
+                    .padding(.top, .xxs)
+                }
+
+                if isBusinessOrEmployee, let address {
+                    HStack(spacing: 0) {
+                        if let distanceKm {
+                            Text("\(String(format: "%.1f", distanceKm))km")
+                                .font(.footnote)
+                                .foregroundColor(.gray)
+                                .lineLimit(1)
+
+                            Text("  \u{2022}  ")
+                                .foregroundColor(.gray)
+                        }
+
+                        Text(address)
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                            .lineLimit(1)
                     }
                     .padding(.top, .xxs)
                 }

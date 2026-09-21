@@ -70,6 +70,8 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                             isBusinessOrEmployee: user.isBusinessOrEmployee,
                             ratingsAverage: user.counters.ratingsAverage,
                             openingHours: user.openingHours,
+                            distanceKm: user.distanceKm,
+                            address: user.address,
                             onShowOpeningHoursSheet: onShowOpeningHours
                         )
 

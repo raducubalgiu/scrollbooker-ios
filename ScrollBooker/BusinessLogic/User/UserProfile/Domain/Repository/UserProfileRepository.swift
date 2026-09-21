@@ -8,7 +8,7 @@
 import Foundation
 
 protocol UserProfileRepository: Sendable {
-    func getUserProfile(username: String) async throws -> UserProfile
+    func getUserProfile(username: String, lat: Double?, lng: Double?) async throws -> UserProfile
     func getUserProfileAbout(userId: Int) async throws -> UserProfileAbout
     func updateFullName(request: UpdateFullNameRequest) async throws -> UserProfileUpdate
     func updateUsername(request: UpdateUsernameRequest) async throws -> UserProfileUpdate

@@ -13,6 +13,7 @@ import Observation
 final class AppContainer {
     let session: SessionManager
     let apiClient: APIClient
+    let userLocationService: UserLocationService
 
     let authModule: AuthModule
     let userInfoModule: UserInfoModule
@@ -50,6 +51,8 @@ final class AppContainer {
         // care lăsa o fereastră de timp în care primele request-uri de la bootstrap treceau neinterceptate).
         let authInterceptor = AuthInterceptor()
         self.apiClient = APIClient(config: .default, interceptors: [authInterceptor])
+        let userLocationService = UserLocationService()
+        self.userLocationService = userLocationService
 
         let authStore = AuthStore()
         let userInfoModule = UserInfoModule(apiClient: apiClient)
@@ -70,7 +73,7 @@ final class AppContainer {
         )
         authInterceptor.sessionManager = session
 
-        let userProfileModule = UserProfileModule(apiClient: apiClient)
+        let userProfileModule = UserProfileModule(apiClient: apiClient, userLocationService: userLocationService)
         self.userProfileModule = userProfileModule
         let businessTypeModule = BusinessTypeModule(apiClient: apiClient)
         self.businessTypeModule = businessTypeModule
@@ -78,7 +81,8 @@ final class AppContainer {
         self.scheduleModule = scheduleModule
         let businessModule = BusinessModule(
             apiClient: apiClient,
-            updateSchedulesUseCase: scheduleModule.updateSchedulesUseCase
+            updateSchedulesUseCase: scheduleModule.updateSchedulesUseCase,
+            userLocationService: userLocationService
         )
         self.businessModule = businessModule
         let servieDomainModule = ServiceDomainModule(apiClient: apiClient)

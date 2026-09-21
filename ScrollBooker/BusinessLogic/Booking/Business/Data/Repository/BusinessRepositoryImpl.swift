@@ -34,8 +34,8 @@ final class BusinessRepositoryImpl: BusinessRepository {
         }
     }
     
-    func getBusinessProfile(username: String) async throws -> BusinessProfile {
-        let dtoResponse = try await api.getBusinessProfile(username: username)
+    func getBusinessProfile(username: String, lat: Double?, lng: Double?) async throws -> BusinessProfile {
+        let dtoResponse = try await api.getBusinessProfile(username: username, lat: lat, lng: lng)
         return BusinessProfile(from: dtoResponse)
     }
 

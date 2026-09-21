@@ -10,7 +10,7 @@ import Foundation
 protocol BusinessApiService: Sendable {
     func getBusinessesSheet(page: Int, limit: Int, request: SearchBusinessRequest) async throws -> PaginatedResponseDTO<BusinessSheetDto>
     func getBusinessesMarkers(request: SearchBusinessRequest) async throws -> [BusinessMarkerDto]
-    func getBusinessProfile(username: String) async throws -> BusinessProfileDto
+    func getBusinessProfile(username: String, lat: Double?, lng: Double?) async throws -> BusinessProfileDto
     func getMyBusinessDetails() async throws -> BusinessDetailsDto
     func getUnapprovedBusinesses(page: Int, limit: Int) async throws -> PaginatedResponseDTO<UnapprovedBusinessDto>
     func approveBusiness(userId: Int) async throws -> NoContent
@@ -47,10 +47,17 @@ final class BusinessAPIImpl: BusinessApiService {
         )
     }
     
-    func getBusinessProfile(username: String) async throws -> BusinessProfileDto {
+    func getBusinessProfile(username: String, lat: Double?, lng: Double?) async throws -> BusinessProfileDto {
+        var query: [String: String] = [:]
+        if let lat, let lng {
+            query["lat"] = "\(lat)"
+            query["lng"] = "\(lng)"
+        }
+
         return try await client.request(
             "businesses/\(username)/profile",
-            method: .get
+            method: .get,
+            query: query
         )
     }
 

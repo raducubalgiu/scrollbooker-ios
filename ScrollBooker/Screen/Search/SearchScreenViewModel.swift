@@ -80,6 +80,7 @@ final class SearchViewModel {
     private let getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase
     private let getRecentSearchesUseCase: GetRecentSearchesUseCase
     private let getServicesByServiceDomainUseCase: GetServicesByServiceDomainUseCase
+    private let userLocationService: UserLocationService
 
     private var page = 1
     private let limit = 20
@@ -111,13 +112,15 @@ final class SearchViewModel {
         getBusinessesMarkersUseCase: GetBusinessesMarkersUseCase,
         getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase,
         getRecentSearchesUseCase: GetRecentSearchesUseCase,
-        getServicesByServiceDomainUseCase: GetServicesByServiceDomainUseCase
+        getServicesByServiceDomainUseCase: GetServicesByServiceDomainUseCase,
+        userLocationService: UserLocationService
     ) {
         self.getBusinessesSheetUseCase = getBusinessesSheetUseCase
         self.getBusinessesMarkersUseCase = getBusinessesMarkersUseCase
         self.getAllBusinessDomainsUseCase = getAllBusinessDomainsUseCase
         self.getRecentSearchesUseCase = getRecentSearchesUseCase
         self.getServicesByServiceDomainUseCase = getServicesByServiceDomainUseCase
+        self.userLocationService = userLocationService
     }
 
     func loadServices(serviceDomainId: Int) async {
@@ -217,7 +220,7 @@ final class SearchViewModel {
         viewState = .loading
         operationErrorMessage = nil
 
-        let requestDto = createRequestDto(bbox: bbox, zoom: zoom)
+        let requestDto = await createRequestDto(bbox: bbox, zoom: zoom)
 
         async let recentSearchesPrefetch: Void = loadRecentSearchesIfNeeded()
 
@@ -321,7 +324,7 @@ final class SearchViewModel {
         }
 
         operationErrorMessage = nil
-        let requestDto = createRequestDto(bbox: bbox, zoom: currentZoom)
+        let requestDto = await createRequestDto(bbox: bbox, zoom: currentZoom)
 
         do {
             if isFirstPage {
@@ -367,10 +370,12 @@ final class SearchViewModel {
     }
 
     /// Helper privat menit să unifice și să curețe instanțierea DTO-ului către server.
-    private func createRequestDto(bbox: BusinessBoundingBox, zoom: Float) -> SearchBusinessRequest {
-        SearchBusinessRequest(
+    private func createRequestDto(bbox: BusinessBoundingBox, zoom: Float) async -> SearchBusinessRequest {
+        let userLocation = await userLocationService.currentLocation()
+
+        return SearchBusinessRequest(
             bbox: bbox,
-            userLocation: nil,
+            userLocation: userLocation,
             zoom: zoom,
             maxMarkers: 100,
             businessDomainId: filters.businessDomainId,

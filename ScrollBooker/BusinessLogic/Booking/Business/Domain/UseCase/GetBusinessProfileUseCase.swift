@@ -12,7 +12,7 @@ final class GetBusinessProfileUseCase {
         self.repository = repository
     }
 
-    func callAsFunction(username: String) async throws -> BusinessProfile {
-        try await repository.getBusinessProfile(username: username)
+    func callAsFunction(username: String, lat: Double?, lng: Double?) async throws -> BusinessProfile {
+        try await repository.getBusinessProfile(username: username, lat: lat, lng: lng)
     }
 }

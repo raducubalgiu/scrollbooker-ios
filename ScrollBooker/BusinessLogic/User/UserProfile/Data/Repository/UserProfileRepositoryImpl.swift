@@ -14,8 +14,8 @@ final class UserProfileRepositoryImpl: UserProfileRepository {
         self.api = api
     }
     
-    func getUserProfile(username: String) async throws -> UserProfile {
-        let dto = try await api.getUserProfile(username: username)
+    func getUserProfile(username: String, lat: Double?, lng: Double?) async throws -> UserProfile {
+        let dto = try await api.getUserProfile(username: username, lat: lat, lng: lng)
         return UserProfile(dto: dto)
     }
     

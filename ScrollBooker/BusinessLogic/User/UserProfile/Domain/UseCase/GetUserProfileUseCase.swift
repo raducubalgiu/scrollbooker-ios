@@ -14,7 +14,7 @@ final class GetUserProfileUseCase {
         self.repository = repository
     }
 
-    func callAsFunction(username: String) async throws -> UserProfile {
-        try await repository.getUserProfile(username: username)
+    func callAsFunction(username: String, lat: Double? = nil, lng: Double? = nil) async throws -> UserProfile {
+        try await repository.getUserProfile(username: username, lat: lat, lng: lng)
     }
 }

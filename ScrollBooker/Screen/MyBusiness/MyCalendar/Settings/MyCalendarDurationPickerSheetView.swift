@@ -41,20 +41,24 @@ struct MyCalendarDurationPickerSheetView: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeaderView(onDismiss: onClose, title: title)
+            SheetHeaderView(onDismiss: onClose, title: title, showDivider: false)
 
-            ForEach(options) { option in
-                InputRadio(
-                    title: option.label,
-                    isSelected: option.minutes == localSelection,
-                    onClick: { localSelection = option.minutes }
-                )
-                .padding(.horizontal, .base)
+            VStack(spacing: 0) {
+                ForEach(Array(options.enumerated()), id: \.element.id) { index, option in
+                    InputRadio(
+                        title: option.label,
+                        isSelected: option.minutes == localSelection,
+                        onClick: { localSelection = option.minutes }
+                    )
 
-                if option.id != options.last?.id {
-                    Divider().padding(.horizontal, .base)
+                    if index < options.count - 1 {
+                        Divider()
+                            .background(Color.gray.opacity(0.3))
+                            .padding(.vertical, .s)
+                    }
                 }
             }
+            .padding(.horizontal, .base)
 
             Divider()
 
@@ -69,6 +73,7 @@ struct MyCalendarDurationPickerSheetView: View {
             )
             .padding(.base)
         }
+        .frame(maxHeight: .infinity, alignment: .top)
         .onChange(of: selectedMinutes) { _, newValue in
             if let pendingSave, newValue == pendingSave {
                 onClose()

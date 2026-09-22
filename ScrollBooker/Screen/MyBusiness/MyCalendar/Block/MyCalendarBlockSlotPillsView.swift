@@ -26,7 +26,7 @@ struct MyCalendarBlockSlotPillsView: View {
     private var sortedValues: [String] { startDateLocaleValues.sorted() }
 
     var body: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 80), spacing: 8)], alignment: .leading, spacing: 8) {
+        FlowLayout(horizontalSpacing: AppSize.xs.rawValue, verticalSpacing: AppSize.xs.rawValue) {
             ForEach(sortedValues, id: \.self) { raw in
                 HStack(spacing: 4) {
                     Image(systemName: "clock")

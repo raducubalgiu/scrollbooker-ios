@@ -23,7 +23,21 @@ struct MyCalendarBlockSheetView: View {
 
     private var isOtherReason: Bool { selectedReason == .other }
     private var trimmedMessage: String { message.trimmingCharacters(in: .whitespacesAndNewlines) }
-    private var isMessageValid: Bool { (minLength...maxLength).contains(trimmedMessage.count) }
+
+    private var messageErrorMessage: String? {
+        if trimmedMessage.isEmpty {
+            return String(localized: "requiredValidationMessage")
+        }
+        if trimmedMessage.count < minLength {
+            return String(format: String(localized: "minLengthValidationMessage"), minLength)
+        }
+        if trimmedMessage.count > maxLength {
+            return String(format: String(localized: "maxLengthValidationMessage"), maxLength)
+        }
+        return nil
+    }
+
+    private var isMessageValid: Bool { messageErrorMessage == nil }
 
     private var isButtonEnabled: Bool {
         let hasValidContent = isOtherReason ? isMessageValid : true
@@ -49,7 +63,7 @@ struct MyCalendarBlockSheetView: View {
                     Text(String(localized: "reason"))
                         .font(.headline)
 
-                    LazyVGrid(columns: [GridItem(.adaptive(minimum: 110), spacing: 8)], alignment: .leading, spacing: 8) {
+                    FlowLayout(horizontalSpacing: AppSize.s.rawValue, verticalSpacing: AppSize.s.rawValue) {
                         ForEach(MyCalendarBlockReasonEnum.allCases, id: \.self) { reason in
                             MyCalendarBlockReasonChipView(
                                 title: reason.label,
@@ -64,12 +78,36 @@ struct MyCalendarBlockSheetView: View {
                     }
 
                     if isOtherReason {
-                        TextField(String(localized: "addMessage"), text: $message, axis: .vertical)
-                            .lineLimit(3, reservesSpace: true)
-                            .padding()
-                            .background(Color(.secondarySystemBackground))
-                            .cornerRadius(12)
-                            .disabled(isSaving)
+                        VStack(alignment: .trailing, spacing: 4) {
+                            TextField(String(localized: "addMessage"), text: $message, axis: .vertical)
+                                .lineLimit(3, reservesSpace: true)
+                                .padding()
+                                .background(Color.surfaceSB)
+                                .cornerRadius(12)
+                                .disabled(isSaving)
+                                .onChange(of: message) { _, newValue in
+                                    if newValue.count > maxLength {
+                                        message = String(newValue.prefix(maxLength))
+                                    }
+                                }
+
+                            Text("\(message.count) / \(maxLength)")
+                                .font(.footnote)
+                                .foregroundColor(.gray)
+
+                            if let messageErrorMessage {
+                                HStack(spacing: 4) {
+                                    Image(systemName: "exclamationmark.triangle.fill")
+                                        .font(.footnote)
+                                        .foregroundColor(.errorSB)
+
+                                    Text(messageErrorMessage)
+                                        .font(.footnote)
+                                        .foregroundColor(.errorSB)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                }
+                            }
+                        }
                     }
                 }
                 .padding(.base)

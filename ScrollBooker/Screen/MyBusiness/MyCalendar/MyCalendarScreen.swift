@@ -131,6 +131,8 @@ struct MyCalendarScreen: View {
                 }
             )
             .presentationDetents([.fraction(0.75), .large])
+            .presentationDragIndicator(.hidden)
+            .presentationCornerRadius(25)
         }
         .sheet(isPresented: $showEmployeeSheet) {
             MyCalendarEmployeeSheetView(
@@ -144,6 +146,8 @@ struct MyCalendarScreen: View {
                 onClose: { showEmployeeSheet = false }
             )
             .presentationDetents([.fraction(0.6), .large])
+            .presentationDragIndicator(.hidden)
+            .presentationCornerRadius(25)
         }
     }
 }

@@ -50,7 +50,7 @@ struct HeaderView<CustomAction: View>: View {
                         actionView()
                     }
                 }
-                .frame(minHeight: 44)
+                .frame(width: 44, height: 44)
             }
         }
         .frame(maxWidth: .infinity)

@@ -22,7 +22,20 @@ struct MyCalendarSettingsScreen: View {
 
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(title: String(localized: "calendarSettings"), onBack: onBack)
+            HeaderView(
+                title: String(localized: "calendarSettings"),
+                enableBack: false,
+                onBack: onBack,
+                customAction: {
+                    Button {
+                        onBack()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.onBackgroundSB)
+                    }
+                }
+            )
 
             ScrollView {
                 VStack(spacing: 0) {
@@ -44,7 +57,7 @@ struct MyCalendarSettingsScreen: View {
                         )
                     }
                 }
-                .padding(.horizontal, .base)
+                .padding(.base)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -61,6 +74,8 @@ struct MyCalendarSettingsScreen: View {
                         onClose: { activePicker = nil }
                     )
                     .presentationDetents([.fraction(0.5)])
+                    .presentationDragIndicator(.hidden)
+                    .presentationCornerRadius(25)
 
                 case .gap:
                     MyCalendarDurationPickerSheetView(
@@ -72,6 +87,8 @@ struct MyCalendarSettingsScreen: View {
                         onClose: { activePicker = nil }
                     )
                     .presentationDetents([.fraction(0.5)])
+                    .presentationDragIndicator(.hidden)
+                    .presentationCornerRadius(25)
             }
         }
     }

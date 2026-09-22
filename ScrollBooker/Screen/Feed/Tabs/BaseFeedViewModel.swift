@@ -192,6 +192,34 @@ class BaseFeedViewModel {
     }
     
     @MainActor
+    func sharePostBase(
+        postId: Int,
+        channel: ShareChannelEnum,
+        shareAction: (Int, ShareChannelEnum) async throws -> NoContent
+    ) async {
+        guard let index = posts.firstIndex(where: { $0.id == postId }) else { return }
+        
+        let originalPost = posts[index]
+        let newShareCount = originalPost.counters.shareCount + 1
+        
+        posts[index] = originalPost.copy(
+            counters: originalPost.counters.copy(shareCount: newShareCount)
+        )
+        
+        operationErrorMessage = nil
+        
+        do {
+            _ = try await shareAction(postId, channel)
+        } catch {
+            if let currentIndex = posts.firstIndex(where: { $0.id == postId }) {
+                posts[currentIndex] = originalPost
+            }
+            operationErrorMessage = logger.userMessage(for: error, context: "Sharing post \(postId) on channel \(channel.rawValue)")
+        }
+    }
+
+    
+    @MainActor
     func toggleFollow(
         postId: Int,
         followAction: (Int) async throws -> NoContent,
@@ -225,6 +253,8 @@ class BaseFeedViewModel {
             operationErrorMessage = logger.userMessage(for: error, context: "Toggling Follow for user \(followeeId)")
         }
     }
+    
+    
 
     /// Lets a subclass whose `posts` come from an already-loaded, externally-owned source
     /// (e.g. `ProfileController.postsState`/`.bookmarksState`, for the profile post-detail

@@ -20,4 +20,5 @@ protocol PostRepository: Sendable {
     func createPost(request: CreatePostRequest) async throws -> NoContent
     func createVideoReview(request: CreateVideoReviewRequest) async throws -> NoContent
     func updatePost(id: Int, request: UpdatePostRequest) async throws -> Post
+    func sharePost(id: Int, request: ShareRequest) async throws -> NoContent
 }

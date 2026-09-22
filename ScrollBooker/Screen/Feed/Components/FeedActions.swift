@@ -17,7 +17,7 @@ struct FeedActions {
     var onLike: (Int) -> Void = { _ in }
     var onBookmark: (Int) -> Void = { _ in }
     var onFollow: (Int) -> Void = { _ in }
-}
+    var onShare: (Post, ShareChannelEnum) -> Void = { _, _ in }}
 
 struct FeedActionsKey: EnvironmentKey {
     static let defaultValue = FeedActions()

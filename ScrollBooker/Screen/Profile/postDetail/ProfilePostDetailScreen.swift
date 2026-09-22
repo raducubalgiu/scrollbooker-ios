@@ -7,11 +7,6 @@
 
 import SwiftUI
 
-/// Shared by both "my own profile" and "another user's profile" — mirrors Android's
-/// BaseProfilePostDetailScreen: same pager/sheet machinery as ExploreTab/FollowingTab, but pushed
-/// as its own full-screen destination (own header with a title reflecting which grid it was opened
-/// from, own close button, own currentIndex seeded at the tapped post) with the per-post inline
-/// "Rezervă acum" button replaced by one persistent bar pinned under the pager.
 struct ProfilePostDetailScreen: View {
     var viewModel: ProfilePostDetailViewModel
     let source: ProfilePostSource
@@ -91,12 +86,6 @@ struct ProfilePostDetailScreen: View {
 
             header
         }
-        // .ignoresSafeArea(.all) (Explore/Following's own default) would also ignore the bottom
-        // region this safeAreaInset reserves, so containerRelativeFrame would size against the
-        // full screen and the video would render straight through/under the bar. Restricting to
-        // the top edge extends the video under the status bar only, leaving the bottom safe area
-        // (now including this bar's height) intact for containerRelativeFrame to size against —
-        // giving exactly totalHeight - bar height, with the bar itself opaque and non-overlapping.
         .safeAreaInset(edge: .bottom, spacing: 0) {
             bookNowButton
         }
@@ -109,7 +98,27 @@ struct ProfilePostDetailScreen: View {
             onOpenMoreOptions: { postId in activeSheet = .moreOptions(postId: postId) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } },
-            onFollow: { id in Task { await viewModel.toggleFollowPost(id: id) } }
+            onFollow: { id in Task { await viewModel.toggleFollowPost(id: id) } },
+            onShare: { post, _ in
+                let shareBaseURL = "https://scrollbooker-web.vercel.app"
+                let professionSlug = post.user.profession.toSlug()
+                let urlString = "\(shareBaseURL)/user/\(post.user.username)/\(professionSlug)/post/\(post.id)"
+                guard let postURL = URL(string: urlString) else { return }
+                let activityVC = UIActivityViewController(activityItems: [postURL], applicationActivities: nil)
+                
+                activityVC.completionWithItemsHandler = { activityType, completed, returnedItems, error in
+                    if completed {
+                        Task {
+                            await viewModel.sharePost(id: post.id, channel: .other)
+                        }
+                    }
+                }
+                
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let rootVC = windowScene.windows.first?.rootViewController {
+                    rootVC.present(activityVC, animated: true, completion: nil)
+                }
+            }
         ))
         .sheet(item: $activeSheet, onDismiss: {
             pendingSheetAction?()

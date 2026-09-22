@@ -96,4 +96,8 @@ final class PostRepositoryImpl: PostRepository {
         let dto = try await api.updatePost(id: id, request: request)
         return Post(from: dto)
     }
+    
+    func sharePost(id: Int, request: ShareRequest) async throws -> NoContent {
+        return try await api.sharePost(id: id, request: request)
+    }
 }

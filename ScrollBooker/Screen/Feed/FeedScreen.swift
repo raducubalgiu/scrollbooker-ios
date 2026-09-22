@@ -87,9 +87,7 @@ struct FeedScreen: View {
         .overlay(alignment: .top) {
             FeedHeaderView(
                 selectedTab: viewModel.selectedTab,
-                onChangeTab: { newTab in
-                    viewModel.handleTabChange(to: newTab)
-                },
+                onChangeTab: { newTab in viewModel.handleTabChange(to: newTab) },
                 onNavigateToFeedSearch: onNavigateToFeedSearch,
                 onOpenDrawer: onOpenDrawer,
                 activeFiltersCount: viewModel.exploreViewModel.activeFiltersCount

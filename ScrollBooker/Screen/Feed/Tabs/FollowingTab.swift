@@ -41,7 +41,7 @@ struct FollowingTab: View {
                 case .empty:
                     NoDataView(
                         title: String(localized: "title_posts"),
-                        message: "Nu există postări",
+                        message: String(localized: "message_empty_posts"),
                         systemImage: "video.slash"
                     )
                     
@@ -64,7 +64,27 @@ struct FollowingTab: View {
             onOpenMoreOptions: { activeSheet = .moreOptions(postId: $0) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } },
-            onFollow: { id in Task { await viewModel.toggleFollowPost(id: id) } }
+            onFollow: { id in Task { await viewModel.toggleFollowPost(id: id) } },
+            onShare: { post, _ in
+                let shareBaseURL = "https://scrollbooker-web.vercel.app"
+                let professionSlug = post.user.profession.toSlug()
+                let urlString = "\(shareBaseURL)/user/\(post.user.username)/\(professionSlug)/post/\(post.id)"
+                guard let postURL = URL(string: urlString) else { return }
+                let activityVC = UIActivityViewController(activityItems: [postURL], applicationActivities: nil)
+                
+                activityVC.completionWithItemsHandler = { activityType, completed, returnedItems, error in
+                    if completed {
+                        Task {
+                            await viewModel.sharePost(id: post.id, channel: .other)
+                        }
+                    }
+                }
+                
+                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                   let rootVC = windowScene.windows.first?.rootViewController {
+                    rootVC.present(activityVC, animated: true, completion: nil)
+                }
+            }
         ))
         .sheet(item: $activeSheet, onDismiss: {
             pendingSheetAction?()

@@ -42,14 +42,12 @@ struct PostsSuccessView: View {
                                 .ignoresSafeArea()
                             }
 
-                            // 2. Stratul Video
                             if let player = viewModel.players[post.id] {
                                 PlayerView(player: player)
                                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                                     .allowsHitTesting(false)
                             }
 
-                            // 3. Stratul de Interfață: Acum curățat complet de parametri redundanți!
                             PostOverlayView(post: post, showBookButton: showBookButton)
                         }
                         .containerRelativeFrame(.horizontal)
@@ -68,10 +66,6 @@ struct PostsSuccessView: View {
             .scrollIndicators(.never)
             .scrollPosition(id: $currentIndex)
             .onAppear {
-                // .scrollPosition(id:) alone doesn't reliably jump to a non-zero starting id inside
-                // a LazyVStack on first layout (the target row hasn't been measured yet since the
-                // viewport starts at the top) — ScrollViewReader.scrollTo forces it, since every row
-                // here is a uniform, known (screen-sized) height.
                 if let target = currentIndex, target != 0 {
                     proxy.scrollTo(target, anchor: .top)
                 }

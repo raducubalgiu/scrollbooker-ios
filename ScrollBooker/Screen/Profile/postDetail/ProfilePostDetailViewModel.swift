@@ -30,6 +30,7 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
     private let unbookmarkPostUseCase: UnbookmarkPostUseCase
     private let followUserUseCase: FollowUserUseCase
     private let unfollowUserUseCase: UnfollowUserUseCase
+    private let sharePostUseCase: SharePostUseCase
 
     init(
         profileController: ProfileController,
@@ -41,7 +42,8 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
         bookmarkPostUseCase: BookmarkPostUseCase,
         unbookmarkPostUseCase: UnbookmarkPostUseCase,
         followUserUseCase: FollowUserUseCase,
-        unfollowUserUseCase: UnfollowUserUseCase
+        unfollowUserUseCase: UnfollowUserUseCase,
+        sharePostUseCase: SharePostUseCase
     ) {
         self.profileController = profileController
         self.source = source
@@ -52,6 +54,7 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
         self.unbookmarkPostUseCase = unbookmarkPostUseCase
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
+        self.sharePostUseCase = sharePostUseCase
         super.init()
 
         let initialPosts = Self.currentPosts(from: profileController, source: source)
@@ -97,6 +100,17 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
             unbookmarkAction: { [weak self] postId in
                 guard let self else { throw APIError.invalidResponse }
                 return try await self.unbookmarkPostUseCase(id: postId)
+            }
+        )
+    }
+    
+    func sharePost(id: Int, channel: ShareChannelEnum) async {
+        await sharePostBase(
+            postId: id,
+            channel: channel,
+            shareAction: { [weak self] postId, selectedChannel in
+                guard let self else { throw APIError.invalidResponse }
+                return try await self.sharePostUseCase(id: postId, channel: selectedChannel)
             }
         )
     }

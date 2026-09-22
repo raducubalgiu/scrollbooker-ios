@@ -22,6 +22,7 @@ protocol PostApiService: Sendable {
     func createPost(request: CreatePostRequest) async throws -> NoContent
     func createVideoReview(request: CreateVideoReviewRequest) async throws -> NoContent
     func updatePost(id: Int, request: UpdatePostRequest) async throws -> PostDto
+    func sharePost(id: Int, request: ShareRequest) async throws -> NoContent
 }
 
 final class PostAPIImpl: PostApiService {
@@ -175,6 +176,14 @@ final class PostAPIImpl: PostApiService {
         return try await client.request(
             "posts/\(id)",
             method: .delete
+        )
+    }
+    
+    func sharePost(id: Int, request: ShareRequest) async throws -> NoContent {
+        return try await client.request(
+            "posts/\(id)/shares",
+            method: .post,
+            body: request
         )
     }
 }

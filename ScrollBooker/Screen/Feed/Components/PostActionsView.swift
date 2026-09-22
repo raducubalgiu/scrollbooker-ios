@@ -110,9 +110,9 @@ struct PostActionsView: View {
                 }
             }
             .buttonStyle(.plain)
-
+            
             Button {
-
+                actions.onShare(post, .other)
             } label: {
                 VStack(alignment: .center, spacing: 2) {
                     Image(systemName: "arrowshape.turn.up.right")
@@ -120,13 +120,14 @@ struct PostActionsView: View {
                         .foregroundColor(.white)
                         .actionIconShadow()
 
-                    Text("\(10)")
+                    Text("\(post.counters.shareCount)")
                         .font(.footnote)
                         .fontWeight(.semibold)
                         .foregroundColor(.white)
                 }
             }
             .buttonStyle(.plain)
+
 
             if post.isOwnPost {
                 Button {

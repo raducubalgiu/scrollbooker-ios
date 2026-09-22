@@ -58,6 +58,10 @@ final class PostModule {
         UnbookmarkPostUseCase(repository: repository)
     }()
     
+    private lazy var sharePostUseCase: SharePostUseCase = {
+        SharePostUseCase(repository: repository)
+    }()
+    
     lazy var getVideoReviewsUseCase: GetVideoReviewsUseCase = {
         GetVideoReviewsUseCase(repository: repository)
     }()
@@ -117,7 +121,8 @@ final class PostModule {
             bookmarkPostUseCase: bookmarkPostUseCase,
             unbookmarkPostUseCase: unbookmarkPostUseCase,
             followUserUseCase: followUserUseCase,
-            unfollowUserUseCase: unfollowUserUseCase
+            unfollowUserUseCase: unfollowUserUseCase,
+            sharePostUseCase: sharePostUseCase
         )
     }
 
@@ -129,7 +134,8 @@ final class PostModule {
             bookmarkPostUseCase: bookmarkPostUseCase,
             unbookmarkPostUseCase: unbookmarkPostUseCase,
             followUserUseCase: followUserUseCase,
-            unfollowUserUseCase: unfollowUserUseCase
+            unfollowUserUseCase: unfollowUserUseCase,
+            sharePostUseCase: sharePostUseCase
         )
     }
 
@@ -149,7 +155,8 @@ final class PostModule {
             bookmarkPostUseCase: bookmarkPostUseCase,
             unbookmarkPostUseCase: unbookmarkPostUseCase,
             followUserUseCase: followUserUseCase,
-            unfollowUserUseCase: unfollowUserUseCase
+            unfollowUserUseCase: unfollowUserUseCase,
+            sharePostUseCase: sharePostUseCase
         )
     }
 

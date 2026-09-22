@@ -20,6 +20,7 @@ final class ExploreTabViewModel: BaseFeedViewModel {
     private let unbookmarkPostUseCase: UnbookmarkPostUseCase
     private let followUserUseCase: FollowUserUseCase
     private let unfollowUserUseCase: UnfollowUserUseCase
+    private let sharePostUseCase: SharePostUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Feed")
 
     private(set) var serviceDomainsState: FeatureState<[ServiceDomain]> = .idle
@@ -38,7 +39,8 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         bookmarkPostUseCase: BookmarkPostUseCase,
         unbookmarkPostUseCase: UnbookmarkPostUseCase,
         followUserUseCase: FollowUserUseCase,
-        unfollowUserUseCase: UnfollowUserUseCase
+        unfollowUserUseCase: UnfollowUserUseCase,
+        sharePostUseCase: SharePostUseCase
     ) {
         self.getExplorePostsUseCase = getExplorePostsUseCase
         self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
@@ -48,6 +50,7 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         self.unbookmarkPostUseCase = unbookmarkPostUseCase
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
+        self.sharePostUseCase = sharePostUseCase
         super.init()
     }
 
@@ -131,6 +134,17 @@ final class ExploreTabViewModel: BaseFeedViewModel {
             unbookmarkAction: { [weak self] postId in
                 guard let self else { throw APIError.invalidResponse }
                 return try await self.unbookmarkPostUseCase(id: postId)
+            }
+        )
+    }
+    
+    func sharePost(id: Int, channel: ShareChannelEnum) async {
+        await sharePostBase(
+            postId: id,
+            channel: channel,
+            shareAction: { [weak self] postId, selectedChannel in
+                guard let self else { throw APIError.invalidResponse }
+                return try await self.sharePostUseCase(id: postId, channel: selectedChannel)
             }
         )
     }

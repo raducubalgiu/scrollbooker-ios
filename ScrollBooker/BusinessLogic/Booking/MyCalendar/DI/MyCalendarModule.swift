@@ -14,6 +14,8 @@ final class MyCalendarModule {
         businessId: Int,
         businessOwnerId: Int?,
         hasEmployees: Bool,
+        ownAvatar: String?,
+        ownFullName: String,
         getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
         getUserCalendarEventsUseCase: GetUserCalendarEventsUseCase,
         getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
@@ -21,6 +23,8 @@ final class MyCalendarModule {
         updateSlotDurationUseCase: UpdateSlotDurationUseCase,
         updateAppointmentGapUseCase: UpdateAppointmentGapUseCase,
         createBlockAppointmentsUseCase: CreateBlockAppointmentsUseCase,
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        getEmployeesAvailabilityForDayUseCase: GetEmployeesAvailabilityForDayUseCase,
         toastCenter: ToastCenter
     ) -> MyCalendarViewModel {
         MyCalendarViewModel(
@@ -28,6 +32,8 @@ final class MyCalendarModule {
             businessId: businessId,
             businessOwnerId: businessOwnerId,
             hasEmployees: hasEmployees,
+            ownAvatar: ownAvatar,
+            ownFullName: ownFullName,
             getUserAvailableDaysUseCase: getUserAvailableDaysUseCase,
             getUserCalendarEventsUseCase: getUserCalendarEventsUseCase,
             getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
@@ -35,6 +41,8 @@ final class MyCalendarModule {
             updateSlotDurationUseCase: updateSlotDurationUseCase,
             updateAppointmentGapUseCase: updateAppointmentGapUseCase,
             createBlockAppointmentsUseCase: createBlockAppointmentsUseCase,
+            getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
+            getEmployeesAvailabilityForDayUseCase: getEmployeesAvailabilityForDayUseCase,
             toastCenter: toastCenter
         )
     }

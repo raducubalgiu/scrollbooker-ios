@@ -83,7 +83,6 @@ struct MyCalendarDayTimelineView: View {
                     showCheckbox: showCheckbox,
                     isChecked: isChecked,
                     isCheckboxEnabled: !slot.isBlocked,
-                    onCheckboxTap: { onSlotTap(slot) },
                     onTap: onSlotTap
                 )
             }

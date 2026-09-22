@@ -12,9 +12,9 @@ struct CalendarHeaderPagerView: View {
     let calendarDays: [Date]
     let availableDaysSet: Set<String>
     let selectedDay: Date
+    var totalWeeks: Int = 26
+    var alwaysTappable: Bool = false
     var onChangeTab: (Int) -> Void
-    
-    private let totalWeeks = 26
     
     private static let isoFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -47,7 +47,8 @@ struct CalendarHeaderPagerView: View {
                                 isLoading: false,
                                 isDayAvailable: isAvailable,
                                 bgColor: isSelected ? Color.accentColor : Color.clear,
-                                label: shortDayLabel
+                                label: shortDayLabel,
+                                alwaysTappable: alwaysTappable
                             )
                         }
                         .frame(maxWidth: .infinity)

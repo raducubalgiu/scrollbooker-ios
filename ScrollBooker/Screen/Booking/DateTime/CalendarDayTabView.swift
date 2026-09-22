@@ -15,6 +15,7 @@ struct CalendarDayTabView: View {
     let isDayAvailable: Bool
     let bgColor: Color
     let label: String
+    var alwaysTappable: Bool = false
     
     private var isPastDay: Bool {
         let calendar = Calendar.current
@@ -62,7 +63,8 @@ struct CalendarDayTabView: View {
         .frame(maxWidth: .infinity)
         .contentShape(Rectangle())
         .onTapGesture {
-            if isDayAvailable && !isPastDay && !isLoading {
+            guard !isLoading else { return }
+            if alwaysTappable || (isDayAvailable && !isPastDay) {
                 onChangeTab()
             }
         }

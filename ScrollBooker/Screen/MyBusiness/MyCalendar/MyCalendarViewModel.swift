@@ -8,10 +8,15 @@
 import Foundation
 import Observation
 import OSLog
+import SwiftUI
 
 @Observable
 @MainActor
 final class MyCalendarViewModel {
+    static let pastWeeksCount = 26
+    static let futureWeeksCount = 26
+    static var totalWeeks: Int { pastWeeksCount + futureWeeksCount }
+
     private(set) var calendarHeaderState: FeatureState<CalendarHeaderData> = .idle
     private(set) var calendarEventsState: FeatureState<CalendarEvents> = .idle
     private(set) var daySchedule: Schedule?
@@ -25,15 +30,21 @@ final class MyCalendarViewModel {
     private(set) var selectedStartLocale: Set<String> = []
     private(set) var isSavingBlock = false
 
+    private(set) var employeesState: FeatureState<[Employee]> = .idle
+    private(set) var selectedEmployeeId: Int?
+    private(set) var employeesAvailability: [Int: Bool] = [:]
+
     var selectedDay: Date = Date()
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "MyCalendar")
 
     private let userId: Int
     private let businessId: Int
-    private let employeeId: Int?
+    private let selfEmployeeId: Int?
     private let isOwner: Bool
-    private let hasEmployees: Bool
+    private let hasEmployeesFlag: Bool
+    let ownAvatar: String?
+    let ownFullName: String
 
     private let getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase
     private let getUserCalendarEventsUseCase: GetUserCalendarEventsUseCase
@@ -42,6 +53,8 @@ final class MyCalendarViewModel {
     private let updateSlotDurationUseCase: UpdateSlotDurationUseCase
     private let updateAppointmentGapUseCase: UpdateAppointmentGapUseCase
     private let createBlockAppointmentsUseCase: CreateBlockAppointmentsUseCase
+    private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
+    private let getEmployeesAvailabilityForDayUseCase: GetEmployeesAvailabilityForDayUseCase
     private let toastCenter: ToastCenter
 
     private static let isoDateFormatter: DateFormatter = {
@@ -62,6 +75,8 @@ final class MyCalendarViewModel {
         businessId: Int,
         businessOwnerId: Int?,
         hasEmployees: Bool,
+        ownAvatar: String?,
+        ownFullName: String,
         getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
         getUserCalendarEventsUseCase: GetUserCalendarEventsUseCase,
         getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
@@ -69,11 +84,15 @@ final class MyCalendarViewModel {
         updateSlotDurationUseCase: UpdateSlotDurationUseCase,
         updateAppointmentGapUseCase: UpdateAppointmentGapUseCase,
         createBlockAppointmentsUseCase: CreateBlockAppointmentsUseCase,
+        getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
+        getEmployeesAvailabilityForDayUseCase: GetEmployeesAvailabilityForDayUseCase,
         toastCenter: ToastCenter
     ) {
         self.userId = userId
         self.businessId = businessId
-        self.hasEmployees = hasEmployees
+        self.hasEmployeesFlag = hasEmployees
+        self.ownAvatar = ownAvatar
+        self.ownFullName = ownFullName
         self.getUserAvailableDaysUseCase = getUserAvailableDaysUseCase
         self.getUserCalendarEventsUseCase = getUserCalendarEventsUseCase
         self.getSchedulesByUserIdUseCase = getSchedulesByUserIdUseCase
@@ -81,26 +100,47 @@ final class MyCalendarViewModel {
         self.updateSlotDurationUseCase = updateSlotDurationUseCase
         self.updateAppointmentGapUseCase = updateAppointmentGapUseCase
         self.createBlockAppointmentsUseCase = createBlockAppointmentsUseCase
+        self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
+        self.getEmployeesAvailabilityForDayUseCase = getEmployeesAvailabilityForDayUseCase
         self.toastCenter = toastCenter
         self.isOwner = businessOwnerId == userId
 
         if let businessOwnerId, businessOwnerId != userId {
-            self.employeeId = userId
+            self.selfEmployeeId = userId
         } else {
-            self.employeeId = nil
+            self.selfEmployeeId = nil
         }
     }
 
+    private var effectiveEmployeeId: Int? {
+        if let selfEmployeeId { return selfEmployeeId }
+        if isOwner && hasEmployeesFlag { return selectedEmployeeId }
+        return nil
+    }
+
     private var targetUserId: Int {
-        employeeId ?? userId
+        effectiveEmployeeId ?? userId
+    }
+
+    var showsEmployeeDropdown: Bool {
+        isOwner && hasEmployeesFlag
+    }
+
+    var selectedEmployee: Employee? {
+        employeesState.data?.first { $0.id == selectedEmployeeId }
     }
 
     var canSetAppointmentGap: Bool {
-        !(isOwner && hasEmployees)
+        !(isOwner && hasEmployeesFlag)
     }
 
     var hasFreeSlots: Bool {
         (calendarEventsState.data?.days.first?.slots ?? []).contains { $0.isFreeSlot }
+    }
+
+    var domainColor: Color {
+        guard let shortDomain = calendarEventsState.data?.businessShortDomain else { return .primarySB }
+        return BusinessShortDomainEnum(fromKeyOrUnknown: shortDomain).domainColor
     }
 
     var hasPendingBlockChanges: Bool {
@@ -113,6 +153,42 @@ final class MyCalendarViewModel {
 
     func loadInitialData() async {
         await loadCalendarSettings()
+        if showsEmployeeDropdown {
+            await loadEmployees()
+        }
+        await loadCalendarHeader()
+    }
+
+    func loadEmployees() async {
+        employeesState = .loading
+
+        do {
+            let employees = try await getEmployeesByOwnerUseCase(businessOwnerId: userId)
+            employeesState = .success(employees)
+            if selectedEmployeeId == nil {
+                selectedEmployeeId = employees.first?.id
+            }
+        } catch {
+            employeesState = .error(logger.userMessage(for: error, context: "Loading Employees"))
+        }
+    }
+
+    func loadEmployeesAvailability() async {
+        do {
+            let list = try await getEmployeesAvailabilityForDayUseCase(
+                day: Self.isoDateFormatter.string(from: selectedDay),
+                slotDuration: slotDurationMinutes
+            )
+            employeesAvailability = Dictionary(uniqueKeysWithValues: list.map { ($0.employeeId, $0.hasAvailability) })
+        } catch {
+            logger.error("ERROR: on fetching employees availability: \(error.localizedDescription, privacy: .public)")
+        }
+    }
+
+    func selectEmployee(_ employeeId: Int) async {
+        guard selectedEmployeeId != employeeId else { return }
+        selectedEmployeeId = employeeId
+        calendarHeaderState = .idle
         await loadCalendarHeader()
     }
 
@@ -156,33 +232,35 @@ final class MyCalendarViewModel {
 
     func loadCalendarHeader() async {
         guard calendarHeaderState == .idle else { return }
+        guard !showsEmployeeDropdown || selectedEmployeeId != nil else { return }
         calendarHeaderState = .loading
 
         let calendar = Calendar.current
         let today = Date()
 
-        guard let currentMonday = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)) else {
+        guard let currentMonday = calendar.date(from: calendar.dateComponents([.yearForWeekOfYear, .weekOfYear], from: today)),
+              let windowStart = calendar.date(byAdding: .weekOfYear, value: -Self.pastWeeksCount, to: currentMonday) else {
             calendarHeaderState = .error("Nu s-a putut calcula începutul săptămânii.")
             return
         }
 
-        let totalDays = 26 * 7
+        let totalDays = Self.totalWeeks * 7
         var allCalendarDays: [Date] = []
         for i in 0..<totalDays {
-            if let calculatedDate = calendar.date(byAdding: .day, value: i, to: currentMonday) {
+            if let calculatedDate = calendar.date(byAdding: .day, value: i, to: windowStart) {
                 allCalendarDays.append(calculatedDate)
             }
         }
 
-        let startDateStr = Self.isoDateFormatter.string(from: currentMonday)
-        guard let endDate = calendar.date(byAdding: .day, value: totalDays - 1, to: currentMonday) else { return }
+        let startDateStr = Self.isoDateFormatter.string(from: windowStart)
+        guard let endDate = calendar.date(byAdding: .day, value: totalDays - 1, to: windowStart) else { return }
         let endDateStr = Self.isoDateFormatter.string(from: endDate)
 
         do {
             let daysStrings = try await withLoading {
                 try await getUserAvailableDaysUseCase(
                     businessId: businessId,
-                    employeeId: employeeId,
+                    employeeId: effectiveEmployeeId,
                     startDate: startDateStr,
                     endDate: endDateStr,
                     slotDuration: slotDurationMinutes
@@ -211,7 +289,7 @@ final class MyCalendarViewModel {
             let events = try await withLoading {
                 try await getUserCalendarEventsUseCase(
                     businessId: businessId,
-                    employeeId: employeeId,
+                    employeeId: effectiveEmployeeId,
                     startDate: dayStr,
                     endDate: dayStr,
                     slotDuration: slotDurationMinutes

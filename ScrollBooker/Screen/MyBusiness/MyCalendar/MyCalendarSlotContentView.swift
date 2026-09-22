@@ -16,7 +16,6 @@ struct MyCalendarSlotContentView: View {
     var showCheckbox: Bool = false
     var isChecked: Bool = false
     var isCheckboxEnabled: Bool = true
-    var onCheckboxTap: () -> Void = {}
 
     private var isCompact: Bool { height < 40 }
     private var isVeryCompact: Bool { height < 28 }
@@ -38,14 +37,8 @@ struct MyCalendarSlotContentView: View {
                 Spacer()
 
                 if showCheckbox {
-                    CheckboxView(
-                        checked: isChecked,
-                        onChange: onCheckboxTap,
-                        width: 18,
-                        height: 18
-                    )
-                    .disabled(!isCheckboxEnabled)
-                    .opacity(isCheckboxEnabled ? 1 : 0.5)
+                    MyCalendarCheckmarkIndicatorView(checked: isChecked)
+                        .opacity(isCheckboxEnabled ? 1 : 0.5)
                 }
             }
             .frame(height: 40)
@@ -126,6 +119,29 @@ private struct MyCalendarSlotBookedView: View {
                     .lineLimit(maxLines)
             }
         }
+    }
+}
+
+private struct MyCalendarCheckmarkIndicatorView: View {
+    let checked: Bool
+
+    var body: some View {
+        ZStack {
+            RoundedRectangle(cornerRadius: 4)
+                .strokeBorder(Color.gray.opacity(0.6), lineWidth: 1)
+                .background(
+                    RoundedRectangle(cornerRadius: 4)
+                        .fill(checked ? Color.errorSB : Color.clear)
+                )
+                .frame(width: 18, height: 18)
+
+            if checked {
+                Image(systemName: "checkmark")
+                    .font(.system(size: 11, weight: .bold))
+                    .foregroundStyle(.white)
+            }
+        }
+        .allowsHitTesting(false)
     }
 }
 

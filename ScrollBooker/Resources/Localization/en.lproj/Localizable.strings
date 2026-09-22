@@ -382,6 +382,9 @@
 "otherReason" = "Alt motiv";
 "addMessage" = "Adaugă un mesaj ...";
 "block" = "Blochează";
+"employee" = "Angajat";
+"employeeHasAvailability" = "Are locuri libere";
+"employeeFullyBooked" = "Nu mai are locuri libere";
 "send" = "Trimite";
 "finished" = "Finalizat";
 "canceled" = "Anulat";

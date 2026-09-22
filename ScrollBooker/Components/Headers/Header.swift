@@ -9,19 +9,25 @@ import SwiftUI
 
 struct HeaderView<CustomAction: View>: View {
     var title: String = ""
+    var customTitle: (() -> AnyView)? = nil
     var enableBack: Bool = true
     var onBack: () -> Void
     var customAction: (() -> CustomAction)? = nil
 
     var body: some View {
         ZStack {
-            Text(title)
-                .font(.headline)
-                .foregroundColor(.onBackgroundSB)
-                .lineLimit(1)
-                .truncationMode(.tail)
-                .padding(.horizontal, 80)
-            
+            if let customTitle {
+                customTitle()
+                    .padding(.horizontal, 80)
+            } else {
+                Text(title)
+                    .font(.headline)
+                    .foregroundColor(.onBackgroundSB)
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+                    .padding(.horizontal, 80)
+            }
+
             HStack {
                 VStack {
                     if enableBack {

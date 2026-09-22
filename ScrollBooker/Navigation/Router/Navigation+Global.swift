@@ -370,6 +370,8 @@ struct GlobalNavigationModifier: ViewModifier {
                         businessId: businessId,
                         businessOwnerId: userInfo.businessOwnerId,
                         hasEmployees: userInfo.hasEmployees,
+                        ownAvatar: userInfo.avatar,
+                        ownFullName: userInfo.fullName,
                         getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
                         getUserCalendarEventsUseCase: container.availabilityModule.getUserCalendarEventsUseCase,
                         getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase,
@@ -377,6 +379,8 @@ struct GlobalNavigationModifier: ViewModifier {
                         updateSlotDurationUseCase: container.userCalendarSettingsModule.updateSlotDurationUseCase,
                         updateAppointmentGapUseCase: container.userCalendarSettingsModule.updateAppointmentGapUseCase,
                         createBlockAppointmentsUseCase: container.appointmentModule.createBlockAppointmentsUseCase,
+                        getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+                        getEmployeesAvailabilityForDayUseCase: container.availabilityModule.getEmployeesAvailabilityForDayUseCase,
                         toastCenter: toastCenter
                     ),
                     onBack: { router.pop() }

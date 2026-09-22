@@ -11,7 +11,7 @@ struct UserListItem: View {
     var userSocial: UserSocial
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     var onFollow: (UserSocial) -> Void
-    
+
     var body: some View {
         HStack {
             HStack(spacing: 12) {
@@ -35,7 +35,7 @@ struct UserListItem: View {
                         .lineLimit(1)
                         .truncationMode(.tail)
                     
-                    Text("@\(userSocial.username)")
+                    Text(userSocial.isBusinessOrEmployee ? userSocial.profession : "@\(userSocial.username)")
                         .font(.footnote)
                         .foregroundColor(.secondary)
                         .lineLimit(1)

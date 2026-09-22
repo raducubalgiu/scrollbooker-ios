@@ -40,19 +40,8 @@ struct BusinessSummaryDetails: View {
                 Text(openingHours.openNow ? String(localized: "open") : String(localized: "closed"))
                     .font(.footnote)
                     .foregroundColor(.onBackgroundSB)
-                
-                Text("  \u{2022}  ")
-                    .foregroundColor(.gray)
-                
-                Text(formatOpeningHours(openingHours))
-                    .font(.footnote)
-                    .foregroundColor(.gray)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
-    }
-    
-    private func formatOpeningHours(_ hours: OpeningHours) -> String {
-        return "09:00 - 21:00"
     }
 }

@@ -20,7 +20,7 @@ struct BusinessReviewsTabView: View {
                 HStack(spacing: AppSize.s.rawValue) {
                     Text(ratingsAverage.formatRating())
                         .font(.headline.bold())
-                    Text("(\(ratingsCount) recenzii)")
+                    Text("message_info_reviews_count \(ratingsCount)")
                         .font(.subheadline)
                         .foregroundColor(.secondary)
                 }

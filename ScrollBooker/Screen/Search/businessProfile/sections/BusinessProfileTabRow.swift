@@ -29,25 +29,22 @@ struct BusinessProfileTabRow: View {
                         Text(section.title)
                             .font(.system(size: 15, weight: isSel ? .bold : .semibold))
                             .foregroundColor(isSel ? .primary : .gray)
-                            .padding(.bottom, 12) // Padding curat sub text
+                            .padding(.bottom, 12)
                         
-                        // REZOLVARE ANIMAȚIE: Randăm ierarhia curat fără ZStack sau else structural
                         if isSel {
                             Capsule()
-                                .fill(Color.primary) // Sau culoarea brandului tău
+                                .fill(Color.primary)
                                 .frame(height: 3)
-                                // matchedGeometryEffect are nevoie de un ID unic și de Namespace-ul tău
                                 .matchedGeometryEffect(id: "activeTabIndicator", in: indicatorNS)
                         } else {
-                            // Această linie transparentă menține înălțimea fixă fără a strica Namespace-ul
                             Capsule()
                                 .fill(Color.clear)
                                 .frame(height: 3)
                         }
                     }
                 }
-                .buttonStyle(.plain) // Elimină efectul nativ de opacitate la click de pe butoane
-                .frame(maxWidth: .infinity) // Împarte ecranul în mod egal pentru cele 5 taburi
+                .buttonStyle(.plain)
+                .frame(maxWidth: .infinity)
             }
         }
         .padding(.horizontal, 8)

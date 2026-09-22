@@ -37,16 +37,17 @@ struct BusinessPostView: View {
             )
             .disabled(true)
             
-            HStack(spacing: 4) {
-                Image(systemName: "play.fill")
-                    .font(.system(size: 11, weight: .bold))
+            HStack(spacing: 3) {
+                Image(systemName: "play")
+                    .font(.system(size: 12, weight: .bold))
                 
                 Text("\(viewsCount)")
-                    .font(.system(size: 12, weight: .semibold))
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
             }
             .foregroundColor(.white)
-            .padding(.leading, 10)
-            .padding(.bottom, 10)
+            .padding(.horizontal, 10)
+            .padding(.vertical, 10)
         }
         .frame(width: itemWidth)
         .aspectRatio(9.0 / 12.0, contentMode: .fit)

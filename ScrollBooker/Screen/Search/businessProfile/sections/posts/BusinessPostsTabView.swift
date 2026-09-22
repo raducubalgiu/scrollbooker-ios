@@ -12,9 +12,10 @@ struct BusinessPostsTabView: View {
     
     var body: some View {
         if posts.isEmpty {
-            Text("Acest profil nu are nicio postare momentan.")
+            Text(String(localized: "message_empty_posts"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
+                .padding(.horizontal)
         } else {
             ScrollView(.horizontal, showsIndicators: false) {
                 LazyHStack(spacing: 16) {

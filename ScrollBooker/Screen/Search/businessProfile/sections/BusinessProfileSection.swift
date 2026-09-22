@@ -13,11 +13,11 @@ enum BusinessProfileSection: String, CaseIterable, Identifiable {
         
         var title: String {
             switch self {
-            case .services: return "Servicii"
-            case .posts: return "Posts"
-            case .employees: return "Echipă"
-            case .reviews: return "Recenzii"
-            case .about: return "Despre"
+            case .services: return String(localized: "services")
+            case .posts: return String(localized: "title_posts")
+            case .employees: return String(localized: "team")
+            case .reviews: return String(localized: "reviews")
+            case .about: return String(localized: "about")
             }
         }
 }

@@ -43,7 +43,7 @@ struct BusinessServicesTabView: View {
                         let shouldShowViewMore = (serviceGroups.count * 5) < totalCount
                         if shouldShowViewMore {
                             MainButtonOutlined(
-                                title: "Vezi toate cele \(totalCount) servicii",
+                                title: String(localized: "message_info_see_all_services \(totalCount)"),
                                 size: .medium,
                                 fullWidth: true,
                                 onClick: onNavigateToBookingFromProfile
@@ -59,11 +59,10 @@ struct BusinessServicesTabView: View {
                 }
                 
             } else {
-                Text(String(localized: "notFoundServices"))
+                Text(String(localized: "message_empty_services"))
                     .font(.body)
                     .foregroundColor(.gray)
                     .padding(.horizontal, .base)
-                    .padding(.vertical, .base)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)

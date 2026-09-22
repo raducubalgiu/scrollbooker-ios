@@ -47,9 +47,9 @@ struct ReviewsSheetSuccessView: View {
                     }
                 }
             }
-            .refreshable {
-                await viewModel.refresh()
-            }
+//            .refreshable {
+//                await viewModel.refresh()
+//            }
         }
     }
     

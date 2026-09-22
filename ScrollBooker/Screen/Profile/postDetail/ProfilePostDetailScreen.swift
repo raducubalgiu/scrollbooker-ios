@@ -100,23 +100,10 @@ struct ProfilePostDetailScreen: View {
             onBookmark: { id in Task { await viewModel.toggleBookmarkPost(id: id) } },
             onFollow: { id in Task { await viewModel.toggleFollowPost(id: id) } },
             onShare: { post, _ in
-                let shareBaseURL = "https://scrollbooker-web.vercel.app"
-                let professionSlug = post.user.profession.toSlug()
-                let urlString = "\(shareBaseURL)/user/\(post.user.username)/\(professionSlug)/post/\(post.id)"
-                guard let postURL = URL(string: urlString) else { return }
-                let activityVC = UIActivityViewController(activityItems: [postURL], applicationActivities: nil)
-                
-                activityVC.completionWithItemsHandler = { activityType, completed, returnedItems, error in
-                    if completed {
-                        Task {
-                            await viewModel.sharePost(id: post.id, channel: .other)
-                        }
+                ShareHelper.sharePost(post: post) { resolvedChannel in
+                    Task {
+                        await viewModel.sharePost(id: post.id, channel: resolvedChannel)
                     }
-                }
-                
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let rootVC = windowScene.windows.first?.rootViewController {
-                    rootVC.present(activityVC, animated: true, completion: nil)
                 }
             }
         ))

@@ -235,9 +235,6 @@ struct GlobalNavigationModifier: ViewModifier {
                     session: session,
                     params: params,
                     onPostCreated: {
-                        // Pop whichever tab actually hosted this flow (Profile for a normal
-                        // post, Appointments for a video review) before switching the visible
-                        // tab — Android always lands on MyProfile regardless of entry point.
                         router.popToRoot()
                         router.selectedTab = .profile
                         Task { await router.myProfileViewModel?.refresh() }

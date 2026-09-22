@@ -42,8 +42,8 @@ struct SocialScreen: View {
                     state: viewModel.followersState,
                     hasMore: viewModel.hasMoreFollowers,
                     isPaging: viewModel.isPagingFollowers,
-                    noDataTitle: "Urmăritori",
-                    noDataMessage: "Nu există urmăritori",
+                    noDataTitle: String(localized: "followers"),
+                    noDataMessage: String(localized: "message_empty_followers"),
                     onRefresh: { await viewModel.refresh(tab: .followers) },
                     onLoadMore: { currentUser in
                         Task { await viewModel.loadMoreFollowersIfNeeded(currentUser: currentUser) }
@@ -59,8 +59,8 @@ struct SocialScreen: View {
                     state: viewModel.followingsState,
                     hasMore: viewModel.hasMoreFollowings,
                     isPaging: viewModel.isPagingFollowings,
-                    noDataTitle: "Urmărește",
-                    noDataMessage: "Nu urmărești pe nimeni momentan",
+                    noDataTitle: String(localized: "following"),
+                    noDataMessage: String(localized: "message_empty_followings"),
                     onRefresh: { await viewModel.refresh(tab: .following) },
                     onLoadMore: { currentUser in
                         Task { await viewModel.loadMoreFollowingsIfNeeded(currentUser: currentUser) }

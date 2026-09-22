@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import UIKit
 
 enum ShareChannelEnum: String, CaseIterable, Identifiable, Codable {
     case whatsapp = "whatsapp"
@@ -48,3 +49,29 @@ enum ShareChannelEnum: String, CaseIterable, Identifiable, Codable {
         }
     }
 }
+
+extension ShareChannelEnum {
+    static func from(activityType: UIActivity.ActivityType?) -> ShareChannelEnum {
+        guard let activityType = activityType else { return .other }
+
+        switch activityType {
+        case .mail:
+            return .email
+        case .message:
+            return .sms
+        case .postToFacebook:
+            return .facebook
+        case .copyToPasteboard:
+            return .copyLink
+        default:
+            let rawString = activityType.rawValue.lowercased()
+            if rawString.contains("whatsapp") { return .whatsapp }
+            if rawString.contains("instagram") { return .instagram }
+            if rawString.contains("tiktok") { return .tiktok }
+            if rawString.contains("messenger") { return .messenger }
+            
+            return .other
+        }
+    }
+}
+

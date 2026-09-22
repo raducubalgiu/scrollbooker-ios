@@ -51,6 +51,10 @@ final class AppointmentModule {
         CreateBlockAppointmentsUseCase(repository: repository)
     }()
 
+    lazy var createOwnClientAppointmentUseCase: CreateOwnClientAppointmentUseCase = {
+        CreateOwnClientAppointmentUseCase(repository: repository)
+    }()
+
     func makeAppointmentsViewModel() -> AppointmentsViewModel {
         AppointmentsViewModel(
             getUserAppointments: getUserAppointmentsUseCase

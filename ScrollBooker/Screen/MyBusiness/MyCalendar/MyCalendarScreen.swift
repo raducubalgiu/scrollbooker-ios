@@ -10,11 +10,20 @@ import SwiftUI
 struct MyCalendarScreen: View {
     @State var viewModel: MyCalendarViewModel
     var onBack: () -> Void
+    var makeAddOwnClientViewModel: (Date?) -> AddOwnClientViewModel
 
     @State private var currentWeekPage: Int = MyCalendarViewModel.pastWeeksCount
     @State private var showSettings = false
     @State private var showBlockSheet = false
     @State private var showEmployeeSheet = false
+    @State private var addOwnClientViewModel: AddOwnClientViewModel?
+
+    private var showAddOwnClient: Binding<Bool> {
+        Binding(
+            get: { addOwnClientViewModel != nil },
+            set: { isPresented in if !isPresented { addOwnClientViewModel = nil } }
+        )
+    }
 
     private var isFabVisible: Bool {
         viewModel.calendarEventsState.data != nil && !viewModel.isBlocking
@@ -88,6 +97,9 @@ struct MyCalendarScreen: View {
                             onSlotTap: { slot in
                                 if viewModel.isBlocking && slot.isFreeSlot {
                                     viewModel.setBlockDate(slot.startDateLocale)
+                                } else if !viewModel.isBlocking && slot.isFreeSlot {
+                                    viewModel.setSelectedOwnClient(slot)
+                                    addOwnClientViewModel = makeAddOwnClientViewModel(slot.startDate)
                                 }
                             },
                             onRetry: { Task { await viewModel.loadDayEvents(for: viewModel.selectedDay) } }
@@ -107,7 +119,10 @@ struct MyCalendarScreen: View {
                 MyCalendarFabView(
                     isEnabled: viewModel.hasFreeSlots,
                     domainColor: viewModel.domainColor,
-                    onTap: {}
+                    onTap: {
+                        viewModel.setSelectedOwnClient(nil)
+                        addOwnClientViewModel = makeAddOwnClientViewModel(nil)
+                    }
                 )
                 .padding(.base)
                 .transition(.opacity)
@@ -148,6 +163,18 @@ struct MyCalendarScreen: View {
             .presentationDetents([.fraction(0.6), .large])
             .presentationDragIndicator(.hidden)
             .presentationCornerRadius(25)
+        }
+        .fullScreenCover(isPresented: showAddOwnClient) {
+            if let addOwnClientViewModel {
+                AddOwnClientScreen(
+                    viewModel: addOwnClientViewModel,
+                    onBack: { self.addOwnClientViewModel = nil },
+                    onSaved: {
+                        self.addOwnClientViewModel = nil
+                        Task { await viewModel.loadDayEvents(for: viewModel.selectedDay) }
+                    }
+                )
+            }
         }
     }
 }

@@ -50,4 +50,8 @@ final class AppointmentRepositoryImpl: AppointmentRepository {
     func createBlockAppointments(request: AppointmentBlockRequestDTO) async throws -> NoContent {
         return try await api.createBlockAppointments(request: request)
     }
+
+    func createOwnClientAppointment(request: AppointmentOwnClientCreateRequestDTO) async throws -> NoContent {
+        return try await api.createOwnClientAppointment(request: request)
+    }
 }

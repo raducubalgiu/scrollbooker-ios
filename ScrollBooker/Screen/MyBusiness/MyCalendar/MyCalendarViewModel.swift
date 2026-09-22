@@ -34,6 +34,8 @@ final class MyCalendarViewModel {
     private(set) var selectedEmployeeId: Int?
     private(set) var employeesAvailability: [Int: Bool] = [:]
 
+    private(set) var selectedOwnClientSlot: CalendarEventsSlot?
+
     var selectedDay: Date = Date()
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "MyCalendar")
@@ -112,14 +114,18 @@ final class MyCalendarViewModel {
         }
     }
 
-    private var effectiveEmployeeId: Int? {
+    var effectiveEmployeeId: Int? {
         if let selfEmployeeId { return selfEmployeeId }
         if isOwner && hasEmployeesFlag { return selectedEmployeeId }
         return nil
     }
 
-    private var targetUserId: Int {
+    var targetUserId: Int {
         effectiveEmployeeId ?? userId
+    }
+
+    var resolvedBusinessId: Int {
+        businessId
     }
 
     var showsEmployeeDropdown: Bool {
@@ -325,6 +331,10 @@ final class MyCalendarViewModel {
 
     func toggleBlocking() {
         isBlocking.toggle()
+    }
+
+    func setSelectedOwnClient(_ slot: CalendarEventsSlot?) {
+        selectedOwnClientSlot = slot
     }
 
     func setBlockDate(_ startDateLocale: String) {

@@ -364,26 +364,43 @@ struct GlobalNavigationModifier: ViewModifier {
 
         case .myCalendar:
             if let userInfo = session.userInfo, let businessId = userInfo.businessId {
+                let myCalendarViewModel = container.myCalendarModule.makeMyCalendarViewModel(
+                    userId: userInfo.id,
+                    businessId: businessId,
+                    businessOwnerId: userInfo.businessOwnerId,
+                    hasEmployees: userInfo.hasEmployees,
+                    ownAvatar: userInfo.avatar,
+                    ownFullName: userInfo.fullName,
+                    getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
+                    getUserCalendarEventsUseCase: container.availabilityModule.getUserCalendarEventsUseCase,
+                    getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase,
+                    getUserCalendarSettingsUseCase: container.userCalendarSettingsModule.getUserCalendarSettingsUseCase,
+                    updateSlotDurationUseCase: container.userCalendarSettingsModule.updateSlotDurationUseCase,
+                    updateAppointmentGapUseCase: container.userCalendarSettingsModule.updateAppointmentGapUseCase,
+                    createBlockAppointmentsUseCase: container.appointmentModule.createBlockAppointmentsUseCase,
+                    getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
+                    getEmployeesAvailabilityForDayUseCase: container.availabilityModule.getEmployeesAvailabilityForDayUseCase,
+                    toastCenter: toastCenter
+                )
+
                 MyCalendarScreen(
-                    viewModel: container.myCalendarModule.makeMyCalendarViewModel(
-                        userId: userInfo.id,
-                        businessId: businessId,
-                        businessOwnerId: userInfo.businessOwnerId,
-                        hasEmployees: userInfo.hasEmployees,
-                        ownAvatar: userInfo.avatar,
-                        ownFullName: userInfo.fullName,
-                        getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
-                        getUserCalendarEventsUseCase: container.availabilityModule.getUserCalendarEventsUseCase,
-                        getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase,
-                        getUserCalendarSettingsUseCase: container.userCalendarSettingsModule.getUserCalendarSettingsUseCase,
-                        updateSlotDurationUseCase: container.userCalendarSettingsModule.updateSlotDurationUseCase,
-                        updateAppointmentGapUseCase: container.userCalendarSettingsModule.updateAppointmentGapUseCase,
-                        createBlockAppointmentsUseCase: container.appointmentModule.createBlockAppointmentsUseCase,
-                        getEmployeesByOwnerUseCase: container.employeesModule.getEmployeesByOwner,
-                        getEmployeesAvailabilityForDayUseCase: container.availabilityModule.getEmployeesAvailabilityForDayUseCase,
-                        toastCenter: toastCenter
-                    ),
-                    onBack: { router.pop() }
+                    viewModel: myCalendarViewModel,
+                    onBack: { router.pop() },
+                    makeAddOwnClientViewModel: { initialDay in
+                        container.addOwnClientModule.makeAddOwnClientViewModel(
+                            businessId: myCalendarViewModel.resolvedBusinessId,
+                            employeeId: myCalendarViewModel.effectiveEmployeeId,
+                            targetUserId: myCalendarViewModel.targetUserId,
+                            initialDay: initialDay,
+                            getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
+                            getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
+                            getUserAvailableTimeslotsUseCase: container.availabilityModule.getUserAvailableTimeslotsUseCase,
+                            getBusinessClientsUseCase: container.businessClientModule.getBusinessClientsUseCase,
+                            createBusinessClientUseCase: container.businessClientModule.createBusinessClientUseCase,
+                            createOwnClientAppointmentUseCase: container.appointmentModule.createOwnClientAppointmentUseCase,
+                            toastCenter: toastCenter
+                        )
+                    }
                 )
             }
 

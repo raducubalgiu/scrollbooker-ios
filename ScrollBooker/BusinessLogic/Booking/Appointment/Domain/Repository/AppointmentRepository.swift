@@ -13,4 +13,5 @@ protocol AppointmentRepository: Sendable {
     func cancelAppointment(id: Int, request: AppointmentCancelRequest) async throws -> Appointment
     func createScrollBookerAppointment(request: AppointmentScrollBookerCreateRequest) async throws -> NoContent
     func createBlockAppointments(request: AppointmentBlockRequestDTO) async throws -> NoContent
+    func createOwnClientAppointment(request: AppointmentOwnClientCreateRequestDTO) async throws -> NoContent
 }

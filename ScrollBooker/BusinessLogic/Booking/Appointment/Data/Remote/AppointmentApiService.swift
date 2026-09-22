@@ -17,6 +17,7 @@ protocol AppointmentApiService: Sendable {
     func cancelAppointment(id: Int, request: AppointmentCancelRequest) async throws -> AppointmentDto
     func createScrollBookerAppointment(request: AppointmentScrollBookerCreateRequest) async throws -> NoContent
     func createBlockAppointments(request: AppointmentBlockRequestDTO) async throws -> NoContent
+    func createOwnClientAppointment(request: AppointmentOwnClientCreateRequestDTO) async throws -> NoContent
 }
 
 final class AppointmentAPIImpl: AppointmentApiService {
@@ -86,6 +87,14 @@ final class AppointmentAPIImpl: AppointmentApiService {
     func createBlockAppointments(request: AppointmentBlockRequestDTO) async throws -> NoContent {
         return try await client.request(
             "appointments/create-block-appointments",
+            method: .post,
+            body: request
+        )
+    }
+
+    func createOwnClientAppointment(request: AppointmentOwnClientCreateRequestDTO) async throws -> NoContent {
+        return try await client.request(
+            "appointments/create-own-client-appointment",
             method: .post,
             body: request
         )

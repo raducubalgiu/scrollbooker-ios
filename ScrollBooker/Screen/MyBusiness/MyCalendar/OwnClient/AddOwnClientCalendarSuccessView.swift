@@ -19,18 +19,12 @@ struct AddOwnClientCalendarSuccessView: View {
     @State private var isUpdatingFromWeek: Bool = false
     @State private var isUpdatingFromDay: Bool = false
 
-    private static let isoFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
-
     private var nextAvailableDate: Date? {
         let calendar = Calendar.current
         let startOfSelectedDay = calendar.startOfDay(for: viewModel.selectedDay)
 
         return allCalendarDays
-            .filter { calendar.startOfDay(for: $0) > startOfSelectedDay && availableDays.contains(Self.isoFormatter.string(from: $0)) }
+            .filter { calendar.startOfDay(for: $0) > startOfSelectedDay && availableDays.contains($0.asISODateString()) }
             .min()
     }
 

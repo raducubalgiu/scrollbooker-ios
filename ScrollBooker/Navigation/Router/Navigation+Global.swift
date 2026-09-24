@@ -386,6 +386,7 @@ struct GlobalNavigationModifier: ViewModifier {
                     makeAddOwnClientViewModel: { initialSlot in
                         container.addOwnClientModule.makeAddOwnClientViewModel(
                             businessId: myCalendarViewModel.resolvedBusinessId,
+                            employeeId: myCalendarViewModel.effectiveEmployeeId,
                             targetUserId: myCalendarViewModel.targetUserId,
                             initialDay: initialSlot?.startDate,
                             initialSlot: initialSlot?.toSlot(),

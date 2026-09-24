@@ -17,4 +17,27 @@ extension Date {
             formatter.locale = locale
             return formatter.string(from: self)
         }
+
+    private static let isoDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        return formatter
+    }()
+
+    func asISODateString() -> String {
+        Self.isoDateFormatter.string(from: self)
+    }
+}
+
+extension String {
+    private static let localDateTimeFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+
+    func asLocalDateTime() -> Date? {
+        Self.localDateTimeFormatter.date(from: self)
+    }
 }

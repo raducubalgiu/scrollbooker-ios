@@ -11,6 +11,7 @@ import Foundation
 final class AddOwnClientModule {
     func makeAddOwnClientViewModel(
         businessId: Int,
+        employeeId: Int?,
         targetUserId: Int,
         initialDay: Date?,
         initialSlot: Slot?,
@@ -24,6 +25,7 @@ final class AddOwnClientModule {
     ) -> AddOwnClientViewModel {
         AddOwnClientViewModel(
             businessId: businessId,
+            employeeId: employeeId,
             targetUserId: targetUserId,
             initialDay: initialDay,
             initialSlot: initialSlot,

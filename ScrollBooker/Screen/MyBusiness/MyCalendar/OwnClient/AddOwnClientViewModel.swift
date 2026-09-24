@@ -43,6 +43,7 @@ final class AddOwnClientViewModel {
     private(set) var isSaving = false
 
     private let businessId: Int
+    private let employeeId: Int?
     private let targetUserId: Int
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "AddOwnClient")
@@ -60,21 +61,9 @@ final class AddOwnClientViewModel {
     private var currentClientsPage = 1
     private static let clientsPageLimit = 20
 
-    private static let isoDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter
-    }()
-
-    private static let slotDateFormatter: DateFormatter = {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-        formatter.locale = Locale(identifier: "en_US_POSIX")
-        return formatter
-    }()
-
     init(
         businessId: Int,
+        employeeId: Int?,
         targetUserId: Int,
         initialDay: Date?,
         initialSlot: Slot?,
@@ -87,6 +76,7 @@ final class AddOwnClientViewModel {
         toastCenter: ToastCenter
     ) {
         self.businessId = businessId
+        self.employeeId = employeeId
         self.targetUserId = targetUserId
         self.selectedDay = initialDay ?? Date()
         self.selectedSlot = initialSlot
@@ -116,8 +106,8 @@ final class AddOwnClientViewModel {
 
     var selectedSlotDurationMinutes: Int? {
         guard let selectedSlot,
-              let start = Self.slotDateFormatter.date(from: selectedSlot.startDateLocale),
-              let end = Self.slotDateFormatter.date(from: selectedSlot.endDateLocale) else { return nil }
+              let start = selectedSlot.startDateLocale.asLocalDateTime(),
+              let end = selectedSlot.endDateLocale.asLocalDateTime() else { return nil }
         return Int(end.timeIntervalSince(start) / 60)
     }
 
@@ -271,15 +261,15 @@ final class AddOwnClientViewModel {
             }
         }
 
-        let startDateStr = Self.isoDateFormatter.string(from: currentMonday)
+        let startDateStr = currentMonday.asISODateString()
         guard let endDate = calendar.date(byAdding: .day, value: totalDays - 1, to: currentMonday) else { return }
-        let endDateStr = Self.isoDateFormatter.string(from: endDate)
+        let endDateStr = endDate.asISODateString()
 
         do {
             let daysStrings = try await withLoading {
                 try await getUserAvailableDaysUseCase(
                     businessId: businessId,
-                    employeeId: targetUserId,
+                    employeeId: employeeId,
                     startDate: startDateStr,
                     endDate: endDateStr,
                     slotDuration: totalDuration
@@ -298,8 +288,8 @@ final class AddOwnClientViewModel {
     func loadAvailableTimeSlots(for date: Date) async {
         selectedDay = date
 
-        let dayStr = Self.isoDateFormatter.string(from: date)
-        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: targetUserId)
+        let dayStr = date.asISODateString()
+        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: employeeId)
 
         if let cachedData = slotsCache[cacheKey] {
             updateSlotsState(with: cachedData)
@@ -319,7 +309,7 @@ final class AddOwnClientViewModel {
             let availableDayData = try await withLoading {
                 try await getUserAvailableTimeslotsUseCase(
                     businessId: businessId,
-                    employeeId: targetUserId,
+                    employeeId: employeeId,
                     slotDuration: totalDuration,
                     day: dayStr
                 )
@@ -345,15 +335,15 @@ final class AddOwnClientViewModel {
     }
 
     func refreshTimeSlotsForCurrentDay() async {
-        let dayStr = Self.isoDateFormatter.string(from: selectedDay)
-        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: targetUserId)
+        let dayStr = selectedDay.asISODateString()
+        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: employeeId)
 
         slotsCache.removeValue(forKey: cacheKey)
 
         do {
             let freshDayData = try await getUserAvailableTimeslotsUseCase(
                 businessId: businessId,
-                employeeId: targetUserId,
+                employeeId: employeeId,
                 slotDuration: totalDuration,
                 day: dayStr
             )

@@ -18,7 +18,7 @@ extension Slot {
     init(dto: SlotDto) {
         self.startDateUtc = dto.startDateUtc
         self.endDateUtc = dto.endDateUtc
-        self.startDateLocale = dto.startDateUtc
+        self.startDateLocale = dto.startDateLocale
         self.endDateLocale = dto.endDateLocale
         self.isLastMinute = dto.isLastMinute
         self.lastMinuteDiscount = dto.lastMinuteDiscount

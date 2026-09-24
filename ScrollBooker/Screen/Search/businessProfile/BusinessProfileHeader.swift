@@ -11,6 +11,7 @@ struct BusinessProfileHeader: View {
     var showTitle: Bool
     var title: String
     var onBack: () -> Void
+    var onShare: () -> Void
     
     var body: some View {
         HStack(alignment: .center) {
@@ -34,7 +35,7 @@ struct BusinessProfileHeader: View {
             
             Spacer()
             
-            Button(action: { /* Share */ }) {
+            Button(action: onShare) {
                 Image(systemName: "square.and.arrow.up")
                     .font(.system(size: 16, weight: .semibold))
                     .foregroundColor(.primary)

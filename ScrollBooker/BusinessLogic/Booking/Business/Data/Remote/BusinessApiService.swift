@@ -16,6 +16,7 @@ protocol BusinessApiService: Sendable {
     func approveBusiness(userId: Int) async throws -> NoContent
     func searchBusinessAddress(query: String) async throws -> [BusinessAddressDto]
     func updateBusinessGallery(businessId: Int, photos: [Data]) async throws -> NoContent
+    func shareBusinessProfile(businessId: Int, request: ShareRequest) async throws -> NoContent
 }
 
 final class BusinessAPIImpl: BusinessApiService {
@@ -100,6 +101,14 @@ final class BusinessAPIImpl: BusinessApiService {
             method: .patch,
             fields: [:],
             files: MultipartFile.compressedJPEGs(photos)
+        )
+    }
+
+    func shareBusinessProfile(businessId: Int, request: ShareRequest) async throws -> NoContent {
+        return try await client.request(
+            "businesses/\(businessId)/share-profile",
+            method: .post,
+            body: request
         )
     }
 }

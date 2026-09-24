@@ -16,4 +16,5 @@ protocol BusinessRepository: Sendable {
     func approveBusiness(userId: Int) async throws -> NoContent
     func searchBusinessAddress(query: String) async throws -> [BusinessAddress]
     func updateBusinessGallery(businessId: Int, photos: [Data]) async throws -> NoContent
+    func shareBusinessProfile(businessId: Int, request: ShareRequest) async throws -> NoContent
 }

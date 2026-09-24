@@ -59,6 +59,10 @@ final class BusinessModule {
         UpdateBusinessGalleryUseCase(repository: repository)
     }()
 
+    private lazy var shareBusinessProfileUseCase: ShareBusinessProfileUseCase = {
+        ShareBusinessProfileUseCase(repository: repository)
+    }()
+
     func makeSearchViewModel(
         getAllBusinessDomainsUseCase: GetAllBusinessDomainsUseCase,
         getRecentSearchesUseCase: GetRecentSearchesUseCase,
@@ -78,6 +82,7 @@ final class BusinessModule {
         BusinessProfileViewModel(
             username: username,
             getBusinessProfileUseCase: getBusinessProfileUseCase,
+            shareBusinessProfileUseCase: shareBusinessProfileUseCase,
             userLocationService: userLocationService
         )
     }

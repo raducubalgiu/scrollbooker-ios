@@ -254,7 +254,19 @@ struct BusinessProfileScreen: View {
         BusinessProfileHeader(
             showTitle: isStickyActive,
             title: viewModel.viewState.data?.owner.fullName ?? "",
-            onBack: onBack
+            onBack: onBack,
+            onShare: {
+                guard let profile = viewModel.viewState.data else { return }
+                ShareHelper.shareBusinessProfile(
+                    businessOwnerUsername: profile.owner.username,
+                    businessOwnerProfession: profile.owner.profession,
+                    businessDescription: profile.description
+                ) { resolvedChannel in
+                    Task {
+                        await viewModel.shareBusinessProfile(channel: resolvedChannel)
+                    }
+                }
+            }
         )
         .frame(height: headerHeight)
         .padding(.top, safeTop)

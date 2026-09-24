@@ -21,15 +21,18 @@ final class BusinessProfileViewModel {
     
     private let username: String
     private let getBusinessProfileUseCase: GetBusinessProfileUseCase
+    private let shareBusinessProfileUseCase: ShareBusinessProfileUseCase
     private let userLocationService: UserLocationService
 
     init(
         username: String,
         getBusinessProfileUseCase: GetBusinessProfileUseCase,
+        shareBusinessProfileUseCase: ShareBusinessProfileUseCase,
         userLocationService: UserLocationService
     ) {
         self.username = username
         self.getBusinessProfileUseCase = getBusinessProfileUseCase
+        self.shareBusinessProfileUseCase = shareBusinessProfileUseCase
         self.userLocationService = userLocationService
     }
 
@@ -66,6 +69,16 @@ final class BusinessProfileViewModel {
             }
         }
         isRefreshing = false
+    }
+
+    func shareBusinessProfile(channel: ShareChannelEnum) async {
+        guard let businessId = viewState.data?.id else { return }
+
+        do {
+            _ = try await shareBusinessProfileUseCase(businessId: businessId, channel: channel)
+        } catch {
+            logger.error("ERROR: on Sharing Business Profile: \(error.localizedDescription, privacy: .public)")
+        }
     }
 }
 

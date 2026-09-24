@@ -64,4 +64,8 @@ final class BusinessRepositoryImpl: BusinessRepository {
     func updateBusinessGallery(businessId: Int, photos: [Data]) async throws -> NoContent {
         return try await api.updateBusinessGallery(businessId: businessId, photos: photos)
     }
+
+    func shareBusinessProfile(businessId: Int, request: ShareRequest) async throws -> NoContent {
+        return try await api.shareBusinessProfile(businessId: businessId, request: request)
+    }
 }

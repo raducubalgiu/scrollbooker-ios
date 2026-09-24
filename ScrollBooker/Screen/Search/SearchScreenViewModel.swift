@@ -11,7 +11,7 @@ import CoreLocation
 import OSLog
 
 struct SearchFilters: Equatable {
-    var businessDomainId: Int? = nil
+    var businessDomainId: Int? = 1
     var serviceDomainId: Int? = nil
     var serviceId: Int? = nil
     var subFilterIds: [Int]? = nil

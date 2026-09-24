@@ -61,26 +61,26 @@ struct SearchScreen: View {
                 .padding(.bottom, 12)
                 
                 ZStack(alignment: .top) {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack(spacing: 10) {
-                            CategoryFilterButton(
-                                title: String(localized: "all"),
-                                isSelected: viewModel.filters.businessDomainId == nil,
-                                action: { selectDomain(id: nil) }
-                            )
-                            
-                            ForEach(viewModel.businessDomains, id: \.id) { domain in
-                                CategoryFilterButton(
-                                    title: domain.shortName,
-                                    isSelected: viewModel.filters.businessDomainId == domain.id,
-                                    action: { selectDomain(id: domain.id) }
-                                )
-                            }
-                        }
-                        .padding(.horizontal, .base)
-                        .padding(.bottom, 6)
-                    }
-                    .zIndex(1)
+//                    ScrollView(.horizontal, showsIndicators: false) {
+//                        HStack(spacing: 10) {
+//                            CategoryFilterButton(
+//                                title: String(localized: "all"),
+//                                isSelected: viewModel.filters.businessDomainId == nil,
+//                                action: { selectDomain(id: nil) }
+//                            )
+//                            
+//                            ForEach(viewModel.businessDomains, id: \.id) { domain in
+//                                CategoryFilterButton(
+//                                    title: domain.shortName,
+//                                    isSelected: viewModel.filters.businessDomainId == domain.id,
+//                                    action: { selectDomain(id: domain.id) }
+//                                )
+//                            }
+//                        }
+//                        .padding(.horizontal, .base)
+//                        .padding(.bottom, 6)
+//                    }
+//                    .zIndex(1)
                     
                     Color.clear
                         .frame(height: 40)

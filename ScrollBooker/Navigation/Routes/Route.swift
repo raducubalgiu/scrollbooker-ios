@@ -68,6 +68,7 @@ enum Route: Hashable {
     case myProfile
     case userProfile(ProfileNavigationParams)
     case profilePostDetail
+    case reviewVideoDetail
     
     case editProfile
     case editFullName

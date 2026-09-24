@@ -9,7 +9,8 @@ import SwiftUI
 
 struct VideoReviewsTabView: View {
     let viewModel: ReviewsViewModel
-    
+    var onNavigateToVideoReview: (Post) -> Void = { _ in }
+
     private let columns = [
         GridItem(.flexible(), spacing: 1),
         GridItem(.flexible(), spacing: 1),
@@ -37,7 +38,7 @@ struct VideoReviewsTabView: View {
                                 mediaFiles: post.mediaFiles,
                                 viewsCount: post.counters.viewsCount,
                                 rating: post.review?.rating,
-                                onNavigateToPost: { postId in }
+                                onNavigateToPost: { _ in onNavigateToVideoReview(post) }
                             )
                             .onAppear {
                                 Task {

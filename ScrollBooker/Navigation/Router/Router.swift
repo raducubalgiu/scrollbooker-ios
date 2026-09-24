@@ -22,6 +22,19 @@ final class Router {
     var activeProfilePostDetailViewModel: ProfilePostDetailViewModel?
     var myProductsViewModel: MyProductsViewModel?
 
+    // `ReviewVideoDetailScreen` can recurse into itself (its own reviews sheet can push another
+    // instance) — tried keeping the sheet mounted via a NavigationStack nested inside the sheet
+    // instead of this slot, but that pins the pushed screen inside the sheet's own (non-full-
+    // screen) presentation bounds and broke video playback, so back to dismiss-then-push here. A
+    // stack (not a single slot like activeProfilePostDetailViewModel) keeps each level of that
+    // recursion its own state. Popped via `.onDisappear` on the screen (fires on true nav pop
+    // only, not sheet coverage — see `popReviewVideoDetail`).
+    private(set) var reviewVideoDetailStack: [ReviewVideoDetailViewModel] = []
+
+    var activeReviewVideoDetailViewModel: ReviewVideoDetailViewModel? {
+        reviewVideoDetailStack.last
+    }
+
     // Session-wide singleton (no clearXSession()), unlike the flow slots above — resolved
     // lazily by whichever router needs it first.
     var myProfileViewModel: MyProfileViewModel?
@@ -92,6 +105,24 @@ final class Router {
         activeProfilePostDetailViewModel = nil
     }
 
+    func pushReviewVideoDetail(_ viewModel: ReviewVideoDetailViewModel) {
+        reviewVideoDetailStack.append(viewModel)
+        push(.reviewVideoDetail)
+    }
+
+    /// Pops exactly one stack entry, only if `viewModel` is still the top — called from the
+    /// screen's `.onDisappear`, which fires once per true pop regardless of whether it happened
+    /// via the close button or the system swipe-back gesture.
+    func popReviewVideoDetail(_ viewModel: ReviewVideoDetailViewModel) {
+        if reviewVideoDetailStack.last === viewModel {
+            reviewVideoDetailStack.removeLast()
+        }
+    }
+
+    func clearReviewVideoDetailSession() {
+        reviewVideoDetailStack.removeAll()
+    }
+
     func clearMyProductsSession() {
         myProductsViewModel = nil
     }
@@ -104,6 +135,7 @@ final class Router {
         profilePath = .init()
         activeBookingViewModel = nil
         activeProfilePostDetailViewModel = nil
+        reviewVideoDetailStack.removeAll()
         myProfileViewModel = nil
         myProductsViewModel = nil
     }

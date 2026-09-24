@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ReviewsSectionView: View {
     @Bindable var viewModel: ReviewsViewModel
+    var onNavigateToVideoReview: (Post) -> Void = { _ in }
     @Namespace private var indicatorNS
 
     var body: some View {
@@ -25,7 +26,8 @@ struct ReviewsSectionView: View {
                     summary: summary,
                     viewModel: viewModel,
                     selectedTab: $viewModel.selectedTab,
-                    animationNamespace: indicatorNS
+                    animationNamespace: indicatorNS,
+                    onNavigateToVideoReview: onNavigateToVideoReview
                 )
             }
         }

@@ -17,6 +17,7 @@ struct FollowingTab: View {
     let makeEditPostVM: (Post) -> EditPostViewModel
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
+    let onNavigateToReviewVideoDetail: (ReviewsViewModel, Int) -> Void
 
     @State private var currentIndex: Int? = 0
     @State private var activeSheet: FeedSheetType? = nil
@@ -87,8 +88,12 @@ struct FollowingTab: View {
                 .presentationDragIndicator(.visible)
 
             case .reviews(let post):
+                let reviewsVM = reviewsCache.viewModel(for: post.id, make: { _ in makeReviewsVM(post) })
                 ReviewsSheetView(
-                    viewModel: reviewsCache.viewModel(for: post.id, make: { _ in makeReviewsVM(post) })
+                    viewModel: reviewsVM,
+                    onNavigateToVideoReview: { videoPost in
+                        pendingSheetAction = { onNavigateToReviewVideoDetail(reviewsVM, videoPost.id) }
+                    }
                 )
                 .presentationDetents([.fraction(0.7), .large])
                     .presentationDragIndicator(.visible)

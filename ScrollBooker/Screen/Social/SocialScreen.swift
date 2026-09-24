@@ -21,7 +21,8 @@ struct SocialScreen: View {
     @State var selectedTab: SocialTab
     
     let onNavigateToUserProfile: (ProfileNavigationParams) -> Void
-    
+    var onNavigateToVideoReview: (Post) -> Void = { _ in }
+
     var body: some View {
         VStack(spacing: 0) {
             HeaderView(
@@ -38,7 +39,7 @@ struct SocialScreen: View {
             TabView(selection: $selectedTab) {
                 Group {
                     if let reviewsViewModel {
-                        ReviewsSectionView(viewModel: reviewsViewModel)
+                        ReviewsSectionView(viewModel: reviewsViewModel, onNavigateToVideoReview: onNavigateToVideoReview)
                     } else {
                         NoDataView(
                             title: String(localized: "reviews"),

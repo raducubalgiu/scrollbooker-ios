@@ -64,6 +64,14 @@ struct FeedTabRouter: View {
                                         getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
                                         getPostLinkedProductsUseCase: container.productModule.getPostLinkedProductsUseCase
                                     )
+                                },
+                                onNavigateToReviewVideoDetail: { reviewsViewModel, startPostId in
+                                    router.pushReviewVideoDetail(
+                                        container.postModule.makeReviewVideoDetailViewModel(
+                                            reviewsViewModel: reviewsViewModel,
+                                            startPostId: startPostId
+                                        )
+                                    )
                                 }
                             )
                             .safeAreaInset(edge: .bottom, spacing: 0) {

@@ -23,6 +23,7 @@ struct FeedScreen: View {
     let makeStatisticsVM: (Int) -> PostStatisticsViewModel
     let makeDeletePostVM: () -> DeletePostViewModel
     let makeEditPostVM: (Post) -> EditPostViewModel
+    let onNavigateToReviewVideoDetail: (ReviewsViewModel, Int) -> Void
 
     init(
         viewModel: FeedViewModel,
@@ -35,7 +36,8 @@ struct FeedScreen: View {
         makeReviewsVM: @escaping (Post) -> ReviewsViewModel,
         makeStatisticsVM: @escaping (Int) -> PostStatisticsViewModel,
         makeDeletePostVM: @escaping () -> DeletePostViewModel,
-        makeEditPostVM: @escaping (Post) -> EditPostViewModel
+        makeEditPostVM: @escaping (Post) -> EditPostViewModel,
+        onNavigateToReviewVideoDetail: @escaping (ReviewsViewModel, Int) -> Void
     ) {
         self.viewModel = viewModel
         self.onNavigateToFeedSearch = onNavigateToFeedSearch
@@ -48,6 +50,7 @@ struct FeedScreen: View {
         self.makeStatisticsVM = makeStatisticsVM
         self.makeDeletePostVM = makeDeletePostVM
         self.makeEditPostVM = makeEditPostVM
+        self.onNavigateToReviewVideoDetail = onNavigateToReviewVideoDetail
     }
 
     var body: some View {
@@ -64,7 +67,8 @@ struct FeedScreen: View {
                     makeDeletePostVM: makeDeletePostVM,
                     makeEditPostVM: makeEditPostVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
-                    onNavigateToBooking: onNavigateToBooking
+                    onNavigateToBooking: onNavigateToBooking,
+                    onNavigateToReviewVideoDetail: onNavigateToReviewVideoDetail
                 )
                 .tag(FeedTab.explore)
 
@@ -77,7 +81,8 @@ struct FeedScreen: View {
                     makeDeletePostVM: makeDeletePostVM,
                     makeEditPostVM: makeEditPostVM,
                     onNavigateToUserProfile: onNavigateToUserProfile,
-                    onNavigateToBooking: onNavigateToBooking
+                    onNavigateToBooking: onNavigateToBooking,
+                    onNavigateToReviewVideoDetail: onNavigateToReviewVideoDetail
                 )
                 .tag(FeedTab.following)
             }

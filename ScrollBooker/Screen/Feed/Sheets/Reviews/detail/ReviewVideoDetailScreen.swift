@@ -1,15 +1,16 @@
 //
-//  ProfilePostDetailScreen.swift
+//  ReviewVideoDetailScreen.swift
 //  ScrollBooker
 //
-//  Created by Raducu Balgiu on 16.09.2026.
+//  Created by Raducu Balgiu on 24.09.2026.
 //
 
 import SwiftUI
 
-struct ProfilePostDetailScreen: View {
-    var viewModel: ProfilePostDetailViewModel
-    let source: ProfilePostSource
+struct ReviewVideoDetailScreen: View {
+    @Environment(Router.self) private var router
+
+    var viewModel: ReviewVideoDetailViewModel
 
     let makeCommentsVM: (Int) -> CommentsViewModel
     let makeLinkedProductsVM: (Post) -> LinkedProductsViewModel
@@ -33,8 +34,7 @@ struct ProfilePostDetailScreen: View {
     @State private var reviewsCache = ViewModelCache<Int, ReviewsViewModel>()
 
     init(
-        viewModel: ProfilePostDetailViewModel,
-        source: ProfilePostSource,
+        viewModel: ReviewVideoDetailViewModel,
         makeCommentsVM: @escaping (Int) -> CommentsViewModel,
         makeLinkedProductsVM: @escaping (Post) -> LinkedProductsViewModel,
         makeReviewsVM: @escaping (Post) -> ReviewsViewModel,
@@ -47,7 +47,6 @@ struct ProfilePostDetailScreen: View {
         onBack: @escaping () -> Void
     ) {
         self.viewModel = viewModel
-        self.source = source
         self.makeCommentsVM = makeCommentsVM
         self.makeLinkedProductsVM = makeLinkedProductsVM
         self.makeReviewsVM = makeReviewsVM
@@ -61,23 +60,9 @@ struct ProfilePostDetailScreen: View {
         _currentIndex = State(initialValue: viewModel.currentIndex)
     }
 
-    private var title: String {
-        switch source {
-        case .posts: String(localized: "title_posts")
-        case .bookmarks: String(localized: "title_bookmarks")
-        }
-    }
-
     private var currentPost: Post? {
         guard let index = currentIndex, viewModel.posts.indices.contains(index) else { return nil }
         return viewModel.posts[index]
-    }
-
-    private var bookingSource: BookingSourceEnum {
-        switch source {
-        case .posts: .profileGridPostDetail
-        case .bookmarks: .profileBookmarksPostDetail
-        }
     }
 
     var body: some View {
@@ -140,7 +125,7 @@ struct ProfilePostDetailScreen: View {
                     LinkedProductsSheetView(
                         viewModel: linkedProductsCache.viewModel(for: post.id, make: { _ in makeLinkedProductsVM(post) }),
                         post: post,
-                        bookingSource: bookingSource,
+                        bookingSource: .exploreFeed,
                         onNavigateToUserProfile: onNavigateToUserProfile,
                         onNavigateToBooking: onNavigateToBooking
                     )
@@ -198,18 +183,12 @@ struct ProfilePostDetailScreen: View {
         }
         .onDisappear {
             viewModel.pauseAll()
+            router.popReviewVideoDetail(viewModel)
         }
     }
 
     private var header: some View {
         ZStack {
-            Text(title)
-                .font(.headline)
-                .fontWeight(.semibold)
-                .foregroundColor(.white)
-                .lineLimit(1)
-                .padding(.horizontal, 56)
-
             HStack {
                 Button(action: onBack) {
                     Image(systemName: "xmark")

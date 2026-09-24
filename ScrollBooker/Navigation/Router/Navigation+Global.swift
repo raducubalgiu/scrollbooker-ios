@@ -123,6 +123,14 @@ struct GlobalNavigationModifier: ViewModifier {
                     },
                     onNavigateToUserProfile: { router.push(.userProfile($0)) },
                     onNavigateToBooking: { router.push(.bookingServices($0)) },
+                    onNavigateToReviewVideoDetail: { reviewsViewModel, startPostId in
+                        router.pushReviewVideoDetail(
+                            container.postModule.makeReviewVideoDetailViewModel(
+                                reviewsViewModel: reviewsViewModel,
+                                startPostId: startPostId
+                            )
+                        )
+                    },
                     onBack: {
                         router.clearProfilePostDetailSession()
                         router.popWithoutAnimation()
@@ -132,16 +140,68 @@ struct GlobalNavigationModifier: ViewModifier {
                 LoadingView()
             }
 
+        case .reviewVideoDetail:
+            if let viewModel = router.activeReviewVideoDetailViewModel {
+                ReviewVideoDetailScreen(
+                    viewModel: viewModel,
+                    makeCommentsVM: { container.commentModule.makeCommentsViewModel(postId: $0) },
+                    makeLinkedProductsVM: { post in
+                        container.productModule.makeLinkedProductsViewModel(
+                            postId: post.id,
+                            postUserId: post.user.id,
+                            isVideoReview: post.isVideoReview,
+                            getAppointmentByUserAndPostUseCase: container.appointmentModule.getAppointmentByUserAndPostUseCase
+                        )
+                    },
+                    makeReviewsVM: { post in
+                        let isEmployee = post.user.id != post.businessOwner.id
+                        return container.reviewModule.makeReviewsViewModel(
+                            businessId: post.businessId ?? post.businessOwner.id,
+                            employeeId: isEmployee ? post.user.id : nil,
+                            getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+                        )
+                    },
+                    makeStatisticsVM: { postId in
+                        container.postModule.makePostStatisticsViewModel(postId: postId)
+                    },
+                    makeDeletePostVM: {
+                        container.postModule.makeDeletePostViewModel()
+                    },
+                    makeEditPostVM: { post in
+                        container.postModule.makeEditPostViewModel(
+                            post: post,
+                            getSelectedDomainsByBusinessUseCase: container.servieDomainModule.getSelectedDomainsByBusinessUseCase,
+                            getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
+                            getPostLinkedProductsUseCase: container.productModule.getPostLinkedProductsUseCase
+                        )
+                    },
+                    onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                    onNavigateToBooking: { router.push(.bookingServices($0)) },
+                    onNavigateToReviewVideoDetail: { reviewsViewModel, startPostId in
+                        router.pushReviewVideoDetail(
+                            container.postModule.makeReviewVideoDetailViewModel(
+                                reviewsViewModel: reviewsViewModel,
+                                startPostId: startPostId
+                            )
+                        )
+                    },
+                    onBack: { router.popWithoutAnimation() }
+                )
+            } else {
+                LoadingView()
+            }
+
         case .userSocial(let params):
+            let socialReviewsViewModel = params.businessId.map {
+                container.reviewModule.makeReviewsViewModel(
+                    businessId: $0,
+                    employeeId: params.employeeId,
+                    getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+                )
+            }
             SocialScreen(
                 viewModel: container.followModule.makeSocialViewModel(userId: params.userId),
-                reviewsViewModel: params.businessId.map {
-                    container.reviewModule.makeReviewsViewModel(
-                        businessId: $0,
-                        employeeId: params.employeeId,
-                        getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
-                    )
-                },
+                reviewsViewModel: socialReviewsViewModel,
                 onBack: { router.pop() },
                 username: params.username,
                 isBusinessOrEmployee: params.isBusinessOrEmployee,
@@ -149,6 +209,15 @@ struct GlobalNavigationModifier: ViewModifier {
                 followingsCount: params.followingsCount,
                 selectedTab: params.initialTab,
                 onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                onNavigateToVideoReview: { videoPost in
+                    guard let socialReviewsViewModel else { return }
+                    router.pushReviewVideoDetail(
+                        container.postModule.makeReviewVideoDetailViewModel(
+                            reviewsViewModel: socialReviewsViewModel,
+                            startPostId: videoPost.id
+                        )
+                    )
+                }
             )
             
         case .bookingServices(let params):

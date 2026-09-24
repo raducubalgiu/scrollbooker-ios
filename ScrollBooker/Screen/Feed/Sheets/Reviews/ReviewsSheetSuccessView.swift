@@ -13,6 +13,7 @@ struct ReviewsSheetSuccessView: View {
     
     @Binding var selectedTab: ReviewTab
     let animationNamespace: Namespace.ID
+    var onNavigateToVideoReview: (Post) -> Void = { _ in }
     
     var body: some View {
         if summary.ratingsCount == 0 {
@@ -60,7 +61,7 @@ struct ReviewsSheetSuccessView: View {
             AllReviewsTabView(viewModel: viewModel)
                 .animation(.default, value: viewModel.writtenReviews)
         case .video:
-            VideoReviewsTabView(viewModel: viewModel)
+            VideoReviewsTabView(viewModel: viewModel, onNavigateToVideoReview: onNavigateToVideoReview)
                 .animation(.default, value: viewModel.videoReviews)
         }
     }

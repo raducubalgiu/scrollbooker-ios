@@ -160,6 +160,23 @@ final class PostModule {
         )
     }
 
+    func makeReviewVideoDetailViewModel(
+        reviewsViewModel: ReviewsViewModel,
+        startPostId: Int
+    ) -> ReviewVideoDetailViewModel {
+        ReviewVideoDetailViewModel(
+            reviewsViewModel: reviewsViewModel,
+            startPostId: startPostId,
+            likePostUseCase: likePostUseCase,
+            unlikePostUseCase: unlikePostUseCase,
+            bookmarkPostUseCase: bookmarkPostUseCase,
+            unbookmarkPostUseCase: unbookmarkPostUseCase,
+            followUserUseCase: followUserUseCase,
+            unfollowUserUseCase: unfollowUserUseCase,
+            sharePostUseCase: sharePostUseCase
+        )
+    }
+
     func makeFeedViewModel() -> FeedViewModel {
         FeedViewModel(
             exploreViewModel: makeExploreTabViewModel(),

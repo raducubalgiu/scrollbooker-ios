@@ -68,4 +68,8 @@ final class UserProfileRepositoryImpl: UserProfileRepository {
         let dto = try await api.searchUsername(username: username)
         return SearchUsername(dto: dto, username: username)
     }
+
+    func shareUserProfile(userId: Int, request: ShareRequest) async throws -> NoContent {
+        try await api.shareUserProfile(userId: userId, request: request)
+    }
 }

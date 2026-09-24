@@ -19,6 +19,7 @@ protocol UserProfileApiService: Sendable {
     func updatePublicEmail(request: UpdatePublicEmailRequest) async throws -> UserProfileUpdateDto
     func updateAvatar(photo: Data) async throws -> UpdateAvatarResponseDto
     func searchUsername(username: String) async throws -> SearchUsernameDTO
+    func shareUserProfile(userId: Int, request: ShareRequest) async throws -> NoContent
 }
 
 final class UserProfileApiImpl: UserProfileApiService {
@@ -119,6 +120,14 @@ final class UserProfileApiImpl: UserProfileApiService {
             "users/available-username",
             method: .get,
             query: ["username": username]
+        )
+    }
+
+    func shareUserProfile(userId: Int, request: ShareRequest) async throws -> NoContent {
+        try await client.request(
+            "users/\(userId)/share-profile",
+            method: .post,
+            body: request
         )
     }
 }

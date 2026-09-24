@@ -57,6 +57,10 @@ final class UserProfileModule {
         SearchUsernameUseCase(repository: repository)
     }()
 
+    private lazy var shareUserProfileUseCase: ShareUserProfileUseCase = {
+        ShareUserProfileUseCase(repository: repository)
+    }()
+
     func makeMyProfileViewModel(
         session: SessionManager,
         getUserPostsUseCase: GetUserPostsUseCase,
@@ -73,6 +77,7 @@ final class UserProfileModule {
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
             getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
             getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
+            shareUserProfileUseCase: shareUserProfileUseCase,
             userLocationService: userLocationService
         )
 
@@ -106,6 +111,7 @@ final class UserProfileModule {
             getProductsByBusinessAndEmployeeUseCase: getProductsByBusinessAndEmployeeUseCase,
             getEmployeesByOwnerUseCase: getEmployeesByOwnerUseCase,
             getSchedulesByUserIdUseCase: getSchedulesByUserIdUseCase,
+            shareUserProfileUseCase: shareUserProfileUseCase,
             userLocationService: userLocationService
         )
 

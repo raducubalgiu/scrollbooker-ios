@@ -59,6 +59,7 @@ final class ProfileController {
     private let getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase
     private let getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase
     private let getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
+    private let shareUserProfileUseCase: ShareUserProfileUseCase
     private let userLocationService: UserLocationService
 
     init(
@@ -69,6 +70,7 @@ final class ProfileController {
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
         getEmployeesByOwnerUseCase: GetEmployeesByOwnerUseCase,
         getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
+        shareUserProfileUseCase: ShareUserProfileUseCase,
         userLocationService: UserLocationService
     ) {
         self.getUserProfileUseCase = getUserProfileUseCase
@@ -78,6 +80,7 @@ final class ProfileController {
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
         self.getEmployeesByOwnerUseCase = getEmployeesByOwnerUseCase
         self.getSchedulesByUserIdUseCase = getSchedulesByUserIdUseCase
+        self.shareUserProfileUseCase = shareUserProfileUseCase
         self.userLocationService = userLocationService
     }
 
@@ -120,6 +123,14 @@ final class ProfileController {
     /// Updates the cached profile in place (e.g. after an edit-profile save), without a refetch.
     func updateProfile(_ profile: UserProfile) {
         viewState = .success(profile)
+    }
+
+    func shareProfile(userId: Int, channel: ShareChannelEnum) async {
+        do {
+            _ = try await shareUserProfileUseCase(userId: userId, channel: channel)
+        } catch {
+            logger.error("ERROR: on Sharing User Profile: \(error.localizedDescription, privacy: .public)")
+        }
     }
 
     // MARK: - Posts

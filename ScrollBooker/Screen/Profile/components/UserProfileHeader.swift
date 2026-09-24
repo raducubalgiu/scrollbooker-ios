@@ -10,7 +10,8 @@ import SwiftUI
 struct UserProfileHeaderView: View {
     var username: String
     var onBack: () -> Void
-    
+    var onShare: () -> Void
+
     var body: some View {
         HStack {
             Button {
@@ -21,17 +22,22 @@ struct UserProfileHeaderView: View {
                     .font(.system(size: 24))
             }
             .buttonStyle(.plain)
-            
+
             Spacer()
-            
+
             Text(username)
                 .font(.headline.bold())
-            
+
             Spacer()
-            
-            Image(systemName: "line.3.horizontal")
-                .foregroundColor(.backgroundSB)
-                .font(.system(size: 24))
+
+            Button {
+                onShare()
+            } label: {
+                Image(systemName: "square.and.arrow.up")
+                    .foregroundColor(.onBackgroundSB)
+                    .font(.system(size: 20))
+            }
+            .buttonStyle(.plain)
 
         }
         .frame(maxWidth: .infinity)

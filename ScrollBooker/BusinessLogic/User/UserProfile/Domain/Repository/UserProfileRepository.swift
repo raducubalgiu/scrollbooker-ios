@@ -19,4 +19,5 @@ protocol UserProfileRepository: Sendable {
     func updatePublicEmail(request: UpdatePublicEmailRequest) async throws -> UserProfileUpdate
     func updateAvatar(photo: Data) async throws -> String
     func searchUsername(username: String) async throws -> SearchUsername
+    func shareUserProfile(userId: Int, request: ShareRequest) async throws -> NoContent
 }

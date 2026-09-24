@@ -54,7 +54,18 @@ struct UserProfileScreen: View {
                     header: {
                         UserProfileHeaderView(
                             username: "@\(user.username)",
-                            onBack: onBack
+                            onBack: onBack,
+                            onShare: {
+                                ShareHelper.shareUserProfile(
+                                    username: user.username,
+                                    profession: user.profession,
+                                    bio: user.bio
+                                ) { resolvedChannel in
+                                    Task {
+                                        await viewModel.profileController.shareProfile(userId: user.id, channel: resolvedChannel)
+                                    }
+                                }
+                            }
                         )
                         .padding(.vertical)
                         .padding(.horizontal)
@@ -65,7 +76,17 @@ struct UserProfileScreen: View {
                                 isBusinessOrEmployee: user.isBusinessOrEmployee,
                                 onNavigateToEditProfile: onNavigateToEditProfile,
                                 onNavigateToMyCalendar: onNavigateToMyCalendar,
-                                onShareProfile: {}
+                                onShareProfile: {
+                                    ShareHelper.shareUserProfile(
+                                        username: user.username,
+                                        profession: user.profession,
+                                        bio: user.bio
+                                    ) { resolvedChannel in
+                                        Task {
+                                            await viewModel.profileController.shareProfile(userId: user.id, channel: resolvedChannel)
+                                        }
+                                    }
+                                }
                             )
                         } else {
                             UserProfileActions(

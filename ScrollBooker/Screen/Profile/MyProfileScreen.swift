@@ -63,7 +63,17 @@ struct MyProfileScreen: View {
                             isBusinessOrEmployee: user.isBusinessOrEmployee,
                             onNavigateToEditProfile: onNavigateToEditProfile,
                             onNavigateToMyCalendar: onNavigateToMyCalendar,
-                            onShareProfile: {}
+                            onShareProfile: {
+                                ShareHelper.shareUserProfile(
+                                    username: user.username,
+                                    profession: user.profession,
+                                    bio: user.bio
+                                ) { resolvedChannel in
+                                    Task {
+                                        await viewModel.profileController.shareProfile(userId: user.id, channel: resolvedChannel)
+                                    }
+                                }
+                            }
                         )
                     }
                 )

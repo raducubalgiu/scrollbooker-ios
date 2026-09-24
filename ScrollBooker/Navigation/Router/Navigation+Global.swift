@@ -135,6 +135,13 @@ struct GlobalNavigationModifier: ViewModifier {
         case .userSocial(let params):
             SocialScreen(
                 viewModel: container.followModule.makeSocialViewModel(userId: params.userId),
+                reviewsViewModel: params.businessId.map {
+                    container.reviewModule.makeReviewsViewModel(
+                        businessId: $0,
+                        employeeId: params.employeeId,
+                        getVideoReviewsUseCase: container.postModule.getVideoReviewsUseCase
+                    )
+                },
                 onBack: { router.pop() },
                 username: params.username,
                 isBusinessOrEmployee: params.isBusinessOrEmployee,

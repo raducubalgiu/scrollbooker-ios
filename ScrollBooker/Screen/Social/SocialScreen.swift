@@ -9,6 +9,7 @@ import SwiftUI
 
 struct SocialScreen: View {
     @State var viewModel: SocialViewModel
+    let reviewsViewModel: ReviewsViewModel?
     var onBack: () -> Void
     
     var username: String
@@ -35,8 +36,18 @@ struct SocialScreen: View {
             )
             
             TabView(selection: $selectedTab) {
-                Text("Recenzii")
-                    .tag(SocialTab.reviews)
+                Group {
+                    if let reviewsViewModel {
+                        ReviewsSectionView(viewModel: reviewsViewModel)
+                    } else {
+                        NoDataView(
+                            title: String(localized: "reviews"),
+                            message: String(localized: "message_empty_reviews"),
+                            systemImage: "star.bubble"
+                        )
+                    }
+                }
+                .tag(SocialTab.reviews)
                 
                 SocialUsersTabView(
                     state: viewModel.followersState,

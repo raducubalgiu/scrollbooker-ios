@@ -20,13 +20,15 @@ struct BookingNavigationParams: Hashable, Identifiable {
 
 struct SocialNavigationParams: Hashable, Identifiable {
     let id = UUID()
-    
+
     let userId: Int
     let username: String
     let initialTab: SocialTab
     let isBusinessOrEmployee: Bool
     let followersCount: Int
     let followingsCount: Int
+    let businessId: Int?
+    let employeeId: Int?
 }
 
 struct ProfileNavigationParams: Hashable, Identifiable {

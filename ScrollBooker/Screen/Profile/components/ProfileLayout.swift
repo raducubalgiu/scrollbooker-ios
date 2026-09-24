@@ -56,7 +56,9 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                                         initialTab: selectedTab,
                                         isBusinessOrEmployee: user.isBusinessOrEmployee,
                                         followersCount: user.counters.followersCount,
-                                        followingsCount: user.counters.followingsCount
+                                        followingsCount: user.counters.followingsCount,
+                                        businessId: user.businessId,
+                                        employeeId: employeeId
                                     )
                                 )
                             }

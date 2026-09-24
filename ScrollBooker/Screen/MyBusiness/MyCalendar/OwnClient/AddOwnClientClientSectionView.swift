@@ -9,48 +9,49 @@ import SwiftUI
 
 struct AddOwnClientClientSectionView: View {
     let selectedClient: BusinessClient?
-    var onTap: () -> Void
+    var onOpenClientSelect: () -> Void
+    var onAddNewClient: () -> Void
 
     var body: some View {
-        Button(action: onTap) {
-            HStack(spacing: AppSize.base.rawValue) {
-                ZStack {
-                    Circle()
-                        .fill(Color.primarySB.opacity(0.15))
-                        .frame(width: 44, height: 44)
-
-                    Image(systemName: "person.fill")
-                        .foregroundColor(.primarySB)
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    if let selectedClient {
-                        Text(selectedClient.fullname)
-                            .font(.subheadline.bold())
-                            .foregroundColor(.onBackgroundSB)
-
-                        if let phone = selectedClient.phone, !phone.isEmpty {
-                            Text(phone)
-                                .font(.footnote)
-                                .foregroundColor(.gray)
-                        }
-                    } else {
-                        Text(String(localized: "selectClient"))
-                            .font(.subheadline.bold())
-                            .foregroundColor(.onBackgroundSB)
-                    }
-                }
+        VStack(alignment: .leading, spacing: 0) {
+            HStack {
+                Text(String(localized: "client"))
+                    .font(.headline)
 
                 Spacer()
 
-                Image(systemName: "chevron.right")
-                    .font(.footnote)
-                    .foregroundColor(.gray)
+                Button(action: onAddNewClient) {
+                    HStack(spacing: AppSize.xxs.rawValue) {
+                        Image(systemName: "plus.circle")
+                        Text(String(localized: "addNewClient"))
+                    }
+                    .font(.subheadline)
+                    .foregroundColor(.primarySB)
+                }
+                .buttonStyle(.plain)
             }
-            .padding(.base)
-            .background(Color.surfaceSB)
-            .cornerRadius(12)
+            .padding(.bottom, .s)
+
+            if let selectedClient {
+                AddOwnClientSelectedClientRowView(client: selectedClient, onTap: onOpenClientSelect)
+            } else {
+                Button(action: onOpenClientSelect) {
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray)
+
+                        Text(String(localized: "searchClientByNameOrPhone"))
+                            .foregroundColor(.gray)
+
+                        Spacer()
+                    }
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
+                    .background(Color.surfaceSB)
+                    .cornerRadius(8)
+                }
+                .buttonStyle(.plain)
+            }
         }
-        .buttonStyle(.plain)
     }
 }

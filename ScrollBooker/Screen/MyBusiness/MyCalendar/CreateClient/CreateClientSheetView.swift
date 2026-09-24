@@ -1,5 +1,5 @@
 //
-//  AddOwnClientCreateClientSheetView.swift
+//  CreateClientSheetView.swift
 //  ScrollBooker
 //
 //  Created by Raducu Balgiu on 22.09.2026.
@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct AddOwnClientCreateClientSheetView: View {
+struct CreateClientSheetView: View {
     @Environment(\.dismiss) private var dismiss
 
     let isSaving: Bool
@@ -34,7 +34,25 @@ struct AddOwnClientCreateClientSheetView: View {
         return nil
     }
 
-    private var isValid: Bool { nameErrorMessage == nil }
+    private var trimmedPhone: String { phone.trimmingCharacters(in: .whitespacesAndNewlines) }
+
+    private var phoneErrorMessage: String? {
+        guard !trimmedPhone.isEmpty else { return nil }
+
+        let allowedCharacters = CharacterSet(charactersIn: "0123456789+ -")
+        guard trimmedPhone.unicodeScalars.allSatisfy({ allowedCharacters.contains($0) }) else {
+            return String(localized: "invalidPhoneValidationMessage")
+        }
+
+        let digitsOnly = trimmedPhone.filter(\.isNumber)
+        guard (7...15).contains(digitsOnly.count) else {
+            return String(localized: "invalidPhoneValidationMessage")
+        }
+
+        return nil
+    }
+
+    private var isValid: Bool { nameErrorMessage == nil && phoneErrorMessage == nil }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -80,6 +98,18 @@ struct AddOwnClientCreateClientSheetView: View {
                             .padding()
                             .background(Color.surfaceSB)
                             .cornerRadius(12)
+
+                        if let phoneErrorMessage {
+                            HStack(spacing: 4) {
+                                Image(systemName: "exclamationmark.triangle.fill")
+                                    .font(.footnote)
+                                    .foregroundColor(.errorSB)
+
+                                Text(phoneErrorMessage)
+                                    .font(.footnote)
+                                    .foregroundColor(.errorSB)
+                            }
+                        }
                     }
                 }
                 .padding(.base)
@@ -94,7 +124,6 @@ struct AddOwnClientCreateClientSheetView: View {
                 isLoading: isSaving,
                 onClick: {
                     Task {
-                        let trimmedPhone = phone.trimmingCharacters(in: .whitespacesAndNewlines)
                         await onSave(trimmedName, trimmedPhone.isEmpty ? nil : trimmedPhone)
                     }
                 }

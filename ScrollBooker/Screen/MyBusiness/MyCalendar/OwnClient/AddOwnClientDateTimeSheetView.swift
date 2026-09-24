@@ -8,12 +8,12 @@
 import SwiftUI
 
 struct AddOwnClientDateTimeSheetView: View {
-    @Environment(\.dismiss) private var dismiss
     let viewModel: AddOwnClientViewModel
+    var onClose: () -> Void
 
     var body: some View {
         VStack(spacing: 0) {
-            SheetHeaderView(onDismiss: { dismiss() }, title: String(localized: "selectDateAndTime"), showDivider: false)
+            SheetHeaderView(onDismiss: onClose, title: String(localized: "selectDateAndTime"), showDivider: false)
 
             switch viewModel.calendarHeaderState {
                 case .idle, .loading:
@@ -29,7 +29,7 @@ struct AddOwnClientDateTimeSheetView: View {
                         availableDays: headerData.availableDays,
                         allCalendarDays: headerData.allCalendarDays,
                         viewModel: viewModel,
-                        onSlotConfirmed: { dismiss() }
+                        onSlotConfirmed: onClose
                     )
             }
         }

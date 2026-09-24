@@ -57,6 +57,7 @@
 "asClient" = "Ca și client";
 "add" = "Adaugă";
 "added" = "Adăugat";
+"change" = "Schimbă";
 "update" = "Actualizează";
 "selectAnOption" = "Selectează o opțiune";
 "serviceWithoutDescription" = "Acest serviciu nu are o descriere disponibilă";
@@ -185,6 +186,7 @@
 "thankYouForHelp" = "Îți mulțumim pentru ajutor!";
 "minLengthValidationMessage" = "Acest câmp trebuie să aibă %1$d caractere";
 "maxLengthValidationMessage" = "Acest câmp este limitat la %1$d caractere";
+"invalidPhoneValidationMessage" = "Numărul de telefon nu este valid";
 "searchEmployee" = "Caută angajat";
 "selectEmployee" = "Selectează angajat";
 "searchEmployeeAndSelectToContinue" = "Caută angajatul în lista de mai jos și selectează-l pentru a continua";
@@ -389,9 +391,13 @@
 "searchClientByNameOrPhone" = "Caută client după nume sau telefon";
 "addNewClient" = "Adaugă un client nou";
 "client" = "Client";
+"noPhoneNumber" = "Fără număr de telefon";
 "searchClientPlaceholderHint" = "Poți căuta un client existent după nume sau număr de telefon";
 "selectServicesForClient" = "Selectează serviciile pe care le va primi clientul.";
 "selectDateAndTime" = "Alege data și ora";
+"selectServicesFirst" = "Selectează mai întâi serviciile";
+"saveAppointment" = "Salvează programarea";
+"appointmentDurationMismatch" = "Durata serviciilor selectate (%1$d min) nu se potrivește cu intervalul ales (%2$d min). Alege un alt interval sau modifică serviciile.";
 "clientName" = "Numele clientului";
 "phone" = "Telefon";
 "addServices" = "Adaugă Servicii";

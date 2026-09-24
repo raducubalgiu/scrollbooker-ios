@@ -12,10 +12,7 @@ struct AddOwnClientScreen: View {
     var onBack: () -> Void
     var onSaved: () -> Void
 
-    @State private var showClientSelect = false
-    @State private var showCreateClient = false
-    @State private var showServicesSelect = false
-    @State private var showDateTimeSelect = false
+    @State private var activeSheet: AddOwnClientSheet?
 
     private static let slotDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -26,53 +23,84 @@ struct AddOwnClientScreen: View {
 
     private var selectedSlotLabel: String? {
         guard let slot = viewModel.selectedSlot,
-              let date = Self.slotDateFormatter.date(from: slot.startDateLocale) else { return nil }
-        return date.formatted(.dateTime.day().month(.wide).hour().minute())
-    }
+              let start = Self.slotDateFormatter.date(from: slot.startDateLocale),
+              let end = Self.slotDateFormatter.date(from: slot.endDateLocale) else { return nil }
 
-    private var bottomButtonTitle: String {
-        viewModel.selectedSlot != nil ? String(localized: "save") : String(localized: "selectDateAndTime")
-    }
+        let datePart = start.formatted(.dateTime.day().month(.wide))
+        let startTime = start.formatted(.dateTime.hour().minute())
+        let endTime = end.formatted(.dateTime.hour().minute())
 
-    private var isBottomButtonDisabled: Bool {
-        viewModel.selectedSlot != nil ? !viewModel.canSave : !viewModel.canPickDateTime
+        if let duration = viewModel.selectedSlotDurationMinutes {
+            return "\(datePart), \(startTime) - \(endTime) (\(duration) min)"
+        }
+        return "\(datePart), \(startTime)"
     }
 
     var body: some View {
         VStack(spacing: 0) {
-            HeaderView(title: String(localized: "addAppointment"), onBack: onBack)
+            HeaderView(
+                title: String(localized: "addAppointment"),
+                enableBack: false,
+                onBack: onBack,
+                customAction: {
+                    Button {
+                        onBack()
+                    } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 18, weight: .semibold))
+                            .foregroundColor(.onBackgroundSB)
+                    }
+                }
+            )
 
             AddOwnClientFormView(
                 selectedClient: viewModel.selectedClient,
                 linkedItems: viewModel.linkedItems,
-                onOpenClientSelect: { showClientSelect = true },
+                onOpenClientSelect: { activeSheet = .clientSelect },
+                onAddNewClient: { activeSheet = .createClient },
                 onRemoveService: { viewModel.removeLinkedItem($0) },
-                onAddService: { showServicesSelect = true }
+                onOpenServicesSheet: { activeSheet = .servicesSelect }
             )
 
             VStack(spacing: 0) {
                 Divider()
 
-                if let selectedSlotLabel {
-                    Text(selectedSlotLabel)
+                HStack {
+                    Text("\(String(localized: "duration")): \(viewModel.totalDuration) min")
+                        .font(.subheadline.weight(.medium))
+
+                    Spacer()
+
+                    Text("\(String(localized: "total")): \(viewModel.totalPriceWithDiscount.toTwoDecimals()) RON")
+                        .font(.subheadline.weight(.medium))
+                }
+                .padding(.horizontal, .base)
+                .padding(.vertical, .s)
+
+                AddOwnClientDateTimeSummaryButtonView(
+                    value: selectedSlotLabel,
+                    isEnabled: viewModel.totalDuration > 0,
+                    onClick: { activeSheet = .dateTimeSelect }
+                )
+                .padding(.horizontal, .base)
+
+                if viewModel.hasDurationMismatch, let mismatchDuration = viewModel.selectedSlotDurationMinutes {
+                    Text(String(format: String(localized: "appointmentDurationMismatch"), viewModel.totalDuration, mismatchDuration))
                         .font(.footnote)
-                        .foregroundColor(.gray)
-                        .padding(.top, .s)
+                        .foregroundColor(.errorSB)
+                        .padding(.horizontal, .base)
+                        .padding(.top, .xs)
                 }
 
                 MainButton(
-                    title: bottomButtonTitle,
-                    isDisabled: isBottomButtonDisabled,
+                    title: String(localized: "saveAppointment"),
+                    isDisabled: !viewModel.canSave,
                     isLoading: viewModel.isSaving,
                     onClick: {
-                        if viewModel.selectedSlot != nil {
-                            Task {
-                                if await viewModel.createAppointment() {
-                                    onSaved()
-                                }
+                        Task {
+                            if await viewModel.createAppointment() {
+                                onSaved()
                             }
-                        } else {
-                            showDateTimeSelect = true
                         }
                     }
                 )
@@ -83,57 +111,56 @@ struct AddOwnClientScreen: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.backgroundSB)
         .task {
-            await viewModel.loadUserProducts()
+            async let products: Void = viewModel.loadUserProducts()
+            async let clients: Void = viewModel.loadClientsIfNeeded()
+            _ = await (products, clients)
         }
-        .sheet(isPresented: $showClientSelect) {
-            AddOwnClientClientSelectSheetView(
-                clientsState: viewModel.clientsState,
-                query: viewModel.clientQuery,
-                onQueryChanged: { viewModel.updateClientQuery($0) },
-                onSelect: { client in
-                    viewModel.selectClient(client)
-                    showClientSelect = false
-                },
-                onAddNewClient: {
-                    showClientSelect = false
-                    showCreateClient = true
-                },
-                onClose: { showClientSelect = false }
-            )
-            .presentationDetents([.fraction(0.75), .large])
-            .presentationDragIndicator(.hidden)
-            .presentationCornerRadius(25)
-        }
-        .sheet(isPresented: $showCreateClient) {
-            AddOwnClientCreateClientSheetView(
-                isSaving: viewModel.isCreatingClient,
-                onSave: { fullname, phone in
-                    if await viewModel.createClient(fullname: fullname, phone: phone) {
-                        showCreateClient = false
-                    }
-                }
-            )
-            .presentationDetents([.fraction(0.6), .large])
-            .presentationDragIndicator(.hidden)
-            .presentationCornerRadius(25)
-        }
-        .sheet(isPresented: $showServicesSelect) {
-            AddOwnClientServicesSheetView(
-                userProductsState: viewModel.userProductsState,
-                linkedItems: viewModel.linkedItems,
-                onSelectBookingItem: { viewModel.selectBookingItem($0) },
-                onClose: { showServicesSelect = false },
-                onRetry: { Task { await viewModel.loadUserProducts() } }
-            )
-            .presentationDetents([.large])
-            .presentationDragIndicator(.hidden)
-            .presentationCornerRadius(25)
-        }
-        .sheet(isPresented: $showDateTimeSelect) {
-            AddOwnClientDateTimeSheetView(viewModel: viewModel)
-                .presentationDetents([.large])
-                .presentationDragIndicator(.hidden)
-                .presentationCornerRadius(25)
+        .sheet(item: $activeSheet) { sheet in
+            switch sheet {
+                case .clientSelect:
+                    SelectClientSheetView(
+                        viewModel: viewModel,
+                        onAddNewClient: { activeSheet = .createClient },
+                        onClose: { activeSheet = nil }
+                    )
+                    .presentationDetents([.fraction(0.75), .large])
+                    .presentationDragIndicator(.hidden)
+                    .presentationCornerRadius(25)
+
+                case .createClient:
+                    CreateClientSheetView(
+                        isSaving: viewModel.isCreatingClient,
+                        onSave: { fullname, phone in
+                            if await viewModel.createClient(fullname: fullname, phone: phone) {
+                                activeSheet = nil
+                            }
+                        }
+                    )
+                    .presentationDetents([.fraction(0.6), .large])
+                    .presentationDragIndicator(.hidden)
+                    .presentationCornerRadius(25)
+
+                case .servicesSelect:
+                    AddOwnClientServicesSheetView(
+                        userProductsState: viewModel.userProductsState,
+                        linkedItems: viewModel.linkedItems,
+                        onConfirm: { items in
+                            viewModel.setLinkedItems(items)
+                            activeSheet = nil
+                        },
+                        onClose: { activeSheet = nil },
+                        onRetry: { Task { await viewModel.loadUserProducts() } }
+                    )
+                    .presentationDetents([.large])
+                    .presentationDragIndicator(.hidden)
+                    .presentationCornerRadius(25)
+
+                case .dateTimeSelect:
+                    AddOwnClientDateTimeSheetView(viewModel: viewModel, onClose: { activeSheet = nil })
+                        .presentationDetents([.large])
+                        .presentationDragIndicator(.hidden)
+                        .presentationCornerRadius(25)
+            }
         }
     }
 }

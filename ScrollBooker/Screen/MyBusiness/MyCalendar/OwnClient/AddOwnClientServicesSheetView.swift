@@ -10,12 +10,30 @@ import SwiftUI
 struct AddOwnClientServicesSheetView: View {
     let userProductsState: FeatureState<UserProducts>
     let linkedItems: [SelectedBookingItem]
-    var onSelectBookingItem: (SelectedBookingItem) -> Void
+    var onConfirm: ([SelectedBookingItem]) -> Void
     var onClose: () -> Void
     var onRetry: () -> Void
 
+    @State private var localLinkedItems: [SelectedBookingItem]
     @State private var activeSectionId: Int?
     @State private var selectedProductForVariants: Product?
+
+    init(
+        userProductsState: FeatureState<UserProducts>,
+        linkedItems: [SelectedBookingItem],
+        onConfirm: @escaping ([SelectedBookingItem]) -> Void,
+        onClose: @escaping () -> Void,
+        onRetry: @escaping () -> Void
+    ) {
+        self.userProductsState = userProductsState
+        self.linkedItems = linkedItems
+        self.onConfirm = onConfirm
+        self.onClose = onClose
+        self.onRetry = onRetry
+        self._localLinkedItems = State(initialValue: linkedItems)
+    }
+
+    private var isConfirmEnabled: Bool { localLinkedItems != linkedItems }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -40,29 +58,42 @@ struct AddOwnClientServicesSheetView: View {
                             userProducts: userProducts,
                             activeSectionId: $activeSectionId,
                             isSelectable: true,
-                            selectedProductIds: Set(linkedItems.map(\.productId)),
+                            selectedProductIds: Set(localLinkedItems.map(\.productId)),
                             onOpenProductDetail: { product in selectedProductForVariants = product },
                             onSelect: { product in
-                                if let existingSelectedItem = linkedItems.first(where: { $0.productId == product.id }) {
-                                    onSelectBookingItem(existingSelectedItem)
+                                if let existing = localLinkedItems.first(where: { $0.productId == product.id }) {
+                                    localLinkedItems.removeAll { $0.productId == existing.productId }
                                 } else if product.variants.count > 1 {
                                     selectedProductForVariants = product
                                 } else if let firstVariant = product.variants.first {
-                                    onSelectBookingItem(firstVariant.toBookingItem(product: product))
+                                    localLinkedItems.append(firstVariant.toBookingItem(product: product))
                                 }
                             },
                             onNavigateEditProduct: nil
                         )
                     }
             }
+
+            Divider()
+
+            MainButton(
+                title: String(localized: "add"),
+                isDisabled: !isConfirmEnabled,
+                isLoading: false,
+                onClick: {
+                    onConfirm(localLinkedItems)
+                }
+            )
+            .padding(.base)
         }
         .frame(maxHeight: .infinity, alignment: .top)
         .sheet(item: $selectedProductForVariants) { product in
             ProductDetailSheetView(
                 product: product,
-                selectedBookingItems: linkedItems,
+                selectedBookingItems: localLinkedItems,
                 onAdd: { bookingItem in
-                    onSelectBookingItem(bookingItem)
+                    localLinkedItems.removeAll { $0.productId == bookingItem.productId }
+                    localLinkedItems.append(bookingItem)
                     selectedProductForVariants = nil
                 },
                 onClose: { selectedProductForVariants = nil }

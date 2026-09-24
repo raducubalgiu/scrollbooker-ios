@@ -10,44 +10,36 @@ import SwiftUI
 struct AddOwnClientServicesSectionView: View {
     let linkedItems: [SelectedBookingItem]
     var onRemove: (SelectedBookingItem) -> Void
-    var onAddService: () -> Void
+    var onOpenServicesSheet: () -> Void
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text(String(localized: "services"))
-                .font(.headline)
-                .padding(.bottom, .s)
+            HStack {
+                Text(String(localized: "services"))
+                    .font(.headline)
 
-            if !linkedItems.isEmpty {
-                VStack(spacing: 0) {
+                Spacer()
+
+                if !linkedItems.isEmpty {
+                    Button(String(localized: "change"), action: onOpenServicesSheet)
+                        .font(.footnote.bold())
+                        .foregroundColor(.primarySB)
+                }
+            }
+            .padding(.bottom, .s)
+
+            if linkedItems.isEmpty {
+                PlaceholderActionBoxView(
+                    description: String(localized: "selectServicesForClient"),
+                    onClick: onOpenServicesSheet
+                )
+            } else {
+                VStack(spacing: AppSize.s.rawValue) {
                     ForEach(linkedItems) { item in
                         AddOwnClientLinkedServiceRowView(item: item, onRemove: { onRemove(item) })
-
-                        if item.id != linkedItems.last?.id {
-                            Divider()
-                        }
                     }
                 }
-                .padding(.base)
-                .background(Color.surfaceSB)
-                .cornerRadius(12)
-                .padding(.bottom, .s)
             }
-
-            Button(action: onAddService) {
-                HStack {
-                    Image(systemName: "plus.circle")
-                    Text(String(localized: "addServices"))
-                    Spacer()
-                }
-                .foregroundColor(.primarySB)
-                .padding(.base)
-                .overlay(
-                    RoundedRectangle(cornerRadius: 12)
-                        .stroke(Color.dividerSB, lineWidth: 1)
-                )
-            }
-            .buttonStyle(.plain)
         }
     }
 }

@@ -10,7 +10,7 @@ import SwiftUI
 struct MyCalendarScreen: View {
     @State var viewModel: MyCalendarViewModel
     var onBack: () -> Void
-    var makeAddOwnClientViewModel: (Date?) -> AddOwnClientViewModel
+    var makeAddOwnClientViewModel: (CalendarEventsSlot?) -> AddOwnClientViewModel
 
     @State private var currentWeekPage: Int = MyCalendarViewModel.pastWeeksCount
     @State private var showSettings = false
@@ -99,7 +99,7 @@ struct MyCalendarScreen: View {
                                     viewModel.setBlockDate(slot.startDateLocale)
                                 } else if !viewModel.isBlocking && slot.isFreeSlot {
                                     viewModel.setSelectedOwnClient(slot)
-                                    addOwnClientViewModel = makeAddOwnClientViewModel(slot.startDate)
+                                    addOwnClientViewModel = makeAddOwnClientViewModel(slot)
                                 }
                             },
                             onRetry: { Task { await viewModel.loadDayEvents(for: viewModel.selectedDay) } }

@@ -11,35 +11,55 @@ struct AddOwnClientLinkedServiceRowView: View {
     let item: SelectedBookingItem
     var onRemove: () -> Void
 
-    private var priceText: String {
-        let price = item.offerings.first?.priceWithDiscount ?? 0
-        return String(format: "%.2f", NSDecimalNumber(decimal: price).doubleValue)
+    private var subtitleText: String {
+        let durationText = item.variantDuration.formatDuration()
+        return item.variantName.isEmpty ? durationText : "\(durationText) - \(item.variantName)"
     }
 
     var body: some View {
-        HStack(spacing: AppSize.s.rawValue) {
-            VStack(alignment: .leading, spacing: 2) {
+        HStack(alignment: .center, spacing: AppSize.s.rawValue) {
+            VStack(alignment: .leading, spacing: 0) {
                 Text(item.productName)
-                    .font(.subheadline.bold())
+                    .font(.headline)
+                    .fontWeight(.semibold)
                     .foregroundColor(.onBackgroundSB)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
 
-                Text(item.variantName)
+                Spacer().frame(height: 4)
+
+                Text(subtitleText)
                     .font(.footnote)
                     .foregroundColor(.gray)
+                    .lineLimit(2)
+                    .truncationMode(.tail)
+
+                Spacer().frame(height: 6)
+
+                ProductCardRowPriceView(
+                    hasDifferentOfferings: item.hasPriceVariance,
+                    price: item.offerings.first?.price ?? 0,
+                    priceWithDiscount: item.offerings.first?.priceWithDiscount ?? 0,
+                    discount: item.offerings.first?.discount ?? 0
+                )
             }
 
             Spacer()
 
-            Text(priceText)
-                .font(.footnote.bold())
-                .foregroundColor(.onBackgroundSB)
-
-            Button(action: onRemove) {
-                Image(systemName: "xmark.circle.fill")
-                    .foregroundColor(.gray)
+            Button {
+                onRemove()
+            } label: {
+                Image(systemName: "trash")
+                    .font(.footnote)
+                    .foregroundColor(.errorSB)
+                    .frame(width: 28, height: 28)
+                    .background(Color.backgroundSB)
+                    .clipShape(Circle())
             }
             .buttonStyle(.plain)
         }
-        .padding(.vertical, .s)
+        .padding(.base)
+        .background(Color.surfaceSB)
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }

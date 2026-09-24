@@ -383,12 +383,12 @@ struct GlobalNavigationModifier: ViewModifier {
                 MyCalendarScreen(
                     viewModel: myCalendarViewModel,
                     onBack: { router.pop() },
-                    makeAddOwnClientViewModel: { initialDay in
+                    makeAddOwnClientViewModel: { initialSlot in
                         container.addOwnClientModule.makeAddOwnClientViewModel(
                             businessId: myCalendarViewModel.resolvedBusinessId,
-                            employeeId: myCalendarViewModel.effectiveEmployeeId,
                             targetUserId: myCalendarViewModel.targetUserId,
-                            initialDay: initialDay,
+                            initialDay: initialSlot?.startDate,
+                            initialSlot: initialSlot?.toSlot(),
                             getProductsByBusinessAndEmployeeUseCase: container.productModule.getProductsByBusinessAndEmployeeUseCase,
                             getUserAvailableDaysUseCase: container.availabilityModule.getUserAvailableDaysUseCase,
                             getUserAvailableTimeslotsUseCase: container.availabilityModule.getUserAvailableTimeslotsUseCase,

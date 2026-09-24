@@ -55,11 +55,11 @@ struct MyCalendarSlotContentView: View {
                     } else if isBlocking && slot.isFreeSlot {
                         EmptyView()
                     } else if slot.isBooked {
-                        MyCalendarSlotBookedView(slot: slot, maxLines: isCompact ? 1 : 2)
+                        MyCalendarSlotBookedView(slot: slot, maxLines: isCompact ? 1 : 2, showSubtitle: !isCompact)
                     } else if slot.isLastMinute {
                         MyCalendarSlotLastMinuteView(discount: slot.lastMinuteDiscount)
                     } else if isBefore {
-                        MyCalendarSlotMessageView(text: String(localized: "unbookedSlot"), color: .dividerSB)
+                        MyCalendarSlotMessageView(text: String(localized: "unbookedSlot"), color: .gray)
                     } else {
                         HStack {
                             Spacer()
@@ -90,6 +90,7 @@ private struct MyCalendarSlotMessageView: View {
 private struct MyCalendarSlotBookedView: View {
     let slot: CalendarEventsSlot
     let maxLines: Int
+    var showSubtitle: Bool = true
 
     private var title: String {
         slot.info?.customer?.fullname ?? String(localized: "booked")
@@ -112,7 +113,7 @@ private struct MyCalendarSlotBookedView: View {
                 .font(.footnote.bold())
                 .lineLimit(maxLines)
 
-            if !subtitle.isEmpty {
+            if showSubtitle, !subtitle.isEmpty {
                 Text(subtitle)
                     .font(.footnote)
                     .foregroundColor(.gray)

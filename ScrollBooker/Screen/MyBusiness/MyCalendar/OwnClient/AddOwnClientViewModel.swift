@@ -9,6 +9,19 @@ import Foundation
 import Observation
 import OSLog
 
+extension CalendarEventsSlot {
+    func toSlot() -> Slot {
+        Slot(
+            startDateUtc: startDateUtc,
+            endDateUtc: endDateUtc,
+            startDateLocale: startDateLocale,
+            endDateLocale: endDateLocale,
+            isLastMinute: isLastMinute,
+            lastMinuteDiscount: lastMinuteDiscount
+        )
+    }
+}
+
 @Observable
 @MainActor
 final class AddOwnClientViewModel {
@@ -17,6 +30,8 @@ final class AddOwnClientViewModel {
 
     private(set) var clientQuery: String = ""
     private(set) var clientsState: FeatureState<[BusinessClient]> = .idle
+    private(set) var canLoadMoreClients = true
+    private(set) var isLoadingMoreClients = false
     private(set) var selectedClient: BusinessClient?
     private(set) var isCreatingClient = false
 
@@ -28,7 +43,6 @@ final class AddOwnClientViewModel {
     private(set) var isSaving = false
 
     private let businessId: Int
-    private let employeeId: Int?
     private let targetUserId: Int
 
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "AddOwnClient")
@@ -43,6 +57,8 @@ final class AddOwnClientViewModel {
 
     private var slotsCache: [TimeslotsCacheKey: AvailableDay] = [:]
     private var searchTask: Task<Void, Never>?
+    private var currentClientsPage = 1
+    private static let clientsPageLimit = 20
 
     private static let isoDateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -50,11 +66,18 @@ final class AddOwnClientViewModel {
         return formatter
     }()
 
+    private static let slotDateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        return formatter
+    }()
+
     init(
         businessId: Int,
-        employeeId: Int?,
         targetUserId: Int,
         initialDay: Date?,
+        initialSlot: Slot?,
         getProductsByBusinessAndEmployeeUseCase: GetProductsbyBusinessAndEmployeeUseCase,
         getUserAvailableDaysUseCase: GetUserAvailableDaysUseCase,
         getUserAvailableTimeslotsUseCase: GetUserAvailableTimeslotsUseCase,
@@ -64,9 +87,9 @@ final class AddOwnClientViewModel {
         toastCenter: ToastCenter
     ) {
         self.businessId = businessId
-        self.employeeId = employeeId
         self.targetUserId = targetUserId
         self.selectedDay = initialDay ?? Date()
+        self.selectedSlot = initialSlot
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
         self.getUserAvailableDaysUseCase = getUserAvailableDaysUseCase
         self.getUserAvailableTimeslotsUseCase = getUserAvailableTimeslotsUseCase
@@ -91,8 +114,20 @@ final class AddOwnClientViewModel {
         selectedClient != nil && !linkedItems.isEmpty
     }
 
+    var selectedSlotDurationMinutes: Int? {
+        guard let selectedSlot,
+              let start = Self.slotDateFormatter.date(from: selectedSlot.startDateLocale),
+              let end = Self.slotDateFormatter.date(from: selectedSlot.endDateLocale) else { return nil }
+        return Int(end.timeIntervalSince(start) / 60)
+    }
+
+    var hasDurationMismatch: Bool {
+        guard let selectedSlotDurationMinutes, totalDuration > 0 else { return false }
+        return selectedSlotDurationMinutes != totalDuration
+    }
+
     var canSave: Bool {
-        canPickDateTime && selectedSlot != nil && !isSaving
+        canPickDateTime && selectedSlot != nil && !isSaving && !hasDurationMismatch
     }
 
     func loadUserProducts() async {
@@ -103,7 +138,7 @@ final class AddOwnClientViewModel {
             let products = try await withLoading {
                 try await getProductsByBusinessAndEmployeeUseCase(
                     businessId: businessId,
-                    employeeId: employeeId,
+                    employeeId: targetUserId,
                     onlyServicesWithProducts: true,
                     productsLimitPerService: nil
                 )
@@ -114,17 +149,8 @@ final class AddOwnClientViewModel {
         }
     }
 
-    func selectBookingItem(_ item: SelectedBookingItem) {
-        if let index = linkedItems.firstIndex(where: { $0.productId == item.productId }) {
-            let existingItem = linkedItems[index]
-            if existingItem.variantId == item.variantId {
-                linkedItems.remove(at: index)
-            } else {
-                linkedItems[index] = item
-            }
-        } else {
-            linkedItems.append(item)
-        }
+    func setLinkedItems(_ items: [SelectedBookingItem]) {
+        linkedItems = items
         resetDateTimeSelection()
     }
 
@@ -141,31 +167,66 @@ final class AddOwnClientViewModel {
     }
 
     func updateClientQuery(_ query: String) {
+        guard query != clientQuery else { return }
         clientQuery = query
         searchTask?.cancel()
-
-        guard query.count >= 2 else {
-            clientsState = .idle
-            return
-        }
 
         searchTask = Task {
             try? await Task.sleep(for: .milliseconds(300))
             guard !Task.isCancelled else { return }
-            await searchClients(query: query)
+            await loadClients(reset: true)
         }
     }
 
-    private func searchClients(query: String) async {
-        clientsState = .loading
+    func loadClientsIfNeeded() async {
+        guard clientsState.data == nil else { return }
+        await loadClients(reset: true)
+    }
+
+    func loadMoreClientsIfNeeded(currentClient: BusinessClient?) async {
+        guard canLoadMoreClients, !isLoadingMoreClients else { return }
+        guard let currentClient, currentClient.id == clientsState.data?.last?.id else { return }
+
+        isLoadingMoreClients = true
+        await loadClients(reset: false)
+        isLoadingMoreClients = false
+    }
+
+    private func fetchClientsPage() async throws -> PaginatedResponse<BusinessClient> {
+        try await getBusinessClientsUseCase(
+            businessId: businessId,
+            query: clientQuery.isEmpty ? nil : clientQuery,
+            page: currentClientsPage,
+            limit: Self.clientsPageLimit
+        )
+    }
+
+    private func loadClients(reset: Bool) async {
+        if reset {
+            currentClientsPage = 1
+            canLoadMoreClients = true
+            clientsState = .loading
+        }
 
         do {
-            let result = try await getBusinessClientsUseCase(businessId: businessId, query: query)
+            let response = reset
+                ? try await withLoading { try await self.fetchClientsPage() }
+                : try await fetchClientsPage()
             guard !Task.isCancelled else { return }
-            clientsState = .success(result.results)
+
+            let existing = reset ? [] : (clientsState.data ?? [])
+            let existingIds = Set(existing.map(\.id))
+            let newClients = existing + response.results.filter { !existingIds.contains($0.id) }
+            clientsState = .success(newClients)
+
+            let loadedCount = (currentClientsPage - 1) * Self.clientsPageLimit + response.results.count
+            canLoadMoreClients = loadedCount < response.count && !response.results.isEmpty
+            if canLoadMoreClients { currentClientsPage += 1 }
         } catch {
             guard !Task.isCancelled else { return }
-            clientsState = .error(logger.userMessage(for: error, context: "Searching Business Clients"))
+            if reset {
+                clientsState = .error(logger.userMessage(for: error, context: "Loading Business Clients"))
+            }
         }
     }
 
@@ -218,7 +279,7 @@ final class AddOwnClientViewModel {
             let daysStrings = try await withLoading {
                 try await getUserAvailableDaysUseCase(
                     businessId: businessId,
-                    employeeId: employeeId,
+                    employeeId: targetUserId,
                     startDate: startDateStr,
                     endDate: endDateStr,
                     slotDuration: totalDuration
@@ -238,7 +299,7 @@ final class AddOwnClientViewModel {
         selectedDay = date
 
         let dayStr = Self.isoDateFormatter.string(from: date)
-        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: employeeId)
+        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: targetUserId)
 
         if let cachedData = slotsCache[cacheKey] {
             updateSlotsState(with: cachedData)
@@ -258,7 +319,7 @@ final class AddOwnClientViewModel {
             let availableDayData = try await withLoading {
                 try await getUserAvailableTimeslotsUseCase(
                     businessId: businessId,
-                    employeeId: employeeId,
+                    employeeId: targetUserId,
                     slotDuration: totalDuration,
                     day: dayStr
                 )
@@ -285,14 +346,14 @@ final class AddOwnClientViewModel {
 
     func refreshTimeSlotsForCurrentDay() async {
         let dayStr = Self.isoDateFormatter.string(from: selectedDay)
-        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: employeeId)
+        let cacheKey = TimeslotsCacheKey(day: dayStr, duration: totalDuration, employeeId: targetUserId)
 
         slotsCache.removeValue(forKey: cacheKey)
 
         do {
             let freshDayData = try await getUserAvailableTimeslotsUseCase(
                 businessId: businessId,
-                employeeId: employeeId,
+                employeeId: targetUserId,
                 slotDuration: totalDuration,
                 day: dayStr
             )

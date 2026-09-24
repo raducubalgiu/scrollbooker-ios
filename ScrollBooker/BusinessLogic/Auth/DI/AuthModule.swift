@@ -33,6 +33,10 @@ final class AuthModule {
     lazy var repository: AuthRepository = {
         AuthRepositoryImpl(api: apiService)
     }()
+    
+    lazy var signInWithGoogleUseCase: SignInWithGoogleUseCase = {
+        SignInWithGoogleUseCase(repository: repository)
+    }()
 
     lazy var loginUseCase: LoginUseCase = {
         LoginUseCase(repository: repository)
@@ -70,6 +74,7 @@ final class AuthModule {
     func makeAuthViewModel(session: SessionManager) -> AuthViewModel {
         AuthViewModel(
             session: session,
+            signInWithGoogleUseCase: signInWithGoogleUseCase,
             loginUseCase: loginUseCase,
             registerUseCase: registerUseCase,
             verifyEmailUseCase: verifyEmailUseCase,

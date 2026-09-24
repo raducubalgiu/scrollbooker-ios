@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		BE7070BD3062F378004853D0 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = BE7070BC3062F378004853D0 /* GoogleSignIn */; };
+		BE7070BF3062F391004853D0 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = BE7070BE3062F391004853D0 /* GoogleSignInSwift */; };
 		BEF70FDD2E4B8DC7003CE834 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = BEF70FDB2E4B8DBD003CE834 /* .gitignore */; };
 /* End PBXBuildFile section */
 
@@ -70,6 +72,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BE7070BD3062F378004853D0 /* GoogleSignIn in Frameworks */,
+				BE7070BF3062F391004853D0 /* GoogleSignInSwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -100,7 +104,15 @@
 				BEBA7F182E4CADA400289802 /* ScrollBooker.app */,
 				BEBA7F192E4CADA400289802 /* ScrollBookerTests.xctest */,
 				BEBA7F1A2E4CADA400289802 /* ScrollBookerUITests.xctest */,
+				BE7067753062EF0A004853D0 /* Frameworks */,
 			);
+			sourceTree = "<group>";
+		};
+		BE7067753062EF0A004853D0 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -123,6 +135,8 @@
 			);
 			name = ScrollBooker;
 			packageProductDependencies = (
+				BE7070BC3062F378004853D0 /* GoogleSignIn */,
+				BE7070BE3062F391004853D0 /* GoogleSignInSwift */,
 			);
 			productName = ScrollBooker;
 			productReference = BEBA7F182E4CADA400289802 /* ScrollBooker.app */;
@@ -208,7 +222,7 @@
 			mainGroup = BE6BC0102E4B71070087D9BD;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				BE2A27F02E6ED64500C334A1 /* XCRemoteSwiftPackageReference "Factory" */,
+				BE7067763062F1BC004853D0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = BE6BC0102E4B71070087D9BD;
@@ -425,6 +439,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScrollBooker/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Folosim locația ta pentru a-ți arăta postări și programări relevante din zona ta.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Aplicația are nevoie de acces la galerie pentru a selecta clipuri video pentru postări.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -456,6 +472,8 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = ScrollBooker/Info.plist;
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Folosim locația ta pentru a-ți arăta postări și programări relevante din zona ta.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Aplicația are nevoie de acces la galerie pentru a selecta clipuri video pentru postări.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -596,15 +614,28 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		BE2A27F02E6ED64500C334A1 /* XCRemoteSwiftPackageReference "Factory" */ = {
+		BE7067763062F1BC004853D0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/hmlongco/Factory";
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 2.5.3;
+				minimumVersion = 10.0.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		BE7070BC3062F378004853D0 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE7067763062F1BC004853D0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		BE7070BE3062F391004853D0 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = BE7067763062F1BC004853D0 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = BE6BC0112E4B71070087D9BD /* Project object */;
 }

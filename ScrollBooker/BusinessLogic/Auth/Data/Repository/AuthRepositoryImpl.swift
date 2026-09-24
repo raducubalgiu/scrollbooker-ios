@@ -13,6 +13,12 @@ final class AuthRepositoryImpl: AuthRepository {
     init(api: AuthApiService) {
         self.api = api
     }
+    
+    func signInWithGoogle(idToken: String, roleName: String?) async throws -> AuthResponse {
+        let requestDto = GoogleAuthRequest(idToken: idToken, roleName: roleName)
+        let responseDto = try await api.signInWithGoogle(body: requestDto)
+        return AuthResponse(dto: responseDto)
+    }
 
     func login(username: String, password: String) async throws -> AuthResponse {
         let dto = try await api.login(body: LoginRequestDTO(username: username, password: password))

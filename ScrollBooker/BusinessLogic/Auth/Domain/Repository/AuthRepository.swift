@@ -6,6 +6,7 @@
 //
 
 protocol AuthRepository: Sendable {
+    func signInWithGoogle(idToken: String, roleName: String?) async throws -> AuthResponse
     func login(username: String, password: String) async throws -> AuthResponse
     func register(email: String, password: String, roleName: String) async throws -> AuthResponse
     func refresh(refreshToken: String) async throws -> AuthResponse

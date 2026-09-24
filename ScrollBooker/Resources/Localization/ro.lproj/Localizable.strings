@@ -479,6 +479,7 @@
 "auth_title_email_verification" = "Confirmă adresa de email";
 "auth_description_email_verification" = "Ți-am trimis un link de confirmare pe adresa de email. Apasă pe el, apoi revino aici și apasă butonul de mai jos.";
 "auth_button_verify_email" = "Am confirmat";
+"auth_or" = "sau";
 
 /* --- DASHBOARD --- */
 "dashboard" = "Dashboard";

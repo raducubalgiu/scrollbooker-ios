@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import GoogleSignInSwift
 
 struct LoginScreen: View {
     let authViewModel: AuthViewModel
@@ -32,7 +33,7 @@ struct LoginScreen: View {
                 Input(
                     label: String(localized: "auth_label_username_or_email"),
                     text: lowercasedUsername,
-                    placeholder: String(localized: "auth_label_username_or_email"),
+                    placeholder: String(localized: "auth_label_username_or_email")
                 )
                 .textInputAutocapitalization(.never)
 
@@ -54,9 +55,69 @@ struct LoginScreen: View {
                                 password: password
                             )
                         }
-                    },
+                    }
                 )
                 .padding(.top, .xs)
+
+                VStack(spacing: AppSize.m.rawValue) {
+                    // Linia de separare "sau"
+                    HStack {
+                        VStack { Divider() }
+                        Text(String(localized: "auth_or"))
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, .xs)
+                        VStack { Divider() }
+                    }
+                    .padding(.vertical, .xs)
+
+                    // Butoanele sociale aliniate în linie (Stil Airbnb)
+                    HStack(spacing: AppSize.m.rawValue) {
+                        
+                        // 1. BUTONUL CUSTOM GOOGLE
+                        Button {
+                            Task {
+                                await authViewModel.signInWithGoogle(roleName: .client)
+                            }
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                                    .frame(height: 54)
+                                
+                                // Poți folosi imaginea din resursele tale (ex: "google_logo")
+                                // Dacă nu ai logoul în Assets, poți pune temporar o pictogramă de sistem
+                                Image("logo_google")
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 24, height: 24)
+                            }
+                        }
+                        .disabled(authViewModel.isLoading)
+                        .opacity(authViewModel.isLoading ? 0.5 : 1.0)
+
+                        // 2. BUTONUL CUSTOM APPLE
+                        Button {
+                            Task {
+                                // Aici vei apela funcția de Apple când o vei implementa
+                                print("Apple login tapped")
+                            }
+                        } label: {
+                            ZStack {
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(Color(.systemGray4), lineWidth: 1)
+                                    .frame(height: 54)
+                                
+                                // Apple are pictogramă nativă direct în SF Symbols
+                                Image(systemName: "apple.logo")
+                                    .font(.system(size: 24))
+                                    .foregroundColor(.primary) // Se adaptează automat la Dark Mode
+                            }
+                        }
+                        .disabled(authViewModel.isLoading)
+                        .opacity(authViewModel.isLoading ? 0.5 : 1.0)
+                    }
+                }
 
                 HStack {
                     Text(String(localized: "auth_description_dont_have_account"))
@@ -66,6 +127,7 @@ struct LoginScreen: View {
                     .foregroundColor(.primarySB)
                     .fontWeight(.bold)
                 }
+                .padding(.top, .xs)
 
                 VStack(alignment: .center, spacing: AppSize.s.rawValue) {
                     Spacer()

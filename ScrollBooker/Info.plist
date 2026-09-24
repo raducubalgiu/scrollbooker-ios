@@ -6,9 +6,18 @@
 	<string>$(API_HOST)</string>
 	<key>API_SCHEME</key>
 	<string>$(API_SCHEME)</string>
-	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Aplicația are nevoie de acces la galerie pentru a selecta clipuri video pentru postări.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>Folosim locația ta pentru a-ți arăta postări și programări relevante din zona ta.</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>com.googleusercontent.apps.596516500254-9i02nkm04bn6gbm8em2k4e01hl58aono</string>
+			</array>
+		</dict>
+	</array>
+	<key>GIDClientID</key>
+	<string>596516500254-9i02nkm04bn6gbm8em2k4e01hl58aono.apps.googleusercontent.com</string>
 </dict>
 </plist>

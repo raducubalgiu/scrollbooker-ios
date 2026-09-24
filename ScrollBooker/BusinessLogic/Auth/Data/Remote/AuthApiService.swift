@@ -10,6 +10,7 @@ import Foundation
 protocol AuthApiService: Sendable {
     func login(body: LoginRequestDTO) async throws -> AuthResponseDTO
     func register(body: RegisterRequestDTO) async throws -> AuthResponseDTO
+    func signInWithGoogle(body: GoogleAuthRequest) async throws -> AuthResponseDTO
     func refresh(refreshToken: String) async throws -> AuthResponseDTO
     func verifyEmail() async throws -> AuthStateDTO
 }
@@ -19,6 +20,14 @@ final class AuthAPIImpl: AuthApiService {
 
     init(client: APIClient) {
         self.client = client
+    }
+    
+    func signInWithGoogle(body: GoogleAuthRequest) async throws -> AuthResponseDTO {
+        try await client.request(
+            "auth/google",
+            method: .post,
+            body: body
+        )
     }
 
     func login(body: LoginRequestDTO) async throws -> AuthResponseDTO {

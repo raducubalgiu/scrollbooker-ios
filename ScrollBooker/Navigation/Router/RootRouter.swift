@@ -10,6 +10,7 @@ import SwiftUI
 struct RootRouter: View {
     @Environment(AppContainer.self) private var container
     @Environment(SessionManager.self) private var session
+    @Environment(AppLaunchGate.self) private var launchGate
 
     var body: some View {
         rootContent
@@ -27,7 +28,18 @@ struct RootRouter: View {
             AuthRouter(startStep: nil, container: container, session: session)
         } else if let info = session.userInfo {
             if info.isValidated {
-                MainRouter()
+                ZStack {
+                    MainRouter()
+
+                    if !launchGate.isFeedReady {
+                        SplashView()
+                            .transition(.opacity)
+                            .animation(.easeInOut(duration: 0.3), value: launchGate.isFeedReady)
+                    }
+                }
+                .task {
+                    launchGate.startWatchdogIfNeeded()
+                }
             } else {
                 AuthRouter(startStep: info.registrationStep, container: container, session: session)
             }
@@ -39,10 +51,15 @@ struct RootRouter: View {
 
 struct SplashView: View {
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea();
-            
-            ProgressView().tint(.white)
+        ZStack(alignment: .bottom) {
+            Image("Brand/splash")
+                .resizable()
+                .scaledToFill()
+                .ignoresSafeArea()
+
+            ProgressView()
+                .tint(.white)
+                .padding(.bottom, .xxl)
         }
     }
 }

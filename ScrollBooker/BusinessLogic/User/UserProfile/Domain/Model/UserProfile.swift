@@ -113,15 +113,20 @@ struct OpeningHours: Codable, Hashable, Sendable {
 
 // Extensions
 extension OpeningHours {
+    private static let localizedDaysByEnglishName: [String: String] = [
+        "Monday": String(localized: "monday"),
+        "Tuesday": String(localized: "tuesday"),
+        "Wednesday": String(localized: "wednesday"),
+        "Thursday": String(localized: "thursday"),
+        "Friday": String(localized: "friday"),
+        "Saturday": String(localized: "saturday"),
+        "Sunday": String(localized: "sunday")
+    ]
+
     var formattedStatus: String {
-        let daysMap: [String: String] = [
-            "Monday": String(localized: "monday"),
-            
-        ]
-        
         if openNow {
             if let closing = closingTime, !closing.isEmpty {
-                return "\(String(localized: "closingAt")) \(closing)"
+                return String(format: String(localized: "isClosingAt"), closing)
             } else {
                 return String(localized: "opens")
             }
@@ -129,8 +134,8 @@ extension OpeningHours {
             if let nextDay = nextOpenDay,
                let hour = nextOpenTime,
                !nextDay.isEmpty, !hour.isEmpty {
-                let localizedDay = daysMap[nextDay] ?? nextDay
-                return "\(String(localized: "opens")) \(localizedDay.lowercased()) \(String(localized: "at")) \(hour)"
+                let localizedDay = (Self.localizedDaysByEnglishName[nextDay] ?? nextDay).lowercased()
+                return String(format: String(localized: "opensOnDayAt"), localizedDay, hour)
             } else {
                 return String(localized: "closed")
             }

@@ -269,7 +269,8 @@
 "youWillAppearInThePublicBusinessProfile" = "Vei apărea in profilul public al business-ului ca membru oficial al echipei";
 "youWillReceiveReviewsFromYourClients" = "Vei putea primi review-uri individuale din partea clienților";
 "youCouldResignAnytime" = "Poți renunța oricând la colaborare prin funcția demisie din aplicație";
-"isClosingAt" = "Închide la";
+"isClosingAt" = "Închide la %@";
+"opensOnDayAt" = "Deschide %@ la %@";
 "opens" = "Deschide";
 "at" = "la";
 "fromYou" = "de tine";

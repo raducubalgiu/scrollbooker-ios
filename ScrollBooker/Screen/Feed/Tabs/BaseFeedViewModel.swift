@@ -36,6 +36,10 @@ class BaseFeedViewModel {
             updateWindow(at: currentIndex)
         }
     }
+
+    var onFirstItemReady: (() -> Void)?
+    private var hasSignaledFirstItemReady = false
+    private var itemReadyObservations: [Int: NSKeyValueObservation] = [:]
     
     private(set) var viewState: FeedPostsState = .idle
     private(set) var isPaging: Bool = false
@@ -338,7 +342,19 @@ class BaseFeedViewModel {
         
         let newPlayer = AVPlayer(playerItem: playerItem)
         newPlayer.actionAtItemEnd = .none
-        
+
+        if !hasSignaledFirstItemReady {
+            itemReadyObservations[post.id] = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
+                guard let self, !self.hasSignaledFirstItemReady else { return }
+                guard item.status == .readyToPlay || item.status == .failed else { return }
+
+                self.hasSignaledFirstItemReady = true
+                DispatchQueue.main.async {
+                    self.onFirstItemReady?()
+                }
+            }
+        }
+
         NotificationCenter.default.addObserver(
             forName: .AVPlayerItemDidPlayToEndTime,
             object: playerItem,

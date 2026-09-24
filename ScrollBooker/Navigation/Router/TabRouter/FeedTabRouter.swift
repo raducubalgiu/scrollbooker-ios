@@ -9,6 +9,7 @@ import SwiftUI
 
 struct FeedTabRouter: View {
     @Environment(AppContainer.self) private var container
+    @Environment(AppLaunchGate.self) private var launchGate
     var router: Router
     
     @State private var feedViewModel: FeedViewModel?
@@ -139,7 +140,11 @@ struct FeedTabRouter: View {
             }
             .onAppear {
                 if feedViewModel == nil {
-                    feedViewModel = container.postModule.makeFeedViewModel()
+                    let newFeedViewModel = container.postModule.makeFeedViewModel()
+                    newFeedViewModel.exploreViewModel.onFirstItemReady = {
+                        launchGate.markFeedReady()
+                    }
+                    feedViewModel = newFeedViewModel
                 }
                 
                 switch feedViewModel?.selectedTab {

@@ -15,6 +15,7 @@ struct ScrollBookerApp: App {
     @State private var container = AppContainer()
     @State private var networkMonitor = NetworkMonitor()
     @State private var toastCenter = ToastCenter()
+    @State private var launchGate = AppLaunchGate()
 
     var body: some Scene {
         WindowGroup {
@@ -24,6 +25,7 @@ struct ScrollBookerApp: App {
                 .environment(theme)
                 .environment(networkMonitor)
                 .environment(toastCenter)
+                .environment(launchGate)
                 .overlay(alignment: .top) {
                     if !networkMonitor.isConnected {
                         NetworkStatusBanner()

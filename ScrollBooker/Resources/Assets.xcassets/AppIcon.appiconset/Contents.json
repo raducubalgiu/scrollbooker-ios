@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "ScrollBooker_v8_mare_dark_rounded.png",
+      "filename" : "logo_any_appearance.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -13,7 +13,7 @@
           "value" : "dark"
         }
       ],
-      "filename" : "ScrollBooker_v8_mare_dark_rounded 1.png",
+      "filename" : "logo_any_appearance 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -25,7 +25,6 @@
           "value" : "tinted"
         }
       ],
-      "filename" : "ScrollBooker_v7_light_rounded.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"

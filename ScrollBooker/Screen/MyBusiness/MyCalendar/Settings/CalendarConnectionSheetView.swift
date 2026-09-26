@@ -28,6 +28,7 @@ struct CalendarConnectionSheetView: View {
             }
             .padding(.base)
         }
+        .frame(maxHeight: .infinity, alignment: .top)
         .task {
             await viewModel.loadConnection()
         }

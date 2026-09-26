@@ -364,6 +364,14 @@
 "slotDurationSectionDescription" = "Alege la cât timp să fie afișate sloturile disponibile în calendar.";
 "appointmentGapSectionTitle" = "Pauză între programări";
 "appointmentGapSectionDescription" = "Adaugă automat un interval liber după fiecare programare.";
+"calendarConnection" = "Conectare calendar";
+"calendarConnectionDescription" = "Conectează-ți contul Google Calendar pentru a sincroniza automat programările.";
+"connectGoogleCalendar" = "Conectează Google Calendar";
+"disconnectGoogleCalendar" = "Deconectează";
+"calendarConnected" = "Conectat";
+"calendarNotConnected" = "Neconectat";
+"disconnectGoogleCalendarConfirm" = "Sigur vrei să deconectezi Google Calendar? Programările nu se vor mai sincroniza.";
+"calendarConnectionLoadFailed" = "Nu am putut încărca starea conexiunii cu Google Calendar.";
 "noGap" = "Fără pauză";
 "minutes5" = "5 min";
 "minutes10" = "10 min";

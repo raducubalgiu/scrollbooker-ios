@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MyCalendarSettingsScreen: View {
     @State var viewModel: MyCalendarViewModel
+    var calendarConnectionViewModel: CalendarConnectionViewModel
     var onBack: () -> Void
 
     private enum PickerKind: Identifiable {
@@ -19,6 +20,7 @@ struct MyCalendarSettingsScreen: View {
     }
 
     @State private var activePicker: PickerKind?
+    @State private var showGoogleCalendarSheet = false
 
     var body: some View {
         VStack(spacing: 0) {
@@ -56,12 +58,30 @@ struct MyCalendarSettingsScreen: View {
                             onTap: { activePicker = .gap }
                         )
                     }
+
+                    Divider()
+
+                    MyCalendarSettingsRowView(
+                        title: String(localized: "calendarConnection"),
+                        description: String(localized: "calendarConnectionDescription"),
+                        value: calendarConnectionViewModel.statusLabel,
+                        onTap: { showGoogleCalendarSheet = true }
+                    )
                 }
                 .padding(.base)
             }
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .background(Color.backgroundSB)
+        .task {
+            await calendarConnectionViewModel.loadConnection()
+        }
+        .sheet(isPresented: $showGoogleCalendarSheet) {
+            CalendarConnectionSheetView(viewModel: calendarConnectionViewModel)
+                .presentationDetents([.fraction(0.5)])
+                .presentationDragIndicator(.hidden)
+                .presentationCornerRadius(25)
+        }
         .sheet(item: $activePicker) { picker in
             switch picker {
                 case .duration:

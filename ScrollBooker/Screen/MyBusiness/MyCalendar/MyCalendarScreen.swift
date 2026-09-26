@@ -11,17 +11,25 @@ struct MyCalendarScreen: View {
     @State var viewModel: MyCalendarViewModel
     var onBack: () -> Void
     var makeAddOwnClientViewModel: (CalendarEventsSlot?) -> AddOwnClientViewModel
+    var makeCalendarConnectionViewModel: () -> CalendarConnectionViewModel
 
     @State private var currentWeekPage: Int = MyCalendarViewModel.pastWeeksCount
-    @State private var showSettings = false
     @State private var showBlockSheet = false
     @State private var showEmployeeSheet = false
     @State private var addOwnClientViewModel: AddOwnClientViewModel?
+    @State private var calendarConnectionViewModel: CalendarConnectionViewModel?
 
     private var showAddOwnClient: Binding<Bool> {
         Binding(
             get: { addOwnClientViewModel != nil },
             set: { isPresented in if !isPresented { addOwnClientViewModel = nil } }
+        )
+    }
+
+    private var showSettings: Binding<Bool> {
+        Binding(
+            get: { calendarConnectionViewModel != nil },
+            set: { isPresented in if !isPresented { calendarConnectionViewModel = nil } }
         )
     }
 
@@ -55,7 +63,7 @@ struct MyCalendarScreen: View {
                     onBack: onBack,
                     customAction: {
                         Button {
-                            showSettings = true
+                            calendarConnectionViewModel = makeCalendarConnectionViewModel()
                         } label: {
                             Image(systemName: "gearshape")
                                 .font(.system(size: 22.5))
@@ -134,8 +142,14 @@ struct MyCalendarScreen: View {
         .task {
             await viewModel.loadInitialData()
         }
-        .fullScreenCover(isPresented: $showSettings) {
-            MyCalendarSettingsScreen(viewModel: viewModel, onBack: { showSettings = false })
+        .fullScreenCover(isPresented: showSettings) {
+            if let calendarConnectionViewModel {
+                MyCalendarSettingsScreen(
+                    viewModel: viewModel,
+                    calendarConnectionViewModel: calendarConnectionViewModel,
+                    onBack: { self.calendarConnectionViewModel = nil }
+                )
+            }
         }
         .sheet(isPresented: $showBlockSheet) {
             MyCalendarBlockSheetView(

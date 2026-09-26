@@ -8,6 +8,7 @@
 import UIKit
 import AVFoundation
 import UIKit
+import GoogleSignIn
 final class AppBootstrapper: NSObject, UIApplicationDelegate {
     func application(
         _ application: UIApplication,
@@ -15,6 +16,14 @@ final class AppBootstrapper: NSObject, UIApplicationDelegate {
     ) -> Bool {
         configureAudioSession()
         return true
+    }
+
+    func application(
+        _ app: UIApplication,
+        open url: URL,
+        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
+    ) -> Bool {
+        GIDSignIn.sharedInstance.handle(url)
     }
 
     // Belt-and-suspenders alongside Info.plist's UISupportedInterfaceOrientations: the app is

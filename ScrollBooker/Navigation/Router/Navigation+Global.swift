@@ -474,6 +474,9 @@ struct GlobalNavigationModifier: ViewModifier {
                             createOwnClientAppointmentUseCase: container.appointmentModule.createOwnClientAppointmentUseCase,
                             toastCenter: toastCenter
                         )
+                    },
+                    makeCalendarConnectionViewModel: {
+                        container.calendarConnectionModule.makeCalendarConnectionViewModel(toastCenter: toastCenter)
                     }
                 )
             }

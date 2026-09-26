@@ -46,6 +46,7 @@ final class AppContainer {
     let serviceModule: ServiceModule
     let myCalendarModule: MyCalendarModule
     let userCalendarSettingsModule: UserCalendarSettingsModule
+    let calendarConnectionModule: CalendarConnectionModule
     let businessClientModule: BusinessClientModule
     let addOwnClientModule: AddOwnClientModule
 
@@ -129,6 +130,7 @@ final class AppContainer {
         self.serviceModule = ServiceModule(apiClient: apiClient)
         self.myCalendarModule = MyCalendarModule()
         self.userCalendarSettingsModule = UserCalendarSettingsModule(apiClient: apiClient)
+        self.calendarConnectionModule = CalendarConnectionModule(apiClient: apiClient)
         self.businessClientModule = BusinessClientModule(apiClient: apiClient)
         self.addOwnClientModule = AddOwnClientModule()
     }

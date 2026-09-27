@@ -49,7 +49,12 @@ struct MyCalendarSlotContentView: View {
                         } else if isBlocking && slot.isFreeSlot {
                             EmptyView()
                         } else if slot.isBooked {
-                            MyCalendarSlotBookedView(slot: slot, maxLines: isCompact ? 1 : 2, showSubtitle: !isCompact)
+                            MyCalendarSlotBookedView(
+                                slot: slot,
+                                lineColor: lineColor,
+                                maxLines: isCompact ? 1 : 2,
+                                showSubtitle: !isCompact
+                            )
                         } else if slot.isLastMinute {
                             MyCalendarSlotLastMinuteView(discount: slot.lastMinuteDiscount)
                         } else if isBefore {
@@ -60,9 +65,13 @@ struct MyCalendarSlotContentView: View {
                     }
                 }
 
-                if isExternalBlock, !isVeryCompact {
+                if slot.isBlocked, !isVeryCompact {
                     Spacer(minLength: 0)
-                    MyCalendarSlotGoogleCalendarBadgeView()
+                    if isExternalBlock {
+                        MyCalendarSlotGoogleCalendarBadgeView()
+                    } else {
+                        MyCalendarSlotFooterLabelView(text: String(localized: "blockedSlotFooter"))
+                    }
                 }
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
@@ -93,14 +102,26 @@ private struct MyCalendarSlotMessageView: View {
 
     var body: some View {
         Text(text)
-            .font(.footnote)
+            .font(.footnote.bold())
             .foregroundColor(color)
             .lineLimit(2)
     }
 }
 
+private struct MyCalendarSlotFooterLabelView: View {
+    let text: String
+
+    var body: some View {
+        Text(text)
+            .font(.caption2)
+            .foregroundColor(.gray)
+            .lineLimit(1)
+    }
+}
+
 private struct MyCalendarSlotBookedView: View {
     let slot: CalendarEventsSlot
+    let lineColor: Color
     let maxLines: Int
     var showSubtitle: Bool = true
 
@@ -123,6 +144,7 @@ private struct MyCalendarSlotBookedView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.footnote.bold())
+                .foregroundColor(lineColor)
                 .lineLimit(maxLines)
 
             if showSubtitle, !subtitle.isEmpty {
@@ -166,10 +188,7 @@ private struct MyCalendarSlotGoogleCalendarBadgeView: View {
                 .scaledToFit()
                 .frame(width: 12, height: 12)
 
-            Text(String(localized: "fromGoogleCalendar"))
-                .font(.caption2)
-                .foregroundColor(.gray)
-                .lineLimit(1)
+            MyCalendarSlotFooterLabelView(text: String(localized: "fromGoogleCalendar"))
         }
     }
 }
@@ -179,7 +198,7 @@ private struct MyCalendarSlotLastMinuteView: View {
 
     var body: some View {
         Text("\(String(localized: "lastMinute")) • \(String(format: "%.0f", NSDecimalNumber(decimal: discount ?? 0).doubleValue))%")
-            .font(.caption.bold())
+            .font(.footnote.bold())
             .foregroundColor(.ratingSB)
     }
 }

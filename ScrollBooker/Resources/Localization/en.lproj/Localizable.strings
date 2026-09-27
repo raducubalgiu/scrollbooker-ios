@@ -288,6 +288,7 @@
 "booked" = "Rezervat";
 "unbookedSlot" = "Neprogramat";
 "fromGoogleCalendar" = "Din Google Calendar";
+"blockedSlotFooter" = "Slot blocat";
 "message_error_loading_hours" = "Eroare la încărcarea orelor";
 "locationIsClosed" = "Locația este închisă";
 "thisDayDoesntBelongToSchedule" = "Această zi nu face parte din programul de lucru";

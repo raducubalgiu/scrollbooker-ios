@@ -47,6 +47,9 @@ func resolveSlotStyle(for slot: CalendarEventsSlot, domainColor: Color) -> MyCal
     } else if slot.isBooked {
         baseColor = domainColor
         bgOpacity = 0.18; lineOpacity = 0.35; borderOpacity = 0.5
+    } else if slot.isBlocked, slot.info?.isExternal == true {
+        baseColor = .gray
+        bgOpacity = 0.12; lineOpacity = 1.0; borderOpacity = 0.4
     } else if slot.isBlocked {
         baseColor = .errorSB
         bgOpacity = 0.14; lineOpacity = 0.9; borderOpacity = 0.5

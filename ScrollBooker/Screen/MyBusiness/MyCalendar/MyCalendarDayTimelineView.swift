@@ -72,7 +72,8 @@ struct MyCalendarDayTimelineView: View {
 
                 let isLocallyStaged = pendingBlockSlots.contains(slot.startDateLocale)
                 let isChecked = isLocallyStaged || slot.isBlocked
-                let showCheckbox = (isBlocking && slot.isFreeSlot) || slot.isBlocked
+                let isExternalBlock = slot.isBlocked && slot.info?.isExternal == true
+                let showCheckbox = isBlocking && (slot.isFreeSlot || (slot.isBlocked && !isExternalBlock))
 
                 MyCalendarSlotView(
                     slot: slot,

@@ -20,11 +20,8 @@ struct MyCalendarSlotContentView: View {
     private var isCompact: Bool { height < 40 }
     private var isVeryCompact: Bool { height < 28 }
 
-    private var timeRangeText: String {
-        guard let start = slot.startDate, let end = slot.endDate else { return "" }
-        let formatter = DateFormatter()
-        formatter.dateFormat = "HH:mm"
-        return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
+    private var isExternalBlock: Bool {
+        slot.isBlocked && slot.info?.isExternal == true
     }
 
     private var showsAddIcon: Bool {
@@ -40,26 +37,12 @@ struct MyCalendarSlotContentView: View {
     var body: some View {
         ZStack {
             VStack(alignment: .leading, spacing: 2) {
-                HStack {
-                    Text(timeRangeText)
-                        .font(.footnote.bold())
-                        .lineLimit(1)
-
-                    Spacer()
-
-                    if showCheckbox {
-                        MyCalendarCheckmarkIndicatorView(checked: isChecked)
-                            .opacity(isCheckboxEnabled ? 1 : 0.5)
-                    }
-                }
-                .frame(height: 40)
-
                 if !isVeryCompact {
                     Group {
                         if slot.isBlocked {
                             MyCalendarSlotMessageView(
                                 text: slot.info?.blockedMessage ?? String(localized: "blocked"),
-                                color: lineColor
+                                color: isExternalBlock ? .gray : lineColor
                             )
                         } else if isChecked {
                             MyCalendarSlotMessageView(text: String(localized: "blockInProgress"), color: .errorSB)
@@ -77,12 +60,23 @@ struct MyCalendarSlotContentView: View {
                     }
                 }
 
-                if slot.isBlocked, !isVeryCompact, !isCompact, slot.info?.isExternal == true {
+                if isExternalBlock, !isVeryCompact {
                     Spacer(minLength: 0)
                     MyCalendarSlotGoogleCalendarBadgeView()
                 }
             }
-            .frame(maxHeight: .infinity, alignment: .top)
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+
+            if showCheckbox {
+                VStack {
+                    HStack {
+                        Spacer()
+                        MyCalendarCheckmarkIndicatorView(checked: isChecked)
+                            .opacity(isCheckboxEnabled ? 1 : 0.5)
+                    }
+                    Spacer()
+                }
+            }
 
             if showsAddIcon {
                 Image(systemName: "plus.circle")

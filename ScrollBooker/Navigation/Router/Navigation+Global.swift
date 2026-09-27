@@ -459,6 +459,7 @@ struct GlobalNavigationModifier: ViewModifier {
                 MyCalendarScreen(
                     viewModel: myCalendarViewModel,
                     onBack: { router.pop() },
+                    onNavigateToAppointmentDetails: { router.push(.appointmentDetails(id: $0)) },
                     makeAddOwnClientViewModel: { initialSlot in
                         container.addOwnClientModule.makeAddOwnClientViewModel(
                             businessId: myCalendarViewModel.resolvedBusinessId,

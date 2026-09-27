@@ -10,6 +10,7 @@ import SwiftUI
 struct MyCalendarScreen: View {
     @State var viewModel: MyCalendarViewModel
     var onBack: () -> Void
+    var onNavigateToAppointmentDetails: (Int) -> Void
     var makeAddOwnClientViewModel: (CalendarEventsSlot?) -> AddOwnClientViewModel
     var makeCalendarConnectionViewModel: () -> CalendarConnectionViewModel
 
@@ -108,6 +109,8 @@ struct MyCalendarScreen: View {
                                 } else if !viewModel.isBlocking && slot.isFreeSlot {
                                     viewModel.setSelectedOwnClient(slot)
                                     addOwnClientViewModel = makeAddOwnClientViewModel(slot)
+                                } else if !viewModel.isBlocking, slot.isBooked, let appointmentId = slot.slotId {
+                                    onNavigateToAppointmentDetails(appointmentId)
                                 }
                             },
                             onRetry: { Task { await viewModel.loadDayEvents(for: viewModel.selectedDay) } }

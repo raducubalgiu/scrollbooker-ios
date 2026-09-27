@@ -52,6 +52,5 @@ struct MyCalendarSlotView: View {
         .padding(.horizontal, 4)
         .frame(height: touchHeight)
         .offset(y: offsetY)
-        .opacity(style.isEnabled ? 1 : 0.85)
     }
 }

@@ -27,55 +27,67 @@ struct MyCalendarSlotContentView: View {
         return "\(formatter.string(from: start)) - \(formatter.string(from: end))"
     }
 
+    private var showsAddIcon: Bool {
+        !isVeryCompact
+            && !slot.isBlocked
+            && !isChecked
+            && !(isBlocking && slot.isFreeSlot)
+            && !slot.isBooked
+            && !slot.isLastMinute
+            && !isBefore
+    }
+
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            HStack {
-                Text(timeRangeText)
-                    .font(.footnote.bold())
-                    .lineLimit(1)
+        ZStack {
+            VStack(alignment: .leading, spacing: 2) {
+                HStack {
+                    Text(timeRangeText)
+                        .font(.footnote.bold())
+                        .lineLimit(1)
 
-                Spacer()
+                    Spacer()
 
-                if showCheckbox {
-                    MyCalendarCheckmarkIndicatorView(checked: isChecked)
-                        .opacity(isCheckboxEnabled ? 1 : 0.5)
+                    if showCheckbox {
+                        MyCalendarCheckmarkIndicatorView(checked: isChecked)
+                            .opacity(isCheckboxEnabled ? 1 : 0.5)
+                    }
                 }
-            }
-            .frame(height: 40)
+                .frame(height: 40)
 
-            if !isVeryCompact {
-                Group {
-                    if slot.isBlocked {
-                        VStack(alignment: .leading, spacing: 2) {
+                if !isVeryCompact {
+                    Group {
+                        if slot.isBlocked {
                             MyCalendarSlotMessageView(
                                 text: slot.info?.blockedMessage ?? String(localized: "blocked"),
                                 color: lineColor
                             )
-
-                            if !isCompact, slot.info?.isExternal == true {
-                                MyCalendarSlotGoogleCalendarBadgeView()
-                            }
-                        }
-                    } else if isChecked {
-                        MyCalendarSlotMessageView(text: String(localized: "blockInProgress"), color: .errorSB)
-                    } else if isBlocking && slot.isFreeSlot {
-                        EmptyView()
-                    } else if slot.isBooked {
-                        MyCalendarSlotBookedView(slot: slot, maxLines: isCompact ? 1 : 2, showSubtitle: !isCompact)
-                    } else if slot.isLastMinute {
-                        MyCalendarSlotLastMinuteView(discount: slot.lastMinuteDiscount)
-                    } else if isBefore {
-                        MyCalendarSlotMessageView(text: String(localized: "unbookedSlot"), color: .gray)
-                    } else {
-                        HStack {
-                            Spacer()
-                            Image(systemName: "plus.circle")
-                                .font(.system(size: min(max(height * 0.6, 16), 28)))
-                                .foregroundColor(.dividerSB)
-                            Spacer()
+                        } else if isChecked {
+                            MyCalendarSlotMessageView(text: String(localized: "blockInProgress"), color: .errorSB)
+                        } else if isBlocking && slot.isFreeSlot {
+                            EmptyView()
+                        } else if slot.isBooked {
+                            MyCalendarSlotBookedView(slot: slot, maxLines: isCompact ? 1 : 2, showSubtitle: !isCompact)
+                        } else if slot.isLastMinute {
+                            MyCalendarSlotLastMinuteView(discount: slot.lastMinuteDiscount)
+                        } else if isBefore {
+                            MyCalendarSlotMessageView(text: String(localized: "unbookedSlot"), color: .gray)
+                        } else {
+                            EmptyView()
                         }
                     }
                 }
+
+                if slot.isBlocked, !isVeryCompact, !isCompact, slot.info?.isExternal == true {
+                    Spacer(minLength: 0)
+                    MyCalendarSlotGoogleCalendarBadgeView()
+                }
+            }
+            .frame(maxHeight: .infinity, alignment: .top)
+
+            if showsAddIcon {
+                Image(systemName: "plus.circle")
+                    .font(.system(size: min(max(height * 0.6, 16), 28)))
+                    .foregroundColor(.dividerSB)
             }
         }
     }

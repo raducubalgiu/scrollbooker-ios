@@ -34,45 +34,58 @@ struct MyCalendarSlotContentView: View {
             && !isBefore
     }
 
+    private var showsLeadingBar: Bool {
+        slot.isBooked || slot.isLastMinute
+    }
+
     var body: some View {
         ZStack {
-            VStack(alignment: .leading, spacing: 2) {
-                if !isVeryCompact {
-                    Group {
-                        if slot.isBlocked {
-                            MyCalendarSlotMessageView(
-                                text: slot.info?.blockedMessage ?? String(localized: "blocked"),
-                                color: lineColor
-                            )
-                        } else if isChecked {
-                            MyCalendarSlotMessageView(text: String(localized: "blockInProgress"), color: .errorSB)
-                        } else if isBlocking && slot.isFreeSlot {
-                            EmptyView()
-                        } else if slot.isBooked {
-                            MyCalendarSlotBookedView(
-                                slot: slot,
-                                lineColor: lineColor,
-                                maxLines: isCompact ? 1 : 2,
-                                showSubtitle: !isCompact
-                            )
-                        } else if slot.isLastMinute {
-                            MyCalendarSlotLastMinuteView(discount: slot.lastMinuteDiscount)
-                        } else if isBefore {
-                            MyCalendarSlotMessageView(text: String(localized: "unbookedSlot"), color: .gray)
+            HStack(alignment: .top, spacing: 6) {
+                if showsLeadingBar {
+                    RoundedRectangle(cornerRadius: 2)
+                        .fill(lineColor)
+                        .frame(width: 4)
+                        .frame(maxHeight: .infinity)
+                }
+
+                VStack(alignment: .leading, spacing: 2) {
+                    if !isVeryCompact {
+                        Group {
+                            if slot.isBlocked {
+                                MyCalendarSlotMessageView(
+                                    text: slot.info?.blockedMessage ?? String(localized: "blocked"),
+                                    color: .onBackgroundSB
+                                )
+                            } else if isChecked {
+                                MyCalendarSlotMessageView(text: String(localized: "blockInProgress"), color: .errorSB)
+                            } else if isBlocking && slot.isFreeSlot {
+                                EmptyView()
+                            } else if slot.isBooked {
+                                MyCalendarSlotBookedView(
+                                    slot: slot,
+                                    maxLines: isCompact ? 1 : 2,
+                                    showSubtitle: !isCompact
+                                )
+                            } else if slot.isLastMinute {
+                                MyCalendarSlotLastMinuteView(discount: slot.lastMinuteDiscount)
+                            } else if isBefore {
+                                MyCalendarSlotMessageView(text: String(localized: "unbookedSlot"), color: .gray)
+                            } else {
+                                EmptyView()
+                            }
+                        }
+                    }
+
+                    if slot.isBlocked, !isVeryCompact {
+                        Spacer(minLength: 0)
+                        if isExternalBlock {
+                            MyCalendarSlotGoogleCalendarBadgeView()
                         } else {
-                            EmptyView()
+                            MyCalendarSlotFooterLabelView(text: String(localized: "blockedSlotFooter"))
                         }
                     }
                 }
-
-                if slot.isBlocked, !isVeryCompact {
-                    Spacer(minLength: 0)
-                    if isExternalBlock {
-                        MyCalendarSlotGoogleCalendarBadgeView()
-                    } else {
-                        MyCalendarSlotFooterLabelView(text: String(localized: "blockedSlotFooter"))
-                    }
-                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 
@@ -121,7 +134,6 @@ private struct MyCalendarSlotFooterLabelView: View {
 
 private struct MyCalendarSlotBookedView: View {
     let slot: CalendarEventsSlot
-    let lineColor: Color
     let maxLines: Int
     var showSubtitle: Bool = true
 
@@ -144,7 +156,7 @@ private struct MyCalendarSlotBookedView: View {
         VStack(alignment: .leading, spacing: 4) {
             Text(title)
                 .font(.footnote.bold())
-                .foregroundColor(lineColor)
+                .foregroundColor(.onBackgroundSB)
                 .lineLimit(maxLines)
 
             if showSubtitle, !subtitle.isEmpty {

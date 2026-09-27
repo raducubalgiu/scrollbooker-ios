@@ -48,7 +48,6 @@ struct MyCalendarSlotView: View {
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)
-        .disabled(!style.isEnabled)
         .padding(.horizontal, 4)
         .frame(height: touchHeight)
         .offset(y: offsetY)

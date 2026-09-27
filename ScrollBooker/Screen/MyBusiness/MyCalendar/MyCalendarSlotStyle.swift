@@ -15,23 +15,6 @@ struct MyCalendarSlotStyle {
     let isBefore: Bool
 }
 
-private let calendarEventsDateTimeFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
-    formatter.locale = Locale(identifier: "en_US_POSIX")
-    return formatter
-}()
-
-extension CalendarEventsSlot {
-    var startDate: Date? { calendarEventsDateTimeFormatter.date(from: startDateLocale) }
-    var endDate: Date? { calendarEventsDateTimeFormatter.date(from: endDateLocale) }
-
-    var isFreeSlot: Bool {
-        let isBeforeNow = (startDate ?? .distantFuture) < Date()
-        return !isBooked && !isBlocked && !isLastMinute && !isBeforeNow
-    }
-}
-
 func resolveSlotStyle(for slot: CalendarEventsSlot, domainColor: Color) -> MyCalendarSlotStyle {
     let isBefore = (slot.startDate ?? .distantFuture) < Date()
 
@@ -41,31 +24,37 @@ func resolveSlotStyle(for slot: CalendarEventsSlot, domainColor: Color) -> MyCal
 
     if slot.isBooked, slot.info?.channel == .scrollBooker {
         baseColor = .primarySB
-        bgOpacity = 0.45; borderOpacity = 0.5
+        bgOpacity = 0.2;
+        borderOpacity = 0.25
     } else if slot.isBooked {
         baseColor = domainColor
-        bgOpacity = 0.45; borderOpacity = 0.5
+        bgOpacity = 0.2;
+        borderOpacity = 0.25
     } else if slot.isBlocked, slot.info?.isExternal == true {
         baseColor = domainColor
-        bgOpacity = 0.45; borderOpacity = 0.5
+        bgOpacity = 0.2;
+        borderOpacity = 0.25
     } else if slot.isBlocked {
         baseColor = .errorSB
-        bgOpacity = 0.40; borderOpacity = 0.5
+        bgOpacity = 0.2;
+        borderOpacity = 0.25
     } else if slot.isLastMinute {
         baseColor = .ratingSB
-        bgOpacity = 0.45; borderOpacity = 0.5
+        bgOpacity = 0.2;
+        borderOpacity = 0.25
     } else {
         baseColor = .surfaceSB
-        bgOpacity = 1.0; borderOpacity = 0.6
+        bgOpacity = 1.0;
+        borderOpacity = 0.6
     }
 
     let isSpecialState = slot.isBooked || slot.isBlocked || slot.isLastMinute
 
     return MyCalendarSlotStyle(
         backgroundColor: baseColor.opacity(bgOpacity),
-        lineColor: baseColor,
+        lineColor: baseColor.opacity(0.55),
         borderColor: isSpecialState ? baseColor.opacity(borderOpacity) : Color.dividerSB.opacity(borderOpacity),
-        borderWidth: 1,
+        borderWidth: 2,
         isBefore: isBefore
     )
 }

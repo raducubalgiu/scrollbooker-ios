@@ -34,6 +34,16 @@ struct CalendarEventsSlot: Identifiable, Equatable, Hashable, Sendable {
     let info: CalendarEventsInfo?
 }
 
+extension CalendarEventsSlot {
+    var startDate: Date? { startDateLocale.asLocalDateTime() }
+    var endDate: Date? { endDateLocale.asLocalDateTime() }
+
+    var isFreeSlot: Bool {
+        let isBeforeNow = (startDate ?? .distantFuture) < Date()
+        return !isBooked && !isBlocked && !isLastMinute && !isBeforeNow
+    }
+}
+
 struct CalendarEventsCustomer: Equatable, Hashable, Sendable {
     let id: Int?
     let fullname: String

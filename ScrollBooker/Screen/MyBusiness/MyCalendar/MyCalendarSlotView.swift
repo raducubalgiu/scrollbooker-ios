@@ -41,10 +41,10 @@ struct MyCalendarSlotView: View {
             .frame(height: touchHeight, alignment: .top)
             .background(style.backgroundColor)
             .overlay(
-                RoundedRectangle(cornerRadius: 8)
+                RoundedRectangle(cornerRadius: 4)
                     .stroke(style.borderColor, lineWidth: style.borderWidth)
             )
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(RoundedRectangle(cornerRadius: 4))
             .contentShape(Rectangle())
         }
         .buttonStyle(.plain)

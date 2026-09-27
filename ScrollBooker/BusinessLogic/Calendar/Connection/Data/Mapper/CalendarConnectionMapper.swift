@@ -12,7 +12,8 @@ extension CalendarConnectionDto {
             provider: provider,
             status: status,
             googleAccountEmail: googleAccountEmail,
-            lastSyncedAt: lastSyncedAt
+            lastSyncedAt: lastSyncedAt,
+            hasSyncConflicts: hasSyncConflicts
         )
     }
 }

@@ -46,10 +46,16 @@ struct MyCalendarSlotContentView: View {
             if !isVeryCompact {
                 Group {
                     if slot.isBlocked {
-                        MyCalendarSlotMessageView(
-                            text: slot.info?.blockedMessage ?? String(localized: "blocked"),
-                            color: lineColor
-                        )
+                        VStack(alignment: .leading, spacing: 2) {
+                            MyCalendarSlotMessageView(
+                                text: slot.info?.blockedMessage ?? String(localized: "blocked"),
+                                color: lineColor
+                            )
+
+                            if !isCompact, slot.info?.isExternal == true {
+                                MyCalendarSlotGoogleCalendarBadgeView()
+                            }
+                        }
                     } else if isChecked {
                         MyCalendarSlotMessageView(text: String(localized: "blockInProgress"), color: .errorSB)
                     } else if isBlocking && slot.isFreeSlot {
@@ -143,6 +149,22 @@ private struct MyCalendarCheckmarkIndicatorView: View {
             }
         }
         .allowsHitTesting(false)
+    }
+}
+
+private struct MyCalendarSlotGoogleCalendarBadgeView: View {
+    var body: some View {
+        HStack(spacing: 4) {
+            Image("logo_google")
+                .resizable()
+                .scaledToFit()
+                .frame(width: 12, height: 12)
+
+            Text(String(localized: "fromGoogleCalendar"))
+                .font(.caption2)
+                .foregroundColor(.gray)
+                .lineLimit(1)
+        }
     }
 }
 

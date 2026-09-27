@@ -19,6 +19,7 @@ enum NotificationType: String, Equatable, Hashable, Sendable {
     case appointmentRescheduled = "appointment_rescheduled"
     case appointmentReminder = "appointment_reminder"
     case appointmentReviewed = "appointment_reviewed"
+    case appointmentGoogleCalendarError = "appointment_google_calendar_error"
     case employmentRequest = "employment_request"
     case employmentRequestAccepted = "employment_request_accepted"
     case employmentRequestDenied = "employment_request_denied"
@@ -84,6 +85,11 @@ struct AppointmentReviewedNotificationData: Equatable, Hashable {
     let rating: Int
 }
 
+struct AppointmentGoogleCalendarErrorNotificationData: Equatable, Hashable {
+    let appointmentId: Int
+    let startDate: String
+}
+
 struct EmploymentRequestNotificationData: Equatable, Hashable {
     let employmentRequestId: Int
     let professionId: Int
@@ -118,6 +124,7 @@ enum NotificationData: Equatable, Hashable {
     case appointmentRescheduled(AppointmentRescheduledNotificationData)
     case appointmentReminder(AppointmentReminderNotificationData)
     case appointmentReviewed(AppointmentReviewedNotificationData)
+    case appointmentGoogleCalendarError(AppointmentGoogleCalendarErrorNotificationData)
     case employmentRequest(EmploymentRequestNotificationData)
     case employmentRequestAccepted(EmploymentRequestAcceptedNotificationData)
     case employmentRequestDenied(EmploymentRequestDeniedNotificationData)
@@ -165,6 +172,8 @@ extension NotificationType {
                 return ("calendar", .red)
             case .appointmentReviewed:
                 return nil
+            case .appointmentGoogleCalendarError:
+                return ("exclamationmark.triangle.fill", .orange)
             case .employmentRequest, .employmentRequestAccepted:
                 return ("briefcase.fill", Color(red: 1, green: 0.57, blue: 0))
             case .employmentRequestDenied:
@@ -226,6 +235,10 @@ extension NotificationData {
 
             case .appointmentReviewed(let d):
                 return String(localized: "notification_appointment_reviewed \(d.rating)")
+
+            case .appointmentGoogleCalendarError(let d):
+                let dateText = d.startDate.asISO8601Date()?.asFormattedString() ?? d.startDate
+                return String(localized: "notification_appointment_google_calendar_error \(dateText)")
 
             case .employmentRequest(let d):
                 return String(localized: "notification_employment_request \(d.professionName)")

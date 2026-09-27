@@ -11,11 +11,13 @@ struct CalendarConnectionDto: Decodable {
     let status: CalendarConnectionStatusEnum
     let googleAccountEmail: String?
     let lastSyncedAt: String?
+    let hasSyncConflicts: Bool
 
     enum CodingKeys: String, CodingKey {
         case id, provider, status
         case googleAccountEmail = "google_account_email"
         case lastSyncedAt = "last_synced_at"
+        case hasSyncConflicts = "has_sync_conflicts"
     }
 }
 

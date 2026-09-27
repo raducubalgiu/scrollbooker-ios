@@ -121,6 +121,16 @@ struct AppointmentReviewedNotificationDataDTO: Decodable {
     }
 }
 
+struct AppointmentGoogleCalendarErrorNotificationDataDTO: Decodable {
+    let appointmentId: Int
+    let startDate: String
+
+    enum CodingKeys: String, CodingKey {
+        case appointmentId = "appointment_id"
+        case startDate = "start_date"
+    }
+}
+
 struct EmploymentRequestNotificationDataDTO: Decodable {
     let employmentRequestId: Int
     let professionId: Int
@@ -180,6 +190,7 @@ enum NotificationDataDTO: Decodable {
     case appointmentRescheduled(AppointmentRescheduledNotificationDataDTO)
     case appointmentReminder(AppointmentReminderNotificationDataDTO)
     case appointmentReviewed(AppointmentReviewedNotificationDataDTO)
+    case appointmentGoogleCalendarError(AppointmentGoogleCalendarErrorNotificationDataDTO)
     case employmentRequest(EmploymentRequestNotificationDataDTO)
     case employmentRequestAccepted(EmploymentRequestAcceptedNotificationDataDTO)
     case employmentRequestDenied(EmploymentRequestDeniedNotificationDataDTO)
@@ -213,6 +224,8 @@ enum NotificationDataDTO: Decodable {
             self = .appointmentReminder(try AppointmentReminderNotificationDataDTO(from: decoder))
         case .appointmentReviewed:
             self = .appointmentReviewed(try AppointmentReviewedNotificationDataDTO(from: decoder))
+        case .appointmentGoogleCalendarError:
+            self = .appointmentGoogleCalendarError(try AppointmentGoogleCalendarErrorNotificationDataDTO(from: decoder))
         case .employmentRequest:
             self = .employmentRequest(try EmploymentRequestNotificationDataDTO(from: decoder))
         case .employmentRequestAccepted:

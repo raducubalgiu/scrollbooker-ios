@@ -52,6 +52,8 @@ extension NotificationData {
             self = .appointmentReminder(AppointmentReminderNotificationData(dto: d))
         case .appointmentReviewed(let d):
             self = .appointmentReviewed(AppointmentReviewedNotificationData(dto: d))
+        case .appointmentGoogleCalendarError(let d):
+            self = .appointmentGoogleCalendarError(AppointmentGoogleCalendarErrorNotificationData(dto: d))
         case .employmentRequest(let d):
             self = .employmentRequest(EmploymentRequestNotificationData(dto: d))
         case .employmentRequestAccepted(let d):
@@ -137,6 +139,13 @@ extension AppointmentReviewedNotificationData {
         self.appointmentId = dto.appointmentId
         self.reviewId = dto.reviewId
         self.rating = dto.rating
+    }
+}
+
+extension AppointmentGoogleCalendarErrorNotificationData {
+    init(dto: AppointmentGoogleCalendarErrorNotificationDataDTO) {
+        self.appointmentId = dto.appointmentId
+        self.startDate = dto.startDate
     }
 }
 

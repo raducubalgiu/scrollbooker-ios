@@ -27,6 +27,12 @@ struct CalendarConnectionStatusRowView: View {
                         .font(.footnote)
                         .foregroundColor(.gray)
                 }
+
+                if connection?.hasSyncConflicts == true {
+                    Text(String(localized: "calendarSyncConflictsDetected"))
+                        .font(.footnote)
+                        .foregroundColor(.errorSB)
+                }
             }
 
             Spacer()

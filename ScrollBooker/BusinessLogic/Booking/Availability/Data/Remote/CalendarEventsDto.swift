@@ -84,6 +84,7 @@ struct CalendarEventsInfoDto: Decodable {
     let totalDuration: Int
     let paymentCurrency: CurrencyDto
     let products: [CalendarEventsProductDto]
+    let isExternal: Bool
 
     enum CodingKeys: String, CodingKey {
         case channel
@@ -95,6 +96,7 @@ struct CalendarEventsInfoDto: Decodable {
         case totalDuration = "total_duration"
         case paymentCurrency = "payment_currency"
         case products
+        case isExternal = "is_external"
     }
 }
 

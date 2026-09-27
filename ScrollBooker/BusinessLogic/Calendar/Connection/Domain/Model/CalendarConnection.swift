@@ -11,6 +11,7 @@ struct CalendarConnection: Identifiable, Equatable, Hashable, Sendable {
     let status: CalendarConnectionStatusEnum
     let googleAccountEmail: String?
     let lastSyncedAt: String?
+    let hasSyncConflicts: Bool
 
     var isActive: Bool { status == .active }
 }

@@ -51,6 +51,7 @@ struct CalendarEventsInfo: Equatable, Hashable, Sendable {
     let totalDuration: Int
     let paymentCurrency: Currency
     let products: [CalendarEventsProduct]
+    let isExternal: Bool
 }
 
 struct CalendarEventsProduct: Equatable, Hashable, Sendable {

@@ -140,6 +140,13 @@ struct NotificationItemView: View {
                 onClick: { onNavigateToAppointmentDetails(d.appointmentId) }
             )
 
+        case .appointmentGoogleCalendarError(let d):
+            MainButtonMini(
+                title: String(localized: "details"),
+                backgroundColor: .errorSB,
+                onClick: { onNavigateToAppointmentDetails(d.appointmentId) }
+            )
+
         case .employmentRequest(let d):
             MainButtonMini(
                 title: String(localized: "seeMore"),
@@ -164,6 +171,8 @@ struct NotificationItemView: View {
         case .appointmentRescheduled(let d):
             onNavigateToAppointmentDetails(d.appointmentId)
         case .appointmentReminder(let d):
+            onNavigateToAppointmentDetails(d.appointmentId)
+        case .appointmentGoogleCalendarError(let d):
             onNavigateToAppointmentDetails(d.appointmentId)
 
         case .likePost, .commentPost, .repost, .mentionPost:

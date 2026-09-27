@@ -58,6 +58,7 @@ extension CalendarEventsInfo {
         self.totalDuration = dto.totalDuration
         self.paymentCurrency = Currency(dto: dto.paymentCurrency)
         self.products = dto.products.map { CalendarEventsProduct(dto: $0) }
+        self.isExternal = dto.isExternal
     }
 }
 

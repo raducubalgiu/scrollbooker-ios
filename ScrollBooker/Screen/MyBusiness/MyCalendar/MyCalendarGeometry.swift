@@ -40,14 +40,12 @@ func formatMinutesAsClock(_ minutes: Int) -> String {
 }
 
 func hourHeight(forSlotDurationMinutes minutes: Int) -> CGFloat {
-    let minSlotHeight: CGFloat
-    switch minutes {
-        case 15: minSlotHeight = 130
-        case 30: minSlotHeight = 140
-        case 45: minSlotHeight = 150
-        default: minSlotHeight = 170
-    }
+    guard minutes > 0 else { return 60 }
 
-    let computed = (60.0 / CGFloat(minutes)) * minSlotHeight
-    return min(max(computed, 120), 260)
+    // A single slot's default height: just enough to fit its title plus one more
+    // line (subtitle/footer), ellipsized beyond that - not sized to fit an
+    // arbitrary amount of content.
+    let targetSlotHeight: CGFloat = 60
+    let computed = (60.0 / CGFloat(minutes)) * targetSlotHeight
+    return min(max(computed, 60), 240)
 }

@@ -41,19 +41,19 @@ func resolveSlotStyle(for slot: CalendarEventsSlot, domainColor: Color) -> MyCal
 
     if slot.isBooked, slot.info?.channel == .scrollBooker {
         baseColor = .primarySB
-        bgOpacity = 0.32; borderOpacity = 0.5
+        bgOpacity = 0.45; borderOpacity = 0.5
     } else if slot.isBooked {
         baseColor = domainColor
-        bgOpacity = 0.32; borderOpacity = 0.5
+        bgOpacity = 0.45; borderOpacity = 0.5
     } else if slot.isBlocked, slot.info?.isExternal == true {
         baseColor = domainColor
-        bgOpacity = 0.32; borderOpacity = 0.5
+        bgOpacity = 0.45; borderOpacity = 0.5
     } else if slot.isBlocked {
         baseColor = .errorSB
-        bgOpacity = 0.28; borderOpacity = 0.5
+        bgOpacity = 0.40; borderOpacity = 0.5
     } else if slot.isLastMinute {
         baseColor = .ratingSB
-        bgOpacity = 0.32; borderOpacity = 0.5
+        bgOpacity = 0.45; borderOpacity = 0.5
     } else {
         baseColor = .surfaceSB
         bgOpacity = 1.0; borderOpacity = 0.6

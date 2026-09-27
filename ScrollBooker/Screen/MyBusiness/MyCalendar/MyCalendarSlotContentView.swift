@@ -35,7 +35,7 @@ struct MyCalendarSlotContentView: View {
     }
 
     private var showsLeadingBar: Bool {
-        slot.isBooked || slot.isLastMinute
+        slot.isBooked || slot.isBlocked || slot.isLastMinute
     }
 
     var body: some View {

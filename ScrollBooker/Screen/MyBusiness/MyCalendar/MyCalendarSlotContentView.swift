@@ -42,7 +42,7 @@ struct MyCalendarSlotContentView: View {
                         if slot.isBlocked {
                             MyCalendarSlotMessageView(
                                 text: slot.info?.blockedMessage ?? String(localized: "blocked"),
-                                color: isExternalBlock ? .gray : lineColor
+                                color: lineColor
                             )
                         } else if isChecked {
                             MyCalendarSlotMessageView(text: String(localized: "blockInProgress"), color: .errorSB)

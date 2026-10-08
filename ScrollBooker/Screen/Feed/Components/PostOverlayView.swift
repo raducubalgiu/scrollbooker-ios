@@ -10,6 +10,7 @@ import SwiftUI
 struct PostOverlayView: View {
     var post: Post
     var showBookButton: Bool = true
+    var userCoordinates: BusinessCoordinates?
 
     @Environment(\.feedActions) private var actions
     @State private var isDescriptionExpanded = false
@@ -36,6 +37,7 @@ struct PostOverlayView: View {
                         isVideoReview: post.isVideoReview,
                         businessOwner: post.businessOwner,
                         employee: post.employee,
+                        distanceKm: post.distanceKm(from: userCoordinates),
                         onNavigateToUser: { actions.onNavigateToUserProfile($0) }
                     )
                     

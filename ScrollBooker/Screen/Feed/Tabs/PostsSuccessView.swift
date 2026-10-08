@@ -48,7 +48,11 @@ struct PostsSuccessView: View {
                                     .allowsHitTesting(false)
                             }
 
-                            PostOverlayView(post: post, showBookButton: showBookButton)
+                            PostOverlayView(
+                                post: post,
+                                showBookButton: showBookButton,
+                                userCoordinates: viewModel.userCoordinates
+                            )
                         }
                         .containerRelativeFrame(.horizontal)
                         .containerRelativeFrame(.vertical)

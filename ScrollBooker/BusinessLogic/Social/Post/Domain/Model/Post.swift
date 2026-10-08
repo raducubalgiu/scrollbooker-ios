@@ -225,3 +225,12 @@ extension PostCounters {
         )
     }
 }
+
+extension Post {
+    func distanceKm(from userCoordinates: BusinessCoordinates?) -> Double? {
+        guard let userCoordinates, let business = businessLocation?.coordinates else {
+            return nil
+        }
+        return userCoordinates.distanceKm(to: business)
+    }
+}

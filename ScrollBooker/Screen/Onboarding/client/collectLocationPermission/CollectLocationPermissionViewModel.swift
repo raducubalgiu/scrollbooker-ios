@@ -23,7 +23,10 @@ final class CollectLocationPermissionViewModel: NSObject {
 
     private var authorizationContinuation: CheckedContinuation<Void, Never>?
 
-    init(session: SessionManager, collectClientLocationPermissionUseCase: CollectClientLocationPermissionUseCase) {
+    init(
+        session: SessionManager,
+        collectClientLocationPermissionUseCase: CollectClientLocationPermissionUseCase
+    ) {
         self.session = session
         self.collectClientLocationPermissionUseCase = collectClientLocationPermissionUseCase
         super.init()

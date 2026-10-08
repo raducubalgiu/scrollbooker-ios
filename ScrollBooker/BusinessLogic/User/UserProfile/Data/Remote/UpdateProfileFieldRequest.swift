@@ -33,7 +33,7 @@ struct UpdateWebsiteRequest: Encodable {
 
 struct UpdatePublicEmailRequest: Encodable {
     let publicEmail: String
-    
+
     enum CodingKeys: String, CodingKey {
         case publicEmail = "public_email"
     }

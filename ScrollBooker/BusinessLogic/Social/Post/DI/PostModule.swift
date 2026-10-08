@@ -13,17 +13,20 @@ final class PostModule {
     private let getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase
     private let followUserUseCase: FollowUserUseCase
     private let unfollowUserUseCase: UnfollowUserUseCase
+    private let userLocationService: UserLocationService
 
     init(
         apiClient: APIClient,
         getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase,
         followUserUseCase: FollowUserUseCase,
-        unfollowUserUseCase: UnfollowUserUseCase
+        unfollowUserUseCase: UnfollowUserUseCase,
+        userLocationService: UserLocationService
     ) {
         self.apiClient = apiClient
         self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
+        self.userLocationService = userLocationService
     }
 
     private lazy var apiService: PostApiService = {
@@ -122,7 +125,8 @@ final class PostModule {
             unbookmarkPostUseCase: unbookmarkPostUseCase,
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
-            sharePostUseCase: sharePostUseCase
+            sharePostUseCase: sharePostUseCase,
+            userLocationService: userLocationService
         )
     }
 
@@ -135,7 +139,8 @@ final class PostModule {
             unbookmarkPostUseCase: unbookmarkPostUseCase,
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
-            sharePostUseCase: sharePostUseCase
+            sharePostUseCase: sharePostUseCase,
+            userLocationService: userLocationService
         )
     }
 
@@ -156,7 +161,8 @@ final class PostModule {
             unbookmarkPostUseCase: unbookmarkPostUseCase,
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
-            sharePostUseCase: sharePostUseCase
+            sharePostUseCase: sharePostUseCase,
+            userLocationService: userLocationService
         )
     }
 
@@ -173,7 +179,8 @@ final class PostModule {
             unbookmarkPostUseCase: unbookmarkPostUseCase,
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
-            sharePostUseCase: sharePostUseCase
+            sharePostUseCase: sharePostUseCase,
+            userLocationService: userLocationService
         )
     }
 

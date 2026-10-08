@@ -43,7 +43,8 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
         unbookmarkPostUseCase: UnbookmarkPostUseCase,
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
-        sharePostUseCase: SharePostUseCase
+        sharePostUseCase: SharePostUseCase,
+        userLocationService: UserLocationService
     ) {
         self.profileController = profileController
         self.source = source
@@ -55,7 +56,7 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init()
+        super.init(userLocationService: userLocationService)
 
         let initialPosts = Self.currentPosts(from: profileController, source: source)
         syncExternalPosts(initialPosts)

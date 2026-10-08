@@ -40,7 +40,8 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         unbookmarkPostUseCase: UnbookmarkPostUseCase,
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
-        sharePostUseCase: SharePostUseCase
+        sharePostUseCase: SharePostUseCase,
+        userLocationService: UserLocationService
     ) {
         self.getExplorePostsUseCase = getExplorePostsUseCase
         self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
@@ -51,7 +52,7 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init()
+        super.init(userLocationService: userLocationService)
     }
 
     func initialLoad() async {

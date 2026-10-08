@@ -29,7 +29,9 @@ class BaseFeedViewModel {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Feed")
 
     private(set) var posts: [Post] = []
-    
+    private(set) var userCoordinates: BusinessCoordinates?
+    private let userLocationService: UserLocationService
+
     var players: [Int: AVPlayer] = [:]
     var currentIndex: Int = 0 {
         didSet {
@@ -58,6 +60,13 @@ class BaseFeedViewModel {
     var isLoading: Bool {
         get { if case .loading = viewState { return true }; return false }
         set { if newValue { viewState = .loading } }
+    }
+
+    init(userLocationService: UserLocationService) {
+        self.userLocationService = userLocationService
+        Task { @MainActor [weak self] in
+            self?.userCoordinates = await self?.userLocationService.currentLocation()
+        }
     }
 
     func initialLoadIfNeeded(fetchBlock: (_ page: Int, _ limit: Int) async throws -> PaginatedResponse<Post>) async {

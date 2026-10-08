@@ -52,7 +52,7 @@ func resolveSlotStyle(for slot: CalendarEventsSlot, domainColor: Color) -> MyCal
 
     return MyCalendarSlotStyle(
         backgroundColor: baseColor.opacity(bgOpacity),
-        lineColor: baseColor.opacity(0.55),
+        lineColor: slot.isBlocked ? Color.clear : baseColor.opacity(0.55),
         borderColor: isSpecialState ? baseColor.opacity(borderOpacity) : Color.dividerSB.opacity(borderOpacity),
         borderWidth: 2,
         isBefore: isBefore

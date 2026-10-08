@@ -202,6 +202,8 @@ private struct MyCalendarSlotGoogleCalendarBadgeView: View {
 
             MyCalendarSlotFooterLabelView(text: String(localized: "fromGoogleCalendar"))
         }
+        .background(Color.onBackgroundSB)
+        .cornerRadius(50)
     }
 }
 

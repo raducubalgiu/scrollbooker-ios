@@ -145,10 +145,6 @@ final class CollectBusinessViewModel {
                     businessTypeId: businessTypeId,
                     ownerFullName: self.businessName
                 )
-                // La fel ca la collectUsername: refacem fetch complet de UserInfo (are deja
-                // businessId/businessTypeId/registrationStep) în loc să persistăm manual
-                // valorile în AuthStore — setBusinessId/setBusinessTypeId au fost eliminate
-                // din AuthStore fiindcă nu mai aveau niciun apelant.
                 return try await self.getUserInfoUseCase()
             }
             session.setAuthenticated(freshUserInfo)

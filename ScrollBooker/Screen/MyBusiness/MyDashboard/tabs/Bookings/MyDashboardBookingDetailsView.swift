@@ -57,27 +57,27 @@ struct MyDashboardBookingDetailsView: View {
                 )
             }
 
-            Spacer().frame(height: AppSize.m.rawValue)
-
-            HStack(spacing: AppSize.m.rawValue) {
-                StatCardView(
-                    label: String(localized: "fromvideo"),
-                    value: "\(dashboardBooking.revenueFromVideo.toTwoDecimals()) RON",
-                    containerColor: .clear,
-                    contentColor: .onBackgroundSB,
-                    borderColor: .dividerSB
-                )
-                StatCardView(
-                    label: String(localized: "scrollBookerCommission"),
-                    value: "\(dashboardBooking.revenueScrollBooker.toTwoDecimals()) RON",
-                    contentColor: .onBackgroundSB,
-                    borderColor: Color.primarySB.opacity(0.5),
-                    gradientColors: [
-                        Color.primarySB.opacity(0.15),
-                        Color.primarySB.opacity(0.02)
-                    ]
-                )
-            }
+//            Spacer().frame(height: AppSize.m.rawValue)
+//
+//            HStack(spacing: AppSize.m.rawValue) {
+//                StatCardView(
+//                    label: String(localized: "fromvideo"),
+//                    value: "\(dashboardBooking.revenueFromVideo.toTwoDecimals()) RON",
+//                    containerColor: .clear,
+//                    contentColor: .onBackgroundSB,
+//                    borderColor: .dividerSB
+//                )
+//                StatCardView(
+//                    label: String(localized: "scrollBookerCommission"),
+//                    value: "\(dashboardBooking.revenueScrollBooker.toTwoDecimals()) RON",
+//                    contentColor: .onBackgroundSB,
+//                    borderColor: Color.primarySB.opacity(0.5),
+//                    gradientColors: [
+//                        Color.primarySB.opacity(0.15),
+//                        Color.primarySB.opacity(0.02)
+//                    ]
+//                )
+//            }
 
             Spacer().frame(height: AppSize.m.rawValue)
 

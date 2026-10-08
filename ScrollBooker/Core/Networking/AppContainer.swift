@@ -110,7 +110,8 @@ final class AppContainer {
             apiClient: apiClient,
             getAllServiceDomainsUseCase: servieDomainModule.getAllServiceDomainsUseCase,
             followUserUseCase: followModule.followUserUseCase,
-            unfollowUserUseCase: followModule.unfollowUserUseCase
+            unfollowUserUseCase: followModule.unfollowUserUseCase,
+            userLocationService: userLocationService
         )
         self.availabilityModule = AvailabilityModule(apiClient: apiClient)
         self.bookingFlowModule = BookingFlowModule(apiClient: apiClient)

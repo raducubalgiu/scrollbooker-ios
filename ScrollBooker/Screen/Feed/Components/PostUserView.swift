@@ -13,7 +13,20 @@ struct PostUserView: View {
     var isVideoReview: Bool
     var businessOwner: PostBusinessOwner
     var employee: PostEmployee?
+    var distanceKm: Double?
     var onNavigateToUser: (ProfileNavigationParams) -> Void
+
+    private var subtitle: Text {
+        var text = Text(user.profession).foregroundColor(Color.primarySB.opacity(0.85))
+
+        if let distanceKm {
+            text = text
+                + Text(" • ").foregroundColor(.white)
+                + Text(distanceKm.formatDistance()).foregroundColor(.white)
+        }
+
+        return text
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSize.s.rawValue) {
@@ -53,7 +66,11 @@ struct PostUserView: View {
                         }
                     }
                 } else {
-                    PostSecondaryText(text: user.profession)
+                    subtitle
+                        .font(.footnote)
+                        .fontWeight(.semibold)
+                        .tracking(0.25)
+                        .shadow(color: .black.opacity(0.6), radius: 3, x: 1, y: 1)
                 }
             }
             .contentShape(Rectangle())

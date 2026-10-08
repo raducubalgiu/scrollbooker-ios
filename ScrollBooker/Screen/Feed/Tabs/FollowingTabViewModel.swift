@@ -28,7 +28,8 @@ final class FollowingTabViewModel: BaseFeedViewModel {
         unbookmarkPostUseCase: UnbookmarkPostUseCase,
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
-        sharePostUseCase: SharePostUseCase
+        sharePostUseCase: SharePostUseCase,
+        userLocationService: UserLocationService
     ) {
         self.getFollowingPostsUseCase = getFollowingPostsUseCase
         self.likePostUseCase = likePostUseCase
@@ -38,7 +39,7 @@ final class FollowingTabViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init()
+        super.init(userLocationService: userLocationService)
     }
 
     func initialLoad() async {

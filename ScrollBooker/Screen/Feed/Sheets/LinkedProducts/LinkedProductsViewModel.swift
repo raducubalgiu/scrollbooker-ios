@@ -94,7 +94,7 @@ final class LinkedProductsViewModel {
                 try await getAppointmentByUserAndPostUseCase(userId: postUserId, postId: postId, lat: userLocation?.lat, lng: userLocation?.lng)
             }
             reviewAppointmentState = .success(result)
-            reviewDistanceKm = result.business.distanceKm
+            reviewDistanceKm = userLocation?.distanceKm(to: result.business.coordinates)
         } catch {
             reviewAppointmentState = .error(logger.userMessage(for: error, context: "Fetching Review Appointment for Post (\(self.postId))"))
         }

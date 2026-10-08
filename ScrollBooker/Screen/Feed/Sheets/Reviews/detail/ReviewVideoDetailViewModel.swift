@@ -30,7 +30,8 @@ final class ReviewVideoDetailViewModel: BaseFeedViewModel {
         unbookmarkPostUseCase: UnbookmarkPostUseCase,
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
-        sharePostUseCase: SharePostUseCase
+        sharePostUseCase: SharePostUseCase,
+        userLocationService: UserLocationService
     ) {
         self.reviewsViewModel = reviewsViewModel
         self.likePostUseCase = likePostUseCase
@@ -40,7 +41,7 @@ final class ReviewVideoDetailViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init()
+        super.init(userLocationService: userLocationService)
 
         syncExternalPosts(reviewsViewModel.videoReviews)
 

@@ -29,6 +29,7 @@ final class FollowingTabViewModel: BaseFeedViewModel {
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
         sharePostUseCase: SharePostUseCase,
+        playerManager: VideoPlayerManager,
         userLocationService: UserLocationService
     ) {
         self.getFollowingPostsUseCase = getFollowingPostsUseCase
@@ -39,7 +40,7 @@ final class FollowingTabViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init(userLocationService: userLocationService)
+        super.init(scopeKey: "following_feed", playerManager: playerManager, userLocationService: userLocationService)
     }
 
     func initialLoad() async {

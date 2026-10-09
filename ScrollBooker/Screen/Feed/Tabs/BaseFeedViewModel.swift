@@ -25,6 +25,7 @@ enum FeedPostsState {
 }
 
 @Observable
+@MainActor
 class BaseFeedViewModel {
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Feed")
 
@@ -32,7 +33,9 @@ class BaseFeedViewModel {
     private(set) var userCoordinates: BusinessCoordinates?
     private let userLocationService: UserLocationService
 
-    var players: [Int: AVPlayer] = [:]
+    let scopeKey: String
+    private let playerManager: VideoPlayerManager
+
     var currentIndex: Int = 0 {
         didSet {
             updateWindow(at: currentIndex)
@@ -40,9 +43,7 @@ class BaseFeedViewModel {
     }
 
     var onFirstItemReady: (() -> Void)?
-    private var hasSignaledFirstItemReady = false
-    private var itemReadyObservations: [Int: NSKeyValueObservation] = [:]
-    
+
     private(set) var viewState: FeedPostsState = .idle
     private(set) var isPaging: Bool = false
     private(set) var isRefreshing: Bool = false
@@ -62,10 +63,20 @@ class BaseFeedViewModel {
         set { if newValue { viewState = .loading } }
     }
 
-    init(userLocationService: UserLocationService) {
+    init(scopeKey: String, playerManager: VideoPlayerManager, userLocationService: UserLocationService) {
+        self.scopeKey = scopeKey
+        self.playerManager = playerManager
         self.userLocationService = userLocationService
         Task { @MainActor [weak self] in
             self?.userCoordinates = await self?.userLocationService.currentLocation()
+        }
+    }
+
+    deinit {
+        let manager = playerManager
+        let key = scopeKey
+        Task { @MainActor in
+            manager.releaseScope(key)
         }
     }
 
@@ -97,7 +108,6 @@ class BaseFeedViewModel {
         isPaging = false
     }
 
-    @MainActor
     private func load(
         isFirstPage: Bool,
         fetchBlock: (_ page: Int, _ limit: Int
@@ -136,7 +146,6 @@ class BaseFeedViewModel {
         }
     }
     
-    @MainActor
     func toggleLike(
         postId: Int,
         likeAction: (Int) async throws -> NoContent,
@@ -171,7 +180,6 @@ class BaseFeedViewModel {
         }
     }
 
-    @MainActor
     func toggleBookmark(
         postId: Int,
         bookmarkAction: (Int) async throws -> NoContent,
@@ -204,7 +212,6 @@ class BaseFeedViewModel {
         }
     }
     
-    @MainActor
     func sharePostBase(
         postId: Int,
         channel: ShareChannelEnum,
@@ -232,7 +239,6 @@ class BaseFeedViewModel {
     }
 
     
-    @MainActor
     func toggleFollow(
         postId: Int,
         followAction: (Int) async throws -> NoContent,
@@ -272,108 +278,38 @@ class BaseFeedViewModel {
     /// Lets a subclass whose `posts` come from an already-loaded, externally-owned source
     /// (e.g. `ProfileController.postsState`/`.bookmarksState`, for the profile post-detail
     /// screen) push a fresh snapshot in, instead of self-paginating via `load(fetchBlock:)`.
-    @MainActor
     func syncExternalPosts(_ newPosts: [Post]) {
         posts = newPosts
         viewState = posts.isEmpty ? .empty : .success(posts)
     }
 
     func updateWindow(at index: Int) {
-        guard !posts.isEmpty else { return }
-        
-        // 1. Extragem direct obiectele Post folosind subscript-ul safe
-        let currentPost = posts[safe: index]
-        let prevPost = posts[safe: index - 1]
-        let nextPost = posts[safe: index + 1]
-        
-        // 2. Colectăm ID-urile ferestrei active (exact ca înainte)
-        let activeIds = Set([prevPost?.id, currentPost?.id, nextPost?.id].compactMap { $0 })
-        
-        // 3. Eliberăm playerele care nu mai sunt în fereastră
-        for (postId, player) in players {
-            if !activeIds.contains(postId) {
-                player.pause()
-                player.replaceCurrentItem(with: nil)
-                players.removeValue(forKey: postId)
-            }
-        }
-        
-        // 4. Pornim playerul curent folosind obiectul Post direct
-        if let current = currentPost {
-            let currentPlayer = getOrCreatePlayer(for: current) // <-- Schimbat în obiect Post
-            currentPlayer.isMuted = false
-            currentPlayer.play()
-        }
-        
-        // 5. Pregătim (buffer) postarea anterioară în mod silențios
-        if let prev = prevPost {
-            let prevPlayer = getOrCreatePlayer(for: prev)
-            prevPlayer.isMuted = true
-        }
-        
-        // 6. Pregătim (buffer) postarea următoare în mod silențios
-        if let next = nextPost {
-            let nextPlayer = getOrCreatePlayer(for: next)
-            nextPlayer.isMuted = true
-        }
+        playerManager.ensureWindow(
+            scopeKey: scopeKey,
+            posts: posts,
+            centerIndex: index,
+            onFirstReady: onFirstItemReady
+        )
     }
-        
+
     func playCurrent() {
-        guard let currentPostId = posts[safe: currentIndex]?.id,
-              let player = players[currentPostId] else { return }
-        player.isMuted = false
-        player.play()
+        guard let currentPostId = posts[safe: currentIndex]?.id else { return }
+        playerManager.playCurrent(scopeKey: scopeKey, postId: currentPostId)
     }
-        
+
     func pauseAll() {
-        for player in players.values {
-            player.pause()
-        }
+        playerManager.pauseAll(scopeKey: scopeKey)
     }
-        
-    private func getOrCreatePlayer(for post: Post) -> AVPlayer { // <-- Acum primește Post
-        // Dacă playerul există deja, îl returnăm intact
-        if let existingPlayer = players[post.id] {
-            return existingPlayer
-        }
-        
-        // Extragere URL din structura ta
-        guard let videoUrlString = post.mediaFiles.first?.url,
-              let url = URL(string: videoUrlString) else {
-            return AVPlayer()
-        }
-        
-        let asset = AVURLAsset(url: url)
-        let playerItem = AVPlayerItem(asset: asset)
-        
-        playerItem.automaticallyPreservesTimeOffsetFromLive = true
-        playerItem.preferredForwardBufferDuration = 5
-        
-        let newPlayer = AVPlayer(playerItem: playerItem)
-        newPlayer.actionAtItemEnd = .none
 
-        if !hasSignaledFirstItemReady {
-            itemReadyObservations[post.id] = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
-                guard let self, !self.hasSignaledFirstItemReady else { return }
-                guard item.status == .readyToPlay || item.status == .failed else { return }
+    func activateScope() {
+        playerManager.activateScope(scopeKey)
+    }
 
-                self.hasSignaledFirstItemReady = true
-                DispatchQueue.main.async {
-                    self.onFirstItemReady?()
-                }
-            }
-        }
+    func player(for postId: Int) -> AVPlayer? {
+        playerManager.existingPlayer(scopeKey: scopeKey, postId: postId)
+    }
 
-        NotificationCenter.default.addObserver(
-            forName: .AVPlayerItemDidPlayToEndTime,
-            object: playerItem,
-            queue: .main
-        ) { _ in
-            newPlayer.seek(to: .zero)
-            newPlayer.play()
-        }
-        
-        players[post.id] = newPlayer
-        return newPlayer
+    func isPlayerReady(for postId: Int) -> Bool {
+        playerManager.isReady(scopeKey: scopeKey, postId: postId)
     }
 }

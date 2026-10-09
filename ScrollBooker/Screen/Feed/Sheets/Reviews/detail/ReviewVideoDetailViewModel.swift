@@ -31,6 +31,7 @@ final class ReviewVideoDetailViewModel: BaseFeedViewModel {
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
         sharePostUseCase: SharePostUseCase,
+        playerManager: VideoPlayerManager,
         userLocationService: UserLocationService
     ) {
         self.reviewsViewModel = reviewsViewModel
@@ -41,7 +42,13 @@ final class ReviewVideoDetailViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init(userLocationService: userLocationService)
+        super.init(
+            scopeKey: "review_detail_\(startPostId)",
+            playerManager: playerManager,
+            userLocationService: userLocationService
+        )
+
+        activateScope()
 
         syncExternalPosts(reviewsViewModel.videoReviews)
 

@@ -13,6 +13,7 @@ final class PostModule {
     private let getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase
     private let followUserUseCase: FollowUserUseCase
     private let unfollowUserUseCase: UnfollowUserUseCase
+    private let videoPlayerManager: VideoPlayerManager
     private let userLocationService: UserLocationService
 
     init(
@@ -20,12 +21,14 @@ final class PostModule {
         getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase,
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
+        videoPlayerManager: VideoPlayerManager,
         userLocationService: UserLocationService
     ) {
         self.apiClient = apiClient
         self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
+        self.videoPlayerManager = videoPlayerManager
         self.userLocationService = userLocationService
     }
 
@@ -126,6 +129,7 @@ final class PostModule {
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
             sharePostUseCase: sharePostUseCase,
+            playerManager: videoPlayerManager,
             userLocationService: userLocationService
         )
     }
@@ -140,6 +144,7 @@ final class PostModule {
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
             sharePostUseCase: sharePostUseCase,
+            playerManager: videoPlayerManager,
             userLocationService: userLocationService
         )
     }
@@ -162,6 +167,7 @@ final class PostModule {
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
             sharePostUseCase: sharePostUseCase,
+            playerManager: videoPlayerManager,
             userLocationService: userLocationService
         )
     }
@@ -180,6 +186,7 @@ final class PostModule {
             followUserUseCase: followUserUseCase,
             unfollowUserUseCase: unfollowUserUseCase,
             sharePostUseCase: sharePostUseCase,
+            playerManager: videoPlayerManager,
             userLocationService: userLocationService
         )
     }

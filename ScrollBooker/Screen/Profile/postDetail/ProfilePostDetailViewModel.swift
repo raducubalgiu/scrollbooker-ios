@@ -44,6 +44,7 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
         sharePostUseCase: SharePostUseCase,
+        playerManager: VideoPlayerManager,
         userLocationService: UserLocationService
     ) {
         self.profileController = profileController
@@ -56,7 +57,14 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init(userLocationService: userLocationService)
+
+        let scopeKey = switch source {
+        case .posts: "USER_PROFILE_DETAIL_POSTS_\(userId)"
+        case .bookmarks: "USER_PROFILE_DETAIL_BOOKMARKS_\(userId)"
+        }
+        super.init(scopeKey: scopeKey, playerManager: playerManager, userLocationService: userLocationService)
+
+        activateScope()
 
         let initialPosts = Self.currentPosts(from: profileController, source: source)
         syncExternalPosts(initialPosts)

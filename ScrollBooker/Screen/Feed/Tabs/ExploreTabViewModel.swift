@@ -41,6 +41,7 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         followUserUseCase: FollowUserUseCase,
         unfollowUserUseCase: UnfollowUserUseCase,
         sharePostUseCase: SharePostUseCase,
+        playerManager: VideoPlayerManager,
         userLocationService: UserLocationService
     ) {
         self.getExplorePostsUseCase = getExplorePostsUseCase
@@ -52,7 +53,7 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         self.followUserUseCase = followUserUseCase
         self.unfollowUserUseCase = unfollowUserUseCase
         self.sharePostUseCase = sharePostUseCase
-        super.init(userLocationService: userLocationService)
+        super.init(scopeKey: "explore_feed", playerManager: playerManager, userLocationService: userLocationService)
     }
 
     func initialLoad() async {

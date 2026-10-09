@@ -24,7 +24,13 @@ struct PostsSuccessView: View {
                         ZStack {
                             Color.black
 
-                            if let firstMedia = post.mediaFiles.first {
+                            if let player = viewModel.player(for: post.id) {
+                                PlayerView(player: player)
+                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                                    .allowsHitTesting(false)
+                            }
+
+                            if !viewModel.isPlayerReady(for: post.id), let firstMedia = post.mediaFiles.first {
                                 GeometryReader { geometry in
                                     AsyncImage(url: URL(string: firstMedia.thumbnailUrl ?? "")) { phase in
                                         switch phase {
@@ -42,12 +48,6 @@ struct PostsSuccessView: View {
                                 .ignoresSafeArea()
                             }
 
-                            if let player = viewModel.players[post.id] {
-                                PlayerView(player: player)
-                                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                                    .allowsHitTesting(false)
-                            }
-
                             PostOverlayView(
                                 post: post,
                                 showBookButton: showBookButton,
@@ -58,7 +58,7 @@ struct PostsSuccessView: View {
                         .containerRelativeFrame(.vertical)
                         .id(index)
                         .onAppear {
-                            if index == 0 && viewModel.currentIndex == 0 && viewModel.players[post.id] == nil {
+                            if index == 0 && viewModel.currentIndex == 0 && viewModel.player(for: post.id) == nil {
                                 viewModel.updateWindow(at: 0)
                             }
                         }

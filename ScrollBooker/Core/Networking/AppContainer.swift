@@ -14,6 +14,7 @@ final class AppContainer {
     let session: SessionManager
     let apiClient: APIClient
     let userLocationService: UserLocationService
+    let videoPlayerManager: VideoPlayerManager
 
     let authModule: AuthModule
     let userInfoModule: UserInfoModule
@@ -58,6 +59,8 @@ final class AppContainer {
         self.apiClient = APIClient(config: .default, interceptors: [authInterceptor])
         let userLocationService = UserLocationService()
         self.userLocationService = userLocationService
+        let videoPlayerManager = VideoPlayerManager()
+        self.videoPlayerManager = videoPlayerManager
 
         let authStore = AuthStore()
         let userInfoModule = UserInfoModule(apiClient: apiClient)
@@ -111,6 +114,7 @@ final class AppContainer {
             getAllServiceDomainsUseCase: servieDomainModule.getAllServiceDomainsUseCase,
             followUserUseCase: followModule.followUserUseCase,
             unfollowUserUseCase: followModule.unfollowUserUseCase,
+            videoPlayerManager: videoPlayerManager,
             userLocationService: userLocationService
         )
         self.availabilityModule = AvailabilityModule(apiClient: apiClient)

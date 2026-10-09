@@ -7,7 +7,7 @@
 
 import Foundation
 
-enum PostViewSourceEnum: String, CaseIterable {
+enum PostViewSourceEnum: String, CaseIterable, Codable {
     case exploreFeed = "explore_feed"
     case followingFeed = "following_feed"
     case searchVideoFeed = "search_video_feed"

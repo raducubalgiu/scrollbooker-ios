@@ -6,14 +6,30 @@
 //
 
 import AVKit
+import Combine
 import Foundation
 import Observation
+
+struct PlaybackEvent {
+    let scopeKey: String
+    let postId: Int
+    let isPlaying: Bool
+    let positionMs: Int
+    let durationMs: Int?
+}
 
 @Observable
 @MainActor
 final class VideoPlayerManager {
+    /// Fires on every genuine play/pause transition for any player this manager owns — the
+    /// direct analogue of Android's `VideoPlayerManager.playbackEvents` (`SharedFlow<PlaybackEvent>`,
+    /// itself driven by `ExoPlayer.Listener.onIsPlayingChanged`). `PostViewHeartbeatTracker`
+    /// subscribes to this independently; nothing in this class knows that tracker exists.
+    let playbackEvents = PassthroughSubject<PlaybackEvent, Never>()
+
     private var playersByKey: [String: AVPlayer] = [:]
     private var itemReadyObservations: [String: NSKeyValueObservation] = [:]
+    private var playbackStatusObservations: [String: NSKeyValueObservation] = [:]
     private var loopObservers: [String: NSObjectProtocol] = [:]
     private var signaledScopes: Set<String> = []
     private(set) var readyKeys: Set<String> = []
@@ -76,6 +92,23 @@ final class VideoPlayerManager {
             DispatchQueue.main.async {
                 onFirstReady()
             }
+        }
+
+        playbackStatusObservations[key] = newPlayer.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
+            guard let self else { return }
+
+            let positionSeconds = player.currentTime().seconds
+            let positionMs = positionSeconds.isFinite ? Int(positionSeconds * 1000) : 0
+            let durationSeconds = player.currentItem?.duration.seconds
+            let durationMs: Int? = (durationSeconds?.isFinite == true) ? Int(durationSeconds! * 1000) : nil
+
+            self.playbackEvents.send(PlaybackEvent(
+                scopeKey: scopeKey,
+                postId: post.id,
+                isPlaying: player.timeControlStatus == .playing,
+                positionMs: positionMs,
+                durationMs: durationMs
+            ))
         }
 
         loopObservers[key] = NotificationCenter.default.addObserver(
@@ -194,6 +227,7 @@ final class VideoPlayerManager {
         playersByKey[key]?.replaceCurrentItem(with: nil)
         playersByKey.removeValue(forKey: key)
         itemReadyObservations.removeValue(forKey: key)
+        playbackStatusObservations.removeValue(forKey: key)
         readyKeys.remove(key)
         userPausedKeys.remove(key)
 

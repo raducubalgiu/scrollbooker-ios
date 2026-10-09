@@ -100,4 +100,8 @@ final class PostRepositoryImpl: PostRepository {
     func sharePost(id: Int, request: ShareRequest) async throws -> NoContent {
         return try await api.sharePost(id: id, request: request)
     }
+
+    func createPostViewEventsBulk(request: PostViewEventsBulkRequest) async throws -> PostViewEventsBulkResponse {
+        return try await api.createPostViewEventsBulk(request: request)
+    }
 }

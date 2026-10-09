@@ -16,6 +16,11 @@ final class PostModule {
     private let videoPlayerManager: VideoPlayerManager
     private let userLocationService: UserLocationService
 
+    /// Constructed eagerly here (not lazy, unlike `postInteractionStore`) — it must start
+    /// listening to `videoPlayerManager.playbackEvents` immediately at app launch, not wait for
+    /// the first feed ViewModel to be built.
+    let postViewHeartbeatTracker: PostViewHeartbeatTracker
+
     init(
         apiClient: APIClient,
         getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase,
@@ -30,6 +35,12 @@ final class PostModule {
         self.unfollowUserUseCase = unfollowUserUseCase
         self.videoPlayerManager = videoPlayerManager
         self.userLocationService = userLocationService
+
+        let repository = PostRepositoryImpl(api: PostAPIImpl(client: apiClient))
+        self.postViewHeartbeatTracker = PostViewHeartbeatTracker(
+            videoPlayerManager: videoPlayerManager,
+            createPostViewEventsBulkUseCase: CreatePostViewEventsBulkUseCase(repository: repository)
+        )
     }
 
     private lazy var apiService: PostApiService = {

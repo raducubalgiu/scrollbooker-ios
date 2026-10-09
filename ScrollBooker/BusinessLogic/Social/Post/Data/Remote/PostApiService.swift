@@ -23,6 +23,7 @@ protocol PostApiService: Sendable {
     func createVideoReview(request: CreateVideoReviewRequest) async throws -> NoContent
     func updatePost(id: Int, request: UpdatePostRequest) async throws -> PostDto
     func sharePost(id: Int, request: ShareRequest) async throws -> NoContent
+    func createPostViewEventsBulk(request: PostViewEventsBulkRequest) async throws -> PostViewEventsBulkResponse
 }
 
 final class PostAPIImpl: PostApiService {
@@ -182,6 +183,14 @@ final class PostAPIImpl: PostApiService {
     func sharePost(id: Int, request: ShareRequest) async throws -> NoContent {
         return try await client.request(
             "posts/\(id)/shares",
+            method: .post,
+            body: request
+        )
+    }
+
+    func createPostViewEventsBulk(request: PostViewEventsBulkRequest) async throws -> PostViewEventsBulkResponse {
+        return try await client.request(
+            "posts/analytics/views/bulk",
             method: .post,
             body: request
         )

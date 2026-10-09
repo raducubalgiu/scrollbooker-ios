@@ -17,6 +17,19 @@ final class VideoPlayerManager {
     private var loopObservers: [String: NSObjectProtocol] = [:]
     private var signaledScopes: Set<String> = []
     private(set) var readyKeys: Set<String> = []
+    /// Posts the user explicitly paused via a tap. Android's equivalent (`_userPausedPostIds`)
+    /// keys this by bare post id, with no scope — that works there because a screen's player
+    /// pool is destroyed/recreated with its screen. iOS keeps Explore and Following alive
+    /// simultaneously for the app's lifetime (see `MainRouter`'s ZStack-mounted tabs), so a
+    /// global, scope-less set would let pausing a post in one scope bleed into another scope
+    /// that happens to show the same post id later. Keyed by scope here to avoid that.
+    private(set) var userPausedKeys: Set<String> = []
+    /// The post id sitting at `centerIndex` the last time `ensureWindow` ran, per scope — lets
+    /// `ensureWindow` tell "the user swiped to a different post" (clear that scope's pause
+    /// state, matching TikTok: a swipe starts a fresh viewing session) apart from "this scope's
+    /// window was merely re-evaluated without the center actually changing" (e.g. returning from
+    /// another screen — pause state must survive that).
+    private var lastCenterPostId: [String: Int] = [:]
 
     private func makeKey(scopeKey: String, postId: Int) -> String {
         "\(scopeKey)#\(postId)"
@@ -86,6 +99,24 @@ final class VideoPlayerManager {
         readyKeys.contains(makeKey(scopeKey: scopeKey, postId: postId))
     }
 
+    func isPaused(scopeKey: String, postId: Int) -> Bool {
+        userPausedKeys.contains(makeKey(scopeKey: scopeKey, postId: postId))
+    }
+
+    func togglePlayer(scopeKey: String, postId: Int) {
+        let key = makeKey(scopeKey: scopeKey, postId: postId)
+        guard let player = playersByKey[key] else { return }
+
+        if player.timeControlStatus == .playing {
+            player.pause()
+            userPausedKeys.insert(key)
+        } else {
+            userPausedKeys.remove(key)
+            player.isMuted = false
+            player.play()
+        }
+    }
+
     func ensureWindow(
         scopeKey: String,
         posts: [Post],
@@ -101,6 +132,11 @@ final class VideoPlayerManager {
         let prevPost = posts[safe: centerIndex - 1]
         let nextPost = posts[safe: centerIndex + 1]
 
+        if let current = currentPost, lastCenterPostId[scopeKey] != current.id {
+            lastCenterPostId[scopeKey] = current.id
+            userPausedKeys = userPausedKeys.filter { !$0.hasPrefix("\(scopeKey)#") }
+        }
+
         let activeIds = Set([prevPost?.id, currentPost?.id, nextPost?.id].compactMap { $0 })
 
         for key in playersByKey.keys where key.hasPrefix("\(scopeKey)#") {
@@ -112,7 +148,9 @@ final class VideoPlayerManager {
         if let current = currentPost {
             let currentPlayer = player(scopeKey: scopeKey, post: current, onFirstReady: onFirstReady)
             currentPlayer.isMuted = false
-            currentPlayer.play()
+            if !userPausedKeys.contains(makeKey(scopeKey: scopeKey, postId: current.id)) {
+                currentPlayer.play()
+            }
         }
 
         if let prev = prevPost {
@@ -127,6 +165,7 @@ final class VideoPlayerManager {
     func playCurrent(scopeKey: String, postId: Int) {
         guard let player = playersByKey[makeKey(scopeKey: scopeKey, postId: postId)] else { return }
         player.isMuted = false
+        guard !userPausedKeys.contains(makeKey(scopeKey: scopeKey, postId: postId)) else { return }
         player.play()
     }
 
@@ -147,6 +186,7 @@ final class VideoPlayerManager {
             release(key: key)
         }
         signaledScopes.remove(scopeKey)
+        lastCenterPostId.removeValue(forKey: scopeKey)
     }
 
     private func release(key: String) {
@@ -155,6 +195,7 @@ final class VideoPlayerManager {
         playersByKey.removeValue(forKey: key)
         itemReadyObservations.removeValue(forKey: key)
         readyKeys.remove(key)
+        userPausedKeys.remove(key)
 
         if let observer = loopObservers.removeValue(forKey: key) {
             NotificationCenter.default.removeObserver(observer)

@@ -51,6 +51,20 @@ struct PostsSuccessView: View {
                                 showBookButton: showBookButton,
                                 userCoordinates: viewModel.userCoordinates
                             )
+
+                            // Mirrors Android's PostVerticalPager play indicator exactly: a bare
+                            // white 50%-opacity play.fill triangle, centered, fading in/out — shown
+                            // only while the user has explicitly paused (never during buffering).
+                            Image(systemName: "play.fill")
+                                .font(.system(size: 75))
+                                .foregroundStyle(.white.opacity(0.5))
+                                .opacity(viewModel.isPaused(postId: post.id) ? 1 : 0)
+                                .animation(.easeInOut(duration: 0.3), value: viewModel.isPaused(postId: post.id))
+                                .allowsHitTesting(false)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            viewModel.togglePlayer(postId: post.id)
                         }
                         .containerRelativeFrame(.horizontal)
                         .containerRelativeFrame(.vertical)

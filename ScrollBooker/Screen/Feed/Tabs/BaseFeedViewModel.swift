@@ -312,6 +312,14 @@ class BaseFeedViewModel {
         playerManager.activateScope(scopeKey)
     }
 
+    func togglePlayer(postId: Int) {
+        playerManager.togglePlayer(scopeKey: scopeKey, postId: postId)
+    }
+
+    func isPaused(postId: Int) -> Bool {
+        playerManager.isPaused(scopeKey: scopeKey, postId: postId)
+    }
+
     func player(for postId: Int) -> AVPlayer? {
         playerManager.existingPlayer(scopeKey: scopeKey, postId: postId)
     }

@@ -54,7 +54,10 @@ struct FeedHeaderView: View {
                                 .offset(x: 8, y: -8)
                         }
                     }
+                    .padding(.horizontal, .base)
+                    .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
 
                 Spacer()
 
@@ -65,9 +68,11 @@ struct FeedHeaderView: View {
                         .font(.system(size: 25, weight: .semibold))
                         .foregroundColor(.white)
                         .shadow(color: .black.opacity(0.6), radius: 4, x: 2, y: 2)
+                        .padding(.horizontal, .base)
+                        .contentShape(Rectangle())
                 }
+                .buttonStyle(.plain)
             }
         }
-        .padding(.horizontal)
     }
 }

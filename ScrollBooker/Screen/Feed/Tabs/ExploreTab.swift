@@ -170,5 +170,13 @@ struct ExploreTab: View {
         .onChange(of: viewModel.scrollResetTrigger) { _, _ in
             currentPostId = viewModel.posts.first?.id
         }
+        /// `.fullScreenCover` never fires `onDisappear` on the presenter, so pause/resume has to
+        /// be driven off this state directly instead.
+        .onChange(of: statisticsPostId) { _, newValue in
+            if newValue != nil { viewModel.pauseAll() } else { viewModel.playCurrent() }
+        }
+        .onChange(of: editPostId) { _, newValue in
+            if newValue != nil { viewModel.pauseAll() } else { viewModel.playCurrent() }
+        }
     }
 }

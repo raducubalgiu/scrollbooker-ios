@@ -52,11 +52,12 @@ struct PostsSuccessView: View {
                                 userCoordinates: viewModel.userCoordinates
                             )
 
-                            // Mirrors Android's PostVerticalPager play indicator exactly: a bare
-                            // white 50%-opacity play.fill triangle, centered, fading in/out — shown
-                            // only while the user has explicitly paused (never during buffering).
+                            // Mirrors Android's PostVerticalPager play indicator — a bare white
+                            // 50%-opacity play.fill triangle, centered, fading in/out, shown only
+                            // while the user has explicitly paused (never during buffering) —
+                            // except sized smaller than Android's, by deliberate UX request.
                             Image(systemName: "play.fill")
-                                .font(.system(size: 75))
+                                .font(.system(size: 60))
                                 .foregroundStyle(.white.opacity(0.5))
                                 .opacity(viewModel.isPaused(postId: post.id) ? 1 : 0)
                                 .animation(.easeInOut(duration: 0.3), value: viewModel.isPaused(postId: post.id))

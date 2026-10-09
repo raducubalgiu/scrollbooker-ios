@@ -137,6 +137,7 @@ struct PostActionsView: View {
                         .font(.system(size: 27))
                         .foregroundColor(.white)
                         .actionIconShadow()
+                        .padding(.vertical, .s)
                 }
                 .buttonStyle(.plain)
             }

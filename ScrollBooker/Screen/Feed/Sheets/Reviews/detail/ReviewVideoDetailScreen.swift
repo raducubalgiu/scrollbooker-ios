@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ReviewVideoDetailScreen: View {
     @Environment(Router.self) private var router
+    @Environment(\.scenePhase) private var scenePhase
 
     var viewModel: ReviewVideoDetailViewModel
 
@@ -185,6 +186,21 @@ struct ReviewVideoDetailScreen: View {
         .onDisappear {
             viewModel.pauseAll()
             router.popReviewVideoDetail(viewModel)
+        }
+        /// `.fullScreenCover` never fires `onDisappear` on the presenter, so pause/resume has to
+        /// be driven off this state directly instead.
+        .onChange(of: statisticsPostId) { _, newValue in
+            if newValue != nil { viewModel.pauseAll() } else { viewModel.playCurrent() }
+        }
+        .onChange(of: editPostId) { _, newValue in
+            if newValue != nil { viewModel.pauseAll() } else { viewModel.playCurrent() }
+        }
+        .onChange(of: scenePhase) { _, phase in
+            if phase != .active {
+                viewModel.pauseAll()
+            } else if statisticsPostId == nil && editPostId == nil {
+                viewModel.playCurrent()
+            }
         }
     }
 

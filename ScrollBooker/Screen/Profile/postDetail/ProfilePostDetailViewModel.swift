@@ -13,10 +13,6 @@ import Observation
 /// ExploreTab/FollowingTab use), but never self-paginates — it mirrors whatever `ProfileController`
 /// already holds (the exact list + pagination cursor the grid itself used) via `syncExternalPosts`,
 /// so opening the detail screen doesn't trigger a second, redundant fetch of the same data.
-///
-/// Deliberately simple for now: each instance owns its own `AVPlayer`s privately, released via
-/// ARC once the router's session slot is cleared. A future shared `PlayerManager` singleton will
-/// replace this (and ExploreTab/FollowingTab's own player handling) — not built here yet.
 @Observable
 @MainActor
 final class ProfilePostDetailViewModel: BaseFeedViewModel {
@@ -24,45 +20,29 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
     let source: ProfilePostSource
     private let userId: Int
 
-    private let likePostUseCase: LikePostUseCase
-    private let unlikePostUseCase: UnlikePostUseCase
-    private let bookmarkPostUseCase: BookmarkPostUseCase
-    private let unbookmarkPostUseCase: UnbookmarkPostUseCase
-    private let followUserUseCase: FollowUserUseCase
-    private let unfollowUserUseCase: UnfollowUserUseCase
-    private let sharePostUseCase: SharePostUseCase
-
     init(
         profileController: ProfileController,
         source: ProfilePostSource,
         userId: Int,
         startPostId: Int,
-        likePostUseCase: LikePostUseCase,
-        unlikePostUseCase: UnlikePostUseCase,
-        bookmarkPostUseCase: BookmarkPostUseCase,
-        unbookmarkPostUseCase: UnbookmarkPostUseCase,
-        followUserUseCase: FollowUserUseCase,
-        unfollowUserUseCase: UnfollowUserUseCase,
-        sharePostUseCase: SharePostUseCase,
         playerManager: VideoPlayerManager,
+        postInteractionStore: PostInteractionStore,
         userLocationService: UserLocationService
     ) {
         self.profileController = profileController
         self.source = source
         self.userId = userId
-        self.likePostUseCase = likePostUseCase
-        self.unlikePostUseCase = unlikePostUseCase
-        self.bookmarkPostUseCase = bookmarkPostUseCase
-        self.unbookmarkPostUseCase = unbookmarkPostUseCase
-        self.followUserUseCase = followUserUseCase
-        self.unfollowUserUseCase = unfollowUserUseCase
-        self.sharePostUseCase = sharePostUseCase
 
         let scopeKey = switch source {
         case .posts: "USER_PROFILE_DETAIL_POSTS_\(userId)"
         case .bookmarks: "USER_PROFILE_DETAIL_BOOKMARKS_\(userId)"
         }
-        super.init(scopeKey: scopeKey, playerManager: playerManager, userLocationService: userLocationService)
+        super.init(
+            scopeKey: scopeKey,
+            playerManager: playerManager,
+            postInteractionStore: postInteractionStore,
+            userLocationService: userLocationService
+        )
 
         activateScope()
 
@@ -83,59 +63,6 @@ final class ProfilePostDetailViewModel: BaseFeedViewModel {
         }
 
         syncExternalPosts(Self.currentPosts(from: profileController, source: source))
-    }
-
-    func toggleLikePost(id: Int) async {
-        await toggleLike(
-            postId: id,
-            likeAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.likePostUseCase(id: postId)
-            },
-            unlikeAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.unlikePostUseCase(id: postId)
-            }
-        )
-    }
-
-    func toggleBookmarkPost(id: Int) async {
-        await toggleBookmark(
-            postId: id,
-            bookmarkAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.bookmarkPostUseCase(id: postId)
-            },
-            unbookmarkAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.unbookmarkPostUseCase(id: postId)
-            }
-        )
-    }
-    
-    func sharePost(id: Int, channel: ShareChannelEnum) async {
-        await sharePostBase(
-            postId: id,
-            channel: channel,
-            shareAction: { [weak self] postId, selectedChannel in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.sharePostUseCase(id: postId, channel: selectedChannel)
-            }
-        )
-    }
-
-    func toggleFollowPost(id: Int) async {
-        await toggleFollow(
-            postId: id,
-            followAction: { [weak self] followeeId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.followUserUseCase(followeeId: followeeId)
-            },
-            unfollowAction: { [weak self] followeeId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.unfollowUserUseCase(followeeId: followeeId)
-            }
-        )
     }
 
     private static func currentPosts(from controller: ProfileController, source: ProfilePostSource) -> [Post] {

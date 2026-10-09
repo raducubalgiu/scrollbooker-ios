@@ -14,13 +14,6 @@ import OSLog
 final class ExploreTabViewModel: BaseFeedViewModel {
     private let getExplorePostsUseCase: GetExplorePostsUseCase
     private let getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase
-    private let likePostUseCase: LikePostUseCase
-    private let unlikePostUseCase: UnlikePostUseCase
-    private let bookmarkPostUseCase: BookmarkPostUseCase
-    private let unbookmarkPostUseCase: UnbookmarkPostUseCase
-    private let followUserUseCase: FollowUserUseCase
-    private let unfollowUserUseCase: UnfollowUserUseCase
-    private let sharePostUseCase: SharePostUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Feed")
 
     private(set) var serviceDomainsState: FeatureState<[ServiceDomain]> = .idle
@@ -34,26 +27,18 @@ final class ExploreTabViewModel: BaseFeedViewModel {
     init(
         getExplorePostsUseCase: GetExplorePostsUseCase,
         getAllServiceDomainsUseCase: GetAllServiceDomainsUseCase,
-        likePostUseCase: LikePostUseCase,
-        unlikePostUseCase: UnlikePostUseCase,
-        bookmarkPostUseCase: BookmarkPostUseCase,
-        unbookmarkPostUseCase: UnbookmarkPostUseCase,
-        followUserUseCase: FollowUserUseCase,
-        unfollowUserUseCase: UnfollowUserUseCase,
-        sharePostUseCase: SharePostUseCase,
         playerManager: VideoPlayerManager,
+        postInteractionStore: PostInteractionStore,
         userLocationService: UserLocationService
     ) {
         self.getExplorePostsUseCase = getExplorePostsUseCase
         self.getAllServiceDomainsUseCase = getAllServiceDomainsUseCase
-        self.likePostUseCase = likePostUseCase
-        self.unlikePostUseCase = unlikePostUseCase
-        self.bookmarkPostUseCase = bookmarkPostUseCase
-        self.unbookmarkPostUseCase = unbookmarkPostUseCase
-        self.followUserUseCase = followUserUseCase
-        self.unfollowUserUseCase = unfollowUserUseCase
-        self.sharePostUseCase = sharePostUseCase
-        super.init(scopeKey: "explore_feed", playerManager: playerManager, userLocationService: userLocationService)
+        super.init(
+            scopeKey: "explore_feed",
+            playerManager: playerManager,
+            postInteractionStore: postInteractionStore,
+            userLocationService: userLocationService
+        )
     }
 
     func initialLoad() async {
@@ -110,58 +95,5 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         self.onlyVideoReviews = onlyVideoReviews
 
         await refreshPosts()
-    }
-
-    func toggleLikePost(id: Int) async {
-        await toggleLike(
-            postId: id,
-            likeAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.likePostUseCase(id: postId)
-            },
-            unlikeAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.unlikePostUseCase(id: postId)
-            }
-        )
-    }
-
-    func toggleBookmarkPost(id: Int) async {
-        await toggleBookmark(
-            postId: id,
-            bookmarkAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.bookmarkPostUseCase(id: postId)
-            },
-            unbookmarkAction: { [weak self] postId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.unbookmarkPostUseCase(id: postId)
-            }
-        )
-    }
-    
-    func sharePost(id: Int, channel: ShareChannelEnum) async {
-        await sharePostBase(
-            postId: id,
-            channel: channel,
-            shareAction: { [weak self] postId, selectedChannel in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.sharePostUseCase(id: postId, channel: selectedChannel)
-            }
-        )
-    }
-
-    func toggleFollowPost(id: Int) async {
-        await toggleFollow(
-            postId: id,
-            followAction: { [weak self] followeeId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.followUserUseCase(followeeId: followeeId)
-            },
-            unfollowAction: { [weak self] followeeId in
-                guard let self else { throw APIError.invalidResponse }
-                return try await self.unfollowUserUseCase(followeeId: followeeId)
-            }
-        )
     }
 }

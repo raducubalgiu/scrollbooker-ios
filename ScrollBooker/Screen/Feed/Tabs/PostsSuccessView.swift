@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PostsSuccessView: View {
     var viewModel: BaseFeedViewModel
-    @Binding var currentIndex: Int?
+    @Binding var currentPostId: Int?
     var showBookButton: Bool = true
 
     @Environment(\.feedActions) private var actions
@@ -18,9 +18,7 @@ struct PostsSuccessView: View {
         ScrollViewReader { proxy in
             ScrollView(.vertical) {
                 LazyVStack(spacing: 0) {
-                    ForEach(Array(viewModel.posts.enumerated()), id: \.element.id) { index, _ in
-                        let post = viewModel.posts[index]
-
+                    ForEach(viewModel.posts, id: \.id) { post in
                         ZStack {
                             Color.black
 
@@ -56,9 +54,18 @@ struct PostsSuccessView: View {
                         }
                         .containerRelativeFrame(.horizontal)
                         .containerRelativeFrame(.vertical)
-                        .id(index)
+                        // Identity is the post itself, not its screen position — a wholesale
+                        // posts replacement (e.g. applying Explore filters) means slot 0 can hold
+                        // a completely different post than before. Keying by position here was
+                        // the root cause of stale player/thumbnail content surviving a refresh:
+                        // SwiftUI recycled the row (and its embedded AVPlayerViewController)
+                        // instead of tearing it down, since "index 0" looked unchanged even though
+                        // the post at it wasn't.
+                        .id(post.id)
                         .onAppear {
-                            if index == 0 && viewModel.currentIndex == 0 && viewModel.player(for: post.id) == nil {
+                            if post.id == viewModel.posts.first?.id
+                                && viewModel.currentIndex == 0
+                                && viewModel.player(for: post.id) == nil {
                                 viewModel.updateWindow(at: 0)
                             }
                         }
@@ -68,9 +75,9 @@ struct PostsSuccessView: View {
             }
             .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
             .scrollIndicators(.never)
-            .scrollPosition(id: $currentIndex)
+            .scrollPosition(id: $currentPostId)
             .onAppear {
-                if let target = currentIndex, target != 0 {
+                if let target = currentPostId, target != viewModel.posts.first?.id {
                     proxy.scrollTo(target, anchor: .top)
                 }
             }

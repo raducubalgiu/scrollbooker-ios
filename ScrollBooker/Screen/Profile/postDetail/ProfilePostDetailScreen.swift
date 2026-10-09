@@ -22,7 +22,7 @@ struct ProfilePostDetailScreen: View {
     let onNavigateToReviewVideoDetail: (ReviewsViewModel, Int) -> Void
     var onBack: () -> Void
 
-    @State private var currentIndex: Int?
+    @State private var currentPostId: Int?
     @State private var activeSheet: FeedSheetType? = nil
     @State private var pendingSheetAction: (() -> Void)?
     @State private var statisticsPostId: Int?
@@ -58,7 +58,7 @@ struct ProfilePostDetailScreen: View {
         self.onNavigateToBooking = onNavigateToBooking
         self.onNavigateToReviewVideoDetail = onNavigateToReviewVideoDetail
         self.onBack = onBack
-        _currentIndex = State(initialValue: viewModel.currentIndex)
+        _currentPostId = State(initialValue: viewModel.posts[safe: viewModel.currentIndex]?.id)
     }
 
     private var title: String {
@@ -69,8 +69,8 @@ struct ProfilePostDetailScreen: View {
     }
 
     private var currentPost: Post? {
-        guard let index = currentIndex, viewModel.posts.indices.contains(index) else { return nil }
-        return viewModel.posts[index]
+        guard let postId = currentPostId else { return nil }
+        return viewModel.posts.first(where: { $0.id == postId })
     }
 
     private var bookingSource: BookingSourceEnum {
@@ -84,7 +84,7 @@ struct ProfilePostDetailScreen: View {
         ZStack(alignment: .top) {
             Color.black.ignoresSafeArea()
 
-            PostsSuccessView(viewModel: viewModel, currentIndex: $currentIndex, showBookButton: false)
+            PostsSuccessView(viewModel: viewModel, currentPostId: $currentPostId, showBookButton: false)
                 .ignoresSafeArea(edges: .top)
 
             header
@@ -186,8 +186,9 @@ struct ProfilePostDetailScreen: View {
                 )
             }
         }
-        .onChange(of: currentIndex) { _, newIndex in
-            guard let index = newIndex, index < viewModel.posts.count else { return }
+        .onChange(of: currentPostId) { _, newPostId in
+            guard let postId = newPostId,
+                  let index = viewModel.posts.firstIndex(where: { $0.id == postId }) else { return }
 
             viewModel.currentIndex = index
             let currentPost = viewModel.posts[index]

@@ -42,6 +42,11 @@ class BaseFeedViewModel {
         }
     }
 
+    /// Bumped every time `posts` is replaced wholesale (a fresh page-1 load, e.g. pull-to-refresh
+    /// or applying Explore filters) — the View observes this to reset its own scroll position back
+    /// to the top, since the old scroll offset now points at an unrelated post in the new list.
+    private(set) var scrollResetTrigger: Int = 0
+
     var onFirstItemReady: (() -> Void)?
 
     private(set) var viewState: FeedPostsState = .idle
@@ -122,6 +127,8 @@ class BaseFeedViewModel {
 
             if isFirstPage {
                 posts = response.results
+                currentIndex = 0
+                scrollResetTrigger += 1
             } else {
                 let existingIds = Set(posts.map(\.id))
                 let unique = response.results.filter { !existingIds.contains($0.id) }

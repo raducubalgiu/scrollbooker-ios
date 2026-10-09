@@ -28,9 +28,17 @@ struct FeedTabRouter: View {
                         if let viewModel = feedViewModel {
                             FeedScreen(
                                 viewModel: viewModel,
-                                onNavigateToFeedSearch: { router.push(.feedSearch) },
+                                onNavigateToFeedSearch: {
+                                    feedViewModel?.exploreViewModel.pauseAll()
+                                    feedViewModel?.followingViewModel.pauseAll()
+                                    router.push(.feedSearch)
+                                },
                                 onNavigateToUserProfile: { router.push(.userProfile($0)) },
-                                onNavigateToBooking: { router.push(.bookingServices($0)) },
+                                onNavigateToBooking: { params in
+                                    feedViewModel?.exploreViewModel.pauseAll()
+                                    feedViewModel?.followingViewModel.pauseAll()
+                                    router.push(.bookingServices(params))
+                                },
                                 onOpenDrawer: {
                                     withAnimation(.easeInOut(duration: 0.25)) { isDrawerOpen = true }
                                 },
@@ -101,6 +109,9 @@ struct FeedTabRouter: View {
                         onlyVideoReviews: feedViewModel?.exploreViewModel.onlyVideoReviews ?? false,
                         isOpen: isDrawerOpen,
                         onApplyFilters: { serviceIds, onlyVideoReviews in
+                            if feedViewModel?.selectedTab == .following {
+                                feedViewModel?.handleTabChange(to: .explore)
+                            }
                             Task {
                                 await feedViewModel?.exploreViewModel.applyFilters(
                                     serviceIds: serviceIds,
@@ -155,13 +166,15 @@ struct FeedTabRouter: View {
                     feedViewModel = newFeedViewModel
                 }
                 
-                switch feedViewModel?.selectedTab {
-                    case .explore:
-                        feedViewModel?.exploreViewModel.playCurrent()
-                    case .following:
-                        feedViewModel?.followingViewModel.playCurrent()
-                    case .none:
-                    break
+                if router.selectedTab == .feed {
+                    switch feedViewModel?.selectedTab {
+                        case .explore:
+                            feedViewModel?.exploreViewModel.playCurrent()
+                        case .following:
+                            feedViewModel?.followingViewModel.playCurrent()
+                        case .none:
+                        break
+                    }
                 }
             }
             .onDisappear {

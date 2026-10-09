@@ -92,7 +92,10 @@ final class VideoPlayerManager {
         centerIndex: Int,
         onFirstReady: (() -> Void)? = nil
     ) {
-        guard !posts.isEmpty else { return }
+        guard !posts.isEmpty else {
+            releaseScope(scopeKey)
+            return
+        }
 
         let currentPost = posts[safe: centerIndex]
         let prevPost = posts[safe: centerIndex - 1]

@@ -19,7 +19,7 @@ struct FollowingTab: View {
     let onNavigateToBooking: (BookingNavigationParams) -> Void
     let onNavigateToReviewVideoDetail: (ReviewsViewModel, Int) -> Void
 
-    @State private var currentIndex: Int? = 0
+    @State private var currentPostId: Int?
     @State private var activeSheet: FeedSheetType? = nil
     @State private var pendingSheetAction: (() -> Void)?
     @State private var statisticsPostId: Int?
@@ -52,7 +52,7 @@ struct FollowingTab: View {
                     }
                     
                 case .success(_):
-                    PostsSuccessView(viewModel: viewModel, currentIndex: $currentIndex)
+                    PostsSuccessView(viewModel: viewModel, currentPostId: $currentPostId)
                 }
         }
         .ignoresSafeArea(.all)
@@ -150,12 +150,13 @@ struct FollowingTab: View {
         .task {
             await viewModel.initialLoad()
         }
-        .onChange(of: currentIndex) { _, newIndex in
-            guard let index = newIndex, index < viewModel.posts.count else { return }
-            
+        .onChange(of: currentPostId) { _, newPostId in
+            guard let postId = newPostId,
+                  let index = viewModel.posts.firstIndex(where: { $0.id == postId }) else { return }
+
             viewModel.currentIndex = index
             let currentPost = viewModel.posts[index]
-            
+
             Task {
                 await viewModel.loadMore(currentPost: currentPost)
             }

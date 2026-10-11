@@ -11,6 +11,7 @@ struct RootRouter: View {
     @Environment(AppContainer.self) private var container
     @Environment(SessionManager.self) private var session
     @Environment(AppLaunchGate.self) private var launchGate
+    @Environment(ToastCenter.self) private var toastCenter
 
     var body: some View {
         rootContent
@@ -25,7 +26,7 @@ struct RootRouter: View {
                     await session.bootstrap()
                 }
         } else if !session.isAuthenticated {
-            AuthRouter(startStep: nil, container: container, session: session)
+            AuthRouter(startStep: nil, container: container, session: session, toastCenter: toastCenter)
         } else if let info = session.userInfo {
             if info.isValidated {
                 ZStack {
@@ -41,7 +42,7 @@ struct RootRouter: View {
                     launchGate.startWatchdogIfNeeded()
                 }
             } else {
-                AuthRouter(startStep: info.registrationStep, container: container, session: session)
+                AuthRouter(startStep: info.registrationStep, container: container, session: session, toastCenter: toastCenter)
             }
         } else {
             SplashView()

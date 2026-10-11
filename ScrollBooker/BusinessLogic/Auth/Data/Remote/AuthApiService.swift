@@ -12,7 +12,8 @@ protocol AuthApiService: Sendable {
     func register(body: RegisterRequestDTO) async throws -> AuthResponseDTO
     func signInWithGoogle(body: GoogleAuthRequest) async throws -> AuthResponseDTO
     func refresh(refreshToken: String) async throws -> AuthResponseDTO
-    func verifyEmail() async throws -> AuthStateDTO
+    func verifyEmail(code: String) async throws -> AuthStateDTO
+    func resendVerificationEmail() async throws -> ActionMessageResponseDTO
 }
 
 final class AuthAPIImpl: AuthApiService {
@@ -57,9 +58,17 @@ final class AuthAPIImpl: AuthApiService {
         )
     }
 
-    func verifyEmail() async throws -> AuthStateDTO {
+    func verifyEmail(code: String) async throws -> AuthStateDTO {
         try await client.request(
             "auth/verify-email",
+            method: .post,
+            body: VerifyEmailCodeRequestDTO(code: code)
+        )
+    }
+
+    func resendVerificationEmail() async throws -> ActionMessageResponseDTO {
+        try await client.request(
+            "auth/resend-verification-email",
             method: .post
         )
     }

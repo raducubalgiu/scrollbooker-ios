@@ -432,6 +432,13 @@
 "period_six_months" = "6 luni";
 "period_one_year" = "1 an";
 "nearbyServices" = "Servicii în apropiere";
+"account" = "Cont";
+"accountInfo" = "Informații Cont";
+"password" = "Parolă";
+"deactivateDeleteAccount" = "Dezactivează sau șterge contul";
+"accountInfoDescription" = "Vezi și editează datele tale personale";
+"passwordDescription" = "Actualizează parola și securitatea contului";
+"deactivateDeleteAccountDescription" = "Dezactivează temporar sau șterge definitiv contul";
 
 /* --- EDIT PROFILE --- */
 "editProfile" = "Editează profilul";
@@ -494,9 +501,19 @@
 "auth_description_dont_have_account" = "Nu ai încă un cont?";
 "auth_description_already_have_account" = "Ai deja un cont?";
 "auth_description_have_business" = "Ai un business care primeste programari?";
-"auth_title_email_verification" = "Confirmă adresa de email";
-"auth_description_email_verification" = "Ți-am trimis un link de confirmare pe adresa de email. Apasă pe el, apoi revino aici și apasă butonul de mai jos.";
-"auth_button_verify_email" = "Am confirmat";
+"onboarding_email_verification_title" = "Verifică emailul";
+"onboarding_email_verification_description" = "Ți-am trimis un cod pe email. Introdu-l mai jos pentru a continua.";
+"onboarding_email_verification_code_placeholder" = "Introdu codul";
+"onboarding_email_verification_verify" = "Verifică";
+"onboarding_email_verification_no_email" = "Nu ai primit emailul?";
+"onboarding_email_verification_resend" = "Trimite din nou";
+"onboarding_email_verification_resend_cooldown" = "Poți cere un cod nou în %ds";
+"onboarding_email_verification_resend_success" = "Un cod nou a fost trimis.";
+"onboarding_email_verification_already_verified" = "Emailul este deja verificat.";
+"onboarding_email_verification_error_incorrect_code" = "Codul introdus este greșit.";
+"onboarding_email_verification_error_too_many_attempts" = "Prea multe încercări greșite. Cere un cod nou.";
+"onboarding_email_verification_error_expired_code" = "Codul a expirat sau nu mai este valid. Cere un cod nou.";
+"onboarding_email_verification_error_generic" = "Ceva nu a mers cum trebuie. Încearcă din nou.";
 "auth_or" = "sau";
 
 /* --- DASHBOARD --- */

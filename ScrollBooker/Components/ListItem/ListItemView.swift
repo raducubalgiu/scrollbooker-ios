@@ -9,7 +9,8 @@ import SwiftUI
 
 struct ListItemView: View {
     var title: String
-    var leadingIcon: String?
+    var description: String? = nil
+    var leadingIcon: String? = nil
     var onClick: () -> Void
     
     var padding: CGFloat = 0
@@ -21,22 +22,28 @@ struct ListItemView: View {
         Button {
             onClick()
         } label: {
-            HStack {
-                HStack {
-                    if !(leadingIcon ?? "").isEmpty {
-                        Image(systemName: leadingIcon!)
-                            .foregroundColor(color)
-                    }
-                    
+            HStack(alignment: .center) {
+                if let leadingIcon = leadingIcon, !leadingIcon.isEmpty {
+                    Image(systemName: leadingIcon)
+                        .foregroundColor(color)
+                }
+                
+                VStack(alignment: .leading, spacing: 4) {
                     Text(title)
                         .font(.subheadline)
                         .fontWeight(.semibold)
                         .foregroundColor(color)
+                    
+                    if let description = description, !description.isEmpty {
+                        Text(description)
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                    }
                 }
                 
                 Spacer()
                 
-                if (showTrailingIcon) {
+                if showTrailingIcon {
                     Image(systemName: "chevron.right")
                         .foregroundColor(Color.gray)
                 }
@@ -50,3 +57,4 @@ struct ListItemView: View {
         .buttonStyle(.plain)
     }
 }
+

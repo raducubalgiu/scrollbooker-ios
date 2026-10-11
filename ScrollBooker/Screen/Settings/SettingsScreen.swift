@@ -15,6 +15,7 @@ struct SettingsItem: Identifiable, Hashable {
 }
 
 private var settingsItems = [
+    SettingsItem(name: "Cont", route: .account, icon: "person"),
     SettingsItem(name: "Afișare", route: .display, icon: "moon"),
     SettingsItem(name: "Raportează o problemă", route: .reportProblem, icon: "flag")
 ]

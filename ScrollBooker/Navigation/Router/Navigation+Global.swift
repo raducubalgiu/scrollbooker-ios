@@ -325,6 +325,21 @@ struct GlobalNavigationModifier: ViewModifier {
                 onNavigate: { r in router.push(r) },
                 onBack: { router.pop() }
             )
+            
+        case .account:
+            AccountScreen(
+                onBack: { router.pop() },
+                onNavigate: { r in router.push(r) }
+            )
+            
+        case .accountInfo:
+            AccountInfoScreen(onBack: { router.pop() })
+            
+        case .password:
+            PasswordScreen(onBack: { router.pop() })
+            
+        case .deactivateDeleteAccount:
+            DeactivateDeleteAccountScreen(onBack: { router.pop() })
 
         case .display:
             DisplayScreen(onBack: { router.pop() })

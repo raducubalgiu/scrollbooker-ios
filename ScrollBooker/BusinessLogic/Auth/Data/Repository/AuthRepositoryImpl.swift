@@ -35,8 +35,13 @@ final class AuthRepositoryImpl: AuthRepository {
         return AuthResponse(dto: dto)
     }
 
-    func verifyEmail() async throws -> AuthState {
-        let dto = try await api.verifyEmail()
+    func verifyEmail(code: String) async throws -> AuthState {
+        let dto = try await api.verifyEmail(code: code)
         return AuthState(dto: dto)
+    }
+
+    func resendVerificationEmail() async throws -> String {
+        let dto = try await api.resendVerificationEmail()
+        return dto.detail
     }
 }

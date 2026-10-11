@@ -12,6 +12,7 @@ struct ProfileUserInfoView: View {
     var fullName: String
     var profession: String
     var isBusinessOrEmployee: Bool
+    var isOwnProfile: Bool
     var ratingsAverage: Float
     var openingHours: OpeningHours
     var distanceKm: Double?
@@ -63,7 +64,7 @@ struct ProfileUserInfoView: View {
                     .padding(.top, .xxs)
                 }
 
-                if isBusinessOrEmployee, let address {
+                if isBusinessOrEmployee && !isOwnProfile, let address {
                     HStack(spacing: 0) {
                         if let distanceKm {
                             Text("\(String(format: "%.1f", distanceKm))km")

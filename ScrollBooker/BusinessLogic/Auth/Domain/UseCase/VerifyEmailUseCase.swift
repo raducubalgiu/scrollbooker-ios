@@ -12,7 +12,7 @@ final class VerifyEmailUseCase {
         self.repository = repository
     }
 
-    func callAsFunction() async throws -> AuthState {
-        try await repository.verifyEmail()
+    func callAsFunction(code: String) async throws -> AuthState {
+        try await repository.verifyEmail(code: code)
     }
 }

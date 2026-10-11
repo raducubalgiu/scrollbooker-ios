@@ -16,11 +16,11 @@ struct AuthRouter: View {
 
     @State private var path: [AuthRoute]
 
-    init(startStep: RegistrationStepEnum?, container: AppContainer, session: SessionManager) {
+    init(startStep: RegistrationStepEnum?, container: AppContainer, session: SessionManager, toastCenter: ToastCenter) {
         self.startStep = startStep
         self.container = container
         self.session = session
-        self.authViewModel = container.authModule.makeAuthViewModel(session: session)
+        self.authViewModel = container.authModule.makeAuthViewModel(session: session, toastCenter: toastCenter)
         self.collectBusinessViewModel = container.onboardingModule.makeCollectBusinessViewModel(session: session)
         _path = State(initialValue: startStep.map { [AuthRoute(step: $0)] } ?? [])
     }

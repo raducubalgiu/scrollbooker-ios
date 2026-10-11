@@ -54,6 +54,10 @@ final class AuthModule {
         VerifyEmailUseCase(repository: repository)
     }()
 
+    lazy var resendVerificationEmailUseCase: ResendVerificationEmailUseCase = {
+        ResendVerificationEmailUseCase(repository: repository)
+    }()
+
     lazy var saveSessionUseCase: SaveSessionUseCase = {
         SaveSessionUseCase(
             store: store,
@@ -71,13 +75,15 @@ final class AuthModule {
         )
     }()
 
-    func makeAuthViewModel(session: SessionManager) -> AuthViewModel {
+    func makeAuthViewModel(session: SessionManager, toastCenter: ToastCenter) -> AuthViewModel {
         AuthViewModel(
             session: session,
+            toastCenter: toastCenter,
             signInWithGoogleUseCase: signInWithGoogleUseCase,
             loginUseCase: loginUseCase,
             registerUseCase: registerUseCase,
             verifyEmailUseCase: verifyEmailUseCase,
+            resendVerificationEmailUseCase: resendVerificationEmailUseCase,
             saveSessionUseCase: saveSessionUseCase
         )
     }

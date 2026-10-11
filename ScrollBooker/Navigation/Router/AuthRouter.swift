@@ -47,9 +47,6 @@ struct AuthRouter: View {
         case .login:
             LoginScreen(authViewModel: authViewModel)
 
-        case .registerClient:
-            RegisterScreen(authViewModel: authViewModel)
-
         case .registerBusiness:
             RegisterBusinessScreen(authViewModel: authViewModel)
 

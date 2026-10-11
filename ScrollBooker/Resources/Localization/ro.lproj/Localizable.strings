@@ -2,7 +2,6 @@
 
 "login" = "Logare";
 "register" = "Înregistrare";
-"registerNow" = "Înregistrează";
 "email" = "Email";
 "password" = "Parolă";
 "inbox" = "Inbox";
@@ -493,14 +492,34 @@
 "message_placeholder_search_users" = "Caută utilizatori, afaceri, specialiști";
 
 /* --- AUTH --- */
-"auth_description_login" = "Te rugăm să te autentifici pentru a continua";
-"auth_label_username_or_email" = "Username sau Email";
-"auth_description_register" = "Te rugăm să te înregistrezi pentru a continua";
-"auth_title_register_business" = "Înregistrare business";
-"auth_description_register_business" = "Creează un cont pentru a-ți înregistra afacerea și a incepe procesul de configurare";
+"auth_continue_button" = "Continuă";
+"auth_description_login" = "Alege cum vrei să te autentifici";
+"auth_description_register" = "Alege cum vrei să îți creezi contul";
 "auth_description_dont_have_account" = "Nu ai încă un cont?";
 "auth_description_already_have_account" = "Ai deja un cont?";
-"auth_description_have_business" = "Ai un business care primeste programari?";
+"auth_identifier_email" = "Email";
+"auth_identifier_username" = "Username";
+"auth_identifier_phone" = "Telefon";
+"auth_identifier_phone_placeholder" = "Introdu numărul de telefon";
+"auth_password_title" = "Introdu parola";
+"auth_password_login_description" = "Introdu parola contului tău pentru a continua.";
+"auth_password_register_description" = "Alege o parolă pentru noul tău cont.";
+"auth_phone_code_title" = "Verifică numărul de telefon";
+"auth_phone_code_description" = "Ți-am trimis un cod prin SMS. Introdu-l mai jos pentru a continua.";
+"auth_phone_code_placeholder" = "Introdu codul";
+"auth_error_user_not_found" = "Acest cont nu există. Verifică datele introduse sau creează un cont nou.";
+"auth_error_google_account" = "Acest cont este conectat cu Google. Autentifică-te cu Google.";
+"auth_error_invalid_credentials" = "Datele introduse sunt greșite. Verifică și încearcă din nou.";
+"auth_error_email_taken" = "Există deja un cont cu acest email.";
+"auth_error_generic" = "Ceva nu a mers cum trebuie. Încearcă din nou.";
+"auth_title_register_business" = "Înregistrare business";
+"auth_description_register_business" = "Creează un cont pentru a-ți înregistra afacerea și a incepe procesul de configurare";
+"auth_register_business_cta_title" = "Ai un salon care primește programări?";
+"auth_register_business_cta_description" = "În această primă etapă acceptăm doar saloane și afaceri din zona de beauty.";
+"auth_forgot_password_cta" = "Ai uitat parola?";
+"auth_forgot_password_title" = "Ai uitat parola?";
+"auth_forgot_password_description" = "Introdu adresa de email asociată contului tău. Îți vom trimite instrucțiuni pentru resetarea parolei.";
+"auth_forgot_password_submit" = "Trimite";
 "onboarding_email_verification_title" = "Verifică emailul";
 "onboarding_email_verification_description" = "Ți-am trimis un cod pe email. Introdu-l mai jos pentru a continua.";
 "onboarding_email_verification_code_placeholder" = "Introdu codul";

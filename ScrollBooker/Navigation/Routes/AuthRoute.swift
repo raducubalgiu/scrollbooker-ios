@@ -9,7 +9,6 @@ import SwiftUI
 
 enum AuthRoute: Hashable {
     case login
-    case registerClient
     case registerBusiness
     
     case collectEmailValidation

@@ -26,3 +26,10 @@ enum APIError: Error, LocalizedError {
         }
     }
 }
+
+extension APIError {
+    var backendDetail: String? {
+        guard case .server(_, let data) = self, let data else { return nil }
+        return try? JSONDecoder().decode(ActionMessageResponseDTO.self, from: data).detail
+    }
+}

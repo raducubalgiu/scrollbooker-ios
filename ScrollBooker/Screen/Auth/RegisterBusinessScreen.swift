@@ -10,49 +10,54 @@ import SwiftUI
 struct RegisterBusinessScreen: View {
     let authViewModel: AuthViewModel
 
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var identifierType: AuthIdentifierType = .email
+    @State private var identifierValue: String = ""
+    @State private var showCredentialScreen = false
 
     var body: some View {
         FormLayout(
             headline: String(localized: "auth_title_register_business"),
             subHeadline: String(localized: "auth_description_register_business"),
             enableBottomButton: false,
-            onBack: {}
+            enableBack: true,
+            onBack: { dismiss() }
         ) {
             VStack(alignment: .leading, spacing: AppSize.s.rawValue) {
-                Input(
-                    label: String(localized: "email"),
-                    text: $email,
-                    placeholder: String(localized: "email"),
-                    keyboardType: .emailAddress,
-                )
-                .textInputAutocapitalization(.never)
-
-                Input(
-                    label: String(localized: "password"),
-                    text: $password,
-                    placeholder: String(localized: "password"),
-                    isSecure: true
+                IdentifierPickerView(
+                    availableTypes: [.email, .phone],
+                    identifierType: $identifierType,
+                    identifierValue: $identifierValue
                 )
 
                 MainButton(
-                    title: String(localized: "register"),
+                    title: String(localized: "auth_continue_button"),
+                    isDisabled: identifierValue.isEmpty,
+                    isLoading: false,
+                    onClick: { showCredentialScreen = true }
+                )
+                .padding(.top, .xs)
+
+                SocialSignInSectionView(
                     isDisabled: authViewModel.isLoading,
-                    isLoading: authViewModel.isLoading,
-                    onClick: {
+                    onGoogleClick: {
                         Task {
-                            await authViewModel.register(
-                                email: email,
-                                password: password,
-                                roleName: "business"
-                            )
+                            await authViewModel.signInWithGoogle(roleName: .business)
                         }
                     }
                 )
-                .padding(.top, .xs)
             }
             .padding(.horizontal, .xl)
+        }
+        .navigationDestination(isPresented: $showCredentialScreen) {
+            AuthCredentialScreen(
+                authViewModel: authViewModel,
+                mode: .register(roleName: "business"),
+                identifierType: identifierType,
+                identifierValue: identifierValue
+            )
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }

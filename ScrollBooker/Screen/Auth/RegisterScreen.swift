@@ -10,8 +10,11 @@ import SwiftUI
 struct RegisterScreen: View {
     let authViewModel: AuthViewModel
 
-    @State private var email: String = ""
-    @State private var password: String = ""
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var identifierType: AuthIdentifierType = .email
+    @State private var identifierValue: String = ""
+    @State private var showCredentialScreen = false
     @State private var showRegisterBusiness = false
 
     var body: some View {
@@ -19,67 +22,66 @@ struct RegisterScreen: View {
             headline: String(localized: "register"),
             subHeadline: String(localized: "auth_description_register"),
             enableBottomButton: false,
-            onBack: {}
+            enableBack: true,
+            onBack: { dismiss() }
         ) {
             VStack(alignment: .leading, spacing: AppSize.s.rawValue) {
-                Input(
-                    label: String(localized: "email"),
-                    text: $email,
-                    placeholder: String(localized: "email"),
-                    keyboardType: .emailAddress,
-                )
-                .textInputAutocapitalization(.never)
-
-                Input(
-                    label: String(localized: "password"),
-                    text: $password,
-                    placeholder: String(localized: "password"),
-                    isSecure: true
+                IdentifierPickerView(
+                    availableTypes: [.email, .phone],
+                    identifierType: $identifierType,
+                    identifierValue: $identifierValue
                 )
 
                 MainButton(
-                    title: String(localized: "register"),
-                    isDisabled: authViewModel.isLoading,
-                    isLoading: authViewModel.isLoading,
-                    onClick: {
-                        Task {
-                            await authViewModel.register(
-                                email: email,
-                                password: password,
-                                roleName: "client"
-                            )
-                        }
-                    },
+                    title: String(localized: "auth_continue_button"),
+                    isDisabled: identifierValue.isEmpty,
+                    isLoading: false,
+                    onClick: { showCredentialScreen = true }
                 )
                 .padding(.top, .xs)
 
+                SocialSignInSectionView(
+                    isDisabled: authViewModel.isLoading,
+                    onGoogleClick: {
+                        Task {
+                            await authViewModel.signInWithGoogle(roleName: .client)
+                        }
+                    }
+                )
+
+                RegisterBusinessCTOView(onClick: { showRegisterBusiness = true })
+                    .padding(.top, .base)
+
+                Spacer()
+
                 HStack {
                     Text(String(localized: "auth_description_already_have_account"))
-                    NavigationLink(String(localized: "register")) {
-                        LoginScreen(authViewModel: authViewModel)
+                        .font(.subheadline)
+
+                    Button(String(localized: "login")) {
+                        dismiss()
                     }
                     .foregroundColor(.primarySB)
                     .fontWeight(.bold)
                 }
-
-                VStack(alignment: .center, spacing: AppSize.s.rawValue) {
-                    Spacer()
-
-                    Divider()
-
-                    Text(String(localized: "auth_description_have_business"))
-
-                    MainButtonOutlined(
-                        title: String(localized: "registerNow"),
-                        onClick: { showRegisterBusiness = true }
-                    )
-                }
+                .frame(maxWidth: .infinity)
+                .padding(.bottom, .base)
             }
             .padding(.horizontal, .xl)
             .ignoresSafeArea(.keyboard, edges: .bottom)
         }
+        .navigationDestination(isPresented: $showCredentialScreen) {
+            AuthCredentialScreen(
+                authViewModel: authViewModel,
+                mode: .register(roleName: "client"),
+                identifierType: identifierType,
+                identifierValue: identifierValue
+            )
+            .toolbar(.hidden, for: .navigationBar)
+        }
         .navigationDestination(isPresented: $showRegisterBusiness) {
             RegisterBusinessScreen(authViewModel: authViewModel)
+                .toolbar(.hidden, for: .navigationBar)
         }
     }
 }

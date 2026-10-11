@@ -48,22 +48,34 @@ final class AuthViewModel {
         self.saveSessionUseCase = saveSessionUseCase
     }
 
-    func login(username: String, password: String) async {
+    func login(identifier: String, password: String) async {
         isLoading = true
-        loginError = nil
 
         do {
-            let authResponse = try await loginUseCase(username: username, password: password)
+            let authResponse = try await loginUseCase(username: identifier, password: password)
             let info = try await saveSessionUseCase(authResponse: authResponse)
             session.setAuthenticated(info)
         } catch {
-            loginError = logger.userMessage(for: error, context: "Login")
+            toastCenter.show(loginErrorMessage(for: error), type: .error)
             await session.clearSession()
         }
 
         isLoading = false
     }
-    
+
+    private func loginErrorMessage(for error: Error) -> String {
+        switch (error as? APIError)?.backendDetail {
+        case "This user is not registered yet":
+            return String(localized: "auth_error_user_not_found")
+        case "This account uses Google Sign-In. Please use Google to log in.":
+            return String(localized: "auth_error_google_account")
+        case "Invalid username or password":
+            return String(localized: "auth_error_invalid_credentials")
+        default:
+            return String(localized: "auth_error_generic")
+        }
+    }
+
     func signInWithGoogle(roleName: RoleName) async {
         guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
               let rootViewController = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
@@ -98,18 +110,26 @@ final class AuthViewModel {
 
     func register(email: String, password: String, roleName: String) async {
         isLoading = true
-        loginError = nil
 
         do {
             let authResponse = try await registerUseCase(email: email, password: password, roleName: roleName)
             let info = try await saveSessionUseCase(authResponse: authResponse)
             session.setAuthenticated(info)
         } catch {
-            loginError = logger.userMessage(for: error, context: "Register")
+            toastCenter.show(registerErrorMessage(for: error), type: .error)
             await session.clearSession()
         }
 
         isLoading = false
+    }
+
+    private func registerErrorMessage(for error: Error) -> String {
+        switch (error as? APIError)?.backendDetail {
+        case "User already registered":
+            return String(localized: "auth_error_email_taken")
+        default:
+            return String(localized: "auth_error_generic")
+        }
     }
 
     func verifyEmail(code: String) async {
@@ -150,19 +170,15 @@ final class AuthViewModel {
     }
 
     private func verifyEmailErrorMessage(for error: Error) -> String {
-        if case .server(_, let data)? = error as? APIError, let data,
-           let detail = try? JSONDecoder().decode(ActionMessageResponseDTO.self, from: data).detail {
-            switch detail {
-            case "Incorrect code":
-                return String(localized: "onboarding_email_verification_error_incorrect_code")
-            case "Too many attempts, request a new code":
-                return String(localized: "onboarding_email_verification_error_too_many_attempts")
-            case "Code invalid or expired":
-                return String(localized: "onboarding_email_verification_error_expired_code")
-            default:
-                break
-            }
+        switch (error as? APIError)?.backendDetail {
+        case "Incorrect code":
+            return String(localized: "onboarding_email_verification_error_incorrect_code")
+        case "Too many attempts, request a new code":
+            return String(localized: "onboarding_email_verification_error_too_many_attempts")
+        case "Code invalid or expired":
+            return String(localized: "onboarding_email_verification_error_expired_code")
+        default:
+            return String(localized: "onboarding_email_verification_error_generic")
         }
-        return String(localized: "onboarding_email_verification_error_generic")
     }
 }

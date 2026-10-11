@@ -39,7 +39,7 @@ struct FormLayout<Content: View>: View {
                 
                 Text(subHeadline)
                     .font(.subheadline)
-                    .fontWeight(.semibold)
+                    .fontWeight(.regular)
                     .foregroundColor(.gray)
                     .padding(.bottom)
                     .padding(.horizontal, .xl)

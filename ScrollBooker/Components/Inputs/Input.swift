@@ -31,6 +31,10 @@ struct Input: View {
         isFocused || !text.isEmpty
     }
 
+    private var textFieldPlaceholder: String {
+        label.isEmpty || isLabelFloating ? placeholder : ""
+    }
+
     private var isInteractive: Bool {
         enabled && !readOnly
     }
@@ -71,10 +75,10 @@ struct Input: View {
 
                     Group {
                         if isSecure && !isTextVisible {
-                            SecureField(isLabelFloating ? placeholder : "", text: $text)
+                            SecureField(textFieldPlaceholder, text: $text)
                                 .onSubmit { onCommit?() }
                         } else {
-                            TextField(isLabelFloating ? placeholder : "", text: $text)
+                            TextField(textFieldPlaceholder, text: $text)
                                 .onSubmit { onCommit?() }
                                 .autocapitalization(isSecure ? .none : .sentences)
                                 .autocorrectionDisabled(isSecure)

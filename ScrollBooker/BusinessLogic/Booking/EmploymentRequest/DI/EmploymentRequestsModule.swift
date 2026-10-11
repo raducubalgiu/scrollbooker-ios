@@ -30,9 +30,17 @@ final class EmploymentRequestModule {
     private lazy var cancelEmploymentRequestUseCase: CancelEmploymentRequestUseCase = {
         CancelEmploymentRequestUseCase(repository: repository)
     }()
-    
+
     lazy var createEmploymentRequestUseCase: CreateEmploymentRequestUseCase = {
         CreateEmploymentRequestUseCase(repository: repository)
+    }()
+
+    lazy var getEmploymentRequestByIdUseCase: GetEmploymentRequestByIdUseCase = {
+        GetEmploymentRequestByIdUseCase(repository: repository)
+    }()
+
+    lazy var respondEmploymentRequestUseCase: RespondEmploymentRequestUseCase = {
+        RespondEmploymentRequestUseCase(repository: repository)
     }()
     
     func makeMyEmployeesViewModel(

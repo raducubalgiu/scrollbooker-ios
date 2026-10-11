@@ -22,11 +22,20 @@ final class EmploymentRequestRepositoryImpl: EmploymentRequestRepository {
         }
     }
     
+    func getEmploymentRequestById(employmentId: Int) async throws -> EmploymentRequest {
+        let dto = try await api.getEmploymentRequest(employmentId: employmentId)
+        return try EmploymentRequest(dto: dto)
+    }
+
     func cancelEmploymentRequest(employmentId: Int) async throws -> NoContent {
         return try await api.cancelEmploymentRequest(employmentId: employmentId)
     }
-    
+
     func createEmploymentRequest(request: EmploymentRequestCreate) async throws -> NoContent {
         return try await api.createEmploymentRequest(request: request)
+    }
+
+    func respondEmploymentRequest(status: EmploymentRequestStatusEnum, employmentId: Int) async throws -> NoContent {
+        return try await api.respondEmploymentRequest(status: status, employmentId: employmentId)
     }
 }

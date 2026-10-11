@@ -32,9 +32,22 @@ final class NotificationModule {
         GetUserNotificationsNumberUseCase(repository: repository)
     }()
 
-    func makeNotificationsViewModel() -> InboxViewModel {
+    func makeNotificationsViewModel(
+        session: SessionManager,
+        getEmploymentRequestByIdUseCase: GetEmploymentRequestByIdUseCase,
+        respondEmploymentRequestUseCase: RespondEmploymentRequestUseCase,
+        getConsentByNameUseCase: GetConsentByNameUseCase,
+        refreshSessionUseCase: RefreshSessionUseCase,
+        saveSessionUseCase: SaveSessionUseCase
+    ) -> InboxViewModel {
         InboxViewModel(
-            getUserNotifications: getUserNotificationsUseCase
+            session: session,
+            getUserNotifications: getUserNotificationsUseCase,
+            getEmploymentRequestByIdUseCase: getEmploymentRequestByIdUseCase,
+            respondEmploymentRequestUseCase: respondEmploymentRequestUseCase,
+            getConsentByNameUseCase: getConsentByNameUseCase,
+            refreshSessionUseCase: refreshSessionUseCase,
+            saveSessionUseCase: saveSessionUseCase
         )
     }
 }

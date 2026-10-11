@@ -23,7 +23,7 @@ struct InboxTabRouter: View {
                         viewModel: viewModel,
                         onNavigateToAppointmentDetails: { router.push(.appointmentDetails(id: $0)) },
                         onNavigateToUserProfile: { router.push(.userProfile($0)) },
-                        onNavigateToEmploymentRequest: { router.push(.employmentRequestRespond(id: $0) }
+                        onNavigateToEmploymentRequest: { router.push(.employmentRequestRespond(id: $0)) }
                     )
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         CustomTabBar(backgroundColor: .backgroundSB)
@@ -34,14 +34,28 @@ struct InboxTabRouter: View {
             }
             .withNavigation { route in
                 switch route {
-                    case .employmentRequestRespond:
-                        EmploymentRespondScreen(
-                            onBack: { router.pop() }
-                        )
+                    case .employmentRequestRespond(let id):
+                        if let viewModel = inboxViewModel {
+                            EmploymentRespondScreen(
+                                employmentId: id,
+                                viewModel: viewModel,
+                                onBack: { router.pop() },
+                                onNavigateToConsent: { router.push(.employmentRequestRespondConsent) },
+                                onDenySuccess: { router.popToRoot() }
+                            )
+                        } else {
+                            nil
+                        }
                     case .employmentRequestRespondConsent:
-                        EmploymentRespondConsentScreen(
-                            onBack: { router.pop() }
-                        )
+                        if let viewModel = inboxViewModel {
+                            EmploymentRespondConsentScreen(
+                                viewModel: viewModel,
+                                onBack: { router.pop() },
+                                onAcceptSuccess: { router.popToRoot() }
+                            )
+                        } else {
+                            nil
+                        }
                     default:
                         nil
                     }
@@ -49,9 +63,14 @@ struct InboxTabRouter: View {
         }
         .onChange(of: router.selectedTab, initial: true) { _, newTab in
             if newTab == .inbox && inboxViewModel == nil {
-                Task {
-                    @MainActor in inboxViewModel = container.notificationModule.makeNotificationsViewModel()
-                }
+                inboxViewModel = container.notificationModule.makeNotificationsViewModel(
+                    session: container.session,
+                    getEmploymentRequestByIdUseCase: container.employmentRequestModule.getEmploymentRequestByIdUseCase,
+                    respondEmploymentRequestUseCase: container.employmentRequestModule.respondEmploymentRequestUseCase,
+                    getConsentByNameUseCase: container.consentModule.getConsentByNameUseCase,
+                    refreshSessionUseCase: container.authModule.refreshSessionUseCase,
+                    saveSessionUseCase: container.authModule.saveSessionUseCase
+                )
             }
         }
     }

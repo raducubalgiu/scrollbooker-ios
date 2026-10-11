@@ -155,6 +155,10 @@
 "acceptTerms" = "Acceptă termenii și condițiile";
 "acceptTermsAndConditions" = "Declar că am ințeles termenii și condițiile aplicației";
 "acceptTermsForFinishingEmployeeOnboarding" = "Citește și acceptă termenii de colaborare pentru a finaliza adăugarea angajatului";
+"acceptEmployment" = "Acceptă angajarea";
+"termsNotFound" = "Termenii nu au putut fi încărcați";
+"denyEmploymentRequest" = "Refuză cererea de angajare";
+"areYouSureDenyEmployment" = "Ești sigur că dorești să refuzi cererea de angajare?";
 "dismiss" = "Demite";
 "dismissal" = "Concediere";
 "hireDate" = "Data angajării";

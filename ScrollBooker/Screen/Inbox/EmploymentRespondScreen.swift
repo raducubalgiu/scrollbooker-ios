@@ -7,70 +7,67 @@
 
 import SwiftUI
 
-let texts = [
-    String(localized: "youWillReceiveAccessToYourOwnCalendarAndAppointments"),
-    String(localized: "youWillBeAbleToEditAndAddServicesWithinYourBusiness"),
-    String(localized: "clientsWillBeAbleToSelectYouDirectlyBasedYourAvailability"),
-    String(localized: "youWillAppearInThePublicBusinessProfile"),
-    String(localized: "youWillReceiveReviewsFromYourClients"),
-    String(localized: "youCouldResignAnytime")
-]
-
 struct EmploymentRespondScreen: View {
+    let employmentId: Int
+    let viewModel: InboxViewModel
+
     var onBack: () -> Void
-    
+    var onNavigateToConsent: () -> Void
+    var onDenySuccess: () -> Void
+
+    @State private var showDenyAlert = false
+
     var body: some View {
-        HeaderView(
-            title: "",
-            onBack: onBack
-        )
-        
-        ScrollView {
-            VStack(alignment: .leading) {
-                VStack(alignment: .center, spacing: 25) {
-                    Image(systemName: "info.circle")
-                        .font(.system(size: 50))
-                        .foregroundColor(.primarySB)
-                    Text("Frizeria Figaro ti-a trimis o cerere de angajare")
-                }
-                
-                Text("hereIsWhatYouShouldNow")
-                    .font(.headline.bold())
-                    .padding(.top, .xl)
-                    .padding(.bottom, .xxs)
-                
-                Text("byAcceptingThisRequest")
-                    .padding(.bottom, .m)
-                
-                ForEach(texts, id: \.self) { text in
-                    BulletListItem(text: text)
+        VStack(spacing: 0) {
+            HeaderView(enableBack: true, onBack: onBack)
+                .padding(.horizontal, .base)
+                .padding(.top, .xs)
+
+            Group {
+                switch viewModel.employmentRequestState {
+                case .idle, .loading:
+                    LoadingView()
+
+                case .error:
+                    ErrorView(message: String(localized: "message_error_something_went_wrong")) {
+                        Task { await viewModel.loadEmploymentRequest() }
+                    }
+
+                case .success(let request):
+                    ScrollView {
+                        EmploymentRespondDetailsView(employer: request.employer)
+                    }
                 }
             }
-            .padding()
-        }
-        
-        HStack {
-            MainButton(
-                title: String(localized: "deny"),
-                bgColor: .surfaceSB,
-                color: .onSurfaceSB,
-                onClick: {},
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            EmploymentRespondBottomBarView(
+                isSaving: viewModel.isSaving,
+                onDeny: { showDenyAlert = true },
+                onAccept: onNavigateToConsent
             )
-            MainButton(title: String(localized: "accept"), onClick: {})
         }
-        .padding(.horizontal)
+        .background(Color.backgroundSB)
+        .task {
+            viewModel.setEmploymentId(employmentId)
+            await viewModel.loadEmploymentRequest()
+            await viewModel.loadConsent()
+        }
+        .alert(
+            String(localized: "denyEmploymentRequest"),
+            isPresented: $showDenyAlert
+        ) {
+            Button(String(localized: "deny"), role: .destructive) {
+                Task {
+                    let result = await viewModel.respondToRequest(status: .denied)
+                    if case .success = result {
+                        onDenySuccess()
+                    }
+                }
+            }
+            Button(String(localized: "cancel"), role: .cancel) {}
+        } message: {
+            Text(String(localized: "areYouSureDenyEmployment"))
+        }
     }
-}
-
-#Preview("Light") {
-    EmploymentRespondScreen(
-        onBack: {}
-    )
-}
-
-#Preview("Dark") {
-    EmploymentRespondScreen(
-        onBack: {}
-    )
-        .preferredColorScheme(.dark)
 }

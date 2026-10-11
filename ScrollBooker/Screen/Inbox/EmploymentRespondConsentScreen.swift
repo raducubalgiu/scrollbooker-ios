@@ -8,54 +8,71 @@
 import SwiftUI
 
 struct EmploymentRespondConsentScreen: View {
-    var onBack: () -> Void
-    
+    let viewModel: InboxViewModel
+
+    let onBack: () -> Void
+    let onAcceptSuccess: () -> Void
+
+    @State private var showFailureAlert = false
+
+    private var isButtonDisabled: Bool {
+        viewModel.consentState.data == nil || !viewModel.agreedTerms || viewModel.isSaving
+    }
+
     var body: some View {
-        HeaderView(
-            title: String(localized: "termsAndConditions"),
-            onBack: onBack
-        )
-        
-        VStack {
-            ScrollView {
-                VStack(alignment: .leading) {
-                    Text("Terms from BEsfdfefefefefefefefefefefefefefefefefefefefefeffefef")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
-                    Text("Terms from BE")
+        FormLayout(
+            headline: String(localized: "acceptTerms"),
+            subHeadline: String(localized: "acceptTermsAndConditions"),
+            enableBottomButton: true,
+            enableBack: true,
+            buttonTitle: String(localized: "acceptEmployment"),
+            isDisabled: isButtonDisabled,
+            isLoading: viewModel.isSaving,
+            onBack: onBack,
+            onClick: {
+                Task {
+                    let result = await viewModel.respondToRequest(status: .accepted)
+                    switch result {
+                    case .success:
+                        onAcceptSuccess()
+                    case .failure:
+                        showFailureAlert = true
+                    }
                 }
             }
-            
-            MainButton(
-                title: String(localized: "accept"),
-                onClick: {})
+        ) {
+            VStack {
+                switch viewModel.consentState {
+                case .idle, .loading:
+                    LoadingView()
+
+                case .error:
+                    ErrorView(message: String(localized: "message_error_something_went_wrong")) {
+                        Task { await viewModel.loadConsent() }
+                    }
+
+                case .success(let consent):
+                    if consent.text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                        NoDataView(
+                            title: String(localized: "acceptTerms"),
+                            message: String(localized: "termsNotFound"),
+                            systemImage: "doc.plaintext.fill"
+                        )
+                    } else {
+                        EmploymentConsentView(
+                            text: consent.text,
+                            isTermsAccepted: Binding(
+                                get: { viewModel.agreedTerms },
+                                set: { _ in viewModel.setAgreed() }
+                            )
+                        )
+                    }
+                }
+            }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
         }
-        .padding(.horizontal)
+        .alert(String(localized: "message_error_something_went_wrong"), isPresented: $showFailureAlert) {
+            Button(String(localized: "cancel"), role: .cancel) {}
+        }
     }
-}
-
-#Preview("Light") {
-    EmploymentRespondConsentScreen(
-        onBack: {}
-    )
-}
-
-#Preview("Dark") {
-    EmploymentRespondConsentScreen(
-        onBack: {}
-    )
-        .preferredColorScheme(.dark)
 }

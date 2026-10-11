@@ -12,6 +12,7 @@ struct InboxScreen: View {
     
     var onNavigateToAppointmentDetails: (Int) -> Void
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
+    var onNavigateToEmploymentRequest: (Int) -> Void
 
     var body: some View {
         VStack(spacing: 0) {
@@ -42,16 +43,15 @@ struct InboxScreen: View {
                         NotificationsListView(
                             notifications: notifications,
                             isPaging: viewModel.isPaging,
-                            onRefresh: {
-                                await viewModel.refresh()
-                            },
+                            onRefresh: { await viewModel.refresh() },
                             onItemAppear: { notification in
                                 Task {
                                     await viewModel.loadMoreIfNeeded(currentNotification: notification)
                                 }
                             },
                             onNavigateToAppointmentDetails: onNavigateToAppointmentDetails,
-                            onNavigateToUserProfile: onNavigateToUserProfile
+                            onNavigateToUserProfile: onNavigateToUserProfile,
+                            onNavigateToEmploymentRequest: onNavigateToEmploymentRequest
                         )
                     }
                 }

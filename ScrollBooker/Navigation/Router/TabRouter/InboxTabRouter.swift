@@ -22,7 +22,8 @@ struct InboxTabRouter: View {
                     InboxScreen(
                         viewModel: viewModel,
                         onNavigateToAppointmentDetails: { router.push(.appointmentDetails(id: $0)) },
-                        onNavigateToUserProfile: { router.push(.userProfile($0)) }
+                        onNavigateToUserProfile: { router.push(.userProfile($0)) },
+                        onNavigateToEmploymentRequest: { router.push(.employmentRequestRespond(id: $0) }
                     )
                     .safeAreaInset(edge: .bottom, spacing: 0) {
                         CustomTabBar(backgroundColor: .backgroundSB)

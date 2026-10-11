@@ -38,8 +38,6 @@ struct ProfileNavigationParams: Hashable, Identifiable {
     let username: String
 }
 
-// appointmentId/businessOrEmployeeId are only set when Camera is entered from an
-// appointment's "leave a video review" CTA (not built yet) — nil for a normal post.
 struct CameraParams: Hashable {
     var appointmentId: Int? = nil
     var businessOrEmployeeId: Int? = nil
@@ -53,7 +51,7 @@ enum Route: Hashable {
     
     // Inbox
     case inbox
-    case employmentRequestRespond
+    case employmentRequestRespond(id: Int)
     case employmentRequestRespondConsent
     
     // Search

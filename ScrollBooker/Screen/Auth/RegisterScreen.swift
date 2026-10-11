@@ -80,7 +80,7 @@ struct RegisterScreen: View {
             .toolbar(.hidden, for: .navigationBar)
         }
         .navigationDestination(isPresented: $showRegisterBusiness) {
-            RegisterBusinessScreen(authViewModel: authViewModel)
+            BusinessRegisterIntroScreen(authViewModel: authViewModel)
                 .toolbar(.hidden, for: .navigationBar)
         }
     }

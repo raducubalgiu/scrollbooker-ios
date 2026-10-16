@@ -11,15 +11,19 @@ struct FeedDrawerView: View {
     let serviceDomainsState: FeatureState<[ServiceDomain]>
     let selectedServiceIds: Set<Int>
     let onlyVideoReviews: Bool
+    let onlyNearby: Bool
+    let hasLocationAccess: Bool
     let isOpen: Bool
-    let onApplyFilters: (Set<Int>, Bool) -> Void
+    let onApplyFilters: (Set<Int>, Bool, Bool) -> Void
     let onRequestClose: () -> Void
+    let onRequestLocationAccess: () -> Void
 
     @State private var draftSelectedIds: Set<Int> = []
     @State private var draftOnlyVideoReviews: Bool = false
+    @State private var draftOnlyNearby: Bool = false
 
     private var isClearEnabled: Bool {
-        !draftSelectedIds.isEmpty || draftOnlyVideoReviews
+        !draftSelectedIds.isEmpty || draftOnlyVideoReviews || draftOnlyNearby
     }
 
     var body: some View {
@@ -45,6 +49,12 @@ struct FeedDrawerView: View {
                         FeedDrawerHeaderView()
 
                         FeedDrawerVideoReviewsToggleView(checked: $draftOnlyVideoReviews)
+
+                        FeedDrawerNearbyToggleView(
+                            checked: $draftOnlyNearby,
+                            hasLocationAccess: hasLocationAccess,
+                            onRequestLocationAccess: onRequestLocationAccess
+                        )
 
                         Divider().background(Color(white: 0.23))
 
@@ -80,6 +90,7 @@ struct FeedDrawerView: View {
                     onClear: {
                         draftSelectedIds = []
                         draftOnlyVideoReviews = false
+                        draftOnlyNearby = false
                     },
                     onConfirm: onRequestClose
                 )
@@ -91,8 +102,9 @@ struct FeedDrawerView: View {
             if newValue {
                 draftSelectedIds = selectedServiceIds
                 draftOnlyVideoReviews = onlyVideoReviews
+                draftOnlyNearby = onlyNearby
             } else {
-                onApplyFilters(draftSelectedIds, draftOnlyVideoReviews)
+                onApplyFilters(draftSelectedIds, draftOnlyVideoReviews, draftOnlyNearby)
             }
         }
     }

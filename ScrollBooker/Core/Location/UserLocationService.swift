@@ -8,6 +8,7 @@
 import Foundation
 import CoreLocation
 import Observation
+import UIKit
 
 @Observable
 @MainActor
@@ -19,6 +20,7 @@ final class UserLocationService: NSObject {
     private var lastFetchDate: Date?
     private var inFlightTask: Task<BusinessCoordinates?, Never>?
     private var pendingResume: ((BusinessCoordinates?) -> Void)?
+    private var authorizationRequestContinuation: CheckedContinuation<Void, Never>?
 
     private let cacheTTL: TimeInterval = 600
     private let fetchTimeout: Duration = .seconds(5)
@@ -64,6 +66,34 @@ final class UserLocationService: NSObject {
         return result
     }
 
+    /// Cere permisiunea OS dacă încă nu a fost decisă, sau trimite userul direct în Settings
+    /// dacă a refuzat-o deja (iOS nu mai re-arată dialogul de sistem după un refuz). Întoarce
+    /// controlul abia după ce userul a decis (sau a plecat în Settings), ca apelantul să poată
+    /// re-verifica imediat `currentLocation()`.
+    func requestAccess() async {
+        let liveStatus = locationManager.authorizationStatus
+        authorizationStatus = liveStatus
+
+        switch liveStatus {
+        case .notDetermined:
+            await withCheckedContinuation { continuation in
+                authorizationRequestContinuation = continuation
+                locationManager.requestWhenInUseAuthorization()
+            }
+        case .denied, .restricted:
+            openAppSettings()
+        default:
+            break
+        }
+    }
+
+    private func openAppSettings() {
+        guard let settingsUrl = URL(string: UIApplication.openSettingsURLString) else { return }
+        if UIApplication.shared.canOpenURL(settingsUrl) {
+            UIApplication.shared.open(settingsUrl)
+        }
+    }
+
     private func fetchLocation() async -> BusinessCoordinates? {
         await withCheckedContinuation { continuation in
             var didResume = false
@@ -94,6 +124,9 @@ extension UserLocationService: CLLocationManagerDelegate {
                 self.lastLocation = nil
                 self.lastFetchDate = nil
             }
+
+            self.authorizationRequestContinuation?.resume()
+            self.authorizationRequestContinuation = nil
         }
     }
 

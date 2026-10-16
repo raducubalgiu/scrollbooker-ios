@@ -14,12 +14,23 @@ final class PostRepositoryImpl: PostRepository {
         self.api = api
     }
     
-    func getExplorePosts(page: Int, limit: Int, serviceIds: [Int], onlyVideoReviews: Bool) async throws -> PaginatedResponse<Post> {
+    func getExplorePosts(
+        page: Int,
+        limit: Int,
+        serviceIds: [Int],
+        onlyVideoReviews: Bool,
+        userLat: Double?,
+        userLng: Double?,
+        onlyNearby: Bool
+    ) async throws -> PaginatedResponse<Post> {
         let dtoResponse = try await api.getExplorePosts(
             page: page,
             limit: limit,
             serviceIds: serviceIds,
-            onlyVideoReviews: onlyVideoReviews
+            onlyVideoReviews: onlyVideoReviews,
+            userLat: userLat,
+            userLng: userLng,
+            onlyNearby: onlyNearby
         )
 
         return PaginatedResponse(dtoResponse) {

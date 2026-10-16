@@ -336,6 +336,9 @@
 "tomorrow" = "Mâine";
 "onlyVideoReviews" = "Doar recenzii video";
 "filterVideoContentAccordingToYouPreferences" = "Filtrează conținutul video în funcție de preferințele tale";
+"onlyNearbyPosts" = "Doar din zona mea";
+"showPostsFromMyArea" = "Afișează-mi postări din zona în care mă aflu";
+"locationPermissionNotGranted" = "Nu ai acordat permisiunea locației";
 "close" = "Închide";
 "locationPermission" = "Permisiunea locației";
 "locationPermissionDescription" = "Ne ajută să îți oferim servicii din apropiere și să îți personalizăm experiența";

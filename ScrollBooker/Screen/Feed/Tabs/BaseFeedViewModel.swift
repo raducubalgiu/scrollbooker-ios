@@ -104,6 +104,10 @@ class BaseFeedViewModel {
         }
     }
 
+    func refreshUserLocation() async {
+        userCoordinates = await userLocationService.currentLocation()
+    }
+
     deinit {
         let manager = playerManager
         let key = scopeKey

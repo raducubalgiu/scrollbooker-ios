@@ -107,20 +107,29 @@ struct FeedTabRouter: View {
                         serviceDomainsState: feedViewModel?.exploreViewModel.serviceDomainsState ?? .idle,
                         selectedServiceIds: feedViewModel?.exploreViewModel.selectedServiceIds ?? [],
                         onlyVideoReviews: feedViewModel?.exploreViewModel.onlyVideoReviews ?? false,
+                        onlyNearby: feedViewModel?.exploreViewModel.onlyNearby ?? false,
+                        hasLocationAccess: feedViewModel?.exploreViewModel.userCoordinates != nil,
                         isOpen: isDrawerOpen,
-                        onApplyFilters: { serviceIds, onlyVideoReviews in
+                        onApplyFilters: { serviceIds, onlyVideoReviews, onlyNearby in
                             if feedViewModel?.selectedTab == .following {
                                 feedViewModel?.handleTabChange(to: .explore)
                             }
                             Task {
                                 await feedViewModel?.exploreViewModel.applyFilters(
                                     serviceIds: serviceIds,
-                                    onlyVideoReviews: onlyVideoReviews
+                                    onlyVideoReviews: onlyVideoReviews,
+                                    onlyNearby: onlyNearby
                                 )
                             }
                         },
                         onRequestClose: {
                             withAnimation(.easeInOut(duration: 0.25)) { isDrawerOpen = false }
+                        },
+                        onRequestLocationAccess: {
+                            Task {
+                                await container.userLocationService.requestAccess()
+                                await feedViewModel?.exploreViewModel.refreshUserLocation()
+                            }
                         }
                     )
                         .frame(width: drawerWidth)

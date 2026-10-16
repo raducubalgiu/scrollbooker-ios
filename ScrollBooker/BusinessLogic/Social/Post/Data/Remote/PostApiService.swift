@@ -8,7 +8,15 @@
 import Foundation
 
 protocol PostApiService: Sendable {
-    func getExplorePosts(page: Int, limit: Int, serviceIds: [Int], onlyVideoReviews: Bool) async throws -> PaginatedResponseDTO<PostDto>
+    func getExplorePosts(
+        page: Int,
+        limit: Int,
+        serviceIds: [Int],
+        onlyVideoReviews: Bool,
+        userLat: Double?,
+        userLng: Double?,
+        onlyNearby: Bool
+    ) async throws -> PaginatedResponseDTO<PostDto>
     func getFollowingPosts(page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getVideoReviews(businessId: Int, employeeId: Int?, ratings: [Int]?, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
     func getUserPosts(userId: Int, page: Int, limit: Int) async throws -> PaginatedResponseDTO<PostDto>
@@ -33,12 +41,27 @@ final class PostAPIImpl: PostApiService {
         self.client = client
     }
     
-    func getExplorePosts(page: Int, limit: Int, serviceIds: [Int], onlyVideoReviews: Bool) async throws -> PaginatedResponseDTO<PostDto> {
-        let query: [String: String] = [
+    func getExplorePosts(
+        page: Int,
+        limit: Int,
+        serviceIds: [Int],
+        onlyVideoReviews: Bool,
+        userLat: Double?,
+        userLng: Double?,
+        onlyNearby: Bool
+    ) async throws -> PaginatedResponseDTO<PostDto> {
+        var query: [String: String] = [
             "page": "\(page)",
             "limit": "\(limit)",
             "only_video_reviews": onlyVideoReviews ? "true" : "false"
         ]
+
+        if let userLat, let userLng {
+            query["user_lat"] = "\(userLat)"
+            query["user_lng"] = "\(userLng)"
+            query["only_nearby"] = onlyNearby ? "true" : "false"
+        }
+
         let serviceIdsQueryItems = serviceIds.map { URLQueryItem(name: "service_ids", value: "\($0)") }
 
         return try await client.request(

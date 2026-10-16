@@ -18,14 +18,20 @@ final class GetExplorePostsUseCase {
         page: Int,
         limit: Int,
         serviceIds: [Int] = [],
-        onlyVideoReviews: Bool = false
+        onlyVideoReviews: Bool = false,
+        userLat: Double? = nil,
+        userLng: Double? = nil,
+        onlyNearby: Bool = false
     ) async throws -> PaginatedResponse<Post> {
 
         try await repository.getExplorePosts(
             page: page,
             limit: limit,
             serviceIds: serviceIds,
-            onlyVideoReviews: onlyVideoReviews
+            onlyVideoReviews: onlyVideoReviews,
+            userLat: userLat,
+            userLng: userLng,
+            onlyNearby: onlyNearby
         )
     }
 }

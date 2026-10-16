@@ -19,9 +19,10 @@ final class ExploreTabViewModel: BaseFeedViewModel {
     private(set) var serviceDomainsState: FeatureState<[ServiceDomain]> = .idle
     private(set) var selectedServiceIds: Set<Int> = []
     private(set) var onlyVideoReviews: Bool = false
+    private(set) var onlyNearby: Bool = false
 
     var activeFiltersCount: Int {
-        selectedServiceIds.count + (onlyVideoReviews ? 1 : 0)
+        selectedServiceIds.count + (onlyVideoReviews ? 1 : 0) + (onlyNearby ? 1 : 0)
     }
 
     init(
@@ -47,7 +48,10 @@ final class ExploreTabViewModel: BaseFeedViewModel {
                 page: page,
                 limit: limit,
                 serviceIds: Array(self.selectedServiceIds),
-                onlyVideoReviews: self.onlyVideoReviews
+                onlyVideoReviews: self.onlyVideoReviews,
+                userLat: self.userCoordinates?.lat,
+                userLng: self.userCoordinates?.lng,
+                onlyNearby: self.userCoordinates != nil && self.onlyNearby
             )
         }
     }
@@ -58,7 +62,10 @@ final class ExploreTabViewModel: BaseFeedViewModel {
                 page: page,
                 limit: limit,
                 serviceIds: Array(self.selectedServiceIds),
-                onlyVideoReviews: self.onlyVideoReviews
+                onlyVideoReviews: self.onlyVideoReviews,
+                userLat: self.userCoordinates?.lat,
+                userLng: self.userCoordinates?.lng,
+                onlyNearby: self.userCoordinates != nil && self.onlyNearby
             )
         }
     }
@@ -69,7 +76,10 @@ final class ExploreTabViewModel: BaseFeedViewModel {
                 page: page,
                 limit: limit,
                 serviceIds: Array(self.selectedServiceIds),
-                onlyVideoReviews: self.onlyVideoReviews
+                onlyVideoReviews: self.onlyVideoReviews,
+                userLat: self.userCoordinates?.lat,
+                userLng: self.userCoordinates?.lng,
+                onlyNearby: self.userCoordinates != nil && self.onlyNearby
             )
         }
     }
@@ -88,11 +98,15 @@ final class ExploreTabViewModel: BaseFeedViewModel {
         }
     }
 
-    func applyFilters(serviceIds: Set<Int>, onlyVideoReviews: Bool) async {
-        guard serviceIds != selectedServiceIds || onlyVideoReviews != self.onlyVideoReviews else { return }
+    func applyFilters(serviceIds: Set<Int>, onlyVideoReviews: Bool, onlyNearby: Bool) async {
+        guard serviceIds != selectedServiceIds
+            || onlyVideoReviews != self.onlyVideoReviews
+            || onlyNearby != self.onlyNearby
+        else { return }
 
         self.selectedServiceIds = serviceIds
         self.onlyVideoReviews = onlyVideoReviews
+        self.onlyNearby = onlyNearby
 
         await refreshPosts()
     }

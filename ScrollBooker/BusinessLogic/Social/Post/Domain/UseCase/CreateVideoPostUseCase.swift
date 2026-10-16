@@ -21,6 +21,7 @@ final class CreateVideoPostUseCase {
         description: String?,
         linkedProductIds: [Int],
         serviceDomainId: Int?,
+        targetGender: GenderTypeEnum,
         customCover: String?,
         onProgress: @Sendable @escaping (Double) -> Void
     ) async throws -> NoContent {
@@ -33,7 +34,8 @@ final class CreateVideoPostUseCase {
             orderIndex: 0,
             linkedProductIds: linkedProductIds,
             customCover: customCover,
-            serviceDomainId: serviceDomainId
+            serviceDomainId: serviceDomainId,
+            targetGender: targetGender.rawValue
         )
 
         return try await postsRepository.createPost(request: createPostRequest)

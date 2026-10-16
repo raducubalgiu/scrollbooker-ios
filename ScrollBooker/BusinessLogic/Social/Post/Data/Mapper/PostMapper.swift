@@ -24,6 +24,8 @@ extension Post {
         self.businessId = dto.businessId
         self.review = dto.review.map { PostReview(from: $0) }
         self.serviceDomain = dto.serviceDomain.map { PostServiceDomain(from: $0) }
+        self.targetGender = GenderTypeEnum(rawValue: dto.targetGender) ?? .other
+        self.instantBooking = dto.instantBooking
         self.createdAt = dto.createdAt
     }
 }

@@ -78,6 +78,14 @@ final class CameraViewModel {
     var selectedServiceDomainId: String = ""
     private(set) var serviceDomainsViewState: FeatureState<[SelectedServiceDomainsWithServices]> = .idle
 
+    var selectedTargetGender: GenderTypeEnum = .other
+    let targetGenderOptions: [SelectOption] = GenderTypeEnum.postTargetOptions
+
+    func setTargetGender(_ value: String) {
+        guard let gender = GenderTypeEnum(rawValue: value) else { return }
+        selectedTargetGender = gender
+    }
+
     var linkedProducts: [Product] = []
     private(set) var userProductsViewState: FeatureState<UserProducts> = .idle
 
@@ -545,6 +553,7 @@ final class CameraViewModel {
                     description: description,
                     linkedProductIds: linkedProducts.map(\.id),
                     serviceDomainId: Int(selectedServiceDomainId),
+                    targetGender: selectedTargetGender,
                     customCover: customCoverDataURI(),
                     onProgress: { _ in }
                 )

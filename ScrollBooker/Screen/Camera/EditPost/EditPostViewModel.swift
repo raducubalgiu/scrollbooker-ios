@@ -15,7 +15,15 @@ final class EditPostViewModel {
 
     var description: String
     var selectedServiceDomainId: String
+    var selectedTargetGender: GenderTypeEnum
     var linkedProducts: [Product] = []
+
+    let targetGenderOptions: [SelectOption] = GenderTypeEnum.postTargetOptions
+
+    func setTargetGender(_ value: String) {
+        guard let gender = GenderTypeEnum(rawValue: value) else { return }
+        selectedTargetGender = gender
+    }
 
     private(set) var serviceDomainsViewState: FeatureState<[SelectedServiceDomainsWithServices]> = .idle
     private(set) var userProductsViewState: FeatureState<UserProducts> = .idle
@@ -47,6 +55,7 @@ final class EditPostViewModel {
         self.post = post
         self.description = post.description ?? ""
         self.selectedServiceDomainId = post.serviceDomain.map { String($0.id) } ?? ""
+        self.selectedTargetGender = post.targetGender
         self.updatePostUseCase = updatePostUseCase
         self.getSelectedDomainsByBusinessUseCase = getSelectedDomainsByBusinessUseCase
         self.getProductsByBusinessAndEmployeeUseCase = getProductsByBusinessAndEmployeeUseCase
@@ -128,6 +137,7 @@ final class EditPostViewModel {
                 description: description,
                 linkedProductIds: linkedProducts.map(\.id),
                 serviceDomainId: Int(selectedServiceDomainId),
+                targetGender: selectedTargetGender,
                 customCover: nil
             )
             return true

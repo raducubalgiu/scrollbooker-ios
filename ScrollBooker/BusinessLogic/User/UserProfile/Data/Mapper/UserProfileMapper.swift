@@ -32,6 +32,7 @@ extension UserProfile {
         self.isBusinessOrEmployee = dto.isBusinessOrEmployee
         self.distanceKm = dto.distanceKm
         self.address = dto.address
+        self.instantBooking = dto.instantBooking
     }
 }
 

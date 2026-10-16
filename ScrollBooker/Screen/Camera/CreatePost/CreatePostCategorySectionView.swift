@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct CreatePostCategorySectionView: View {
+    var title: String = String(localized: "category")
+    var sectionDescription: String = String(localized: "categorySectionDescription")
     let options: [SelectOption]
     let selectedOptionId: String
     var onSelect: (String) -> Void
@@ -15,11 +17,11 @@ struct CreatePostCategorySectionView: View {
     var body: some View {
         if !options.isEmpty {
             VStack(alignment: .leading, spacing: 0) {
-                Text(String(localized: "category"))
+                Text(title)
                     .font(.title3)
                     .fontWeight(.heavy)
 
-                Text(String(localized: "categorySectionDescription"))
+                Text(sectionDescription)
                     .font(.footnote)
                     .foregroundColor(.gray)
                     .padding(.top, .xxs)

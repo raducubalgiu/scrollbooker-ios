@@ -31,7 +31,8 @@ struct UserProfileDTO: Decodable {
     let isBusinessOrEmployee: Bool
     let distanceKm: Double?
     let address: String?
-    
+    let instantBooking: Bool
+
     enum CodingKeys: String, CodingKey {
         case id
         case username
@@ -56,6 +57,7 @@ struct UserProfileDTO: Decodable {
         case isBusinessOrEmployee = "is_business_or_employee"
         case distanceKm = "distance_km"
         case address
+        case instantBooking = "instant_booking"
     }
     
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }

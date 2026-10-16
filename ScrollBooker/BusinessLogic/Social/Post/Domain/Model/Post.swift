@@ -23,6 +23,8 @@ struct Post: Identifiable, Equatable, Hashable, Sendable {
     let businessId: Int?
     let review: PostReview?
     let serviceDomain: PostServiceDomain?
+    let targetGender: GenderTypeEnum
+    let instantBooking: Bool
     let createdAt: String
 }
 
@@ -152,6 +154,8 @@ extension Post {
         businessId: Int?? = nil,
         review: PostReview?? = nil,
         serviceDomain: PostServiceDomain?? = nil,
+        targetGender: GenderTypeEnum? = nil,
+        instantBooking: Bool? = nil,
         createdAt: String? = nil
     ) -> Post {
         Post(
@@ -170,6 +174,8 @@ extension Post {
             businessId: businessId ?? self.businessId,
             review: review ?? self.review,
             serviceDomain: serviceDomain ?? self.serviceDomain,
+            targetGender: targetGender ?? self.targetGender,
+            instantBooking: instantBooking ?? self.instantBooking,
             createdAt: createdAt ?? self.createdAt
         )
     }

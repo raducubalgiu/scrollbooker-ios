@@ -17,6 +17,10 @@ struct EditPostContentView: View {
     let selectedServiceDomainId: String
     var onSelectServiceDomain: (String) -> Void
 
+    let targetGenderOptions: [SelectOption]
+    let selectedTargetGender: String
+    var onSelectTargetGender: (String) -> Void
+
     let linkedProducts: [Product]
     let userProductsViewState: FeatureState<UserProducts>
     var onConfirmLinkedProductsSelection: ([Product]) -> Void
@@ -39,6 +43,14 @@ struct EditPostContentView: View {
                     options: serviceDomainOptions,
                     selectedOptionId: selectedServiceDomainId,
                     onSelect: onSelectServiceDomain
+                )
+
+                CreatePostCategorySectionView(
+                    title: String(localized: "postTargetGenderTitle"),
+                    sectionDescription: String(localized: "postTargetGenderDescription"),
+                    options: targetGenderOptions,
+                    selectedOptionId: selectedTargetGender,
+                    onSelect: onSelectTargetGender
                 )
 
                 CreatePostLinkedProductsSectionView(

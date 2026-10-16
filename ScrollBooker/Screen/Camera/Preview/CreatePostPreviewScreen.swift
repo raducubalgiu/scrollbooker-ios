@@ -62,6 +62,8 @@ struct CreatePostPreviewScreen: View {
             businessId: userInfo.businessId,
             review: nil,
             serviceDomain: nil,
+            targetGender: .other,
+            instantBooking: false,
             createdAt: ""
         )
     }

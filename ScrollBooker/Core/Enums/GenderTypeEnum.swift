@@ -27,4 +27,18 @@ enum GenderTypeEnum: String, Codable, Sendable, CaseIterable {
             case .other: return String(localized: "gender_other", defaultValue: "Altul / Nespecificat")
         }
     }
+    
+    var postTargetLabel: String {
+        switch self {
+        case .other: return String(localized: "postTargetGenderEveryone")
+        case .female: return String(localized: "postTargetGenderFemale")
+        case .male: return String(localized: "postTargetGenderMale")
+        }
+    }
+    
+    static var postTargetOptions: [SelectOption] {
+        return [GenderTypeEnum.other, .female, .male].map {
+            SelectOption(value: $0.rawValue, name: $0.postTargetLabel)
+        }
+    }
 }

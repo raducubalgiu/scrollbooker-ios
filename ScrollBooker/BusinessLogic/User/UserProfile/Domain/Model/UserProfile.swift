@@ -31,7 +31,8 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     let isBusinessOrEmployee: Bool
     let distanceKm: Double?
     let address: String?
-    
+    let instantBooking: Bool
+
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
     
     func copy(
@@ -67,7 +68,8 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
             isOwnProfile: self.isOwnProfile,
             isBusinessOrEmployee: self.isBusinessOrEmployee,
             distanceKm: self.distanceKm,
-            address: self.address
+            address: self.address,
+            instantBooking: self.instantBooking
         )
     }
 }

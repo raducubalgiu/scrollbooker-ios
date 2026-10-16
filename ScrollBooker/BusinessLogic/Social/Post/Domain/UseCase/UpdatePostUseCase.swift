@@ -15,13 +15,15 @@ final class UpdatePostUseCase {
         description: String?,
         linkedProductIds: [Int]?,
         serviceDomainId: Int?,
+        targetGender: GenderTypeEnum?,
         customCover: String?
     ) async throws -> Post {
         let request = UpdatePostRequest(
             description: description,
             linkedProductIds: linkedProductIds,
             customCover: customCover,
-            serviceDomainId: serviceDomainId
+            serviceDomainId: serviceDomainId,
+            targetGender: targetGender?.rawValue
         )
 
         return try await postsRepository.updatePost(id: postId, request: request)

@@ -127,6 +127,13 @@ struct AuthRouter: View {
                 onBack: { path.removeLast() }
             )
 
+        case .collectBusinessInstantBooking:
+            CollectBusinessInstantBookingDestination(
+                container: container,
+                session: session,
+                onBack: { path.removeLast() }
+            )
+
         case .collectBusinessValidation:
             CollectBusinessValidationScreen()
 
@@ -314,6 +321,29 @@ private struct CollectBusinessHasEmployeesDestination: View {
         .onAppear {
             if viewModel == nil {
                 viewModel = container.onboardingModule.makeCollectBusinessHasEmployeesViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectBusinessInstantBookingDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectBusinessInstantBookingViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectBusinessInstantBookingScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectBusinessInstantBookingViewModel(session: session)
             }
         }
     }

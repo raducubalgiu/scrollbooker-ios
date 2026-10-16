@@ -79,6 +79,10 @@ final class OnboardingModule {
         CollectBusinessHasEmployeesUseCase(repository: repository)
     }()
 
+    lazy var collectBusinessInstantBookingUseCase: CollectBusinessInstantBookingUseCase = {
+        CollectBusinessInstantBookingUseCase(repository: repository)
+    }()
+
     func makeCollectUsernameViewModel(session: SessionManager) -> CollectUsernameViewModel {
         CollectUsernameViewModel(
             session: session,
@@ -146,6 +150,13 @@ final class OnboardingModule {
         CollectBusinessHasEmployeesViewModel(
             session: session,
             collectBusinessHasEmployeesUseCase: collectBusinessHasEmployeesUseCase
+        )
+    }
+
+    func makeCollectBusinessInstantBookingViewModel(session: SessionManager) -> CollectBusinessInstantBookingViewModel {
+        CollectBusinessInstantBookingViewModel(
+            session: session,
+            collectBusinessInstantBookingUseCase: collectBusinessInstantBookingUseCase
         )
     }
 }

@@ -27,6 +27,7 @@ enum AuthRoute: Hashable {
     case collectBusinessServices
     case collectBusinessSchedules
     case collectBusinessHasEmployees
+    case collectBusinessInstantBooking
     case collectBusinessValidation
     
     case collectBusinessCurrencies
@@ -67,7 +68,10 @@ extension AuthRoute {
             
         case .collectBusinessHasEmployees:
             self = .collectBusinessHasEmployees
-            
+
+        case .collectBusinessInstantBooking:
+            self = .collectBusinessInstantBooking
+
         case .collectBusinessValidation:
             self = .collectBusinessValidation
             

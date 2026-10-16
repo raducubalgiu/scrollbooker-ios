@@ -75,4 +75,11 @@ final class OnboardingRepositoryImpl: OnboardingRepository {
         )
         return AuthState(dto: dto)
     }
+
+    func collectBusinessInstantBooking(instantBooking: Bool) async throws -> AuthState {
+        let dto = try await api.collectBusinessInstantBooking(
+            request: BusinessInstantBookingUpdateRequestDTO(instantBooking: instantBooking)
+        )
+        return AuthState(dto: dto)
+    }
 }

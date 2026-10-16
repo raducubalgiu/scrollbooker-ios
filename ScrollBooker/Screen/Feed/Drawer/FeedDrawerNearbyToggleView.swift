@@ -14,8 +14,8 @@ struct FeedDrawerNearbyToggleView: View {
 
     var body: some View {
         HStack(spacing: AppSize.s.rawValue) {
-            Image(systemName: checked ? "location.fill" : "location")
-                .font(.system(size: 20))
+            Image(systemName: "magnifyingglass")
+                .font(.system(size: 22))
                 .foregroundColor(checked ? .primarySB : Color(white: 0.67))
 
             VStack(alignment: .leading, spacing: AppSize.xxs.rawValue) {

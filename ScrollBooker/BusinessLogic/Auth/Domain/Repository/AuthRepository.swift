@@ -12,4 +12,5 @@ protocol AuthRepository: Sendable {
     func refresh(refreshToken: String) async throws -> AuthResponse
     func verifyEmail(code: String) async throws -> AuthState
     func resendVerificationEmail() async throws -> String
+    func deleteAccount() async throws -> String
 }

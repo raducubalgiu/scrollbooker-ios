@@ -12,6 +12,7 @@ struct FeedActions {
     var onNavigateToBooking: (BookingNavigationParams) -> Void = { _ in }
     var onOpenReviewsSheet: (Post) -> Void = { _ in }
     var onOpenLinkedProductsSheet: (Post) -> Void = { _ in }
+    var onOpenContactSheet: (Post) -> Void = { _ in }
     var onOpenCommentsSheet: (Int) -> Void = { _ in }
     var onOpenMoreOptions: (Int) -> Void = { _ in }
     var onLike: (Int) -> Void = { _ in }

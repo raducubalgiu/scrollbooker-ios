@@ -48,7 +48,7 @@ struct FeedDrawerView: View {
                     VStack(alignment: .leading, spacing: AppSize.xl.rawValue) {
                         FeedDrawerHeaderView()
 
-                        FeedDrawerVideoReviewsToggleView(checked: $draftOnlyVideoReviews)
+//                        FeedDrawerVideoReviewsToggleView(checked: $draftOnlyVideoReviews)
 
                         FeedDrawerNearbyToggleView(
                             checked: $draftOnlyNearby,

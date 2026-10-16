@@ -104,6 +104,7 @@ enum Route: Hashable {
     case accountInfo
     case password
     case deactivateDeleteAccount
+    case deleteAccount
     case display
     case reportProblem
     

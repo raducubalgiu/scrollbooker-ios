@@ -26,7 +26,7 @@ struct PostOverlayView: View {
                 startPoint: .top,
                 endPoint: .bottom
             )
-            .frame(height: isDescriptionExpanded ? 380 : 240)
+            .frame(height: isDescriptionExpanded ? 440 : 300)
             .ignoresSafeArea(edges: .bottom)
             
             HStack(alignment: .bottom, spacing: 0) {
@@ -54,10 +54,17 @@ struct PostOverlayView: View {
                     }
                     
                     if showBookButton {
-                        PostMainActionView(
-                            isVideoReview: post.isVideoReview,
-                            onClick: { actions.onOpenLinkedProductsSheet(post) }
-                        )
+                        if post.instantBooking {
+                            PostMainActionView(
+                                isVideoReview: post.isVideoReview,
+                                onClick: { actions.onOpenLinkedProductsSheet(post) }
+                            )
+                        } else {
+                            PostContactActionsView(
+                                onContact: { actions.onOpenContactSheet(post) },
+                                onOpenServices: { actions.onOpenLinkedProductsSheet(post) }
+                            )
+                        }
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)

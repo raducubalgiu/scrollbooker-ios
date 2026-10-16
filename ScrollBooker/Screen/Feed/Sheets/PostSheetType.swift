@@ -11,6 +11,7 @@ enum FeedSheetType: Identifiable {
     case comments(postId: Int)
     case reviews(post: Post)
     case linkedProducts(post: Post)
+    case contact(post: Post)
     case moreOptions(postId: Int)
     case deletePost(postId: Int)
 
@@ -22,6 +23,8 @@ enum FeedSheetType: Identifiable {
             return "reviews-\(post.id)"
         case .linkedProducts(let post):
             return "products-\(post.id)"
+        case .contact(let post):
+            return "contact-\(post.id)"
         case .moreOptions(let postId):
             return "more-\(postId)"
         case .deletePost(let postId):

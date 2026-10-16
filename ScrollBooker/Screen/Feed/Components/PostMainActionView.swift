@@ -12,8 +12,6 @@ struct PostMainActionView: View {
     var isDisabled: Bool = false
     var onClick: () -> Void
 
-    // A video review is someone else's booking being shown off, so the CTA invites the viewer to
-    // book one for themselves rather than to book "this" — same split as Android's PostOverlay.
     private var title: String {
         isVideoReview
             ? String(localized: "bookYours")
@@ -25,9 +23,9 @@ struct PostMainActionView: View {
             onClick()
         } label: {
             Text(title)
-                .font(.subheadline.bold())
+                .font(.footnote.bold())
                 .foregroundColor(.white)
-                .padding(.vertical, 11)
+                .padding(.vertical, 12)
                 .frame(maxWidth: .infinity)
                 .background(
                     RoundedRectangle(cornerRadius: 50)

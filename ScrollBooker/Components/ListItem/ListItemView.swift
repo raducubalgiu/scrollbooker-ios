@@ -49,7 +49,7 @@ struct ListItemView: View {
                 }
             }
             .frame(maxWidth: .infinity)
-            .padding(.vertical, .m)
+            .padding(.vertical, .base)
             .padding(.horizontal, padding)
             .contentShape(Rectangle())
         }

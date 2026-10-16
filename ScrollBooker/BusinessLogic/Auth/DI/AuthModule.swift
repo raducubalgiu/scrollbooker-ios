@@ -58,6 +58,10 @@ final class AuthModule {
         ResendVerificationEmailUseCase(repository: repository)
     }()
 
+    lazy var deleteAccountUseCase: DeleteAccountUseCase = {
+        DeleteAccountUseCase(repository: repository)
+    }()
+
     lazy var saveSessionUseCase: SaveSessionUseCase = {
         SaveSessionUseCase(
             store: store,
@@ -85,6 +89,13 @@ final class AuthModule {
             verifyEmailUseCase: verifyEmailUseCase,
             resendVerificationEmailUseCase: resendVerificationEmailUseCase,
             saveSessionUseCase: saveSessionUseCase
+        )
+    }
+
+    func makeDeleteAccountViewModel(session: SessionManager) -> DeleteAccountViewModel {
+        DeleteAccountViewModel(
+            session: session,
+            deleteAccountUseCase: deleteAccountUseCase
         )
     }
 }

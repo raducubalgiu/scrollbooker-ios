@@ -339,7 +339,16 @@ struct GlobalNavigationModifier: ViewModifier {
             PasswordScreen(onBack: { router.pop() })
             
         case .deactivateDeleteAccount:
-            DeactivateDeleteAccountScreen(onBack: { router.pop() })
+            DeactivateDeleteAccountScreen(
+                onBack: { router.pop() },
+                onNavigate: { r in router.push(r) }
+            )
+
+        case .deleteAccount:
+            DeleteAccountScreen(
+                viewModel: container.authModule.makeDeleteAccountViewModel(session: session),
+                onBack: { router.pop() }
+            )
 
         case .display:
             DisplayScreen(onBack: { router.pop() })

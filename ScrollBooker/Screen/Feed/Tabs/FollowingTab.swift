@@ -61,6 +61,7 @@ struct FollowingTab: View {
             onNavigateToBooking: onNavigateToBooking,
             onOpenReviewsSheet: { activeSheet = .reviews(post: $0) },
             onOpenLinkedProductsSheet: { activeSheet = .linkedProducts(post: $0) },
+            onOpenContactSheet: { activeSheet = .contact(post: $0) },
             onOpenCommentsSheet: { activeSheet = .comments(postId: $0) },
             onOpenMoreOptions: { activeSheet = .moreOptions(postId: $0) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
@@ -108,6 +109,9 @@ struct FollowingTab: View {
                 )
                 .presentationDetents([.fraction(0.7), .large])
                 .presentationDragIndicator(.visible)
+
+            case .contact:
+                ContactSheetView()
 
             case .moreOptions(let postId):
                 MoreOptionsSheetView(

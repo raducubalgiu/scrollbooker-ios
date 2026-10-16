@@ -99,6 +99,7 @@ struct ProfilePostDetailScreen: View {
             onNavigateToBooking: onNavigateToBooking,
             onOpenReviewsSheet: { post in activeSheet = .reviews(post: post) },
             onOpenLinkedProductsSheet: { post in activeSheet = .linkedProducts(post: post) },
+            onOpenContactSheet: { post in activeSheet = .contact(post: post) },
             onOpenCommentsSheet: { postId in activeSheet = .comments(postId: postId) },
             onOpenMoreOptions: { postId in activeSheet = .moreOptions(postId: postId) },
             onLike: { id in Task { await viewModel.toggleLikePost(id: id) } },
@@ -149,6 +150,9 @@ struct ProfilePostDetailScreen: View {
                     .presentationDetents([.fraction(0.7), .fraction(0.999)])
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
+
+                case .contact:
+                    ContactSheetView()
 
                 case .moreOptions(let postId):
                     MoreOptionsSheetView(

@@ -54,6 +54,10 @@
 "book" = "Rezervă";
 "bookNow" = "Rezervă acum";
 "bookYours" = "Rezervă și tu";
+"contactUs" = "Contactează";
+"servicesAndPrices" = "Servicii și prețuri";
+"writeOnWhatsApp" = "Scrie pe WhatsApp";
+"call" = "Sună";
 "bookAgain" = "Rezervă din nou";
 "buy" = "Cumpără";
 "from" = "de la";
@@ -463,6 +467,14 @@
 "accountInfoDescription" = "Vezi și editează datele tale personale";
 "passwordDescription" = "Actualizează parola și securitatea contului";
 "deactivateDeleteAccountDescription" = "Dezactivează temporar sau șterge definitiv contul";
+"deleteAccountPermanently" = "Șterge contul permanent";
+"deleteAccountPermanentlyDescription" = "Contul și toate datele asociate vor fi șterse definitiv, fără posibilitate de recuperare.";
+"deactivateAccount" = "Dezactivează contul";
+"deactivateAccountDescription" = "Profilul tău devine invizibil temporar. Te poți reactiva oricând, autentificându-te din nou.";
+"deleteAccountWarningTitle" = "Ești sigur că vrei să ștergi contul?";
+"deleteAccountWarningDescription" = "Această acțiune este definitivă. Postările, programările, conversațiile și toate celelalte date asociate contului tău vor fi șterse permanent.";
+"deleteAccountConfirmTitle" = "Ștergi contul permanent?";
+"deleteAccountConfirmDescription" = "Această acțiune nu poate fi anulată.";
 
 /* --- EDIT PROFILE --- */
 "editProfile" = "Editează profilul";

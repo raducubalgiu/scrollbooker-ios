@@ -44,4 +44,9 @@ final class AuthRepositoryImpl: AuthRepository {
         let dto = try await api.resendVerificationEmail()
         return dto.detail
     }
+
+    func deleteAccount() async throws -> String {
+        let dto = try await api.deleteAccount()
+        return dto.detail
+    }
 }

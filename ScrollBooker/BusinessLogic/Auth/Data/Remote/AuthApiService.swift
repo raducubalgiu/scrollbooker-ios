@@ -14,6 +14,7 @@ protocol AuthApiService: Sendable {
     func refresh(refreshToken: String) async throws -> AuthResponseDTO
     func verifyEmail(code: String) async throws -> AuthStateDTO
     func resendVerificationEmail() async throws -> ActionMessageResponseDTO
+    func deleteAccount() async throws -> ActionMessageResponseDTO
 }
 
 final class AuthAPIImpl: AuthApiService {
@@ -69,6 +70,13 @@ final class AuthAPIImpl: AuthApiService {
     func resendVerificationEmail() async throws -> ActionMessageResponseDTO {
         try await client.request(
             "auth/resend-verification-email",
+            method: .post
+        )
+    }
+
+    func deleteAccount() async throws -> ActionMessageResponseDTO {
+        try await client.request(
+            "auth/delete-account",
             method: .post
         )
     }

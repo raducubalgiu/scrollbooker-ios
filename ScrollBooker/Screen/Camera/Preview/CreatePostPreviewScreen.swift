@@ -109,6 +109,9 @@ struct CreatePostPreviewScreen: View {
                 .background(Color.black)
         }
         .navigationBarHidden(true)
+        .onTapGesture {
+            UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+        }
         .task {
             viewModel.resumeOrCreatePreview()
         }

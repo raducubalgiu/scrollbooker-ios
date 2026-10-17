@@ -41,6 +41,7 @@ struct CameraFlowContainer: View {
     }
 
     private func push(_ step: CameraFlowStep) {
+        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
         composerSteps.append(step)
     }
 

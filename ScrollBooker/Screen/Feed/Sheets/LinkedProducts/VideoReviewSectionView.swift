@@ -7,13 +7,10 @@
 
 import SwiftUI
 
-/// Shown instead of the regular product list when the post being viewed is a video review —
-/// who was reviewed, what was said, the services from that booking, and two next actions
-/// (book the same services, or browse everything this business/employee offers). Mirrors
-/// Android's VideoReviewSection.kt.
 struct VideoReviewSectionView: View {
     let viewModel: LinkedProductsViewModel
     let post: Post
+    let instantBooking: Bool
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
     let bookingSource: BookingSourceEnum
@@ -59,7 +56,8 @@ struct VideoReviewSectionView: View {
                                     userId: appointment.user.id ?? appointment.business.businessOwnerId,
                                     businessOwnerId: appointment.business.businessOwnerId,
                                     source: bookingSource,
-                                    selectedProductId: nil
+                                    selectedProductId: nil,
+                                    instantBooking: instantBooking
                                 )
                             )
                         },
@@ -71,7 +69,8 @@ struct VideoReviewSectionView: View {
                                     userId: provider.id,
                                     businessOwnerId: appointment.business.businessOwnerId,
                                     source: bookingSource,
-                                    selectedProductId: nil
+                                    selectedProductId: nil,
+                                    instantBooking: instantBooking
                                 )
                             )
                         }

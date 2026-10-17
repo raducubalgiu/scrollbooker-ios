@@ -29,5 +29,6 @@ extension EmploymentRequestUser {
         self.username = dto.username
         self.avatar = dto.avatar
         self.profession = dto.profession
+        self.instantBooking = dto.instant_booking
     }
 }

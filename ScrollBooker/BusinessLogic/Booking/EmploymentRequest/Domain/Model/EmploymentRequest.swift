@@ -22,6 +22,7 @@ struct EmploymentRequestUser: Identifiable, Equatable, Hashable, Sendable {
     let username: String
     let avatar: String?
     let profession: String
-    
+    let instantBooking: Bool
+
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
 }

@@ -16,6 +16,7 @@ struct BookingNavigationParams: Hashable, Identifiable {
     let source: BookingSourceEnum
     let selectedProductId: Int?
     var appointmentId: Int? = nil
+    var instantBooking: Bool = true
 }
 
 struct SocialNavigationParams: Hashable, Identifiable {

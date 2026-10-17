@@ -14,9 +14,16 @@ public struct BookingServicesScreen: View {
     @State private var activeSectionId: Int? = nil
     @State private var selectedProductForVariants: Product? = nil
     
+    private var instantBooking: Bool {
+        viewModel.params.instantBooking
+    }
+
     public var body: some View {
         VStack(spacing: 0) {
-            HeaderView(title: "Alege Serviciile", onBack: onBack)
+            HeaderView(
+                title: instantBooking ? "Alege Serviciile" : String(localized: "services"),
+                onBack: onBack
+            )
             
             switch viewModel.viewState {
                 case .idle, .loading:
@@ -71,12 +78,16 @@ public struct BookingServicesScreen: View {
                             onNavigateEditProduct: nil
                         )
                         .safeAreaInset(edge: .bottom, spacing: 0) {
-                            BookingBottomBar(
-                                bookingTotals: viewModel.bookingTotals,
-                                onNext: onNext,
-                                isEnabled: !viewModel.selectedBookingItems.isEmpty,
-                                isVisible: !viewModel.selectedBookingItems.isEmpty
-                            )
+                            if instantBooking {
+                                BookingBottomBar(
+                                    bookingTotals: viewModel.bookingTotals,
+                                    onNext: onNext,
+                                    isEnabled: !viewModel.selectedBookingItems.isEmpty,
+                                    isVisible: !viewModel.selectedBookingItems.isEmpty
+                                )
+                            } else {
+                                BookingContactBottomBarView()
+                            }
                         }
                     }
                 }

@@ -29,6 +29,7 @@ struct LinkedProductsSheetView: View {
                     VideoReviewSectionView(
                         viewModel: viewModel,
                         post: post,
+                        instantBooking: instantBooking,
                         onNavigateToUserProfile: onNavigateToUserProfile,
                         onNavigateToBooking: onNavigateToBooking,
                         bookingSource: bookingSource

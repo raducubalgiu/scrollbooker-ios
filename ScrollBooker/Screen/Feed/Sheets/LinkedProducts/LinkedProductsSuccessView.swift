@@ -51,11 +51,34 @@ struct LinkedProductsSuccessView: View {
                                         userId: clickedProduct.targetUserId,
                                         businessOwnerId: clickedProduct.businessOwnerId,
                                         source: bookingSource,
-                                        selectedProductId: clickedProduct.id
+                                        selectedProductId: clickedProduct.id,
+                                        instantBooking: instantBooking
                                     )
                                 )
                             }
                         )
+                        .padding(.horizontal)
+                    }
+                    
+                    if let firstProduct = products.first {
+                        MainButtonOutlined(
+                            title: String(localized: "seeAllServices"),
+                            onClick: {
+                                dismiss()
+
+                                onNavigateToBooking(
+                                    BookingNavigationParams(
+                                        businessId: firstProduct.businessId,
+                                        userId: linkedProducts.business.id,
+                                        businessOwnerId: firstProduct.businessOwnerId,
+                                        source: bookingSource,
+                                        selectedProductId: nil,
+                                        instantBooking: instantBooking
+                                    )
+                                )
+                            }
+                        )
+                        .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.horizontal)
                     }
                 }

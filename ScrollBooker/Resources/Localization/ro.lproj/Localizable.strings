@@ -187,6 +187,7 @@
 "recommendedServices" = "Servicii recomandate";
 "bookSameServices" = "Rezervă aceleași servicii";
 "seeAllServicesFrom" = "Vezi toate serviciile de la %1$@";
+"seeAllServices" = "Vezi toate serviciile";
 "selectedServices" = "Servicii selectate";
 "checkDetails" = "Verifică detaliile";
 "confirmReservationDetails" = "Ești la un pas de a finaliza programarea. Asigură-te că toate datele sunt corecte.";
@@ -299,6 +300,8 @@
 "youWillAppearInThePublicBusinessProfile" = "Vei apărea in profilul public al business-ului ca membru oficial al echipei";
 "youWillReceiveReviewsFromYourClients" = "Vei putea primi review-uri individuale din partea clienților";
 "youCouldResignAnytime" = "Poți renunța oricând la colaborare prin funcția demisie din aplicație";
+"youWillInheritBusinessContactNumber" = "Vei prelua automat numărul de contact al business-ului; îl poți schimba oricând cu unul propriu din profilul tău";
+"clientsWillBeAbleToContactYouDirectly" = "Clienții te vor putea contacta direct prin telefon sau WhatsApp";
 "isClosingAt" = "Închide la %@";
 "opensOnDayAt" = "Deschide %@ la %@";
 "opens" = "Deschide";

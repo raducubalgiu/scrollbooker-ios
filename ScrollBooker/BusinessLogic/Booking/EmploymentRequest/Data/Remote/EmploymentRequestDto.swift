@@ -13,6 +13,7 @@ struct EmploymentRequestUserDto: Codable {
     let username: String
     let avatar: String?
     let profession: String
+    let instant_booking: Bool
 }
 
 struct EmploymentRequestDto: Codable {

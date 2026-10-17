@@ -11,14 +11,25 @@ struct EmploymentRespondDetailsView: View {
     let employer: EmploymentRequestUser
 
     private var paragraphs: [String] {
-        [
-            String(localized: "youWillReceiveAccessToYourOwnCalendarAndAppointments"),
-            "\(String(localized: "youWillBeAbleToEditAndAddServicesWithinYourBusiness")) \(employer.fullName)",
-            String(localized: "clientsWillBeAbleToSelectYouDirectlyBasedYourAvailability"),
-            String(localized: "youWillAppearInThePublicBusinessProfile"),
-            String(localized: "youWillReceiveReviewsFromYourClients"),
-            String(localized: "youCouldResignAnytime")
-        ]
+        if employer.instantBooking {
+            [
+                String(localized: "youWillReceiveAccessToYourOwnCalendarAndAppointments"),
+                "\(String(localized: "youWillBeAbleToEditAndAddServicesWithinYourBusiness")) \(employer.fullName)",
+                String(localized: "clientsWillBeAbleToSelectYouDirectlyBasedYourAvailability"),
+                String(localized: "youWillAppearInThePublicBusinessProfile"),
+                String(localized: "youWillReceiveReviewsFromYourClients"),
+                String(localized: "youCouldResignAnytime")
+            ]
+        } else {
+            [
+                String(localized: "youWillInheritBusinessContactNumber"),
+                "\(String(localized: "youWillBeAbleToEditAndAddServicesWithinYourBusiness")) \(employer.fullName)",
+                String(localized: "clientsWillBeAbleToContactYouDirectly"),
+                String(localized: "youWillAppearInThePublicBusinessProfile"),
+                String(localized: "youWillReceiveReviewsFromYourClients"),
+                String(localized: "youCouldResignAnytime")
+            ]
+        }
     }
 
     var body: some View {

@@ -73,9 +73,9 @@ struct PostsSuccessView: View {
                         // posts replacement (e.g. applying Explore filters) means slot 0 can hold
                         // a completely different post than before. Keying by position here was
                         // the root cause of stale player/thumbnail content surviving a refresh:
-                        // SwiftUI recycled the row (and its embedded AVPlayerViewController)
-                        // instead of tearing it down, since "index 0" looked unchanged even though
-                        // the post at it wasn't.
+                        // SwiftUI recycled the row (and its embedded player view) instead of
+                        // tearing it down, since "index 0" looked unchanged even though the post
+                        // at it wasn't.
                         .id(post.id)
                         .onAppear {
                             if post.id == viewModel.posts.first?.id

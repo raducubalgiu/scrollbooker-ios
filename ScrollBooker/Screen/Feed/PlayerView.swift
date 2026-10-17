@@ -8,28 +8,43 @@
 import SwiftUI
 import AVKit
 
-struct PlayerView: UIViewControllerRepresentable {
-    let player: AVPlayer
-    
-    func makeUIViewController(context: Context) -> AVPlayerViewController {
-        let controller = AVPlayerViewController()
-        controller.player = player
-        controller.showsPlaybackControls = false
-        controller.videoGravity = .resizeAspectFill
-        
-        // SOLUȚIA 1: Dezactivăm marginile sigure din UIKit pentru controller și vederile sale interne.
-        // Acest lucru previne decalarea sau „săritura” video-ului sub Status Bar sau Tab Bar.
-        controller.edgesForExtendedLayout = .all
-        controller.view.clipsToBounds = true
-        
-        return controller
+final class PlayerContainerView: UIView {
+    override class var layerClass: AnyClass { AVPlayerLayer.self }
+
+    private var playerLayer: AVPlayerLayer {
+        layer as! AVPlayerLayer
     }
-    
-    func updateUIViewController(_ uiViewController: AVPlayerViewController, context: Context) {
-        // SOLUȚIA 2: Când utilizatorul face scroll, SwiftUI refolosește (reciclează) controllerul.
-        // Trebuie să ne asigurăm că noul player este atașat corect și își updatează frame-ul instant.
-        if uiViewController.player !== player {
-            uiViewController.player = player
+
+    var player: AVPlayer? {
+        get { playerLayer.player }
+        set { playerLayer.player = newValue }
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        playerLayer.videoGravity = .resizeAspectFill
+    }
+
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        playerLayer.videoGravity = .resizeAspectFill
+    }
+}
+
+struct PlayerView: UIViewRepresentable {
+    let player: AVPlayer
+
+    func makeUIView(context: Context) -> PlayerContainerView {
+        let view = PlayerContainerView()
+        view.player = player
+        return view
+    }
+
+    func updateUIView(_ uiView: PlayerContainerView, context: Context) {
+        // SwiftUI reuses (recycles) this view on scroll — make sure the right player is
+        // attached to the recycled cell instead of whatever it last held.
+        if uiView.player !== player {
+            uiView.player = player
         }
     }
 }

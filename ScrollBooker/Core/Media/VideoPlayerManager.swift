@@ -82,33 +82,37 @@ final class VideoPlayerManager {
         newPlayer.actionAtItemEnd = .none
 
         itemReadyObservations[key] = playerItem.observe(\.status, options: [.new]) { [weak self] item, _ in
-            guard let self else { return }
             guard item.status == .readyToPlay || item.status == .failed else { return }
 
-            self.readyKeys.insert(key)
+            Task { @MainActor [weak self] in
+                guard let self else { return }
 
-            guard let onFirstReady, !self.signaledScopes.contains(scopeKey) else { return }
-            self.signaledScopes.insert(scopeKey)
-            DispatchQueue.main.async {
+                self.readyKeys.insert(key)
+
+                guard let onFirstReady, !self.signaledScopes.contains(scopeKey) else { return }
+                self.signaledScopes.insert(scopeKey)
                 onFirstReady()
             }
         }
 
         playbackStatusObservations[key] = newPlayer.observe(\.timeControlStatus, options: [.new]) { [weak self] player, _ in
-            guard let self else { return }
-
             let positionSeconds = player.currentTime().seconds
             let positionMs = positionSeconds.isFinite ? Int(positionSeconds * 1000) : 0
             let durationSeconds = player.currentItem?.duration.seconds
             let durationMs: Int? = (durationSeconds?.isFinite == true) ? Int(durationSeconds! * 1000) : nil
+            let isPlaying = player.timeControlStatus == .playing
 
-            self.playbackEvents.send(PlaybackEvent(
-                scopeKey: scopeKey,
-                postId: post.id,
-                isPlaying: player.timeControlStatus == .playing,
-                positionMs: positionMs,
-                durationMs: durationMs
-            ))
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+
+                self.playbackEvents.send(PlaybackEvent(
+                    scopeKey: scopeKey,
+                    postId: post.id,
+                    isPlaying: isPlaying,
+                    positionMs: positionMs,
+                    durationMs: durationMs
+                ))
+            }
         }
 
         loopObservers[key] = NotificationCenter.default.addObserver(

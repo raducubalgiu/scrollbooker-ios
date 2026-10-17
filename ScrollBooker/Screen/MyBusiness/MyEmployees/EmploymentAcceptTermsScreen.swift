@@ -61,10 +61,23 @@ struct EmploymentAcceptTermsScreen: View {
                             systemImage: "doc.plaintext.fill"
                         )
                     } else {
-                        EmploymentConsentView(
-                            text: consent.text,
-                            isTermsAccepted: $isTermsAccepted
-                        )
+                        VStack(spacing: AppSize.base.rawValue) {
+                            if !viewModel.businessHasInstantBooking {
+                                Text("💡 \(String(localized: "employmentInheritsBusinessContactHint"))")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                    .padding(.base)
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.surfaceSB.opacity(0.5))
+                                    .clipShape(RoundedRectangle(cornerRadius: AppSize.base.rawValue))
+                                    .padding(.horizontal, .xl)
+                            }
+
+                            EmploymentConsentView(
+                                text: consent.text,
+                                isTermsAccepted: $isTermsAccepted
+                            )
+                        }
                     }
                 }
             }

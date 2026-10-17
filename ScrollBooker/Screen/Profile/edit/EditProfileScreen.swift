@@ -11,6 +11,7 @@ private struct EditProfileAction: Identifiable {
     let id = UUID()
     let title: String
     let value: String
+    var description: String? = nil
     var permission: PermissionEnum = .noProtection
     let onClick: () -> Void
 }
@@ -80,6 +81,7 @@ struct EditProfileScreen: View {
             EditProfileAction(
                 title: String(localized: "publicPhoneNumber"),
                 value: "",
+                description: String(localized: "publicPhoneRowDescription"),
                 onClick: { onNavigate(.editPublicPhone) }
             )
         ]
@@ -130,27 +132,13 @@ struct EditProfileScreen: View {
                 }
 
                 if hasBusinessContext {
-                    Text(String(localized: "editProfileContactSection"))
+                    Text(String(localized: "editProfilePublicContactSection"))
                         .font(.subheadline.bold())
                         .foregroundColor(.gray)
                         .padding(.top, .base)
 
                     ForEach(contactActions) { action in
-                        Button {
-                            action.onClick()
-                        } label: {
-                            HStack {
-                                Text(action.title)
-                                    .font(.subheadline.bold())
-                                    .foregroundColor(.onBackgroundSB)
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                                    .foregroundColor(.gray)
-                            }
-                            .padding(.vertical, .m)
-                        }
+                        EditProfileContactRowView(action: action)
                     }
                 }
 
@@ -165,5 +153,37 @@ struct EditProfileScreen: View {
                 onNavigate(.editAvatarCrop)
             })
         }
+    }
+}
+
+private struct EditProfileContactRowView: View {
+    let action: EditProfileAction
+
+    var body: some View {
+        Button {
+            action.onClick()
+        } label: {
+            HStack {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(action.title)
+                        .font(.subheadline.bold())
+                        .foregroundColor(.onBackgroundSB)
+
+                    if let description = action.description {
+                        Text(description)
+                            .font(.footnote)
+                            .foregroundColor(.gray)
+                            .multilineTextAlignment(.leading)
+                    }
+                }
+
+                Spacer()
+
+                Image(systemName: "chevron.right")
+                    .foregroundColor(.gray)
+            }
+            .padding(.vertical, .m)
+        }
+        .buttonStyle(.plain)
     }
 }

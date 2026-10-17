@@ -42,7 +42,11 @@ final class MyEmployeesViewModel {
     var selectedUserForEmployment: SearchUser? = nil
     var selectedProfessionForEmployment: Profession? = nil
     var isSaving: Bool = false
-    
+
+    var businessHasInstantBooking: Bool {
+        session.userInfo?.instantBooking ?? true
+    }
+
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Employees")
     
     let session: SessionManager

@@ -164,6 +164,7 @@
 "acceptTerms" = "Acceptă termenii și condițiile";
 "acceptTermsAndConditions" = "Declar că am ințeles termenii și condițiile aplicației";
 "acceptTermsForFinishingEmployeeOnboarding" = "Citește și acceptă termenii de colaborare pentru a finaliza adăugarea angajatului";
+"employmentInheritsBusinessContactHint" = "Deoarece business-ul tău nu are Rezervare Instant activă, acest angajat va prelua automat numărul de contact al business-ului. Îl poate schimba oricând din profilul propriu.";
 "acceptEmployment" = "Acceptă angajarea";
 "termsNotFound" = "Termenii nu au putut fi încărcați";
 "denyEmploymentRequest" = "Refuză cererea de angajare";
@@ -499,7 +500,8 @@
 "publicPhoneUseOwnNumber" = "Numărul meu";
 "publicPhoneVerificationTitle" = "Verifică numărul de contact";
 "publicPhoneVerificationPhoneDescription" = "Introdu numărul pe care vrei să-l folosești pentru a fi contactat de clienți.";
-"editProfileContactSection" = "Contact";
+"editProfilePublicContactSection" = "Informații publice de contact";
+"publicPhoneRowDescription" = "Acest număr va apărea în profilul tău și în postări, pentru ca clienții să te poată contacta.";
 
 /* --- PROFILE TABS --- */
 "profile_products_view_more" = "Vezi toate cele %1$d servicii";

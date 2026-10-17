@@ -50,6 +50,7 @@ final class AppContainer {
     let calendarConnectionModule: CalendarConnectionModule
     let businessClientModule: BusinessClientModule
     let addOwnClientModule: AddOwnClientModule
+    let accountInfoModule: AccountInfoModule
 
     init() {
         // Interceptor-ul e construit ÎNAINTE de APIClient și legat direct în init-ul lui,
@@ -138,6 +139,7 @@ final class AppContainer {
         self.calendarConnectionModule = CalendarConnectionModule(apiClient: apiClient)
         self.businessClientModule = BusinessClientModule(apiClient: apiClient)
         self.addOwnClientModule = AddOwnClientModule()
+        self.accountInfoModule = AccountInfoModule(apiClient: apiClient)
     }
 }
 

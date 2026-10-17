@@ -333,8 +333,19 @@ struct GlobalNavigationModifier: ViewModifier {
             )
             
         case .accountInfo:
-            AccountInfoScreen(onBack: { router.pop() })
-            
+            AccountInfoScreen(
+                viewModel: container.accountInfoModule.makeAccountInfoViewModel(),
+                onNavigateToPhoneVerification: { router.push(.phoneVerification) },
+                onBack: { router.pop() }
+            )
+
+        case .phoneVerification:
+            PhoneVerificationScreen(
+                viewModel: container.accountInfoModule.makePhoneVerificationViewModel(),
+                onVerified: { _ in router.pop() },
+                onBack: { router.pop() }
+            )
+
         case .password:
             PasswordScreen(onBack: { router.pop() })
             

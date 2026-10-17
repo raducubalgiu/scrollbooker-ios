@@ -475,6 +475,15 @@
 "deleteAccountWarningDescription" = "Această acțiune este definitivă. Postările, programările, conversațiile și toate celelalte date asociate contului tău vor fi șterse permanent.";
 "deleteAccountConfirmTitle" = "Ștergi contul permanent?";
 "deleteAccountConfirmDescription" = "Această acțiune nu poate fi anulată.";
+"phoneNumber" = "Număr de telefon";
+"accountInfoNotSet" = "Nesetat";
+"phoneVerificationTitle" = "Verifică numărul de telefon";
+"phoneVerificationPhoneDescription" = "Introdu numărul de telefon pe care vrei să-l folosești pentru contact.";
+"phoneVerificationCodeDescription" = "Am trimis un cod prin SMS la %@.";
+"phoneVerificationSendCode" = "Trimite codul";
+"phoneVerificationVerify" = "Verifică";
+"phoneVerificationPlaceholder" = "7xx xxx xxx";
+"phoneVerificationCodePlaceholder" = "Cod de verificare";
 
 /* --- EDIT PROFILE --- */
 "editProfile" = "Editează profilul";

@@ -32,7 +32,7 @@ struct AccountInfoScreen: View {
                 VStack(alignment: .leading, spacing: 0) {
                     AccountInfoRowView(
                         title: String(localized: "phoneNumber"),
-                        value: info.phone.map(Self.maskedPhone) ?? String(localized: "accountInfoNotSet"),
+                        value: info.privatePhone.map(Self.maskedPhone) ?? String(localized: "accountInfoNotSet"),
                         showChevron: true,
                         onClick: onNavigateToPhoneVerification
                     )

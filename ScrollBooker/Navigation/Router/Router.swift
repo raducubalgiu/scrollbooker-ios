@@ -38,6 +38,7 @@ final class Router {
     // Session-wide singleton (no clearXSession()), unlike the flow slots above — resolved
     // lazily by whichever router needs it first.
     var myProfileViewModel: MyProfileViewModel?
+    var publicPhoneViewModel: PublicPhoneViewModel?
 
     // Numărul din badge-urile bottom bar-ului (Appointments/Inbox). Încărcate o singură
     // dată la pornirea sesiunii (vezi MainRouter) — nu sunt polled. Actualizarea optimistă
@@ -138,6 +139,7 @@ final class Router {
         reviewVideoDetailStack.removeAll()
         myProfileViewModel = nil
         myProductsViewModel = nil
+        publicPhoneViewModel = nil
     }
 }
 

@@ -16,6 +16,7 @@ final class OnboardingModule {
     private let searchBusinessAddressUseCase: SearchBusinessAddressUseCase
     private let getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase
     private let getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
+    let sendPhoneVerificationCodeUseCase: SendPhoneVerificationCodeUseCase
 
     init(
         apiClient: APIClient,
@@ -24,7 +25,8 @@ final class OnboardingModule {
         getAllPaginatedBusinessTypesUseCase: GetAllPaginatedBusinessTypesUseCase,
         searchBusinessAddressUseCase: SearchBusinessAddressUseCase,
         getSelectedDomainsByBusinessUseCase: GetSelectedDomainsByBusinesssUseCase,
-        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase
+        getSchedulesByUserIdUseCase: GetSchedulesByUserIdUseCase,
+        sendPhoneVerificationCodeUseCase: SendPhoneVerificationCodeUseCase
     ) {
         self.apiClient = apiClient
         self.getUserInfoUseCase = getUserInfoUseCase
@@ -33,6 +35,7 @@ final class OnboardingModule {
         self.searchBusinessAddressUseCase = searchBusinessAddressUseCase
         self.getSelectedDomainsByBusinessUseCase = getSelectedDomainsByBusinessUseCase
         self.getSchedulesByUserIdUseCase = getSchedulesByUserIdUseCase
+        self.sendPhoneVerificationCodeUseCase = sendPhoneVerificationCodeUseCase
     }
 
     private lazy var apiService: OnboardingApiService = {
@@ -81,6 +84,10 @@ final class OnboardingModule {
 
     lazy var collectBusinessInstantBookingUseCase: CollectBusinessInstantBookingUseCase = {
         CollectBusinessInstantBookingUseCase(repository: repository)
+    }()
+
+    lazy var collectBusinessPublicPhoneUseCase: CollectBusinessPublicPhoneUseCase = {
+        CollectBusinessPublicPhoneUseCase(repository: repository)
     }()
 
     func makeCollectUsernameViewModel(session: SessionManager) -> CollectUsernameViewModel {
@@ -157,6 +164,14 @@ final class OnboardingModule {
         CollectBusinessInstantBookingViewModel(
             session: session,
             collectBusinessInstantBookingUseCase: collectBusinessInstantBookingUseCase
+        )
+    }
+
+    func makeCollectBusinessPublicPhoneViewModel(session: SessionManager) -> CollectBusinessPublicPhoneViewModel {
+        CollectBusinessPublicPhoneViewModel(
+            session: session,
+            sendPhoneVerificationCodeUseCase: sendPhoneVerificationCodeUseCase,
+            collectBusinessPublicPhoneUseCase: collectBusinessPublicPhoneUseCase
         )
     }
 }

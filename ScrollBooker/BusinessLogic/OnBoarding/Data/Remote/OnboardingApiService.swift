@@ -18,6 +18,7 @@ protocol OnboardingApiService: Sendable {
     func collectBusinessSchedules(schedules: [ScheduleDto]) async throws -> AuthStateDTO
     func collectBusinessHasEmployees(request: BusinessHasEmployeesUpdateRequestDTO) async throws -> AuthStateDTO
     func collectBusinessInstantBooking(request: BusinessInstantBookingUpdateRequestDTO) async throws -> AuthStateDTO
+    func collectBusinessPublicPhone(request: PhoneVerificationCheckRequestDTO) async throws -> AuthStateDTO
 }
 
 final class OnboardingAPIImpl: OnboardingApiService {
@@ -103,6 +104,14 @@ final class OnboardingAPIImpl: OnboardingApiService {
     func collectBusinessInstantBooking(request: BusinessInstantBookingUpdateRequestDTO) async throws -> AuthStateDTO {
         try await client.request(
             "onboarding/collect-business-instant-booking",
+            method: .patch,
+            body: request
+        )
+    }
+
+    func collectBusinessPublicPhone(request: PhoneVerificationCheckRequestDTO) async throws -> AuthStateDTO {
+        try await client.request(
+            "onboarding/collect-business-public-phone",
             method: .patch,
             body: request
         )

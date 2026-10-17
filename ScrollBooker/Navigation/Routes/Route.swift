@@ -76,6 +76,8 @@ enum Route: Hashable {
     case editBirthdate
     case editProfession
     case editAvatarCrop
+    case editPublicPhone
+    case publicPhoneVerification
     
     case userSocial(SocialNavigationParams)
     

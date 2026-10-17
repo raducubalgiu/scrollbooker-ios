@@ -18,7 +18,7 @@ enum PhoneVerificationStep {
 @MainActor
 final class PhoneVerificationViewModel {
     private let sendPhoneVerificationCodeUseCase: SendPhoneVerificationCodeUseCase
-    private let verifyPhoneNumberUseCase: VerifyPhoneNumberUseCase
+    private let verifyPrivatePhoneNumberUseCase: VerifyPrivatePhoneNumberUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Settings")
 
     static let countryCode = "+40"
@@ -29,7 +29,7 @@ final class PhoneVerificationViewModel {
     var isSending = false
     var isVerifying = false
     var errorMessage: String?
-    private(set) var verifiedResult: PhoneVerificationResult?
+    private(set) var verifiedResult: PrivatePhoneVerificationResult?
 
     var fullPhone: String {
         Self.countryCode + localNumber.filter(\.isNumber)
@@ -45,10 +45,10 @@ final class PhoneVerificationViewModel {
 
     init(
         sendPhoneVerificationCodeUseCase: SendPhoneVerificationCodeUseCase,
-        verifyPhoneNumberUseCase: VerifyPhoneNumberUseCase
+        verifyPrivatePhoneNumberUseCase: VerifyPrivatePhoneNumberUseCase
     ) {
         self.sendPhoneVerificationCodeUseCase = sendPhoneVerificationCodeUseCase
-        self.verifyPhoneNumberUseCase = verifyPhoneNumberUseCase
+        self.verifyPrivatePhoneNumberUseCase = verifyPrivatePhoneNumberUseCase
     }
 
     func sendCode() async {
@@ -78,7 +78,7 @@ final class PhoneVerificationViewModel {
 
         do {
             let result = try await withLoading {
-                try await self.verifyPhoneNumberUseCase(phone: self.fullPhone, code: self.code)
+                try await self.verifyPrivatePhoneNumberUseCase(phone: self.fullPhone, code: self.code)
             }
             verifiedResult = result
             isVerifying = false

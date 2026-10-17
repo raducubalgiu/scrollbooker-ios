@@ -8,5 +8,5 @@
 protocol AccountInfoRepository: Sendable {
     func getAccountInfo() async throws -> AccountInfo
     func sendPhoneVerificationCode(phone: String) async throws -> String
-    func verifyPhoneNumber(phone: String, code: String) async throws -> PhoneVerificationResult
+    func verifyPrivatePhoneNumber(phone: String, code: String) async throws -> PrivatePhoneVerificationResult
 }

@@ -9,16 +9,16 @@ import Foundation
 
 extension AccountInfo {
     init(dto: AccountInfoDTO) {
-        self.phone = dto.phone
-        self.phoneVerified = dto.phoneVerified
+        self.privatePhone = dto.privatePhone
+        self.privatePhoneVerified = dto.privatePhoneVerified
         self.email = dto.email
         self.emailVerified = dto.emailVerified
     }
 }
 
-extension PhoneVerificationResult {
-    init(dto: PhoneVerificationResultDTO) {
-        self.phone = dto.phone
-        self.phoneVerified = dto.phoneVerified
+extension PrivatePhoneVerificationResult {
+    init(dto: PrivatePhoneVerificationResultDTO) {
+        self.privatePhone = dto.privatePhone
+        self.privatePhoneVerified = dto.privatePhoneVerified
     }
 }

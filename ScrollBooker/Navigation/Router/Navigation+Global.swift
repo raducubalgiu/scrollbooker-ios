@@ -395,6 +395,23 @@ struct GlobalNavigationModifier: ViewModifier {
         case .editAvatarCrop:
             EditAvatarCropScreen(viewModel: resolveMyProfileViewModel(), onBack: { router.pop() })
 
+        case .editPublicPhone:
+            PublicPhoneScreen(
+                viewModel: resolvePublicPhoneViewModel(),
+                onEditPersonalNumber: { router.push(.publicPhoneVerification) },
+                onBack: { router.pop() }
+            )
+
+        case .publicPhoneVerification:
+            PublicPhoneVerificationScreen(
+                viewModel: container.publicPhoneModule.makePublicPhoneVerificationViewModel(),
+                onVerified: { result in
+                    router.publicPhoneViewModel?.applyVerifiedPersonalNumber(result)
+                    router.pop()
+                },
+                onBack: { router.pop() }
+            )
+
         case .myBusiness:
             MyBusinessScreen(
                 onNavigate: { r in router.push(r) },
@@ -549,6 +566,16 @@ struct GlobalNavigationModifier: ViewModifier {
             getSchedulesByUserIdUseCase: container.scheduleModule.getSchedulesByUserIdUseCase
         )
         router.myProfileViewModel = newViewModel
+        return newViewModel
+    }
+
+    private func resolvePublicPhoneViewModel() -> PublicPhoneViewModel {
+        if let existing = router.publicPhoneViewModel {
+            return existing
+        }
+
+        let newViewModel = container.publicPhoneModule.makePublicPhoneViewModel(session: session)
+        router.publicPhoneViewModel = newViewModel
         return newViewModel
     }
 

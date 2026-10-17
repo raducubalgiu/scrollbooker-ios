@@ -23,4 +23,5 @@ protocol OnboardingRepository: Sendable {
     func collectBusinessSchedules(schedules: [Schedule]) async throws -> AuthState
     func collectBusinessHasEmployees(hasEmployees: Bool) async throws -> AuthState
     func collectBusinessInstantBooking(instantBooking: Bool) async throws -> AuthState
+    func collectBusinessPublicPhone(phone: String, code: String) async throws -> AuthState
 }

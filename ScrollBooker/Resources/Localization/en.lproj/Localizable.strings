@@ -269,6 +269,8 @@
 "onboarding_instant_booking_yes_description_with_employees" = "Activezi calendarul și poți primi rezervări instant direct din fiecare postare. Fiecare angajat va primi propriul calendar.";
 "onboarding_instant_booking_no" = "NU, nu vreau Rezervare Instant acum";
 "onboarding_instant_booking_no_description" = "Pe fiecare postare va apărea un buton „Contactează”, prin care clienții te pot scrie pe WhatsApp sau te pot suna direct. Poți activa Rezervarea Instant oricând mai târziu, din setări.";
+"onboarding_public_phone_title" = "Numărul tău de contact";
+"onboarding_public_phone_description" = "Verifică numărul pe care îl vor vedea clienții pentru a te contacta pe WhatsApp sau telefon.";
 "onboarding_business_validation_title" = "Felicitări! Ai finalizat înregistrarea";
 "onboarding_business_validation_description" = "Am primit toate detaliile despre business-ul tău. În scurt timp, echipa noastră va revizui aplicația și te vom anunța imediat ce contul tău este aprobat.";
 "onboarding_business_validation_response_time" = "De obicei răspundem în câteva minute";
@@ -478,7 +480,7 @@
 "phoneNumber" = "Număr de telefon";
 "accountInfoNotSet" = "Nesetat";
 "phoneVerificationTitle" = "Verifică numărul de telefon";
-"phoneVerificationPhoneDescription" = "Introdu numărul de telefon pe care vrei să-l folosești pentru contact.";
+"phoneVerificationPhoneDescription" = "Introdu numărul de telefon folosit pentru securitatea contului tău.";
 "phoneVerificationCodeDescription" = "Am trimis un cod prin SMS la %@.";
 "phoneVerificationSendCode" = "Trimite codul";
 "phoneVerificationVerify" = "Verifică";
@@ -490,6 +492,14 @@
 "edit_bio_placeholder" = "Scrie ceva despre tine..";
 "changePhoto" = "Schimbă poza";
 "chooseFromGallery" = "Alege din galerie";
+"publicPhoneNumber" = "Număr de contact";
+"publicPhoneTitle" = "Număr de contact";
+"publicPhoneDescription" = "Acesta este numărul pe care clienții îl văd pentru a te contacta pe WhatsApp sau telefon.";
+"publicPhoneUseBusinessNumber" = "Folosește numărul business-ului";
+"publicPhoneUseOwnNumber" = "Numărul meu";
+"publicPhoneVerificationTitle" = "Verifică numărul de contact";
+"publicPhoneVerificationPhoneDescription" = "Introdu numărul pe care vrei să-l folosești pentru a fi contactat de clienți.";
+"editProfileContactSection" = "Contact";
 
 /* --- PROFILE TABS --- */
 "profile_products_view_more" = "Vezi toate cele %1$d servicii";

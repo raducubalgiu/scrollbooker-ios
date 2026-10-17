@@ -10,7 +10,7 @@ import Foundation
 protocol AccountInfoApiService: Sendable {
     func getAccountInfo() async throws -> AccountInfoDTO
     func sendPhoneVerificationCode(request: PhoneVerificationSendRequestDTO) async throws -> ActionMessageResponseDTO
-    func verifyPhoneNumber(request: PhoneVerificationCheckRequestDTO) async throws -> PhoneVerificationResultDTO
+    func verifyPrivatePhoneNumber(request: PhoneVerificationCheckRequestDTO) async throws -> PrivatePhoneVerificationResultDTO
 }
 
 final class AccountInfoAPIImpl: AccountInfoApiService {
@@ -32,9 +32,9 @@ final class AccountInfoAPIImpl: AccountInfoApiService {
         )
     }
 
-    func verifyPhoneNumber(request: PhoneVerificationCheckRequestDTO) async throws -> PhoneVerificationResultDTO {
+    func verifyPrivatePhoneNumber(request: PhoneVerificationCheckRequestDTO) async throws -> PrivatePhoneVerificationResultDTO {
         try await client.request(
-            "users/user-info/phone/verify",
+            "users/user-info/private-phone/verify",
             method: .post,
             body: request
         )

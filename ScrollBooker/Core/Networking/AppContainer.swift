@@ -51,6 +51,7 @@ final class AppContainer {
     let businessClientModule: BusinessClientModule
     let addOwnClientModule: AddOwnClientModule
     let accountInfoModule: AccountInfoModule
+    let publicPhoneModule: PublicPhoneModule
 
     init() {
         // Interceptor-ul e construit ÎNAINTE de APIClient și legat direct în init-ul lui,
@@ -96,6 +97,12 @@ final class AppContainer {
         self.businessModule = businessModule
         let servieDomainModule = ServiceDomainModule(apiClient: apiClient)
         self.servieDomainModule = servieDomainModule
+        let accountInfoModule = AccountInfoModule(apiClient: apiClient)
+        self.accountInfoModule = accountInfoModule
+        self.publicPhoneModule = PublicPhoneModule(
+            apiClient: apiClient,
+            sendPhoneVerificationCodeUseCase: accountInfoModule.sendPhoneVerificationCodeUseCase
+        )
         self.onboardingModule = OnboardingModule(
             apiClient: apiClient,
             getUserInfoUseCase: userInfoModule.getUserInfoUseCase,
@@ -103,7 +110,8 @@ final class AppContainer {
             getAllPaginatedBusinessTypesUseCase: businessTypeModule.getAllPaginatedBusinessTypesUseCase,
             searchBusinessAddressUseCase: businessModule.searchBusinessAddressUseCase,
             getSelectedDomainsByBusinessUseCase: servieDomainModule.getSelectedDomainsByBusinessUseCase,
-            getSchedulesByUserIdUseCase: scheduleModule.getSchedulesByUserIdUseCase
+            getSchedulesByUserIdUseCase: scheduleModule.getSchedulesByUserIdUseCase,
+            sendPhoneVerificationCodeUseCase: accountInfoModule.sendPhoneVerificationCodeUseCase
         )
 
         self.cloudflareModuke = CloudflareModule(apiClient: apiClient)
@@ -139,7 +147,6 @@ final class AppContainer {
         self.calendarConnectionModule = CalendarConnectionModule(apiClient: apiClient)
         self.businessClientModule = BusinessClientModule(apiClient: apiClient)
         self.addOwnClientModule = AddOwnClientModule()
-        self.accountInfoModule = AccountInfoModule(apiClient: apiClient)
     }
 }
 

@@ -69,6 +69,22 @@ struct EditProfileScreen: View {
         aboutActions.filter { $0.permission == .noProtection || session.hasPermission($0.permission) }
     }
 
+    private var hasBusinessContext: Bool {
+        session.userInfo?.businessId != nil
+    }
+
+    private var contactActions: [EditProfileAction] {
+        guard hasBusinessContext else { return [] }
+
+        return [
+            EditProfileAction(
+                title: String(localized: "publicPhoneNumber"),
+                value: "",
+                onClick: { onNavigate(.editPublicPhone) }
+            )
+        ]
+    }
+
     var body: some View {
         VStack {
             HeaderView(
@@ -110,6 +126,31 @@ struct EditProfileScreen: View {
                             }
                         }
                         .padding(.vertical, .m)
+                    }
+                }
+
+                if hasBusinessContext {
+                    Text(String(localized: "editProfileContactSection"))
+                        .font(.subheadline.bold())
+                        .foregroundColor(.gray)
+                        .padding(.top, .base)
+
+                    ForEach(contactActions) { action in
+                        Button {
+                            action.onClick()
+                        } label: {
+                            HStack {
+                                Text(action.title)
+                                    .font(.subheadline.bold())
+                                    .foregroundColor(.onBackgroundSB)
+
+                                Spacer()
+
+                                Image(systemName: "chevron.right")
+                                    .foregroundColor(.gray)
+                            }
+                            .padding(.vertical, .m)
+                        }
                     }
                 }
 

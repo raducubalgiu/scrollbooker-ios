@@ -9,7 +9,7 @@ import SwiftUI
 
 struct PhoneVerificationScreen: View {
     @Bindable var viewModel: PhoneVerificationViewModel
-    var onVerified: (PhoneVerificationResult) -> Void
+    var onVerified: (PrivatePhoneVerificationResult) -> Void
     var onBack: () -> Void
 
     private var isLoading: Bool {

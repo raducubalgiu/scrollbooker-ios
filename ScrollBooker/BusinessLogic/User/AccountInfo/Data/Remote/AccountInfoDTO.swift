@@ -8,14 +8,14 @@
 import Foundation
 
 struct AccountInfoDTO: Decodable {
-    let phone: String?
-    let phoneVerified: Bool
+    let privatePhone: String?
+    let privatePhoneVerified: Bool
     let email: String
     let emailVerified: Bool
 
     enum CodingKeys: String, CodingKey {
-        case phone
-        case phoneVerified = "phone_verified"
+        case privatePhone = "private_phone"
+        case privatePhoneVerified = "private_phone_verified"
         case email
         case emailVerified = "email_verified"
     }
@@ -30,12 +30,12 @@ struct PhoneVerificationCheckRequestDTO: Encodable {
     let code: String
 }
 
-struct PhoneVerificationResultDTO: Decodable {
-    let phone: String?
-    let phoneVerified: Bool
+struct PrivatePhoneVerificationResultDTO: Decodable {
+    let privatePhone: String?
+    let privatePhoneVerified: Bool
 
     enum CodingKeys: String, CodingKey {
-        case phone
-        case phoneVerified = "phone_verified"
+        case privatePhone = "private_phone"
+        case privatePhoneVerified = "private_phone_verified"
     }
 }

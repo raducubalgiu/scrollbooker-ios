@@ -8,13 +8,13 @@
 import Foundation
 
 struct AccountInfo: Equatable, Hashable, Sendable {
-    let phone: String?
-    let phoneVerified: Bool
+    let privatePhone: String?
+    let privatePhoneVerified: Bool
     let email: String
     let emailVerified: Bool
 }
 
-struct PhoneVerificationResult: Equatable, Hashable, Sendable {
-    let phone: String?
-    let phoneVerified: Bool
+struct PrivatePhoneVerificationResult: Equatable, Hashable, Sendable {
+    let privatePhone: String?
+    let privatePhoneVerified: Bool
 }

@@ -82,4 +82,11 @@ final class OnboardingRepositoryImpl: OnboardingRepository {
         )
         return AuthState(dto: dto)
     }
+
+    func collectBusinessPublicPhone(phone: String, code: String) async throws -> AuthState {
+        let dto = try await api.collectBusinessPublicPhone(
+            request: PhoneVerificationCheckRequestDTO(phone: phone, code: code)
+        )
+        return AuthState(dto: dto)
+    }
 }

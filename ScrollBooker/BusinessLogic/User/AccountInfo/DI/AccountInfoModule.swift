@@ -31,8 +31,8 @@ final class AccountInfoModule {
         SendPhoneVerificationCodeUseCase(repository: repository)
     }()
 
-    lazy var verifyPhoneNumberUseCase: VerifyPhoneNumberUseCase = {
-        VerifyPhoneNumberUseCase(repository: repository)
+    lazy var verifyPrivatePhoneNumberUseCase: VerifyPrivatePhoneNumberUseCase = {
+        VerifyPrivatePhoneNumberUseCase(repository: repository)
     }()
 
     func makeAccountInfoViewModel() -> AccountInfoViewModel {
@@ -42,7 +42,7 @@ final class AccountInfoModule {
     func makePhoneVerificationViewModel() -> PhoneVerificationViewModel {
         PhoneVerificationViewModel(
             sendPhoneVerificationCodeUseCase: sendPhoneVerificationCodeUseCase,
-            verifyPhoneNumberUseCase: verifyPhoneNumberUseCase
+            verifyPrivatePhoneNumberUseCase: verifyPrivatePhoneNumberUseCase
         )
     }
 }

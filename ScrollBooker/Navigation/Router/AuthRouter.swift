@@ -134,6 +134,13 @@ struct AuthRouter: View {
                 onBack: { path.removeLast() }
             )
 
+        case .collectBusinessPublicPhone:
+            CollectBusinessPublicPhoneDestination(
+                container: container,
+                session: session,
+                onBack: { path.removeLast() }
+            )
+
         case .collectBusinessValidation:
             CollectBusinessValidationScreen()
 
@@ -344,6 +351,29 @@ private struct CollectBusinessInstantBookingDestination: View {
         .onAppear {
             if viewModel == nil {
                 viewModel = container.onboardingModule.makeCollectBusinessInstantBookingViewModel(session: session)
+            }
+        }
+    }
+}
+
+private struct CollectBusinessPublicPhoneDestination: View {
+    let container: AppContainer
+    let session: SessionManager
+    let onBack: () -> Void
+
+    @State private var viewModel: CollectBusinessPublicPhoneViewModel?
+
+    var body: some View {
+        Group {
+            if let viewModel {
+                CollectBusinessPublicPhoneScreen(viewModel: viewModel, onBack: onBack)
+            } else {
+                ProgressView()
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = container.onboardingModule.makeCollectBusinessPublicPhoneViewModel(session: session)
             }
         }
     }

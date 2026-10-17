@@ -24,8 +24,8 @@ final class AccountInfoRepositoryImpl: AccountInfoRepository {
         return dto.detail
     }
 
-    func verifyPhoneNumber(phone: String, code: String) async throws -> PhoneVerificationResult {
-        let dto = try await api.verifyPhoneNumber(request: PhoneVerificationCheckRequestDTO(phone: phone, code: code))
-        return PhoneVerificationResult(dto: dto)
+    func verifyPrivatePhoneNumber(phone: String, code: String) async throws -> PrivatePhoneVerificationResult {
+        let dto = try await api.verifyPrivatePhoneNumber(request: PhoneVerificationCheckRequestDTO(phone: phone, code: code))
+        return PrivatePhoneVerificationResult(dto: dto)
     }
 }

@@ -93,6 +93,8 @@ struct MyBusinessScreen: View {
                 guard session.userInfo?.hasEmployees == true else { return false }
             case .mySchedulesView:
                 guard isEmployee else { return false }
+            case .myCalendarView:
+                guard session.userInfo?.instantBooking == true else { return false }
             default:
                 break
             }

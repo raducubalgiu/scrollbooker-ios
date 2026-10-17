@@ -17,6 +17,7 @@ struct UserInfo: Codable, Hashable, Identifiable {
     let businessOwnerId: Int?
     let businessTypeId: Int?
     let hasEmployees: Bool
+    let instantBooking: Bool
     let isValidated: Bool
     let registrationStep: RegistrationStepEnum?
 }

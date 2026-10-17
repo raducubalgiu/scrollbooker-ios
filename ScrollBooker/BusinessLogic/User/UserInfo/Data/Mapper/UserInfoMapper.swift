@@ -18,6 +18,7 @@ extension UserInfo {
         self.businessOwnerId = dto.business_owner_id
         self.businessTypeId = dto.business_type_id
         self.hasEmployees = dto.has_employees
+        self.instantBooking = dto.instant_booking
         self.isValidated = dto.is_validated
         self.registrationStep = RegistrationStepEnum.fromKeyOrNull(dto.registration_step)
     }

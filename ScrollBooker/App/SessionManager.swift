@@ -91,6 +91,7 @@ final class SessionManager {
             businessOwnerId: currentUserInfo.businessOwnerId,
             businessTypeId: currentUserInfo.businessTypeId,
             hasEmployees: currentUserInfo.hasEmployees,
+            instantBooking: currentUserInfo.instantBooking,
             isValidated: currentUserInfo.isValidated,
             registrationStep: currentUserInfo.registrationStep
         )
@@ -109,6 +110,7 @@ final class SessionManager {
             businessOwnerId: currentUserInfo.businessOwnerId,
             businessTypeId: currentUserInfo.businessTypeId,
             hasEmployees: currentUserInfo.hasEmployees,
+            instantBooking: currentUserInfo.instantBooking,
             isValidated: authState.isValidated,
             registrationStep: authState.registrationStep
         )

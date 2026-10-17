@@ -17,6 +17,7 @@ struct UserInfoDTO: Codable {
     let business_owner_id: Int?
     let business_type_id: Int?
     let has_employees: Bool
+    let instant_booking: Bool
     let is_validated: Bool
     let registration_step: String?
 }

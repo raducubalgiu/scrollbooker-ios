@@ -10,11 +10,13 @@ import Foundation
 enum ProfileSheet: Identifiable {
     case menu
     case openingHours
-    
+    case contact
+
     var id: String {
         switch self {
             case .menu: return "menu"
             case .openingHours: return "openingHours"
+            case .contact: return "contact"
         }
     }
 }

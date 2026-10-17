@@ -206,8 +206,6 @@ struct ProfilePostDetailScreen: View {
         .onDisappear {
             viewModel.pauseAll()
         }
-        /// `.fullScreenCover` never fires `onDisappear` on the presenter, so pause/resume has to
-        /// be driven off this state directly instead.
         .onChange(of: statisticsPostId) { _, newValue in
             if newValue != nil { viewModel.pauseAll() } else { viewModel.playCurrent() }
         }
@@ -250,13 +248,24 @@ struct ProfilePostDetailScreen: View {
         .padding(.top, .s)
     }
 
+    @ViewBuilder
     private var bookNowButton: some View {
-        PostMainActionView(isVideoReview: currentPost?.isVideoReview ?? false) {
-            guard let currentPost else { return }
-            activeSheet = .linkedProducts(post: currentPost)
+        if let currentPost {
+            Group {
+                if currentPost.instantBooking {
+                    PostMainActionView(isVideoReview: currentPost.isVideoReview) {
+                        activeSheet = .linkedProducts(post: currentPost)
+                    }
+                } else {
+                    PostContactActionsView(
+                        onContact: { activeSheet = .contact(post: currentPost) },
+                        onOpenServices: { activeSheet = .linkedProducts(post: currentPost) }
+                    )
+                }
+            }
+            .padding(.horizontal, .base)
+            .padding(.vertical, .s)
+            .background(Color.black)
         }
-        .padding(.horizontal, .base)
-        .padding(.vertical, .s)
-        .background(Color.black)
     }
 }

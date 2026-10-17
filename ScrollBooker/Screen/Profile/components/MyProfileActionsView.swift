@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MyProfileActionsView: View {
     var isBusinessOrEmployee: Bool = false
+    var instantBooking: Bool
     
     var onNavigateToEditProfile: () -> Void
     var onNavigateToMyCalendar: () -> Void
@@ -21,7 +22,7 @@ struct MyProfileActionsView: View {
                 onClick: onNavigateToEditProfile
             )
             
-            if isBusinessOrEmployee {
+            if isBusinessOrEmployee && instantBooking {
                 ProfileActionButton(
                     title: "Calendar",
                     startIcon: "calendar",

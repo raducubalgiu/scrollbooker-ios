@@ -9,11 +9,13 @@ import SwiftUI
 
 struct BusinessSummaryActions: View {
     let counters: BusinessProfileCounters
+    let instantBooking: Bool
     let isFollow: Bool?
     let isFollowEnabled: Bool
     let onFollow: () -> Void
     let onFlyToReviewsSection: () -> Void
     let onNavigateToBooking: () -> Void
+    let onOpenContactSheet: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -43,12 +45,21 @@ struct BusinessSummaryActions: View {
             .frame(maxWidth: .infinity)
             
             HStack(alignment: .center, spacing: AppSize.m.rawValue) {
-                MainButton(
-                    title: String(localized: "book"),
-                    size: .medium,
-                    onClick: onNavigateToBooking
-                )
-                .frame(maxWidth: .infinity)
+                if instantBooking {
+                    MainButton(
+                        title: String(localized: "book"),
+                        size: .medium,
+                        onClick: onNavigateToBooking
+                    )
+                    .frame(maxWidth: .infinity)
+                } else {
+                    MainButton(
+                        title: String(localized: "contactUs"),
+                        size: .medium,
+                        onClick: onOpenContactSheet
+                    )
+                    .frame(maxWidth: .infinity)
+                }
 
                 if let isFollow = isFollow {
                     let buttonTitle = isFollow ? String(localized: "following") : String(localized: "follow")

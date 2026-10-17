@@ -17,9 +17,9 @@ struct MainButtonOutlined: View {
         Button(action: onClick) {
             Text(title)
                 .font(size.font)
-                .frame(maxWidth: fullWidth ? .infinity : nil)
+                .frame(maxWidth: fullWidth ? .infinity : nil, minHeight: size.minHeight)
+                .contentShape(Rectangle())
         }
-        .padding(.vertical, size.verticalPadding)
         .padding(.horizontal, size.horizontalPadding)
         .foregroundColor(.onBackgroundSB)
         .fontWeight(.semibold)

@@ -28,14 +28,6 @@ enum AppButtonSize {
         }
     }
     
-    var verticalPadding: CGFloat {
-        switch self {
-        case .small: return 8
-        case .medium: return 10
-        case .large: return 14
-        }
-    }
-    
     var horizontalPadding: CGFloat {
         switch self {
         case .small: return 12

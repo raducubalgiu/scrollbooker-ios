@@ -74,6 +74,7 @@ struct UserProfileScreen: View {
                         if user.isOwnProfile {
                             MyProfileActionsView(
                                 isBusinessOrEmployee: user.isBusinessOrEmployee,
+                                instantBooking: user.instantBooking,
                                 onNavigateToEditProfile: onNavigateToEditProfile,
                                 onNavigateToMyCalendar: onNavigateToMyCalendar,
                                 onShareProfile: {
@@ -91,6 +92,7 @@ struct UserProfileScreen: View {
                         } else {
                             UserProfileActions(
                                 isBusinessOrEmployee: user.isBusinessOrEmployee,
+                                instantBooking: user.instantBooking,
                                 isFollow: user.isFollow,
                                 isFollowEnabled: true,
                                 onFollow: {
@@ -112,6 +114,9 @@ struct UserProfileScreen: View {
                                             selectedProductId: nil
                                         )
                                     )
+                                },
+                                onOpenContactSheet: {
+                                    activeSheet = .contact
                                 }
                             )
                         }
@@ -142,6 +147,8 @@ struct UserProfileScreen: View {
                     profileController: viewModel.profileController,
                     userId: viewModel.userId
                 )
+            case .contact:
+                ContactSheetView()
             }
         }
     }

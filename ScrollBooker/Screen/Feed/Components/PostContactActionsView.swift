@@ -30,12 +30,12 @@ struct PostContactActionsView: View {
             Button(action: onOpenServices) {
                 Text(String(localized: "servicesAndPrices"))
                     .font(.footnote.bold())
-                    .foregroundColor(.white)
+                    .foregroundColor(.black)
                     .padding(.vertical, 12)
                     .frame(maxWidth: .infinity)
                     .background(
                         RoundedRectangle(cornerRadius: 50)
-                            .fill(Color.white.opacity(0.15))
+                            .fill(Color.white.opacity(0.9))
                     )
                     .contentShape(Rectangle())
             }

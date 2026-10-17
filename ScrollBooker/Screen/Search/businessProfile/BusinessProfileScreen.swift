@@ -30,6 +30,7 @@ struct BusinessProfileScreen: View {
     @State private var isProgrammaticScroll = false
     
     @State private var currentImagePage: Int = 0
+    @State private var showContactSheet = false
 
     var body: some View {
         GeometryReader { rootGeo in
@@ -46,6 +47,9 @@ struct BusinessProfileScreen: View {
                 headerOverlay(safeTop: safeTop)
             }
             .ignoresSafeArea(edges: .top)
+        }
+        .sheet(isPresented: $showContactSheet) {
+            ContactSheetView()
         }
     }
 
@@ -165,6 +169,7 @@ struct BusinessProfileScreen: View {
                 address: profile.location.address,
                 formattedAddress: profile.location.formattedAddress ?? profile.location.address,
                 openingHours: profile.openingHours,
+                instantBooking: profile.instantBooking,
                 isFollow: profile.owner.isFollow,
                 isFollowEnabled: true,
                 onFollow: {},
@@ -180,6 +185,9 @@ struct BusinessProfileScreen: View {
                             selectedProductId: nil
                         )
                     )
+                },
+                onOpenContactSheet: {
+                    showContactSheet = true
                 }
             )
         }

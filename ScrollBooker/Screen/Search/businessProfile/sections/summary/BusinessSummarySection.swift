@@ -13,12 +13,14 @@ struct BusinessSummarySection: View {
     let address: String
     let formattedAddress: String
     let openingHours: OpeningHours
+    let instantBooking: Bool
     let isFollow: Bool?
     let isFollowEnabled: Bool
     let onFollow: () -> Void
     let onNavigateToOwnerProfile: (String) -> Void
     let onFlyToReviewsSection: () -> Void
     let onNavigateToBooking: () -> Void
+    let onOpenContactSheet: () -> Void
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -34,11 +36,13 @@ struct BusinessSummarySection: View {
                 
                 BusinessSummaryActions(
                     counters: owner.counters,
+                    instantBooking: instantBooking,
                     isFollow: isFollow,
                     isFollowEnabled: isFollowEnabled,
                     onFollow: onFollow,
                     onFlyToReviewsSection: onFlyToReviewsSection,
-                    onNavigateToBooking: onNavigateToBooking
+                    onNavigateToBooking: onNavigateToBooking,
+                    onOpenContactSheet: onOpenContactSheet
                 )
             }
             .frame(maxWidth: .infinity)

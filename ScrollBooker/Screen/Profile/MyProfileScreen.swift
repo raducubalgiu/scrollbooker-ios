@@ -61,6 +61,7 @@ struct MyProfileScreen: View {
                     actions: {
                         MyProfileActionsView(
                             isBusinessOrEmployee: user.isBusinessOrEmployee,
+                            instantBooking: user.instantBooking,
                             onNavigateToEditProfile: onNavigateToEditProfile,
                             onNavigateToMyCalendar: onNavigateToMyCalendar,
                             onShareProfile: {
@@ -104,6 +105,8 @@ struct MyProfileScreen: View {
                             userId: userId
                         )
                     }
+                case .contact:
+                    EmptyView()
                 }
         }
     }

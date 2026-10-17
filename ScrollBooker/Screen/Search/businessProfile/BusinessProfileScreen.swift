@@ -213,6 +213,7 @@ struct BusinessProfileScreen: View {
         sectionBlock(.services) {
             BusinessServicesTabView(
                 products: profile.userProducts,
+                instantBooking: profile.instantBooking,
                 onNavigateToBookingFromProfile: {
                     onNavigateToBooking(
                         BookingNavigationParams(

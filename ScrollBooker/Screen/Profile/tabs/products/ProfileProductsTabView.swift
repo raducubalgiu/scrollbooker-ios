@@ -11,6 +11,7 @@ struct ProfileProductsTabView: View {
     let controller: ProfileController
     let businessId: Int?
     let employeeId: Int?
+    let instantBooking: Bool
     let onNavigateToBookingFromProduct: (Product) -> Void
 
     var body: some View {
@@ -41,6 +42,7 @@ struct ProfileProductsTabView: View {
                         } else {
                             ProfileProductsSuccessView(
                                 products: products,
+                                instantBooking: instantBooking,
                                 onNavigateToBookingFromProduct: onNavigateToBookingFromProduct
                             )
                         }

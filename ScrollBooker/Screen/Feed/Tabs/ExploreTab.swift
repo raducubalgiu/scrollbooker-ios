@@ -107,6 +107,7 @@ struct ExploreTab: View {
                         viewModel: linkedProductsCache.viewModel(for: post.id, make: { _ in makeLinkedProductsVM(post) }),
                         post: post,
                         bookingSource: .exploreFeed,
+                        instantBooking: post.instantBooking,
                         onNavigateToUserProfile: onNavigateToUserProfile,
                         onNavigateToBooking: onNavigateToBooking
                     )

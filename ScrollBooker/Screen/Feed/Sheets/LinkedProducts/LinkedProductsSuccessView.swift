@@ -10,6 +10,7 @@ import SwiftUI
 struct LinkedProductsSuccessView: View {
     let linkedProducts: LinkedProducts
     let bookingSource: BookingSourceEnum
+    let instantBooking: Bool
     let onNavigateToBooking: (BookingNavigationParams) -> Void
 
     @Environment(\.dismiss) private var dismiss
@@ -39,6 +40,7 @@ struct LinkedProductsSuccessView: View {
                         ProductCardView(
                             product: product,
                             shouldToggleDescription: true,
+                            instantBooking: instantBooking,
                             onOpenProductDetail: { _ in },
                             onNavigateToBooking: { clickedProduct in
                                 dismiss()

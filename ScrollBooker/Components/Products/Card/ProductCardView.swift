@@ -14,6 +14,7 @@ struct ProductCardView: View {
     var isSelected: Bool = false
     var isSelectable: Bool = false
     var isLoadingDelete: Bool = false
+    var instantBooking: Bool = true
 
     var onOpenProductDetail: (Product) -> Void
     var onSelect: ((Product) -> Void)? = nil
@@ -67,6 +68,7 @@ struct ProductCardView: View {
                     isSelectable: isSelectable,
                     displayEditableActions: displayEditableActions,
                     isLoadingDelete: isLoadingDelete,
+                    instantBooking: instantBooking,
                     onSelect: onSelect,
                     onNavigateToEdit: onNavigateToEdit,
                     onDeleteProduct: onDeleteProduct,

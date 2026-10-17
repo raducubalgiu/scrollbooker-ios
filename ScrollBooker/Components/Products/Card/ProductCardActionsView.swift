@@ -13,6 +13,7 @@ struct ProductCardActionsView: View {
     let isSelectable: Bool
     let displayEditableActions: Bool
     let isLoadingDelete: Bool
+    var instantBooking: Bool = true
 
     var onSelect: ((Product) -> Void)? = nil
     var onNavigateToEdit: ((Int) -> Void)? = nil
@@ -28,9 +29,9 @@ struct ProductCardActionsView: View {
         let isSingle = product.type == .single
         let canBook = product.canBeBooked
 
-        let showAddSingleButtonSelectable = !displayEditableActions && canBook && isSingle && isSelectable
-        let showAddSingleButtonNotSelectable = !displayEditableActions && canBook && isSingle && !isSelectable
-        let showBuyPackButton = !displayEditableActions && canBook && !isSingle
+        let showAddSingleButtonSelectable = !displayEditableActions && canBook && isSingle && isSelectable && instantBooking
+        let showAddSingleButtonNotSelectable = !displayEditableActions && canBook && isSingle && !isSelectable && instantBooking
+        let showBuyPackButton = !displayEditableActions && canBook && !isSingle && instantBooking
 
         Group {
             if showAddSingleButtonSelectable {

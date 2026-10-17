@@ -9,6 +9,7 @@ import SwiftUI
 
 struct BusinessServicesTabView: View {
     let products: UserProducts
+    let instantBooking: Bool
     let onNavigateToBookingFromProfile: () -> Void
     let onNavigateToBookingFromProduct: (Product) -> Void
 
@@ -35,6 +36,7 @@ struct BusinessServicesTabView: View {
                             ProductCardView(
                                 product: product,
                                 shouldToggleDescription: true,
+                                instantBooking: instantBooking,
                                 onOpenProductDetail: { _ in },
                                 onNavigateToBooking: onNavigateToBookingFromProduct
                             )

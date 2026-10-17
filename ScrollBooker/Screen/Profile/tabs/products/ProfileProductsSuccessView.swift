@@ -9,6 +9,7 @@ import SwiftUI
 
 struct ProfileProductsSuccessView: View {
     let products: UserProducts
+    let instantBooking: Bool
     let onNavigateToBookingFromProduct: (Product) -> Void
 
     @State private var activeSectionId: Int? = nil
@@ -38,6 +39,7 @@ struct ProfileProductsSuccessView: View {
                     ProductCardView(
                         product: product,
                         shouldToggleDescription: true,
+                        instantBooking: instantBooking,
                         onOpenProductDetail: { _ in },
                         onNavigateToBooking: onNavigateToBookingFromProduct
                     )

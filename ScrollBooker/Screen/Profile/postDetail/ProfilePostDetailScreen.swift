@@ -144,6 +144,7 @@ struct ProfilePostDetailScreen: View {
                         viewModel: linkedProductsCache.viewModel(for: post.id, make: { _ in makeLinkedProductsVM(post) }),
                         post: post,
                         bookingSource: bookingSource,
+                        instantBooking: post.instantBooking,
                         onNavigateToUserProfile: onNavigateToUserProfile,
                         onNavigateToBooking: onNavigateToBooking
                     )

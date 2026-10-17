@@ -11,6 +11,7 @@ struct LinkedProductsSheetView: View {
     let viewModel: LinkedProductsViewModel
     let post: Post
     let bookingSource: BookingSourceEnum
+    let instantBooking: Bool
     var onNavigateToUserProfile: (ProfileNavigationParams) -> Void
     let onNavigateToBooking: (BookingNavigationParams) -> Void
 
@@ -46,6 +47,7 @@ struct LinkedProductsSheetView: View {
                         LinkedProductsSuccessView(
                             linkedProducts: linkedProducts,
                             bookingSource: bookingSource,
+                            instantBooking: instantBooking,
                             onNavigateToBooking: onNavigateToBooking
                         )
                     }

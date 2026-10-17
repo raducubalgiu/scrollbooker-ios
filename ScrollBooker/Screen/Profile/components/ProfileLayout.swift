@@ -168,6 +168,7 @@ struct ProfileLayout<Header: View, Actions: View>: View {
                 controller: profileController,
                 businessId: user.businessId,
                 employeeId: employeeId,
+                instantBooking: user.instantBooking,
                 onNavigateToBookingFromProduct: { product in
                     onNavigateToBooking(
                         BookingNavigationParams(

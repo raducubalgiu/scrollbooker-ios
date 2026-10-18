@@ -11,6 +11,7 @@ extension BusinessProfile {
     init(from dto: BusinessProfileDto) {
         self.id = dto.id
         self.instantBooking = dto.instantBooking
+        self.contact = ContactInfo(dto: dto.contact)
         self.owner = BusinessProfileOwner(from: dto.owner)
         self.openingHours = OpeningHours(dto: dto.openingHours)
         self.mediaFiles = dto.mediaFiles.map { BusinessMediaFile(from: $0) }

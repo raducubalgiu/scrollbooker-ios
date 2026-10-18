@@ -26,6 +26,7 @@ extension Post {
         self.serviceDomain = dto.serviceDomain.map { PostServiceDomain(from: $0) }
         self.targetGender = GenderTypeEnum(rawValue: dto.targetGender) ?? .other
         self.instantBooking = dto.instantBooking
+        self.contact = ContactInfo(dto: dto.contact)
         self.createdAt = dto.createdAt
     }
 }

@@ -35,8 +35,8 @@ struct PostBadgesView: View {
         Text(text)
             .font(.caption.weight(.semibold))
             .foregroundColor(foreground)
-            .padding(.vertical, 6)
-            .padding(.horizontal, AppSize.s.rawValue)
+            .padding(.vertical, 4)
+            .padding(.horizontal, 6)
             .background(background)
             .clipShape(RoundedRectangle(cornerRadius: 8))
     }

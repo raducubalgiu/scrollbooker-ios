@@ -14,6 +14,7 @@ struct BusinessSummarySection: View {
     let formattedAddress: String
     let openingHours: OpeningHours
     let instantBooking: Bool
+    let contact: ContactInfo
     let isFollow: Bool?
     let isFollowEnabled: Bool
     let onFollow: () -> Void
@@ -37,6 +38,7 @@ struct BusinessSummarySection: View {
                 BusinessSummaryActions(
                     counters: owner.counters,
                     instantBooking: instantBooking,
+                    contact: contact,
                     isFollow: isFollow,
                     isFollowEnabled: isFollowEnabled,
                     onFollow: onFollow,

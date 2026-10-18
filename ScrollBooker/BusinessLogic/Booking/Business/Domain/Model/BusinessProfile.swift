@@ -10,6 +10,7 @@ import Foundation
 struct BusinessProfile: Identifiable, Equatable, Hashable, Sendable {
     let id: Int
     let instantBooking: Bool
+    let contact: ContactInfo
     let owner: BusinessProfileOwner
     let openingHours: OpeningHours
     let mediaFiles: [BusinessMediaFile]

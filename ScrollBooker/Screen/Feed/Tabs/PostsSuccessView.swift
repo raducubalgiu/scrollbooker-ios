@@ -52,10 +52,6 @@ struct PostsSuccessView: View {
                                 userCoordinates: viewModel.userCoordinates
                             )
 
-                            // Mirrors Android's PostVerticalPager play indicator — a bare white
-                            // 50%-opacity play.fill triangle, centered, fading in/out, shown only
-                            // while the user has explicitly paused (never during buffering) —
-                            // except sized smaller than Android's, by deliberate UX request.
                             Image(systemName: "play.fill")
                                 .font(.system(size: 60))
                                 .foregroundStyle(.white.opacity(0.5))
@@ -69,13 +65,6 @@ struct PostsSuccessView: View {
                         }
                         .containerRelativeFrame(.horizontal)
                         .containerRelativeFrame(.vertical)
-                        // Identity is the post itself, not its screen position — a wholesale
-                        // posts replacement (e.g. applying Explore filters) means slot 0 can hold
-                        // a completely different post than before. Keying by position here was
-                        // the root cause of stale player/thumbnail content surviving a refresh:
-                        // SwiftUI recycled the row (and its embedded player view) instead of
-                        // tearing it down, since "index 0" looked unchanged even though the post
-                        // at it wasn't.
                         .id(post.id)
                         .onAppear {
                             if post.id == viewModel.posts.first?.id

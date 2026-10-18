@@ -152,8 +152,15 @@ struct ProfilePostDetailScreen: View {
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
 
-                case .contact:
-                    ContactSheetView()
+                case .contact(let post):
+                    ContactSheetView(
+                        onWriteOnWhatsApp: {
+                            if let phone = post.contact.phone { ContactActionHelper.openWhatsApp(phone: phone) }
+                        },
+                        onCall: {
+                            if let phone = post.contact.phone { ContactActionHelper.call(phone: phone) }
+                        }
+                    )
 
                 case .moreOptions(let postId):
                     MoreOptionsSheetView(
@@ -259,6 +266,7 @@ struct ProfilePostDetailScreen: View {
                     }
                 } else {
                     PostContactActionsView(
+                        contact: currentPost.contact,
                         onContact: { activeSheet = .contact(post: currentPost) },
                         onOpenServices: { activeSheet = .linkedProducts(post: currentPost) }
                     )

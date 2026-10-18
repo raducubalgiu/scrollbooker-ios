@@ -64,6 +64,7 @@ struct CreatePostPreviewScreen: View {
             serviceDomain: nil,
             targetGender: .other,
             instantBooking: userInfo.instantBooking,
+            contact: ContactInfo(phone: nil, acceptsWhatsapp: true, acceptsCalls: true),
             createdAt: ""
         )
     }

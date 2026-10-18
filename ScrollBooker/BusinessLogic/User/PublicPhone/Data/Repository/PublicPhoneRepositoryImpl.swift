@@ -28,4 +28,9 @@ final class PublicPhoneRepositoryImpl: PublicPhoneRepository {
         let dto = try await api.useBusinessPublicPhone()
         return PublicPhoneUpdateResult(dto: dto)
     }
+
+    func updateContactPreference(_ preference: ContactPreferenceEnum) async throws -> ContactPreferenceEnum {
+        let dto = try await api.updateContactPreference(request: ContactPreferenceUpdateRequestDTO(contactPreference: preference))
+        return dto.contactPreference
+    }
 }

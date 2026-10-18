@@ -93,6 +93,7 @@ struct UserProfileScreen: View {
                             UserProfileActions(
                                 isBusinessOrEmployee: user.isBusinessOrEmployee,
                                 instantBooking: user.instantBooking,
+                                contact: user.contact,
                                 isFollow: user.isFollow,
                                 isFollowEnabled: true,
                                 onFollow: {
@@ -116,7 +117,7 @@ struct UserProfileScreen: View {
                                     )
                                 },
                                 onOpenContactSheet: {
-                                    activeSheet = .contact
+                                    activeSheet = .contact(user.contact)
                                 }
                             )
                         }
@@ -147,8 +148,15 @@ struct UserProfileScreen: View {
                     profileController: viewModel.profileController,
                     userId: viewModel.userId
                 )
-            case .contact:
-                ContactSheetView()
+            case .contact(let contact):
+                ContactSheetView(
+                    onWriteOnWhatsApp: {
+                        if let phone = contact.phone { ContactActionHelper.openWhatsApp(phone: phone) }
+                    },
+                    onCall: {
+                        if let phone = contact.phone { ContactActionHelper.call(phone: phone) }
+                    }
+                )
             }
         }
     }

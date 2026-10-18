@@ -12,8 +12,24 @@ struct PublicPhoneSuccessView: View {
     let isEmployee: Bool
     let isSwitching: Bool
     let switchError: String?
+    let isUpdatingContactPreference: Bool
+    let contactPreferenceError: String?
     var onUseBusinessNumber: () -> Void
     var onEditPersonalNumber: () -> Void
+    var onToggleWhatsapp: (Bool) -> Void
+    var onToggleCalls: (Bool) -> Void
+
+    private var isInheritingBusinessNumber: Bool {
+        isEmployee && info.usesBusinessNumber
+    }
+
+    private var effectiveContactPreference: ContactPreferenceEnum {
+        isInheritingBusinessNumber ? info.businessContactPreference : info.contactPreference
+    }
+
+    private var isContactPreferenceEditable: Bool {
+        !isInheritingBusinessNumber && info.publicPhone != nil
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: AppSize.base.rawValue) {
@@ -54,6 +70,55 @@ struct PublicPhoneSuccessView: View {
                 )
             }
 
+            Divider()
+                .padding(.top, .s)
+
+            Text(String(localized: "contactPreferenceSectionTitle"))
+                .font(.subheadline.bold())
+                .foregroundColor(.gray)
+                .padding(.top, .s)
+
+            VStack(spacing: 0) {
+                Toggle(
+                    String(localized: "contactPreferenceWhatsapp"),
+                    isOn: Binding(
+                        get: { effectiveContactPreference.acceptsWhatsapp },
+                        set: { onToggleWhatsapp($0) }
+                    )
+                )
+                .disabled(!isContactPreferenceEditable || isUpdatingContactPreference)
+                .padding(.vertical, .s)
+
+                Divider()
+
+                Toggle(
+                    String(localized: "contactPreferencePhone"),
+                    isOn: Binding(
+                        get: { effectiveContactPreference.acceptsCalls },
+                        set: { onToggleCalls($0) }
+                    )
+                )
+                .disabled(!isContactPreferenceEditable || isUpdatingContactPreference)
+                .padding(.vertical, .s)
+            }
+            .tint(.primarySB)
+
+            if isInheritingBusinessNumber {
+                Text(String(localized: "contactPreferenceInheritedNote"))
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+            } else if !isContactPreferenceEditable {
+                Text(String(localized: "contactPreferenceNoPhoneNote"))
+                    .font(.footnote)
+                    .foregroundColor(.gray)
+            }
+
+            if let contactPreferenceError {
+                Text(contactPreferenceError)
+                    .font(.footnote)
+                    .foregroundColor(.errorSB)
+            }
+
             Spacer()
         }
         .padding(.horizontal, .base)
@@ -68,55 +133,5 @@ struct PublicPhoneSuccessView: View {
         let suffix = phone.suffix(3)
         let maskLength = max(phone.count - 6, 3)
         return "\(prefix)\(String(repeating: "*", count: maskLength))\(suffix)"
-    }
-}
-
-private struct PublicPhoneOptionRowView: View {
-    let title: String
-    let value: String
-    let isSelected: Bool
-    let isLoading: Bool
-    var onClick: () -> Void
-
-    var body: some View {
-        Button(action: onClick) {
-            HStack {
-                ZStack {
-                    if isSelected {
-                        Circle()
-                            .fill(Color.primarySB)
-                            .frame(width: 22, height: 22)
-
-                        Circle()
-                            .fill(Color.backgroundSB)
-                            .frame(width: 9, height: 9)
-                    } else {
-                        Circle()
-                            .stroke(Color.gray.opacity(0.5), lineWidth: 1)
-                            .frame(width: 22, height: 22)
-                    }
-                }
-
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(title)
-                        .font(.subheadline.bold())
-                        .foregroundColor(.onBackgroundSB)
-
-                    Text(value)
-                        .font(.footnote)
-                        .foregroundColor(.gray)
-                }
-
-                Spacer()
-
-                if isLoading {
-                    ProgressView()
-                }
-            }
-            .padding(.vertical, .m)
-            .contentShape(Rectangle())
-        }
-        .buttonStyle(.plain)
-        .disabled(isLoading)
     }
 }

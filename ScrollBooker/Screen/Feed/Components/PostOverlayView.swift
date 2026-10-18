@@ -61,6 +61,7 @@ struct PostOverlayView: View {
                             )
                         } else {
                             PostContactActionsView(
+                                contact: post.contact,
                                 onContact: { actions.onOpenContactSheet(post) },
                                 onOpenServices: { actions.onOpenLinkedProductsSheet(post) }
                             )

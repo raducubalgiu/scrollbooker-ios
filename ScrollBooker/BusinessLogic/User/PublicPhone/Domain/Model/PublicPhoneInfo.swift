@@ -12,6 +12,8 @@ struct PublicPhoneInfo: Equatable, Hashable, Sendable {
     let publicPhoneVerified: Bool
     let businessPublicPhone: String?
     let businessPublicPhoneVerified: Bool
+    let contactPreference: ContactPreferenceEnum
+    let businessContactPreference: ContactPreferenceEnum
 
     var usesBusinessNumber: Bool {
         publicPhone == nil

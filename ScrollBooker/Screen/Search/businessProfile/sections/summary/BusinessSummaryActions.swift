@@ -10,13 +10,18 @@ import SwiftUI
 struct BusinessSummaryActions: View {
     let counters: BusinessProfileCounters
     let instantBooking: Bool
+    let contact: ContactInfo
     let isFollow: Bool?
     let isFollowEnabled: Bool
     let onFollow: () -> Void
     let onFlyToReviewsSection: () -> Void
     let onNavigateToBooking: () -> Void
     let onOpenContactSheet: () -> Void
-    
+
+    private var contactAction: ContactActionInfo {
+        ContactActionInfo(contact: contact, onOpenContactSheet: onOpenContactSheet)
+    }
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             HStack(alignment: .center, spacing: 0) {
@@ -52,12 +57,14 @@ struct BusinessSummaryActions: View {
                         onClick: onNavigateToBooking
                     )
                     .frame(maxWidth: .infinity)
-                } else {
-                    MainButton(
-                        title: String(localized: "contactUs"),
-                        size: .medium,
-                        onClick: onOpenContactSheet
-                    )
+                } else if contactAction.isVisible {
+                    Group {
+                        if contactAction.isWhatsAppStyled {
+                            WhatsAppButton(title: contactAction.title, size: .medium, onClick: contactAction.onClick)
+                        } else {
+                            MainButton(title: contactAction.title, size: .medium, onClick: contactAction.onClick)
+                        }
+                    }
                     .frame(maxWidth: .infinity)
                 }
 

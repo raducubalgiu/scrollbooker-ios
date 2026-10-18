@@ -55,7 +55,7 @@
 "bookNow" = "Rezervă acum";
 "bookYours" = "Rezervă și tu";
 "contactUs" = "Contactează";
-"servicesAndPrices" = "Servicii și prețuri";
+"prices" = "Prețuri";
 "writeOnWhatsApp" = "Scrie pe WhatsApp";
 "call" = "Sună";
 "bookAgain" = "Rezervă din nou";
@@ -496,15 +496,20 @@
 "edit_bio_placeholder" = "Scrie ceva despre tine..";
 "changePhoto" = "Schimbă poza";
 "chooseFromGallery" = "Alege din galerie";
-"publicPhoneNumber" = "Număr de contact";
-"publicPhoneTitle" = "Număr de contact";
+"publicPhoneNumber" = "Telefon și opțiuni de contact";
+"publicPhoneTitle" = "Telefon și opțiuni de contact";
 "publicPhoneDescription" = "Acesta este numărul pe care clienții îl văd pentru a te contacta pe WhatsApp sau telefon.";
 "publicPhoneUseBusinessNumber" = "Folosește numărul business-ului";
 "publicPhoneUseOwnNumber" = "Numărul meu";
 "publicPhoneVerificationTitle" = "Verifică numărul de contact";
 "publicPhoneVerificationPhoneDescription" = "Introdu numărul pe care vrei să-l folosești pentru a fi contactat de clienți.";
 "editProfilePublicContactSection" = "Informații publice de contact";
-"publicPhoneRowDescription" = "Acest număr va apărea în profilul tău și în postări, pentru ca clienții să te poată contacta.";
+"publicPhoneRowDescription" = "Setează numărul de contact și alege cum vrei să fii contactat de clienți: WhatsApp, telefon, sau ambele.";
+"contactPreferenceSectionTitle" = "Cum vrei să fii contactat?";
+"contactPreferenceWhatsapp" = "Mesaje pe WhatsApp";
+"contactPreferencePhone" = "Apeluri telefonice";
+"contactPreferenceInheritedNote" = "Aceste opțiuni sunt setate de business, odată cu numărul moștenit.";
+"contactPreferenceNoPhoneNote" = "Setează mai întâi un număr de telefon pentru a putea alege aceste opțiuni.";
 
 /* --- PROFILE TABS --- */
 "profile_products_view_more" = "Vezi toate cele %1$d servicii";

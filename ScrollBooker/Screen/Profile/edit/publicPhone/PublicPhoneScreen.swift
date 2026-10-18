@@ -34,8 +34,12 @@ struct PublicPhoneScreen: View {
                     isEmployee: viewModel.isEmployee,
                     isSwitching: viewModel.isSwitchingToBusinessNumber,
                     switchError: viewModel.switchError,
+                    isUpdatingContactPreference: viewModel.isUpdatingContactPreference,
+                    contactPreferenceError: viewModel.contactPreferenceError,
                     onUseBusinessNumber: { Task { await viewModel.useBusinessNumber() } },
-                    onEditPersonalNumber: onEditPersonalNumber
+                    onEditPersonalNumber: onEditPersonalNumber,
+                    onToggleWhatsapp: { accepts in Task { await viewModel.setAcceptsWhatsapp(accepts) } },
+                    onToggleCalls: { accepts in Task { await viewModel.setAcceptsCalls(accepts) } }
                 )
             }
         }

@@ -115,8 +115,15 @@ struct ExploreTab: View {
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
 
-                case .contact:
-                    ContactSheetView()
+                case .contact(let post):
+                    ContactSheetView(
+                        onWriteOnWhatsApp: {
+                            if let phone = post.contact.phone { ContactActionHelper.openWhatsApp(phone: phone) }
+                        },
+                        onCall: {
+                            if let phone = post.contact.phone { ContactActionHelper.call(phone: phone) }
+                        }
+                    )
 
                 case .moreOptions(let postId):
                     MoreOptionsSheetView(
@@ -175,8 +182,6 @@ struct ExploreTab: View {
         .onChange(of: viewModel.scrollResetTrigger) { _, _ in
             currentPostId = viewModel.posts.first?.id
         }
-        /// `.fullScreenCover` never fires `onDisappear` on the presenter, so pause/resume has to
-        /// be driven off this state directly instead.
         .onChange(of: statisticsPostId) { _, newValue in
             if newValue != nil { viewModel.pauseAll() } else { viewModel.playCurrent() }
         }

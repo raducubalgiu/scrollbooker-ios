@@ -10,6 +10,7 @@ import Foundation
 struct BusinessProfileDto: Decodable {
     let id: Int
     let instantBooking: Bool
+    let contact: ContactInfoDTO
     let owner: BusinessProfileOwnerDto
     let openingHours: OpeningHoursDTO
     let mediaFiles: [BusinessMediaFileDto]
@@ -26,6 +27,7 @@ struct BusinessProfileDto: Decodable {
     enum CodingKeys: String, CodingKey {
         case id
         case instantBooking = "instant_booking"
+        case contact
         case owner
         case openingHours = "opening_hours"
         case mediaFiles = "media_files"

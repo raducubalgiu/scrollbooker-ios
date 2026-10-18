@@ -13,6 +13,8 @@ extension PublicPhoneInfo {
         self.publicPhoneVerified = dto.publicPhoneVerified
         self.businessPublicPhone = dto.businessPublicPhone
         self.businessPublicPhoneVerified = dto.businessPublicPhoneVerified
+        self.contactPreference = dto.contactPreference
+        self.businessContactPreference = dto.businessContactPreference
     }
 }
 

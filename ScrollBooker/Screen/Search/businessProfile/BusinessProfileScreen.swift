@@ -49,7 +49,16 @@ struct BusinessProfileScreen: View {
             .ignoresSafeArea(edges: .top)
         }
         .sheet(isPresented: $showContactSheet) {
-            ContactSheetView()
+            if case .success(let profile) = viewModel.viewState {
+                ContactSheetView(
+                    onWriteOnWhatsApp: {
+                        if let phone = profile.contact.phone { ContactActionHelper.openWhatsApp(phone: phone) }
+                    },
+                    onCall: {
+                        if let phone = profile.contact.phone { ContactActionHelper.call(phone: phone) }
+                    }
+                )
+            }
         }
     }
 
@@ -170,6 +179,7 @@ struct BusinessProfileScreen: View {
                 formattedAddress: profile.location.formattedAddress ?? profile.location.address,
                 openingHours: profile.openingHours,
                 instantBooking: profile.instantBooking,
+                contact: profile.contact,
                 isFollow: profile.owner.isFollow,
                 isFollowEnabled: true,
                 onFollow: {},

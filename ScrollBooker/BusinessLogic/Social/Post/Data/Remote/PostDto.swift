@@ -25,6 +25,7 @@ struct PostDto: Decodable {
     let serviceDomain: PostServiceDomainDto?
     let targetGender: String
     let instantBooking: Bool
+    let contact: ContactInfoDTO
     let createdAt: String
 
     enum CodingKeys: String, CodingKey {
@@ -45,6 +46,7 @@ struct PostDto: Decodable {
         case serviceDomain = "service_domain"
         case targetGender = "target_gender"
         case instantBooking = "instant_booking"
+        case contact
         case createdAt = "created_at"
     }
 }

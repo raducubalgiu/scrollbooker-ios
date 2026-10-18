@@ -33,6 +33,7 @@ extension UserProfile {
         self.distanceKm = dto.distanceKm
         self.address = dto.address
         self.instantBooking = dto.instantBooking
+        self.contact = ContactInfo(dto: dto.contact)
     }
 }
 

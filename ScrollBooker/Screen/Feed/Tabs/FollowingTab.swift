@@ -111,8 +111,15 @@ struct FollowingTab: View {
                 .presentationDetents([.fraction(0.7), .large])
                 .presentationDragIndicator(.visible)
 
-            case .contact:
-                ContactSheetView()
+            case .contact(let post):
+                ContactSheetView(
+                    onWriteOnWhatsApp: {
+                        if let phone = post.contact.phone { ContactActionHelper.openWhatsApp(phone: phone) }
+                    },
+                    onCall: {
+                        if let phone = post.contact.phone { ContactActionHelper.call(phone: phone) }
+                    }
+                )
 
             case .moreOptions(let postId):
                 MoreOptionsSheetView(

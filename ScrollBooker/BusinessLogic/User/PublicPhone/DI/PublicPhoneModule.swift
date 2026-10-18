@@ -37,11 +37,16 @@ final class PublicPhoneModule {
         UseBusinessPublicPhoneUseCase(repository: repository)
     }()
 
+    lazy var updateContactPreferenceUseCase: UpdateContactPreferenceUseCase = {
+        UpdateContactPreferenceUseCase(repository: repository)
+    }()
+
     func makePublicPhoneViewModel(session: SessionManager) -> PublicPhoneViewModel {
         PublicPhoneViewModel(
             session: session,
             getPublicPhoneInfoUseCase: getPublicPhoneInfoUseCase,
-            useBusinessPublicPhoneUseCase: useBusinessPublicPhoneUseCase
+            useBusinessPublicPhoneUseCase: useBusinessPublicPhoneUseCase,
+            updateContactPreferenceUseCase: updateContactPreferenceUseCase
         )
     }
 

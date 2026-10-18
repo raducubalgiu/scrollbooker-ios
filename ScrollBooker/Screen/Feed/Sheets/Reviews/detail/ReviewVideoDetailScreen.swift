@@ -136,8 +136,15 @@ struct ReviewVideoDetailScreen: View {
                     .presentationDragIndicator(.visible)
                     .presentationCornerRadius(25)
 
-                case .contact:
-                    ContactSheetView()
+                case .contact(let post):
+                    ContactSheetView(
+                        onWriteOnWhatsApp: {
+                            if let phone = post.contact.phone { ContactActionHelper.openWhatsApp(phone: phone) }
+                        },
+                        onCall: {
+                            if let phone = post.contact.phone { ContactActionHelper.call(phone: phone) }
+                        }
+                    )
 
                 case .moreOptions(let postId):
                     MoreOptionsSheetView(

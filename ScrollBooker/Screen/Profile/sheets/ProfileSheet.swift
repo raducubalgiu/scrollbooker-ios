@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum ProfileSheet: Identifiable {
+enum ProfileSheet: Identifiable, Equatable {
     case menu
     case openingHours
-    case contact
+    case contact(ContactInfo)
 
     var id: String {
         switch self {

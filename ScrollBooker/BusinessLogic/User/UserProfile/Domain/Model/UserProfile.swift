@@ -32,6 +32,7 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
     let distanceKm: Double?
     let address: String?
     let instantBooking: Bool
+    let contact: ContactInfo
 
     var avatarURL: URL? { avatar.flatMap(URL.init(string:)) }
     
@@ -69,7 +70,8 @@ struct UserProfile: Identifiable, Codable, Hashable, Sendable {
             isBusinessOrEmployee: self.isBusinessOrEmployee,
             distanceKm: self.distanceKm,
             address: self.address,
-            instantBooking: self.instantBooking
+            instantBooking: self.instantBooking,
+            contact: self.contact
         )
     }
 }

@@ -15,11 +15,14 @@ final class PublicPhoneViewModel {
     private let session: SessionManager
     private let getPublicPhoneInfoUseCase: GetPublicPhoneInfoUseCase
     private let useBusinessPublicPhoneUseCase: UseBusinessPublicPhoneUseCase
+    private let updateContactPreferenceUseCase: UpdateContactPreferenceUseCase
     private let logger = Logger(subsystem: Bundle.main.bundleIdentifier ?? "App", category: "Settings")
 
     var state: FeatureState<PublicPhoneInfo> = .idle
     var isSwitchingToBusinessNumber = false
     var switchError: String?
+    var isUpdatingContactPreference = false
+    var contactPreferenceError: String?
 
     var isEmployee: Bool {
         guard let userInfo = session.userInfo, let businessOwnerId = userInfo.businessOwnerId else {
@@ -31,11 +34,13 @@ final class PublicPhoneViewModel {
     init(
         session: SessionManager,
         getPublicPhoneInfoUseCase: GetPublicPhoneInfoUseCase,
-        useBusinessPublicPhoneUseCase: UseBusinessPublicPhoneUseCase
+        useBusinessPublicPhoneUseCase: UseBusinessPublicPhoneUseCase,
+        updateContactPreferenceUseCase: UpdateContactPreferenceUseCase
     ) {
         self.session = session
         self.getPublicPhoneInfoUseCase = getPublicPhoneInfoUseCase
         self.useBusinessPublicPhoneUseCase = useBusinessPublicPhoneUseCase
+        self.updateContactPreferenceUseCase = updateContactPreferenceUseCase
     }
 
     func load() async {
@@ -65,7 +70,9 @@ final class PublicPhoneViewModel {
                     publicPhone: result.publicPhone,
                     publicPhoneVerified: result.publicPhoneVerified,
                     businessPublicPhone: info.businessPublicPhone,
-                    businessPublicPhoneVerified: info.businessPublicPhoneVerified
+                    businessPublicPhoneVerified: info.businessPublicPhoneVerified,
+                    contactPreference: info.contactPreference,
+                    businessContactPreference: info.businessContactPreference
                 )
             )
         } catch {
@@ -83,8 +90,51 @@ final class PublicPhoneViewModel {
                 publicPhone: result.publicPhone,
                 publicPhoneVerified: result.publicPhoneVerified,
                 businessPublicPhone: info.businessPublicPhone,
-                businessPublicPhoneVerified: info.businessPublicPhoneVerified
+                businessPublicPhoneVerified: info.businessPublicPhoneVerified,
+                contactPreference: info.contactPreference,
+                businessContactPreference: info.businessContactPreference
             )
         )
+    }
+
+    func setAcceptsWhatsapp(_ accepts: Bool) async {
+        guard case .success(let info) = state else { return }
+        await updateContactPreference(
+            ContactPreferenceEnum.from(acceptsWhatsapp: accepts, acceptsCalls: info.contactPreference.acceptsCalls)
+        )
+    }
+
+    func setAcceptsCalls(_ accepts: Bool) async {
+        guard case .success(let info) = state else { return }
+        await updateContactPreference(
+            ContactPreferenceEnum.from(acceptsWhatsapp: info.contactPreference.acceptsWhatsapp, acceptsCalls: accepts)
+        )
+    }
+
+    private func updateContactPreference(_ preference: ContactPreferenceEnum) async {
+        guard case .success(let info) = state else { return }
+
+        isUpdatingContactPreference = true
+        contactPreferenceError = nil
+
+        do {
+            let updated = try await withLoading {
+                try await self.updateContactPreferenceUseCase(preference)
+            }
+            state = .success(
+                PublicPhoneInfo(
+                    publicPhone: info.publicPhone,
+                    publicPhoneVerified: info.publicPhoneVerified,
+                    businessPublicPhone: info.businessPublicPhone,
+                    businessPublicPhoneVerified: info.businessPublicPhoneVerified,
+                    contactPreference: updated,
+                    businessContactPreference: info.businessContactPreference
+                )
+            )
+        } catch {
+            contactPreferenceError = logger.userMessage(for: error, context: "Updating Contact Preference")
+        }
+
+        isUpdatingContactPreference = false
     }
 }
